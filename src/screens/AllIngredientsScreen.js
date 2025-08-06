@@ -12,11 +12,18 @@ import {
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import HeaderWithSearch from "../components/HeaderWithSearch";
+import { useTabMemory } from "../context/TabMemoryContext";
 
 export default function AllIngredientsScreen() {
+  const { setTab } = useTabMemory(); // 🔹 отримуємо функцію з контексту
+  const navigation = useNavigation();
+
+  // 🔹 Зберігаємо активний таб "All" у групі "ingredients"
+  useEffect(() => {
+    setTab("ingredients", "All");
+  }, []);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
   const [search, setSearch] = useState("");
 
   useFocusEffect(
@@ -53,7 +60,7 @@ export default function AllIngredientsScreen() {
       onPress={() =>
         navigation.navigate("Create", {
           screen: "IngredientDetails",
-          params: { id: item.id },
+          params: { id: item.id, previousTab: "All" },
         })
       }
     >

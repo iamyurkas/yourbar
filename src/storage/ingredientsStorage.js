@@ -11,6 +11,18 @@ export async function saveAllIngredients(ingredients) {
   await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
 }
 
+export async function saveIngredient(updatedIngredient) {
+  const all = await getAllIngredients();
+  const index = all.findIndex((i) => i.id === updatedIngredient.id);
+
+  if (index !== -1) {
+    all[index] = updatedIngredient;
+    await saveAllIngredients(all);
+  } else {
+    console.warn("Ingredient not found:", updatedIngredient.id);
+  }
+}
+
 export async function addIngredient(ingredient) {
   const current = await getAllIngredients();
   const newList = [...current, ingredient];

@@ -16,6 +16,7 @@ import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { addIngredient } from "../storage/ingredientsStorage";
+import { useTabMemory } from "../context/TabMemoryContext";
 
 export default function AddIngredientScreen() {
   const navigation = useNavigation();
@@ -27,6 +28,25 @@ export default function AddIngredientScreen() {
     { id: 9, name: "custom", color: "#afc9c3ff" },
   ]);
   const [availableTags, setAvailableTags] = useState([]);
+  const { getTab } = useTabMemory(); // отримуємо останній активний таб
+  const previousTab = getTab("ingredients");
+
+  const handleGoBack = () => {
+    if (previousTab) {
+      navigation.navigate(previousTab);
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      handleGoBack();
+    });
+
+    return unsubscribe;
+  }, [navigation, previousTab]);
 
   useFocusEffect(
     useCallback(() => {

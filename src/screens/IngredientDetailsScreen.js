@@ -6,13 +6,13 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Switch,
   ActivityIndicator,
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getIngredientById } from "../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTabMemory } from "../context/TabMemoryContext";
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
@@ -20,6 +20,26 @@ export default function IngredientDetailsScreen() {
 
   const [ingredient, setIngredient] = useState(null);
   const [inBar, setInBar] = useState(false);
+
+  const { getTab } = useTabMemory(); // отримуємо останній активний таб
+  const previousTab = getTab("ingredients");
+
+  const handleGoBack = () => {
+    if (previousTab) {
+      navigation.navigate(previousTab);
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      handleGoBack();
+    });
+
+    return unsubscribe;
+  }, [navigation, previousTab]);
 
   useEffect(() => {
     const load = async () => {
@@ -133,16 +153,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
-  editButton: {
-    alignSelf: "flex-end",
-    marginTop: 8,
-    marginBottom: 12,
-    padding: 4,
-  },
-  editText: {
-    color: "#4DABF7",
-    fontWeight: "bold",
-  },
   image: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -170,15 +180,6 @@ const styles = StyleSheet.create({
   },
   tagText: {
     color: "white",
-    fontWeight: "bold",
-  },
-  actionButton: {
-    backgroundColor: "#ccc",
-    padding: 10,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  actionText: {
     fontWeight: "bold",
   },
   addCocktailButton: {
