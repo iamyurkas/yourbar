@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
@@ -16,6 +17,7 @@ import {
   deleteIngredient,
   getIngredientById,
 } from "../storage/ingredientsStorage";
+import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
 export default function EditIngredientScreen() {
@@ -26,6 +28,17 @@ export default function EditIngredientScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
+
+  const [availableTags, setAvailableTags] = useState([]);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      const custom = await getAllTags();
+      console.log("Custom tags:", custom);
+      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...custom]);
+    };
+    loadTags();
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -70,7 +83,7 @@ export default function EditIngredientScreen() {
         style: "destructive",
         onPress: async () => {
           await deleteIngredient(id);
-          navigation.goBack();
+          navigation.navigate("IngredientsTabs", { screen: "All" });
         },
       },
     ]);
@@ -78,8 +91,6 @@ export default function EditIngredientScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Edit Ingredient</Text>
-
       <TextInput
         placeholder="Name"
         style={styles.input}
@@ -107,7 +118,7 @@ export default function EditIngredientScreen() {
             <Text style={styles.tagText}>{tag.name}</Text>
           </TouchableOpacity>
         ))}
-        {BUILTIN_INGREDIENT_TAGS.map((tag) => {
+        {availableTags.map((tag) => {
           const exists = tags.some((t) => t.id === tag.id);
           if (exists) return null;
           return (
@@ -211,14 +222,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   deleteButton: {
-    backgroundColor: "#eee",
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
     marginTop: 16,
+    backgroundColor: "#FF6B6B",
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: 8,
   },
   deleteText: {
-    color: "#888",
+    color: "#ffffff",
     fontWeight: "bold",
   },
 });

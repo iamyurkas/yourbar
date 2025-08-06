@@ -19,3 +19,14 @@ export async function saveUserTags(tags) {
     console.error("Failed to save user tags", e);
   }
 }
+
+export const getAllTags = async () => {
+  try {
+    const json = await AsyncStorage.getItem(USER_TAGS_KEY);
+    if (!json) return [];
+    return JSON.parse(json);
+  } catch (error) {
+    console.error("Failed to load tags:", error);
+    return [];
+  }
+};

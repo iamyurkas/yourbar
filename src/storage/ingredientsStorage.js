@@ -22,3 +22,14 @@ export async function getIngredientById(id) {
   const all = await getAllIngredients();
   return all.find((i) => i.id === id);
 }
+
+export async function deleteIngredient(id) {
+  try {
+    const json = await AsyncStorage.getItem(INGREDIENTS_KEY);
+    const list = json ? JSON.parse(json) : [];
+    const updated = list.filter((item) => item.id !== id);
+    await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error("Failed to delete ingredient", e);
+  }
+}

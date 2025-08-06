@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getUserTags } from "../storage/ingredientTagsStorage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";

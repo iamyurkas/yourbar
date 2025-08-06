@@ -9,6 +9,7 @@ import {
   Switch,
   ActivityIndicator,
 } from "react-native";
+
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getIngredientById } from "../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";

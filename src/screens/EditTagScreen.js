@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+
 import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import WheelColorPicker from "react-native-wheel-color-picker";

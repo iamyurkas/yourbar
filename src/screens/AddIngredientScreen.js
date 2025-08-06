@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,8 +12,9 @@ import {
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { addIngredient } from "../storage/ingredientsStorage";
 
 export default function AddIngredientScreen() {
@@ -25,6 +26,25 @@ export default function AddIngredientScreen() {
   const [tags, setTags] = useState([
     { id: 9, name: "custom", color: "#afc9c3ff" },
   ]);
+  const [availableTags, setAvailableTags] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setName("");
+      setDescription("");
+      setPhotoUri(null);
+      setTags([{ id: 9, name: "custom", color: "#afc9c3ff" }]);
+    }, [])
+  );
+
+  useEffect(() => {
+    const loadTags = async () => {
+      const custom = await getAllTags();
+
+      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...custom]);
+    };
+    loadTags();
+  }, []);
 
   const toggleTag = (tag) => {
     if (tags.find((t) => t.id === tag.id)) {
@@ -68,7 +88,6 @@ export default function AddIngredientScreen() {
     };
 
     await addIngredient(ingredient);
-
     navigation.navigate("IngredientDetails", { id });
   };
 
@@ -76,7 +95,7 @@ export default function AddIngredientScreen() {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={100}
+      keyboardVerticalOffset={0}
     >
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.label}>Name:</Text>
@@ -111,17 +130,17 @@ export default function AddIngredientScreen() {
 
         <Text style={styles.label}>Add Tag:</Text>
         <View style={styles.tagContainer}>
-          {BUILTIN_INGREDIENT_TAGS.filter(
-            (t) => !tags.some((tag) => tag.id === t.id)
-          ).map((tag) => (
-            <TouchableOpacity
-              key={tag.id}
-              style={[styles.tag, { backgroundColor: tag.color }]}
-              onPress={() => toggleTag(tag)}
-            >
-              <Text style={styles.tagText}>+ {tag.name}</Text>
-            </TouchableOpacity>
-          ))}
+          {availableTags
+            .filter((t) => !tags.some((tag) => tag.id === t.id))
+            .map((tag) => (
+              <TouchableOpacity
+                key={tag.id}
+                style={[styles.tag, { backgroundColor: tag.color }]}
+                onPress={() => toggleTag(tag)}
+              >
+                <Text style={styles.tagText}>+ {tag.name}</Text>
+              </TouchableOpacity>
+            ))}
         </View>
 
         <Text style={styles.label}>Description:</Text>
@@ -129,7 +148,7 @@ export default function AddIngredientScreen() {
           placeholder="Optional description"
           value={description}
           onChangeText={setDescription}
-          style={[styles.input, { height: 80 }]}
+          style={[styles.input, { height: 60 }]}
           multiline
         />
 
