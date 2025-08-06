@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 // Стек для вкладки Create
 function CreateIngredientStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="AddIngredient">
       <Stack.Screen
         name="AddIngredient"
         component={AddIngredientScreen}
@@ -56,7 +56,21 @@ export default function IngredientsTabsScreen() {
       <Tab.Screen name="All" component={AllIngredientsScreen} />
       <Tab.Screen name="My" component={MyIngredientsScreen} />
       <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
-      <Tab.Screen name="Create" component={CreateIngredientStack} />
+      <Tab.Screen
+        name="Create"
+        component={CreateIngredientStack}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            // Запобігає стандартній поведінці
+            e.preventDefault();
+
+            // Скидає стек до початкового екрану AddIngredient
+            navigation.navigate("Create", {
+              screen: "AddIngredient",
+            });
+          },
+        })}
+      />
     </Tab.Navigator>
   );
 }

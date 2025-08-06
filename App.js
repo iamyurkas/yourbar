@@ -8,37 +8,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import CocktailsScreen from "./src/screens/CocktailsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
 import IngredientsTabsScreen from "./src/screens/IngredientsTabsScreen";
-import IngredientDetailsScreen from "./src/screens/IngredientDetailsScreen";
-import EditIngredientScreen from "./src/screens/EditIngredientScreen";
 
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-// Ingredients stack (with tabs + details/edit)
-function IngredientsStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="IngredientsTabs"
-        component={IngredientsTabsScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Ingredient Details"
-        component={IngredientDetailsScreen}
-        options={{ title: "Ingredient Details" }}
-      />
-      <Stack.Screen
-        name="Edit Ingredient"
-        component={EditIngredientScreen}
-        options={{ title: "Edit Ingredient" }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 export default function App() {
   return (
@@ -66,7 +40,7 @@ export default function App() {
         >
           <Tab.Screen name="Cocktails" component={CocktailsScreen} />
           <Tab.Screen name="Shaker" component={ShakerScreen} />
-          <Tab.Screen name="Ingredients" component={IngredientsStack} />
+          <Tab.Screen name="Ingredients" component={IngredientsTabsScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
