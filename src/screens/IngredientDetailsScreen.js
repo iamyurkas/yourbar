@@ -26,6 +26,15 @@ export default function IngredientDetailsScreen() {
     setIngredient(updated); // оновлюємо локальний стан
   };
 
+  const toggleInShoppingList = async () => {
+    const updated = {
+      ...ingredient,
+      inShoppingList: !ingredient.inShoppingList,
+    };
+    await saveIngredient(updated);
+    setIngredient(updated);
+  };
+
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
 
@@ -74,8 +83,17 @@ export default function IngredientDetailsScreen() {
         >
           <MaterialIcons name="edit" size={24} color="#4DABF7" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.iconButton}>
-          <MaterialIcons name="shopping-cart" size={24} color="#4DABF7" />
+        <TouchableOpacity
+          onPress={toggleInShoppingList}
+          style={styles.iconButton}
+        >
+          <MaterialIcons
+            name={
+              ingredient.inShoppingList ? "shopping-cart" : "add-shopping-cart"
+            }
+            size={24}
+            color={ingredient.inShoppingList ? "#4DABF7" : "#999"}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>

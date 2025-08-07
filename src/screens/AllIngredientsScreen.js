@@ -13,6 +13,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import HeaderWithSearch from "../components/HeaderWithSearch";
 import { useTabMemory } from "../context/TabMemoryContext";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function AllIngredientsScreen() {
   const { setTab } = useTabMemory();
@@ -71,6 +72,16 @@ export default function AllIngredientsScreen() {
     >
       <View style={item.inBar === true ? styles.highlightWrapper : null}>
         <View style={styles.item}>
+          {/* Shopping cart icon */}
+          {item.inShoppingList && (
+            <MaterialIcons
+              name="shopping-cart"
+              size={16}
+              color="#4DABF7"
+              style={styles.cartIcon}
+            />
+          )}
+
           {item.photoUri ? (
             <Image
               source={{ uri: item.photoUri }}
@@ -132,17 +143,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: "16",
+  },
+  listContent: {
+    backgroundColor: "white",
+  },
+  highlightWrapper: {
+    backgroundColor: "#E3F2FD",
   },
   item: {
     flexDirection: "row",
     alignItems: "center",
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee", // тонка лінія між інгредієнтами
-  },
-  inBarItem: {
-    backgroundColor: "#E3F2FD", // світло-блакитний фон
+    borderBottomColor: "#eee",
+    position: "relative",
   },
   image: {
     width: IMAGE_SIZE,
@@ -183,11 +197,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  highlightWrapper: {
-    backgroundColor: "#E3F2FD", // світло-блакитний
-  },
-  listContent: {
-    // без падінгу, щоб інгредієнти йшли від краю до краю
-    backgroundColor: "white",
+  cartIcon: {
+    position: "absolute",
+    bottom: 4,
+    right: 4,
+    zIndex: 1,
   },
 });
