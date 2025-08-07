@@ -25,7 +25,7 @@ export async function saveIngredient(updatedIngredient) {
 
 export async function addIngredient(ingredient) {
   const current = await getAllIngredients();
-  const newList = [...current, ingredient];
+  const newList = [...current, { ...ingredient, inBar: false }];
   await saveAllIngredients(newList);
   return ingredient.id;
 }

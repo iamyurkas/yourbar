@@ -13,15 +13,20 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { getIngredientById } from "../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../context/TabMemoryContext";
+import { saveIngredient } from "../storage/ingredientsStorage";
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
 
   const [ingredient, setIngredient] = useState(null);
-  const [inBar, setInBar] = useState(false);
+  const toggleInBar = async () => {
+    const updated = { ...ingredient, inBar: !ingredient.inBar };
+    await saveIngredient(updated);
+    setIngredient(updated); // оновлюємо локальний стан
+  };
 
-  const { getTab } = useTabMemory(); // отримуємо останній активний таб
+  const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
 
   const handleGoBack = () => {
@@ -73,14 +78,11 @@ export default function IngredientDetailsScreen() {
           <MaterialIcons name="shopping-cart" size={24} color="#4DABF7" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => setInBar((prev) => !prev)}
-          style={styles.iconButton}
-        >
+        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
           <MaterialIcons
-            name={inBar ? "check-circle" : "radio-button-unchecked"}
+            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
             size={24}
-            color={inBar ? "#4DABF7" : "#999"}
+            color={ingredient.inBar ? "#4DABF7" : "#999"}
           />
         </TouchableOpacity>
       </View>

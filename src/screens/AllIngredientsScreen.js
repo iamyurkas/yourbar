@@ -15,22 +15,28 @@ import HeaderWithSearch from "../components/HeaderWithSearch";
 import { useTabMemory } from "../context/TabMemoryContext";
 
 export default function AllIngredientsScreen() {
-  const { setTab } = useTabMemory(); // 🔹 отримуємо функцію з контексту
+  const { setTab } = useTabMemory();
   const navigation = useNavigation();
 
-  // 🔹 Зберігаємо активний таб "All" у групі "ingredients"
-  useEffect(() => {
-    setTab("ingredients", "All");
-  }, []);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    setTab("ingredients", "All");
+  }, []);
+
+  const sortIngredients = (data) => {
+    return data.sort((a, b) =>
+      a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+    );
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const loadIngredients = async () => {
-        const data = await getAllIngredients(); // або твоя функція завантаження
-        setIngredients(data);
+        const data = await getAllIngredients();
+        setIngredients(sortIngredients(data));
       };
       loadIngredients();
     }, [])
@@ -39,7 +45,7 @@ export default function AllIngredientsScreen() {
   useEffect(() => {
     const load = async () => {
       const data = await getAllIngredients();
-      setIngredients(data);
+      setIngredients(sortIngredients(data));
       setLoading(false);
     };
     load();
@@ -56,39 +62,42 @@ export default function AllIngredientsScreen() {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.item}
       onPress={() =>
         navigation.navigate("Create", {
           screen: "IngredientDetails",
-          params: { id: item.id, previousTab: "All" },
+          params: { id: item.id },
         })
       }
     >
-      {item.photoUri ? (
-        <Image
-          source={{ uri: item.photoUri }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      ) : (
-        <View style={[styles.image, styles.placeholder]}>
-          <Text style={styles.placeholderText}>No image</Text>
-        </View>
-      )}
-      <View style={styles.info}>
-        <Text style={styles.name}>{item.name}</Text>
-        {item.tags?.length > 0 && (
-          <View style={styles.tagRow}>
-            {item.tags.map((tag) => (
-              <View
-                key={tag.id}
-                style={[styles.tag, { backgroundColor: tag.color }]}
-              >
-                <Text style={styles.tagText}>{tag.name}</Text>
+      <View style={item.inBar === true ? styles.highlightWrapper : null}>
+        <View style={styles.item}>
+          {item.photoUri ? (
+            <Image
+              source={{ uri: item.photoUri }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          ) : (
+            <View style={[styles.image, styles.placeholder]}>
+              <Text style={styles.placeholderText}>No image</Text>
+            </View>
+          )}
+          <View style={styles.info}>
+            <Text style={styles.name}>{item.name}</Text>
+            {item.tags?.length > 0 && (
+              <View style={styles.tagRow}>
+                {item.tags.map((tag) => (
+                  <View
+                    key={tag.id}
+                    style={[styles.tag, { backgroundColor: tag.color }]}
+                  >
+                    <Text style={styles.tagText}>{tag.name}</Text>
+                  </View>
+                ))}
               </View>
-            ))}
+            )}
           </View>
-        )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -106,7 +115,7 @@ export default function AllIngredientsScreen() {
         data={ingredients}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -121,14 +130,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    padding: 16,
+    flex: 1,
     backgroundColor: "white",
-    paddingBottom: "45",
+    paddingTop: "16",
   },
   item: {
     flexDirection: "row",
-    marginBottom: 16,
     alignItems: "center",
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee", // тонка лінія між інгредієнтами
+  },
+  inBarItem: {
+    backgroundColor: "#E3F2FD", // світло-блакитний фон
   },
   image: {
     width: IMAGE_SIZE,
@@ -168,5 +182,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "white",
     fontWeight: "bold",
+  },
+  highlightWrapper: {
+    backgroundColor: "#E3F2FD", // світло-блакитний
+  },
+  listContent: {
+    // без падінгу, щоб інгредієнти йшли від краю до краю
+    backgroundColor: "white",
   },
 });
