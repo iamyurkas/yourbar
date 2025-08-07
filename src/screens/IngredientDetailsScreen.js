@@ -86,7 +86,11 @@ export default function IngredientDetailsScreen() {
       </View>
 
       {ingredient.photoUri ? (
-        <Image source={{ uri: ingredient.photoUri }} style={styles.image} />
+        <Image
+          source={{ uri: ingredient.photoUri }}
+          style={styles.image}
+          resizeMode="contain"
+        />
       ) : (
         <View
           style={[
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
     borderRadius: 8,
-    backgroundColor: "#eee",
+    backgroundColor: "#ffffff",
     marginBottom: 16,
   },
   section: {

@@ -65,7 +65,11 @@ export default function AllIngredientsScreen() {
       }
     >
       {item.photoUri ? (
-        <Image source={{ uri: item.photoUri }} style={styles.image} />
+        <Image
+          source={{ uri: item.photoUri }}
+          style={styles.image}
+          resizeMode="contain"
+        />
       ) : (
         <View style={[styles.image, styles.placeholder]}>
           <Text style={styles.placeholderText}>No image</Text>
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
     height: IMAGE_SIZE,
     borderRadius: 8,
     marginRight: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ffffff",
   },
   placeholder: {
     justifyContent: "center",

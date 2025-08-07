@@ -34,7 +34,6 @@ export default function EditIngredientScreen() {
   useEffect(() => {
     const loadTags = async () => {
       const custom = await getAllTags();
-      console.log("Custom tags:", custom);
       setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...custom]);
     };
     loadTags();
@@ -55,8 +54,9 @@ export default function EditIngredientScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.6,
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 0.7,
     });
     if (!result.canceled) {
       setPhotoUri(result.assets[0].uri);
@@ -100,7 +100,11 @@ export default function EditIngredientScreen() {
 
       <TouchableOpacity onPress={pickImage}>
         {photoUri ? (
-          <Image source={{ uri: photoUri }} style={styles.image} />
+          <Image
+            source={{ uri: photoUri }}
+            style={styles.image}
+            resizeMode="contain"
+          />
         ) : (
           <View style={[styles.image, styles.placeholder]}>
             <Text style={styles.placeholderText}>Pick a photo</Text>
@@ -159,11 +163,6 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: "white",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -185,6 +184,7 @@ const styles = StyleSheet.create({
     height: IMAGE_SIZE,
     borderRadius: 8,
     marginBottom: 16,
+    backgroundColor: "#fff",
   },
   placeholder: {
     backgroundColor: "#eee",
