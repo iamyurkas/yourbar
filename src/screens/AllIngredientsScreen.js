@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: "white",
+    paddingBottom: "45",
   },
   item: {
     flexDirection: "row",
