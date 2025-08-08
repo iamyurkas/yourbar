@@ -61,57 +61,66 @@ export default function AllIngredientsScreen() {
     );
   }
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("Create", {
-          screen: "IngredientDetails",
-          params: { id: item.id },
-        })
-      }
-    >
-      <View style={item.inBar === true ? styles.highlightWrapper : null}>
-        <View style={styles.item}>
-          {/* Shopping cart icon */}
-          {item.inShoppingList && (
-            <MaterialIcons
-              name="shopping-cart"
-              size={16}
-              color="#4DABF7"
-              style={styles.cartIcon}
-            />
-          )}
+  const renderItem = ({ item }) => {
+    const isBranded = !!item.baseIngredientId; // брендований, якщо є посилання на базу
 
-          {item.photoUri ? (
-            <Image
-              source={{ uri: item.photoUri }}
-              style={styles.image}
-              resizeMode="contain"
-            />
-          ) : (
-            <View style={[styles.image, styles.placeholder]}>
-              <Text style={styles.placeholderText}>No image</Text>
-            </View>
-          )}
-          <View style={styles.info}>
-            <Text style={styles.name}>{item.name}</Text>
-            {item.tags?.length > 0 && (
-              <View style={styles.tagRow}>
-                {item.tags.map((tag) => (
-                  <View
-                    key={tag.id}
-                    style={[styles.tag, { backgroundColor: tag.color }]}
-                  >
-                    <Text style={styles.tagText}>{tag.name}</Text>
-                  </View>
-                ))}
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Create", {
+            screen: "IngredientDetails",
+            params: { id: item.id },
+          })
+        }
+      >
+        <View style={item.inBar === true ? styles.highlightWrapper : null}>
+          <View
+            style={[
+              styles.item,
+              isBranded && styles.brandedStripe, // додаємо смужку, якщо брендований
+            ]}
+          >
+            {/* Shopping cart icon */}
+            {item.inShoppingList && (
+              <MaterialIcons
+                name="shopping-cart"
+                size={16}
+                color="#4DABF7"
+                style={styles.cartIcon}
+              />
+            )}
+
+            {item.photoUri ? (
+              <Image
+                source={{ uri: item.photoUri }}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            ) : (
+              <View style={[styles.image, styles.placeholder]}>
+                <Text style={styles.placeholderText}>No image</Text>
               </View>
             )}
+            <View style={styles.info}>
+              <Text style={styles.name}>{item.name}</Text>
+              {item.tags?.length > 0 && (
+                <View style={styles.tagRow}>
+                  {item.tags.map((tag) => (
+                    <View
+                      key={tag.id}
+                      style={[styles.tag, { backgroundColor: tag.color }]}
+                    >
+                      <Text style={styles.tagText}>{tag.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -149,11 +158,14 @@ const styles = StyleSheet.create({
   },
   highlightWrapper: {
     backgroundColor: "#E3F2FD",
+    borderBottomWidth: 1,
+    borderBottomColor: "#fff",
   },
   item: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     position: "relative",
@@ -202,5 +214,10 @@ const styles = StyleSheet.create({
     bottom: 4,
     right: 4,
     zIndex: 1,
+  },
+  brandedStripe: {
+    borderLeftWidth: 4,
+    borderLeftColor: "green",
+    paddingLeft: 4,
   },
 });

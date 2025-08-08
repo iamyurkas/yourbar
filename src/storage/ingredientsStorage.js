@@ -16,7 +16,10 @@ export async function saveIngredient(updatedIngredient) {
   const index = all.findIndex((i) => i.id === updatedIngredient.id);
 
   if (index !== -1) {
-    all[index] = updatedIngredient;
+    all[index] = {
+      ...all[index],
+      ...updatedIngredient, // зберігає всі поля, включно з baseIngredientId
+    };
     await saveAllIngredients(all);
   } else {
     console.warn("Ingredient not found:", updatedIngredient.id);
@@ -25,7 +28,15 @@ export async function saveIngredient(updatedIngredient) {
 
 export async function addIngredient(ingredient) {
   const current = await getAllIngredients();
-  const newList = [...current, { ...ingredient, inBar: false }];
+  const newList = [
+    ...current,
+    {
+      ...ingredient,
+      inBar: false,
+      inShoppingList: false,
+      baseIngredientId: ingredient.baseIngredientId || null,
+    },
+  ];
   await saveAllIngredients(newList);
   return ingredient.id;
 }

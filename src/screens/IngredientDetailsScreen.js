@@ -10,20 +10,27 @@ import {
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { getIngredientById } from "../storage/ingredientsStorage";
+import {
+  getIngredientById,
+  getAllIngredients,
+  saveIngredient,
+} from "../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../context/TabMemoryContext";
-import { saveIngredient } from "../storage/ingredientsStorage";
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
 
   const [ingredient, setIngredient] = useState(null);
+  const [allIngredients, setAllIngredients] = useState([]);
+  const [brandedChildren, setBrandedChildren] = useState([]);
+  const [baseIngredient, setBaseIngredient] = useState(null);
+
   const toggleInBar = async () => {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     await saveIngredient(updated);
-    setIngredient(updated); // оновлюємо локальний стан
+    setIngredient(updated);
   };
 
   const toggleInShoppingList = async () => {
@@ -58,10 +65,47 @@ export default function IngredientDetailsScreen() {
   useEffect(() => {
     const load = async () => {
       const loaded = await getIngredientById(id);
-      if (loaded) setIngredient(loaded);
+      const all = await getAllIngredients();
+      setIngredient(loaded || null);
+      setAllIngredients(all);
+
+      if (loaded) {
+        // Діти (брендовані) цього інгредієнта
+        const children = all
+          .filter((i) => i.baseIngredientId === loaded.id)
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+          );
+        setBrandedChildren(children);
+
+        // Його базовий (якщо це брендований)
+        const base = loaded.baseIngredientId
+          ? all.find((i) => i.id === loaded.baseIngredientId)
+          : null;
+        setBaseIngredient(base || null);
+      } else {
+        setBrandedChildren([]);
+        setBaseIngredient(null);
+      }
     };
     load();
   }, [id]);
+
+  // Перераховуємо зв’язки, якщо змінився ingredient (наприклад, тумблери)
+  useEffect(() => {
+    if (!ingredient || allIngredients.length === 0) return;
+    const children = allIngredients
+      .filter((i) => i.baseIngredientId === ingredient.id)
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+      );
+    setBrandedChildren(children);
+
+    const base = ingredient.baseIngredientId
+      ? allIngredients.find((i) => i.id === ingredient.baseIngredientId)
+      : null;
+    setBaseIngredient(base || null);
+  }, [ingredient, allIngredients]);
 
   if (!ingredient) {
     return (
@@ -71,6 +115,13 @@ export default function IngredientDetailsScreen() {
       </View>
     );
   }
+
+  const isBase = brandedChildren.length > 0;
+  const isBranded = !!ingredient.baseIngredientId;
+
+  const goToIngredient = (goId) => {
+    navigation.push("IngredientDetails", { id: goId });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -83,6 +134,7 @@ export default function IngredientDetailsScreen() {
         >
           <MaterialIcons name="edit" size={24} color="#4DABF7" />
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={toggleInShoppingList}
           style={styles.iconButton}
@@ -126,26 +178,84 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Tags:</Text>
-        <View style={styles.tagRow}>
-          {ingredient.tags.map((tag) => (
-            <View
-              key={tag.id}
-              style={[styles.tag, { backgroundColor: tag.color }]}
-            >
-              <Text style={styles.tagText}>{tag.name}</Text>
-            </View>
-          ))}
+      {/* Tags */}
+      {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Tags:</Text>
+          <View style={styles.tagRow}>
+            {ingredient.tags.map((tag) => (
+              <View
+                key={tag.id}
+                style={[styles.tag, { backgroundColor: tag.color }]}
+              >
+                <Text style={styles.tagText}>{tag.name}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
+      )}
 
+      {/* Description */}
       {ingredient.description ? (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Description:</Text>
           <Text>{ingredient.description}</Text>
         </View>
       ) : null}
+
+      {/* Base / Branded relations */}
+      <View style={styles.section}>
+        {isBase ? (
+          <>
+            <Text style={styles.sectionLabel}>Branded ingredients:</Text>
+            <View style={styles.listBox}>
+              {brandedChildren.map((child, idx) => (
+                <View key={child.id}>
+                  <TouchableOpacity
+                    style={styles.row}
+                    onPress={() => goToIngredient(child.id)}
+                    activeOpacity={0.7}
+                  >
+                    {child.photoUri ? (
+                      <Image
+                        source={{ uri: child.photoUri }}
+                        style={styles.thumb}
+                      />
+                    ) : null}
+                    <Text style={styles.rowText}>{child.name}</Text>
+                    <MaterialIcons
+                      name="chevron-right"
+                      size={20}
+                      color="#999"
+                    />
+                  </TouchableOpacity>
+                  {idx !== brandedChildren.length - 1 && (
+                    <View style={styles.divider} />
+                  )}
+                </View>
+              ))}
+            </View>
+          </>
+        ) : isBranded && baseIngredient ? (
+          <>
+            <Text style={styles.sectionLabel}>Base ingredient:</Text>
+            <TouchableOpacity
+              style={[styles.row, styles.singleRow]}
+              onPress={() => goToIngredient(baseIngredient.id)}
+              activeOpacity={0.7}
+            >
+              {baseIngredient.photoUri ? (
+                <Image
+                  source={{ uri: baseIngredient.photoUri }}
+                  style={styles.thumb}
+                />
+              ) : null}
+              <Text style={styles.rowText}>{baseIngredient.name}</Text>
+              <MaterialIcons name="chevron-right" size={20} color="#999" />
+            </TouchableOpacity>
+          </>
+        ) : null}
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Used in cocktails:</Text>
@@ -189,7 +299,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontWeight: "bold",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   tagRow: {
     flexDirection: "row",
@@ -206,6 +316,41 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+
+  // Relations box
+  listBox: {
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 8,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
+  singleRow: {
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 8,
+  },
+  thumb: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    marginRight: 10,
+    backgroundColor: "#fff",
+  },
+  rowText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e9e9e9",
+    marginLeft: 8 + 40 + 10, // відступ під текст (під картинку)
+  },
+
   addCocktailButton: {
     marginTop: 24,
     backgroundColor: "#4DABF7",

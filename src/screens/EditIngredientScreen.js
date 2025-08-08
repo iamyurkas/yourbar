@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -16,41 +16,116 @@ import {
   saveIngredient,
   deleteIngredient,
   getIngredientById,
+  getAllIngredients,
 } from "../storage/ingredientsStorage";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
+import {
+  Menu,
+  Divider,
+  Provider as PaperProvider,
+  Text as PaperText,
+} from "react-native-paper";
+import { useTabMemory } from "../context/TabMemoryContext";
 
 export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
 
+  const { getTab } = useTabMemory();
+  const previousTab = getTab("ingredients");
+
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
-
   const [availableTags, setAvailableTags] = useState([]);
 
-  useEffect(() => {
-    const loadTags = async () => {
-      const custom = await getAllTags();
-      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...custom]);
-    };
-    loadTags();
-  }, []);
+  const [baseIngredientId, setBaseIngredientId] = useState(null);
+  const [allBaseIngredients, setAllBaseIngredients] = useState([]);
+  const [brandedChildren, setBrandedChildren] = useState([]);
+  const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
+
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [anchorWidth, setAnchorWidth] = useState(0);
+  const anchorRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Для перевірки змін
+  const initialDataRef = useRef(null);
 
   useEffect(() => {
-    const load = async () => {
-      const ingredient = await getIngredientById(id);
-      if (ingredient) {
-        setName(ingredient.name);
-        setPhotoUri(ingredient.photoUri);
-        setDescription(ingredient.description || "");
-        setTags(ingredient.tags || []);
+    const loadAll = async () => {
+      const custom = await getAllTags();
+      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...custom]);
+
+      const ing = await getIngredientById(id);
+      if (ing) {
+        setName(ing.name || "");
+        setPhotoUri(ing.photoUri || null);
+        setDescription(ing.description || "");
+        setTags(Array.isArray(ing.tags) ? ing.tags : []);
+        setBaseIngredientId(
+          ing.baseIngredientId !== undefined ? ing.baseIngredientId : null
+        );
+
+        // Зберігаємо початкові дані
+        initialDataRef.current = {
+          name: ing.name || "",
+          photoUri: ing.photoUri || null,
+          description: ing.description || "",
+          tags: Array.isArray(ing.tags) ? ing.tags : [],
+          baseIngredientId:
+            ing.baseIngredientId !== undefined ? ing.baseIngredientId : null,
+        };
       }
+
+      const all = await getAllIngredients();
+      const baseOnly = all.filter((i) => !i.baseIngredientId);
+      baseOnly.sort((a, b) =>
+        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+      );
+      setAllBaseIngredients(baseOnly);
+      setBrandedChildren(all.filter((i) => i.baseIngredientId === id));
     };
-    load();
+
+    loadAll();
   }, [id]);
+
+  // Перевірка чи були зміни
+  const hasChanges = () => {
+    if (!initialDataRef.current) return false;
+    const init = initialDataRef.current;
+    return (
+      name !== init.name ||
+      photoUri !== init.photoUri ||
+      description !== init.description ||
+      baseIngredientId !== init.baseIngredientId ||
+      JSON.stringify(tags) !== JSON.stringify(init.tags)
+    );
+  };
+
+  // Перехоплення події "Назад"
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (!hasChanges()) return; // змін нема — виходимо
+      e.preventDefault();
+      Alert.alert(
+        "Discard changes?",
+        "You have unsaved changes. Are you sure you want to go back without saving?",
+        [
+          { text: "Cancel", style: "cancel", onPress: () => {} },
+          {
+            text: "Discard",
+            style: "destructive",
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]
+      );
+    });
+    return unsubscribe;
+  }, [navigation, name, photoUri, description, tags, baseIngredientId]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -58,101 +133,301 @@ export default function EditIngredientScreen() {
       allowsEditing: true,
       quality: 0.7,
     });
-    if (!result.canceled) {
-      setPhotoUri(result.assets[0].uri);
-    }
+    if (!result.canceled) setPhotoUri(result.assets[0].uri);
   };
 
   const handleSave = async () => {
+    if (!name.trim()) {
+      Alert.alert("Validation", "Please enter the ingredient name.");
+      return;
+    }
+
     const updatedIngredient = {
       id,
-      name,
+      name: name.trim(),
       photoUri,
       description,
       tags,
+      baseIngredientId: baseIngredientId || null,
     };
+
     await saveIngredient(updatedIngredient);
     navigation.navigate("IngredientDetails", { id });
   };
 
   const handleDelete = () => {
-    Alert.alert("Delete ingredient", "Are you sure?", [
+    const hasChildren = brandedChildren.length > 0;
+
+    const message = hasChildren
+      ? `This ingredient is a base and has ${brandedChildren.length} branded item(s) linked.\n\nIf you delete it, all linked branded ingredients will become base ingredients.\n\nDelete anyway?`
+      : "Delete ingredient?";
+
+    Alert.alert("Delete ingredient", message, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
+          if (hasChildren) {
+            const all = await getAllIngredients();
+            const children = all.filter((i) => i.baseIngredientId === id);
+            for (const ch of children) {
+              await saveIngredient({ ...ch, baseIngredientId: null });
+            }
+          }
+
           await deleteIngredient(id);
-          navigation.navigate("IngredientsTabs", { screen: "All" });
+
+          if (previousTab) {
+            navigation.navigate(previousTab);
+          } else if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
         },
       },
     ]);
   };
 
+  const toggleAddTag = (tag) =>
+    setTags((prev) =>
+      prev.some((t) => t.id === tag.id) ? prev : [...prev, tag]
+    );
+  const removeTag = (tag) =>
+    setTags((prev) => prev.filter((t) => t.id !== tag.id));
+
+  const filteredBase = allBaseIngredients
+    .filter((i) => i.id !== id)
+    .filter((i) =>
+      i.name.toLowerCase().includes(baseIngredientSearch.toLowerCase())
+    )
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+    );
+
+  const selectedBase = allBaseIngredients.find(
+    (i) => i.id === baseIngredientId
+  );
+  const hasChildren = brandedChildren.length > 0;
+  const isBase = hasChildren;
+
+  const openMenu = () => {
+    if (!anchorRef.current) return;
+    anchorRef.current.measureInWindow((x, y, w, h) => {
+      setAnchorWidth(w);
+      setMenuAnchor({ x, y: y - 250 });
+      setMenuVisible(true);
+      requestAnimationFrame(() =>
+        setTimeout(() => searchInputRef.current?.focus(), 0)
+      );
+    });
+  };
+
+  const unlinkChild = async (child) => {
+    const updated = { ...child, baseIngredientId: null };
+    await saveIngredient(updated);
+    const all = await getAllIngredients();
+    setBrandedChildren(all.filter((i) => i.baseIngredientId === id));
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TextInput
-        placeholder="Name"
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
+    <PaperProvider>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <TextInput
+          placeholder="Name"
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
 
-      <TouchableOpacity onPress={pickImage}>
-        {photoUri ? (
-          <Image
-            source={{ uri: photoUri }}
-            style={styles.image}
-            resizeMode="contain"
-          />
-        ) : (
-          <View style={[styles.image, styles.placeholder]}>
-            <Text style={styles.placeholderText}>Pick a photo</Text>
-          </View>
-        )}
-      </TouchableOpacity>
+        <TouchableOpacity onPress={pickImage}>
+          {photoUri ? (
+            <Image
+              source={{ uri: photoUri }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          ) : (
+            <View style={[styles.image, styles.placeholder]}>
+              <Text style={styles.placeholderText}>Pick a photo</Text>
+            </View>
+          )}
+        </TouchableOpacity>
 
-      <View style={styles.tagRow}>
-        {tags.map((tag) => (
-          <TouchableOpacity
-            key={tag.id}
-            style={[styles.tag, { backgroundColor: tag.color }]}
-            onPress={() => setTags(tags.filter((t) => t.id !== tag.id))}
-          >
-            <Text style={styles.tagText}>{tag.name}</Text>
-          </TouchableOpacity>
-        ))}
-        {availableTags.map((tag) => {
-          const exists = tags.some((t) => t.id === tag.id);
-          if (exists) return null;
-          return (
+        {/* Tags */}
+        <View style={styles.tagRow}>
+          {tags.map((tag) => (
             <TouchableOpacity
               key={tag.id}
-              style={[styles.tag, { backgroundColor: "#ccc" }]}
-              onPress={() => setTags([...tags, tag])}
+              style={[styles.tag, { backgroundColor: tag.color }]}
+              onPress={() => removeTag(tag)}
             >
-              <Text style={styles.tagText}>+ {tag.name}</Text>
+              <Text style={styles.tagText}>{tag.name}</Text>
             </TouchableOpacity>
-          );
-        })}
-      </View>
+          ))}
+          {availableTags.map((tag) => {
+            const exists = tags.some((t) => t.id === tag.id);
+            if (exists) return null;
+            return (
+              <TouchableOpacity
+                key={tag.id}
+                style={[styles.tag, { backgroundColor: "#ccc" }]}
+                onPress={() => toggleAddTag(tag)}
+              >
+                <Text style={styles.tagText}>+ {tag.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
-      <TextInput
-        placeholder="Description"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        style={styles.textarea}
-      />
+        <Text style={styles.label}>Base Ingredient:</Text>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveText}>Save</Text>
-      </TouchableOpacity>
+        {isBase ? (
+          <View style={styles.baseInfoBox}>
+            <Text style={styles.baseInfoText}>
+              This ingredient is currently a{" "}
+              <Text style={{ fontWeight: "bold" }}>base</Text> because it has
+              branded items linked to it.
+            </Text>
 
-      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-        <Text style={styles.deleteText}>Delete Ingredient</Text>
-      </TouchableOpacity>
-    </ScrollView>
+            <Text style={[styles.label, { marginTop: 12, marginBottom: 8 }]}>
+              Branded ingredients linked to this base:
+            </Text>
+
+            {brandedChildren.length === 0 ? (
+              <Text style={{ color: "#777" }}>None</Text>
+            ) : (
+              brandedChildren.map((child) => (
+                <View key={child.id} style={styles.childRow}>
+                  {child.photoUri ? (
+                    <Image
+                      source={{ uri: child.photoUri }}
+                      style={styles.menuImg}
+                    />
+                  ) : (
+                    <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+                  )}
+                  <Text style={styles.childName}>{child.name}</Text>
+                  <TouchableOpacity
+                    style={styles.unlinkBtn}
+                    onPress={() => unlinkChild(child)}
+                  >
+                    <Text style={styles.unlinkText}>Unlink</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+            <Text style={{ color: "#777", marginTop: 8 }}>
+              To convert this into a regular ingredient, unlink all branded
+              items.
+            </Text>
+          </View>
+        ) : (
+          <>
+            <View
+              ref={anchorRef}
+              onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
+            >
+              <TouchableOpacity
+                onPress={openMenu}
+                style={[styles.input, styles.anchorInput]}
+                activeOpacity={0.7}
+              >
+                <View style={styles.anchorRow}>
+                  {selectedBase?.photoUri && (
+                    <Image
+                      source={{ uri: selectedBase.photoUri }}
+                      style={styles.menuImg}
+                    />
+                  )}
+                  <PaperText style={{ color: selectedBase ? "#111" : "#777" }}>
+                    {selectedBase ? selectedBase.name : "None"}
+                  </PaperText>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <Menu
+              visible={menuVisible}
+              onDismiss={() => setMenuVisible(false)}
+              anchor={menuAnchor || { x: 0, y: 0 }}
+              contentStyle={{ width: anchorWidth }}
+            >
+              <View style={styles.menuSearchBox}>
+                <TextInput
+                  ref={searchInputRef}
+                  placeholder="Search base ingredient..."
+                  value={baseIngredientSearch}
+                  onChangeText={setBaseIngredientSearch}
+                  style={styles.menuSearchInput}
+                  returnKeyType="search"
+                />
+              </View>
+              <Divider />
+              <ScrollView
+                style={{ maxHeight: 260 }}
+                keyboardShouldPersistTaps="handled"
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setBaseIngredientId(null);
+                    setMenuVisible(false);
+                  }}
+                  style={styles.menuRow}
+                >
+                  <View style={styles.menuRowInner}>
+                    <PaperText>None</PaperText>
+                  </View>
+                </TouchableOpacity>
+
+                {filteredBase.map((i) => (
+                  <TouchableOpacity
+                    key={i.id}
+                    onPress={() => {
+                      setBaseIngredientId(i.id);
+                      setMenuVisible(false);
+                    }}
+                    style={styles.menuRow}
+                  >
+                    <View style={styles.menuRowInner}>
+                      {i.photoUri ? (
+                        <Image
+                          source={{ uri: i.photoUri }}
+                          style={styles.menuImg}
+                        />
+                      ) : (
+                        <View
+                          style={[styles.menuImg, styles.menuImgPlaceholder]}
+                        />
+                      )}
+                      <PaperText>{i.name}</PaperText>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </Menu>
+          </>
+        )}
+
+        <TextInput
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          style={styles.textarea}
+        />
+
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveText}>Save</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteText}>Delete Ingredient</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </PaperProvider>
   );
 }
 
@@ -163,12 +438,26 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: "white",
   },
+  label: {
+    fontWeight: "bold",
+    marginBottom: 6,
+    marginTop: 12,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 6,
     padding: 10,
     marginBottom: 12,
+  },
+  anchorInput: {
+    justifyContent: "center",
+    minHeight: 44,
+  },
+  anchorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   textarea: {
     borderWidth: 1,
@@ -209,6 +498,69 @@ const styles = StyleSheet.create({
   tagText: {
     color: "white",
     fontWeight: "bold",
+  },
+  menuSearchBox: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  menuSearchInput: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  menuRow: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  menuRowInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  menuImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+  },
+  menuImgPlaceholder: {
+    backgroundColor: "#eee",
+  },
+  baseInfoBox: {
+    borderWidth: 1,
+    borderColor: "#e6e6e6",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  baseInfoText: {
+    color: "#333",
+  },
+  childRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  childName: {
+    flex: 1,
+    fontSize: 15,
+  },
+  unlinkBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: "#FFEEEA",
+    borderWidth: 1,
+    borderColor: "#FF8A80",
+  },
+  unlinkText: {
+    color: "#D84315",
+    fontWeight: "600",
   },
   saveButton: {
     backgroundColor: "#4DABF7",
