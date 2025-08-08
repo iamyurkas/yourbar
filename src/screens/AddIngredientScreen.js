@@ -20,28 +20,24 @@ import {
   getAllIngredients,
 } from "../storage/ingredientsStorage";
 import { useTabMemory } from "../context/TabMemoryContext";
-import {
-  Menu,
-  Divider,
-  Provider as PaperProvider,
-  Text as PaperText,
-} from "react-native-paper";
+import { Menu, Divider, Text as PaperText, useTheme } from "react-native-paper";
 
 export default function AddIngredientScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([
-    { id: 9, name: "custom", color: "#afc9c3ff" },
+    { id: 9, name: "custom", color: "#AFC9C3FF" },
   ]);
   const [availableTags, setAvailableTags] = useState([]);
   const [allIngredients, setAllIngredients] = useState([]);
   const [baseIngredientId, setBaseIngredientId] = useState(null);
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
 
-  // Меню — як в EditIngredientScreen: координатний anchor, стабільний при скролі
+  // Меню з координатним anchor
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
   const [anchorWidth, setAnchorWidth] = useState(0);
@@ -52,11 +48,8 @@ export default function AddIngredientScreen() {
   const previousTab = getTab("ingredients");
 
   const handleGoBack = () => {
-    if (previousTab) {
-      navigation.navigate(previousTab);
-    } else {
-      navigation.goBack();
-    }
+    if (previousTab) navigation.navigate(previousTab);
+    else navigation.goBack();
   };
 
   useEffect(() => {
@@ -64,7 +57,6 @@ export default function AddIngredientScreen() {
       e.preventDefault();
       handleGoBack();
     });
-
     return unsubscribe;
   }, [navigation, previousTab]);
 
@@ -73,7 +65,7 @@ export default function AddIngredientScreen() {
       setName("");
       setDescription("");
       setPhotoUri(null);
-      setTags([{ id: 9, name: "custom", color: "#afc9c3ff" }]);
+      setTags([{ id: 9, name: "custom", color: "#AFC9C3FF" }]);
       setBaseIngredientId(null);
       setBaseIngredientSearch("");
     }, [])
@@ -86,7 +78,7 @@ export default function AddIngredientScreen() {
 
       setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...customTags]);
 
-      // тільки базові (тобто ті, що не є брендовими)
+      // тільки базові (не брендові)
       const baseOnly = ingredients.filter((i) => !i.baseIngredientId);
       baseOnly.sort((a, b) =>
         a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
@@ -129,7 +121,6 @@ export default function AddIngredientScreen() {
     }
 
     const id = Date.now();
-
     const ingredient = {
       id,
       name: name.trim(),
@@ -153,179 +144,258 @@ export default function AddIngredientScreen() {
 
   const selectedBase = allIngredients.find((i) => i.id === baseIngredientId);
 
-  // координатне відкриття меню (накриває інпут; якщо треба — підкрути offset)
   const openMenu = () => {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
       setAnchorWidth(w);
-      setMenuAnchor({ x, y }); // якщо хочеш вище/нижче: y - 10 / y + 10
+      setMenuAnchor({ x, y: y + h }); // 👈 нижче поля
       setMenuVisible(true);
-      requestAnimationFrame(() =>
-        setTimeout(() => searchInputRef.current?.focus(), 0)
-      );
+      requestAnimationFrame(() => {
+        setTimeout(() => searchInputRef.current?.focus(), 0);
+      });
     });
   };
 
   return (
-    <PaperProvider>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={0}
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0}
+    >
+      <ScrollView
+        contentContainerStyle={[styles.container]}
+        keyboardShouldPersistTaps="handled"
       >
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Name:
+        </Text>
+        <TextInput
+          placeholder="e.g. Lemon juice"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={name}
+          onChangeText={setName}
+          style={[
+            styles.input,
+            {
+              borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+        />
+
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Photo:
+        </Text>
+        <TouchableOpacity
+          style={[
+            styles.imageButton,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.outline,
+            },
+          ]}
+          onPress={pickImage}
         >
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            placeholder="e.g. Lemon juice"
-            value={name}
-            onChangeText={setName}
-            style={styles.input}
-          />
+          {photoUri ? (
+            <Image source={{ uri: photoUri }} style={styles.image} />
+          ) : (
+            <Text
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                textAlign: "center",
+              }}
+            >
+              Tap to select image
+            </Text>
+          )}
+        </TouchableOpacity>
 
-          <Text style={styles.label}>Photo:</Text>
-          <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-            {photoUri ? (
-              <Image source={{ uri: photoUri }} style={styles.image} />
-            ) : (
-              <Text style={styles.imagePlaceholder}>Tap to select image</Text>
-            )}
-          </TouchableOpacity>
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Tags:
+        </Text>
+        <View style={styles.tagContainer}>
+          {tags.map((tag) => (
+            <TouchableOpacity
+              key={tag.id}
+              style={[styles.tag, { backgroundColor: tag.color }]}
+              onPress={() => toggleTag(tag)}
+            >
+              <Text style={styles.tagText}>{tag.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          <Text style={styles.label}>Tags:</Text>
-          <View style={styles.tagContainer}>
-            {tags.map((tag) => (
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Add Tag:
+        </Text>
+        <View style={styles.tagContainer}>
+          {availableTags
+            .filter((t) => !tags.some((tag) => tag.id === t.id))
+            .map((tag) => (
               <TouchableOpacity
                 key={tag.id}
-                style={[styles.tag, { backgroundColor: tag.color }]}
+                style={[
+                  styles.tag,
+                  {
+                    backgroundColor: tag.color || theme.colors.outline, // fallback
+                  },
+                ]}
                 onPress={() => toggleTag(tag)}
               >
-                <Text style={styles.tagText}>{tag.name}</Text>
+                <Text
+                  style={[
+                    styles.tagText,
+                    // якщо фон світлий — підставимо темний текст
+                    { color: "#fff" },
+                  ]}
+                >
+                  + {tag.name}
+                </Text>
               </TouchableOpacity>
             ))}
+        </View>
+
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Base Ingredient:
+        </Text>
+
+        {/* Поле-якір для меню з координатним позиціонуванням */}
+        <View
+          ref={anchorRef}
+          onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
+        >
+          <TouchableOpacity
+            onPress={openMenu}
+            style={[
+              styles.input,
+              styles.anchorInput,
+              {
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+            activeOpacity={0.7}
+          >
+            <View style={styles.anchorRow}>
+              {selectedBase?.photoUri && (
+                <Image
+                  source={{ uri: selectedBase.photoUri }}
+                  style={styles.menuImg}
+                />
+              )}
+              <PaperText
+                style={{
+                  color: selectedBase
+                    ? theme.colors.onSurface
+                    : theme.colors.onSurfaceVariant,
+                }}
+              >
+                {selectedBase ? selectedBase.name : "None"}
+              </PaperText>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={menuAnchor || { x: 0, y: 0 }}
+          contentStyle={{
+            width: anchorWidth, // 👈 така ж ширина, як у поля
+            backgroundColor: theme.colors.surface,
+          }}
+        >
+          <View style={styles.menuSearchBox}>
+            <TextInput
+              ref={searchInputRef}
+              placeholder="Search base ingredient..."
+              placeholderTextColor={theme.colors.onSurfaceVariant}
+              value={baseIngredientSearch}
+              onChangeText={setBaseIngredientSearch}
+              style={[
+                styles.menuSearchInput,
+                {
+                  borderColor: theme.colors.outline,
+                  color: theme.colors.onSurface,
+                  backgroundColor: theme.colors.background,
+                },
+              ]}
+              returnKeyType="search"
+            />
           </View>
-
-          <Text style={styles.label}>Add Tag:</Text>
-          <View style={styles.tagContainer}>
-            {availableTags
-              .filter((t) => !tags.some((tag) => tag.id === t.id))
-              .map((tag) => (
-                <TouchableOpacity
-                  key={tag.id}
-                  style={[styles.tag, { backgroundColor: tag.color }]}
-                  onPress={() => toggleTag(tag)}
-                >
-                  <Text style={styles.tagText}>+ {tag.name}</Text>
-                </TouchableOpacity>
-              ))}
-          </View>
-
-          <Text style={styles.label}>Base Ingredient:</Text>
-
-          {/* Поле-якір для меню з координатним позиціонуванням */}
-          <View
-            ref={anchorRef}
-            onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
+          <Divider />
+          <ScrollView
+            style={{ maxHeight: 260 }}
+            keyboardShouldPersistTaps="handled"
           >
             <TouchableOpacity
-              onPress={openMenu}
-              style={[styles.input, styles.anchorInput]}
-              activeOpacity={0.7}
+              onPress={() => {
+                setBaseIngredientId(null);
+                setMenuVisible(false);
+              }}
+              style={styles.menuRow}
             >
-              <View style={styles.anchorRow}>
-                {selectedBase?.photoUri && (
-                  <Image
-                    source={{ uri: selectedBase.photoUri }}
-                    style={styles.menuImg}
-                  />
-                )}
-                <PaperText style={{ color: selectedBase ? "#111" : "#777" }}>
-                  {selectedBase ? selectedBase.name : "None"}
-                </PaperText>
+              <View style={styles.menuRowInner}>
+                <PaperText>None</PaperText>
               </View>
             </TouchableOpacity>
-          </View>
 
-          <Menu
-            visible={menuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            anchor={menuAnchor || { x: 0, y: 0 }}
-            contentStyle={{ width: anchorWidth }}
-          >
-            {/* Пошук */}
-            <View style={styles.menuSearchBox}>
-              <TextInput
-                ref={searchInputRef}
-                placeholder="Search base ingredient..."
-                value={baseIngredientSearch}
-                onChangeText={setBaseIngredientSearch}
-                style={styles.menuSearchInput}
-                returnKeyType="search"
-              />
-            </View>
-            <Divider />
-
-            {/* Скрольний список пунктів */}
-            <ScrollView
-              style={{ maxHeight: 260 }}
-              keyboardShouldPersistTaps="handled"
-            >
+            {filteredBaseIngredients.map((i) => (
               <TouchableOpacity
+                key={i.id}
                 onPress={() => {
-                  setBaseIngredientId(null);
+                  setBaseIngredientId(i.id);
                   setMenuVisible(false);
                 }}
                 style={styles.menuRow}
               >
                 <View style={styles.menuRowInner}>
-                  <PaperText>None</PaperText>
+                  {i.photoUri ? (
+                    <Image
+                      source={{ uri: i.photoUri }}
+                      style={styles.menuImg}
+                    />
+                  ) : (
+                    <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+                  )}
+                  <PaperText>{i.name}</PaperText>
                 </View>
               </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </Menu>
 
-              {filteredBaseIngredients.map((i) => (
-                <TouchableOpacity
-                  key={i.id}
-                  onPress={() => {
-                    setBaseIngredientId(i.id);
-                    setMenuVisible(false);
-                  }}
-                  style={styles.menuRow}
-                >
-                  <View style={styles.menuRowInner}>
-                    {i.photoUri ? (
-                      <Image
-                        source={{ uri: i.photoUri }}
-                        style={styles.menuImg}
-                      />
-                    ) : (
-                      <View
-                        style={[styles.menuImg, styles.menuImgPlaceholder]}
-                      />
-                    )}
-                    <PaperText>{i.name}</PaperText>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </Menu>
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Description:
+        </Text>
+        <TextInput
+          placeholder="Optional description"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={description}
+          onChangeText={setDescription}
+          style={[
+            styles.input,
+            {
+              height: 60,
+              borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+          multiline
+        />
 
-          <Text style={styles.label}>Description:</Text>
-          <TextInput
-            placeholder="Optional description"
-            value={description}
-            onChangeText={setDescription}
-            style={[styles.input, { height: 60 }]}
-            multiline
-          />
-
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveText}>Save Ingredient</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </PaperProvider>
+        <TouchableOpacity
+          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+          onPress={handleSave}
+        >
+          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
+            Save Ingredient
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -334,7 +404,6 @@ const IMAGE_SIZE = 120;
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    backgroundColor: "white",
   },
   label: {
     fontWeight: "bold",
@@ -342,12 +411,10 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 10,
     marginTop: 8,
     borderRadius: 8,
   },
-  // Щоб меню виглядало як поле вводу
   anchorInput: {
     justifyContent: "center",
     minHeight: 44,
@@ -361,9 +428,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
-    backgroundColor: "#ffffff",
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     overflow: "hidden",
     justifyContent: "center",
@@ -374,10 +439,6 @@ const styles = StyleSheet.create({
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
     resizeMode: "cover",
-  },
-  imagePlaceholder: {
-    color: "#777",
-    textAlign: "center",
   },
   tagContainer: {
     flexDirection: "row",
@@ -391,17 +452,15 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: {
-    color: "#fff",
+    color: "white",
     fontWeight: "bold",
   },
-  // Пошукове поле в меню
   menuSearchBox: {
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   menuSearchInput: {
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
@@ -426,13 +485,8 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 24,
-    backgroundColor: "#4DABF7",
     paddingVertical: 12,
     alignItems: "center",
     borderRadius: 8,
-  },
-  saveText: {
-    color: "white",
-    fontWeight: "bold",
   },
 });

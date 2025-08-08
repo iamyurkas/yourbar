@@ -8,5 +8,5 @@ export const BUILTIN_INGREDIENT_TAGS = [
   { id: 7, name: "herb", color: "#38D9A9" },
   { id: 8, name: "spice", color: "#9775FA" },
   { id: 9, name: "dairy", color: "#4DABF7" },
-  { id: 11, name: "custom", color: "#AFC9C3FF" },
+  { id: 10, name: "custom", color: "#AFC9C3FF" },
 ];

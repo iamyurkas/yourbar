@@ -127,7 +127,7 @@ export default function AllIngredientsScreen() {
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        onMenu={() => console.log("Open menu")}
+        onMenu={() => navigation.navigate("GeneralMenu")}
         onFilter={() => console.log("Open filter")}
       />
 
