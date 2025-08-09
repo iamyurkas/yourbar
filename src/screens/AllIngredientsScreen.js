@@ -9,12 +9,12 @@ import React, {
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   Image,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import {
   getAllIngredients,
@@ -28,12 +28,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 const IMAGE_SIZE = 50;
 const ROW_VERTICAL = 8;
 const ROW_BORDER = 1;
-const ITEM_HEIGHT =
-  ROW_VERTICAL * 2 + // paddingVertical
-  Math.max(IMAGE_SIZE, 40) + // контент (по висоті тут визначає картинка)
-  ROW_BORDER; // нижній бордер (вписуємо приблизно)
+const ITEM_HEIGHT = ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
 
-// ---- Рядок списку (мемоізований) ----
+// ---- Рядок списку ----
 const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
   const isBranded = !!item.baseIngredientId;
   const inBar = item?.inBar === true;
@@ -47,7 +44,6 @@ const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
           !inBar && styles.dimmed,
         ]}
       >
-        {/* Shopping cart icon */}
         {item.inShoppingList && (
           <MaterialIcons
             name="shopping-cart"
@@ -92,7 +88,6 @@ const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
           </View>
         </TouchableOpacity>
 
-        {/* Чекбокс праворуч */}
         <TouchableOpacity
           onPress={() => onToggleInBar(item.id)}
           style={styles.checkButton}
@@ -120,7 +115,6 @@ export default function AllIngredientsScreen() {
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
 
-  // 1) Один раз встановлюємо таб
   const didSetTabRef = useRef(false);
   useEffect(() => {
     if (!didSetTabRef.current) {
@@ -129,7 +123,6 @@ export default function AllIngredientsScreen() {
     }
   }, [setTab]);
 
-  // 2) Індекс id -> index для O(1) оновлення
   const indexMapRef = useRef(new Map());
 
   const sortIngredients = useCallback((data) => {
@@ -142,7 +135,6 @@ export default function AllIngredientsScreen() {
     const data = await getAllIngredients();
     const sorted = sortIngredients(data);
     setIngredients(sorted);
-    // оновлюємо мапу індексів
     const map = new Map();
     for (let i = 0; i < sorted.length; i++) {
       map.set(sorted[i].id, i);
@@ -150,7 +142,6 @@ export default function AllIngredientsScreen() {
     indexMapRef.current = map;
   }, [sortIngredients]);
 
-  // 3) Початкове та фокусне завантаження
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
@@ -164,16 +155,13 @@ export default function AllIngredientsScreen() {
     };
   }, [isFocused, loadIngredients]);
 
-  // 4) Дебаунс пошуку
   useEffect(() => {
     const id = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(id);
   }, [search]);
 
-  // 5) O(1) оптимістичний тумблер inBar
   const toggleInBar = useCallback(
     (id) => {
-      // знаходимо індекс миттєво
       const idx = indexMapRef.current.get(id);
       if (idx === undefined) return;
 
@@ -186,7 +174,6 @@ export default function AllIngredientsScreen() {
         return next;
       });
 
-      // збереження у фоні
       const current = ingredients[indexMapRef.current.get(id)];
       const nextInBar = !current?.inBar;
       saveIngredient({ ...current, inBar: nextInBar }).catch((err) =>
@@ -196,7 +183,6 @@ export default function AllIngredientsScreen() {
     [ingredients]
   );
 
-  // 6) Натискання на рядок
   const onItemPress = useCallback(
     (id) => {
       navigation.navigate("Create", {
@@ -207,14 +193,12 @@ export default function AllIngredientsScreen() {
     [navigation]
   );
 
-  // 7) Мемо фільтрації
   const filtered = useMemo(() => {
     const q = searchDebounced.trim().toLowerCase();
     if (!q) return ingredients;
     return ingredients.filter((i) => i.name.toLowerCase().includes(q));
   }, [ingredients, searchDebounced]);
 
-  // 8) Рендер рядка — стабільний колбек
   const renderItem = useCallback(
     ({ item }) => (
       <ItemRow item={item} onPress={onItemPress} onToggleInBar={toggleInBar} />
@@ -222,19 +206,8 @@ export default function AllIngredientsScreen() {
     [onItemPress, toggleInBar]
   );
 
-  // 9) Стабільний keyExtractor
   const keyExtractor = useCallback(
     (item, i) => String(item?.id ?? `${item?.name ?? "item"}-${i}`),
-    []
-  );
-
-  // 10) Фіксована висота рядка — FlatList скаже «дякую»
-  const getItemLayout = useCallback(
-    (_, index) => ({
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * index,
-      index,
-    }),
     []
   );
 
@@ -256,19 +229,13 @@ export default function AllIngredientsScreen() {
         onFilter={() => console.log("Open filter")}
       />
 
-      <FlatList
+      <FlashList
         data={filtered}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        estimatedItemSize={ITEM_HEIGHT} // ⚡ Головне для швидкості
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
-        // Параметри продуктивності:
-        initialNumToRender={20}
-        maxToRenderPerBatch={24}
-        updateCellsBatchingPeriod={16}
-        windowSize={10}
-        removeClippedSubviews
-        getItemLayout={getItemLayout}
       />
     </View>
   );
@@ -311,7 +278,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   placeholder: { justifyContent: "center", alignItems: "center" },
-  placeholderText: { color: "#999", fontSize: 10 },
+  placeholderText: { color: "#999", fontSize: 10, textAlign: "center" },
 
   info: { flex: 1, paddingRight: 8 },
   name: { fontSize: 16, fontWeight: "bold" },
