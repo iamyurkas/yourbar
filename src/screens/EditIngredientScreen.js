@@ -5,12 +5,12 @@ import React, {
   useRef,
   useMemo,
   memo,
+  useDeferredValue,
 } from "react";
 import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   Image,
   StyleSheet,
   ScrollView,
@@ -20,6 +20,7 @@ import {
   InteractionManager,
   ActivityIndicator,
   FlatList,
+  Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -51,35 +52,47 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
+const RIPPLE = { color: "#E3F2FD" };
 
-// pills for tags (memo)
-const TagPill = memo(({ tag, onPress }) => (
-  <TouchableOpacity
-    style={[styles.tag, { backgroundColor: tag.color || "#ccc" }]}
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
-    <Text style={styles.tagText}>{tag.name}</Text>
-  </TouchableOpacity>
-));
+// pills for tags (memo, стабільний onPress через id)
+const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+  return (
+    <Pressable
+      onPress={() => onToggle(id)}
+      android_ripple={RIPPLE}
+      style={({ pressed }) => [
+        styles.tag,
+        { backgroundColor: color || "#ccc" },
+        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+      ]}
+    >
+      <Text style={styles.tagText}>{name}</Text>
+    </Pressable>
+  );
+});
 
-// row in base menu (memo)
-const BaseRow = memo(({ item, onPress }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={styles.menuRow}
-    activeOpacity={0.7}
-  >
-    <View style={styles.menuRowInner}>
-      {item.photoUri ? (
-        <Image source={{ uri: item.photoUri }} style={styles.menuImg} />
-      ) : (
-        <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
-      )}
-      <PaperText numberOfLines={1}>{item.name}</PaperText>
-    </View>
-  </TouchableOpacity>
-));
+// row in base menu (memo, стабільний onPress через id)
+const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+  return (
+    <Pressable
+      onPress={() => onSelect(id)}
+      android_ripple={RIPPLE}
+      style={({ pressed }) => [
+        styles.menuRow,
+        pressed && { opacity: 0.9, transform: [{ scale: 0.997 }] },
+      ]}
+    >
+      <View style={styles.menuRowInner}>
+        {photoUri ? (
+          <Image source={{ uri: photoUri }} style={styles.menuImg} />
+        ) : (
+          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+        )}
+        <PaperText numberOfLines={1}>{name}</PaperText>
+      </View>
+    </Pressable>
+  );
+});
 
 export default function EditIngredientScreen() {
   const theme = useTheme();
@@ -99,8 +112,8 @@ export default function EditIngredientScreen() {
   // reference lists
   const [availableTags, setAvailableTags] = useState([]); // builtin + custom
 
-  // base list (lazy)
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]);
+  // base list (lazy) — кешуємо nameLower для швидкого фільтру
+  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
 
@@ -111,14 +124,15 @@ export default function EditIngredientScreen() {
     [baseOnlySorted, baseIngredientId]
   );
 
-  // search in base menu (debounced)
+  // search in base menu (debounced + deferred)
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
+  const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = debouncedQuery.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.name.toLowerCase().includes(q));
-  }, [baseOnlySorted, debouncedQuery]);
+    return baseOnlySorted.filter((i) => i.nameLower.includes(q));
+  }, [baseOnlySorted, deferredQuery]);
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -126,6 +140,14 @@ export default function EditIngredientScreen() {
   const [anchorWidth, setAnchorWidth] = useState(0);
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // go back fast
   const handleGoBack = useCallback(() => {
@@ -141,28 +163,31 @@ export default function EditIngredientScreen() {
     return unsub;
   }, [navigation, handleGoBack]);
 
-  // load tags + entity on focus
+  // load tags + entity on focus (паралельно, з безпечним setState)
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
 
     (async () => {
-      // tags first (no blocking)
-      const customTags = await getAllTags();
-      if (!cancelled) {
-        const mergedTags = [...BUILTIN_INGREDIENT_TAGS, ...customTags];
-        setAvailableTags(mergedTags);
-      }
+      try {
+        const [customTags, data] = await Promise.all([
+          getAllTags(),
+          getIngredientById(route.params?.id),
+        ]);
+        if (cancelled || !isMountedRef.current) return;
 
-      // entity
-      const data = await getIngredientById(route.params?.id);
-      if (!cancelled && data) {
-        setIngredient(data);
-        setName(data.name || "");
-        setDescription(data.description || "");
-        setPhotoUri(data.photoUri || null);
-        setTags(Array.isArray(data.tags) ? data.tags : []);
-        setBaseIngredientId(data.baseIngredientId || null);
+        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(customTags || [])]);
+
+        if (data) {
+          setIngredient(data);
+          setName(data.name || "");
+          setDescription(data.description || "");
+          setPhotoUri(data.photoUri || null);
+          setTags(Array.isArray(data.tags) ? data.tags : []);
+          setBaseIngredientId(data.baseIngredientId || null);
+        }
+      } catch {
+        // no-op
       }
     })();
 
@@ -176,7 +201,6 @@ export default function EditIngredientScreen() {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
     try {
-      // після анімацій, щоб не блокувати перехід
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
       const currentId = route.params?.id;
@@ -184,11 +208,18 @@ export default function EditIngredientScreen() {
         .filter((i) => !i.baseIngredientId && i.id !== currentId)
         .sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-        );
+        )
+        .map((i) => ({
+          id: i.id,
+          name: i.name,
+          photoUri: i.photoUri || null,
+          nameLower: (i.name || "").toLowerCase(),
+        }));
+      if (!isMountedRef.current) return;
       setBaseOnlySorted(baseOnly);
       setBasesLoaded(true);
     } finally {
-      setLoadingBases(false);
+      if (isMountedRef.current) setLoadingBases(false);
     }
   }, [basesLoaded, loadingBases, route.params?.id]);
 
@@ -203,13 +234,20 @@ export default function EditIngredientScreen() {
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  const toggleTag = useCallback((tag) => {
-    setTags((prev) =>
-      prev.some((t) => t.id === tag.id)
-        ? prev.filter((t) => t.id !== tag.id)
-        : [...prev, tag]
-    );
-  }, []);
+  // стабільний toggleTag через id
+  const toggleTagById = useCallback(
+    (id) => {
+      setTags((prev) => {
+        const exists = prev.some((t) => t.id === id);
+        if (exists) return prev.filter((t) => t.id !== id);
+        const toAdd =
+          availableTags.find((t) => t.id === id) ||
+          BUILTIN_INGREDIENT_TAGS.find((t) => t.id === id);
+        return toAdd ? [...prev, toAdd] : prev;
+      });
+    },
+    [availableTags]
+  );
 
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -227,7 +265,8 @@ export default function EditIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!name.trim()) {
+    const trimmed = name.trim();
+    if (!trimmed) {
       Alert.alert("Please enter a name for the ingredient.");
       return;
     }
@@ -235,7 +274,7 @@ export default function EditIngredientScreen() {
 
     const updated = {
       ...ingredient,
-      name: name.trim(),
+      name: trimmed,
       description,
       photoUri,
       tags,
@@ -274,7 +313,6 @@ export default function EditIngredientScreen() {
       setAnchorWidth(w);
       setMenuAnchor({ x, y: y + h });
       setMenuVisible(true);
-      // запускаємо підвантаження баз (якщо ще не)
       loadBases();
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
@@ -320,7 +358,7 @@ export default function EditIngredientScreen() {
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Photo:
         </Text>
-        <TouchableOpacity
+        <Pressable
           style={[
             styles.imageButton,
             {
@@ -329,7 +367,7 @@ export default function EditIngredientScreen() {
             },
           ]}
           onPress={pickImage}
-          activeOpacity={0.7}
+          android_ripple={RIPPLE}
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
@@ -343,14 +381,20 @@ export default function EditIngredientScreen() {
               Tap to select image
             </Text>
           )}
-        </TouchableOpacity>
+        </Pressable>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Tags:
         </Text>
         <View style={styles.tagContainer}>
-          {tags.map((tag) => (
-            <TagPill key={tag.id} tag={tag} onPress={() => toggleTag(tag)} />
+          {tags.map((t) => (
+            <TagPill
+              key={t.id}
+              id={t.id}
+              name={t.name}
+              color={t.color}
+              onToggle={toggleTagById}
+            />
           ))}
         </View>
 
@@ -359,9 +403,15 @@ export default function EditIngredientScreen() {
         </Text>
         <View style={styles.tagContainer}>
           {availableTags
-            .filter((t) => !tags.some((tag) => tag.id === t.id))
-            .map((tag) => (
-              <TagPill key={tag.id} tag={tag} onPress={() => toggleTag(tag)} />
+            .filter((t) => !tags.some((x) => x.id === t.id))
+            .map((t) => (
+              <TagPill
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                color={t.color}
+                onToggle={toggleTagById}
+              />
             ))}
         </View>
 
@@ -375,7 +425,7 @@ export default function EditIngredientScreen() {
           collapsable={false}
           onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
         >
-          <TouchableOpacity
+          <Pressable
             onPress={openMenu}
             style={[
               styles.input,
@@ -385,7 +435,7 @@ export default function EditIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
-            activeOpacity={0.7}
+            android_ripple={RIPPLE}
           >
             <View style={styles.anchorRow}>
               {selectedBase?.photoUri && (
@@ -408,7 +458,7 @@ export default function EditIngredientScreen() {
                   : "(loading...)"}
               </PaperText>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <Menu
@@ -457,32 +507,41 @@ export default function EditIngredientScreen() {
             </View>
           ) : (
             <FlatList
-              data={[{ id: "__none__", name: "None" }, ...filteredBase]}
+              data={[
+                { id: "__none__", name: "None", nameLower: "none" },
+                ...filteredBase,
+              ]}
               keyExtractor={(item, i) => String(item.id ?? i)}
               renderItem={({ item }) =>
                 item.id === "__none__" ? (
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => {
                       setBaseIngredientId(null);
                       setMenuVisible(false);
                     }}
-                    style={styles.menuRow}
+                    android_ripple={RIPPLE}
+                    style={({ pressed }) => [
+                      styles.menuRow,
+                      pressed && { opacity: 0.9 },
+                    ]}
                   >
                     <View style={styles.menuRowInner}>
                       <PaperText>None</PaperText>
                     </View>
-                  </TouchableOpacity>
+                  </Pressable>
                 ) : (
                   <BaseRow
-                    item={item}
-                    onPress={() => {
-                      setBaseIngredientId(item.id);
+                    id={item.id}
+                    name={item.name}
+                    photoUri={item.photoUri}
+                    onSelect={(id) => {
+                      setBaseIngredientId(id);
                       setMenuVisible(false);
                     }}
                   />
                 )
               }
-              // фіксована висота => стабільний скрол усередині меню
+              // стабільний скрол усередині меню
               style={{
                 height: Math.min(
                   300,
@@ -490,6 +549,13 @@ export default function EditIngredientScreen() {
                 ),
               }}
               keyboardShouldPersistTaps="handled"
+              removeClippedSubviews
+              initialNumToRender={10}
+              getItemLayout={(_, index) => ({
+                length: MENU_ROW_HEIGHT,
+                offset: MENU_ROW_HEIGHT * index,
+                index,
+              })}
             />
           )}
         </Menu>
@@ -514,26 +580,26 @@ export default function EditIngredientScreen() {
           multiline
         />
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          activeOpacity={0.7}
+          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Changes
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
           onPress={handleDelete}
-          activeOpacity={0.7}
+          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
         >
           <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
             Delete Ingredient
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

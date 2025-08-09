@@ -5,6 +5,7 @@ import React, {
   useRef,
   useMemo,
   memo,
+  useDeferredValue,
 } from "react";
 import {
   View,
@@ -30,97 +31,115 @@ const IMAGE_SIZE = 50;
 const ROW_VERTICAL = 8;
 const ROW_BORDER = 1;
 const ITEM_HEIGHT = ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
+const RIPPLE = { color: "#E3F2FD" };
 
 // ---- Рядок списку ----
-const ItemRow = memo(function ItemRow({
-  item,
-  onPress,
-  onToggleInBar,
-  navigatingId,
-}) {
-  const isBranded = !!item.baseIngredientId;
-  const inBar = item?.inBar === true;
-  const isNavigating = navigatingId === item.id;
+const ItemRow = memo(
+  function ItemRow({
+    id,
+    name,
+    photoUri,
+    tags,
+    inBar,
+    inShoppingList,
+    baseIngredientId,
+    onPress,
+    onToggleInBar,
+    isNavigating,
+  }) {
+    const isBranded = !!baseIngredientId;
 
-  return (
-    <View style={inBar ? styles.highlightWrapper : styles.normalWrapper}>
-      <View
-        style={[
-          styles.item,
-          isBranded && styles.brandedStripe,
-          !inBar && styles.dimmed,
-          isNavigating && styles.navigatingRow, // миттєвий стан після тапу
-        ]}
-      >
-        {item.inShoppingList && (
-          <MaterialIcons
-            name="shopping-cart"
-            size={16}
-            color="#4DABF7"
-            style={styles.cartIcon}
-          />
-        )}
-
-        {/* Ліва зона — відкриття деталей */}
-        <Pressable
-          onPress={() => onPress(item.id)}
-          android_ripple={{ color: "#E3F2FD" }}
-          style={({ pressed }) => [
-            styles.leftTapZone,
-            pressed && styles.pressedLeft, // миттєвий відгук
+    return (
+      <View style={inBar ? styles.highlightWrapper : styles.normalWrapper}>
+        <View
+          style={[
+            styles.item,
+            isBranded && styles.brandedStripe,
+            !inBar && styles.dimmed,
+            isNavigating && styles.navigatingRow, // миттєвий стан після тапу
           ]}
-          hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
         >
-          {item.photoUri ? (
-            <Image
-              source={{ uri: item.photoUri }}
-              style={styles.image}
-              resizeMode="cover"
+          {inShoppingList && (
+            <MaterialIcons
+              name="shopping-cart"
+              size={16}
+              color="#4DABF7"
+              style={styles.cartIcon}
             />
-          ) : (
-            <View style={[styles.image, styles.placeholder]}>
-              <Text style={styles.placeholderText}>No image</Text>
-            </View>
           )}
-          <View style={styles.info}>
-            <Text numberOfLines={1} style={styles.name}>
-              {item.name}
-            </Text>
-            {Array.isArray(item.tags) && item.tags.length > 0 && (
-              <View style={styles.tagRow}>
-                {item.tags.map((tag) => (
-                  <View
-                    key={tag.id}
-                    style={[styles.tag, { backgroundColor: tag.color }]}
-                  >
-                    <Text style={styles.tagText}>{tag.name}</Text>
-                  </View>
-                ))}
+
+          {/* Ліва зона — відкриття деталей */}
+          <Pressable
+            onPress={() => onPress(id)}
+            android_ripple={RIPPLE}
+            style={({ pressed }) => [
+              styles.leftTapZone,
+              pressed && styles.pressedLeft, // миттєвий відгук
+            ]}
+            hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
+          >
+            {photoUri ? (
+              <Image
+                source={{ uri: photoUri }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={[styles.image, styles.placeholder]}>
+                <Text style={styles.placeholderText}>No image</Text>
               </View>
             )}
-          </View>
-        </Pressable>
+            <View style={styles.info}>
+              <Text numberOfLines={1} style={styles.name}>
+                {name}
+              </Text>
+              {Array.isArray(tags) && tags.length > 0 && (
+                <View style={styles.tagRow}>
+                  {tags.map((tag) => (
+                    <View
+                      key={tag.id}
+                      style={[styles.tag, { backgroundColor: tag.color }]}
+                    >
+                      <Text style={styles.tagText}>{tag.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          </Pressable>
 
-        {/* Чекбокс — оптимістичний апдейт + прес-ефект */}
-        <Pressable
-          onPress={() => onToggleInBar(item.id)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          android_ripple={{ color: "#E3F2FD", borderless: true }}
-          style={({ pressed }) => [
-            styles.checkButton,
-            pressed && styles.pressedCheck,
-          ]}
-        >
-          <MaterialIcons
-            name={inBar ? "check-circle" : "radio-button-unchecked"}
-            size={22}
-            color={inBar ? "#4DABF7" : "#999"}
-          />
-        </Pressable>
+          {/* Чекбокс — оптимістичний апдейт + прес-ефект */}
+          <Pressable
+            onPress={() => onToggleInBar(id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            android_ripple={{ ...RIPPLE, borderless: true }}
+            style={({ pressed }) => [
+              styles.checkButton,
+              pressed && styles.pressedCheck,
+            ]}
+          >
+            <MaterialIcons
+              name={inBar ? "check-circle" : "radio-button-unchecked"}
+              size={22}
+              color={inBar ? "#4DABF7" : "#999"}
+            />
+          </Pressable>
+        </View>
       </View>
-    </View>
-  );
-});
+    );
+  },
+  // 🔒 ререндер тільки при реальній зміні відображуваних полів
+  (prev, next) =>
+    prev.id === next.id &&
+    prev.name === next.name &&
+    prev.photoUri === next.photoUri &&
+    prev.inBar === next.inBar &&
+    prev.inShoppingList === next.inShoppingList &&
+    prev.baseIngredientId === next.baseIngredientId &&
+    prev.isNavigating === next.isNavigating &&
+    // shallow-порівняння масиву тегів (посилання), щоб не дорого
+    prev.tags === next.tags
+);
 
 export default function AllIngredientsScreen() {
   const navigation = useNavigation();
@@ -133,6 +152,7 @@ export default function AllIngredientsScreen() {
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null); // миттєва підсвітка рядка
 
+  // ⚠️ уникаємо повторного setTab
   const didSetTabRef = useRef(false);
   useEffect(() => {
     if (!didSetTabRef.current) {
@@ -141,9 +161,11 @@ export default function AllIngredientsScreen() {
     }
   }, [setTab]);
 
+  // мапа id -> index
   const indexMapRef = useRef(new Map());
 
   const sortIngredients = useCallback((data) => {
+    // сортуємо 1 раз при завантаженні
     return [...data].sort((a, b) =>
       a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
     );
@@ -154,9 +176,7 @@ export default function AllIngredientsScreen() {
     const sorted = sortIngredients(data);
     setIngredients(sorted);
     const map = new Map();
-    for (let i = 0; i < sorted.length; i++) {
-      map.set(sorted[i].id, i);
-    }
+    for (let i = 0; i < sorted.length; i++) map.set(sorted[i].id, i);
     indexMapRef.current = map;
   }, [sortIngredients]);
 
@@ -173,63 +193,96 @@ export default function AllIngredientsScreen() {
     };
   }, [isFocused, loadIngredients]);
 
+  // 🔔 легкий debounce на пошуку
   useEffect(() => {
     const id = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(id);
   }, [search]);
 
-  const toggleInBar = useCallback(
-    (id) => {
+  // ⏳ відкладений рендер відфільтрованого списку (React 18)
+  const deferredSearch = useDeferredValue(searchDebounced);
+
+  // ✅ Функціональний toggle без залежності від зовнішнього `ingredients`
+  // + батчинг записів у сховище
+  const pendingSaveRef = useRef(new Map()); // id -> latestValue
+  const flushTimerRef = useRef(null);
+
+  const flushSaves = useCallback(() => {
+    const pending = pendingSaveRef.current;
+    pendingSaveRef.current = new Map();
+    flushTimerRef.current = null;
+
+    if (pending.size === 0) return;
+    // зберігаємо пачкою, але окремими викликами API
+    pending.forEach((inBar, id) => {
       const idx = indexMapRef.current.get(id);
-      if (idx === undefined) return;
-
-      // оптимістичне оновлення
-      setIngredients((prev) => {
-        if (!prev[idx]) return prev;
-        const next = [...prev];
-        const item = next[idx];
-        const nextItem = { ...item, inBar: !item?.inBar };
-        next[idx] = nextItem;
-        return next;
-      });
-
-      // збереження у фоні
-      const current = ingredients[indexMapRef.current.get(id)];
-      const nextInBar = !current?.inBar;
-      saveIngredient({ ...current, inBar: nextInBar }).catch((err) =>
+      if (idx == null) return;
+      const current = ingredients[idx];
+      // якщо за час батчингу дані оновилися — підстрахуємось
+      if (!current) return;
+      saveIngredient({ ...current, inBar }).catch((err) =>
         console.error("Save failed", err)
       );
+    });
+  }, [ingredients]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) return;
+    flushTimerRef.current = setTimeout(flushSaves, 200);
+  }, [flushSaves]);
+
+  const toggleInBar = useCallback(
+    (id) => {
+      setIngredients((prev) => {
+        const idx = indexMapRef.current.get(id);
+        if (idx === undefined || !prev[idx]) return prev;
+        const next = [...prev];
+        const item = next[idx];
+        const nextInBar = !item?.inBar;
+        next[idx] = { ...item, inBar: nextInBar };
+
+        // запис у чергу збереження
+        pendingSaveRef.current.set(id, nextInBar);
+        scheduleFlush();
+
+        return next;
+      });
     },
-    [ingredients]
+    [scheduleFlush]
   );
 
   const onItemPress = useCallback(
     (id) => {
-      // миттєвий візуальний фідбек до переходу
-      setNavigatingId(id);
+      setNavigatingId(id); // миттєва підсвітка
       navigation.navigate("Create", {
         screen: "IngredientDetails",
         params: { id },
       });
-      // якщо екран лишається (наприклад, швидке повернення), приберемо стан через мить
+      // запасний таймер — на випадок швидкого повернення
       setTimeout(() => setNavigatingId(null), 600);
     },
     [navigation]
   );
 
   const filtered = useMemo(() => {
-    const q = searchDebounced.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return ingredients;
     return ingredients.filter((i) => i.name.toLowerCase().includes(q));
-  }, [ingredients, searchDebounced]);
+  }, [ingredients, deferredSearch]);
 
   const renderItem = useCallback(
     ({ item }) => (
       <ItemRow
-        item={item}
+        id={item.id}
+        name={item.name}
+        photoUri={item.photoUri}
+        tags={item.tags}
+        inBar={item.inBar === true}
+        inShoppingList={item.inShoppingList === true}
+        baseIngredientId={item.baseIngredientId}
         onPress={onItemPress}
         onToggleInBar={toggleInBar}
-        navigatingId={navigatingId}
+        isNavigating={navigatingId === item.id}
       />
     ),
     [onItemPress, toggleInBar, navigatingId]
@@ -239,6 +292,26 @@ export default function AllIngredientsScreen() {
     (item, i) => String(item?.id ?? `${item?.name ?? "item"}-${i}`),
     []
   );
+
+  useEffect(() => {
+    // при розмонтуванні — доженемо незбережені записи
+    return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+      flushTimerRef.current = null;
+      // синхронно флашнемо, щоб нічого не втратити
+      // (у реальному проді можна лишити як є, якщо це не критично)
+      // викликати прямо тут не можемо, бо залежить від state — просто прогорнемо мапу
+      const pending = pendingSaveRef.current;
+      pendingSaveRef.current = new Map();
+      pending.forEach((inBar, id) => {
+        const idx = indexMapRef.current.get(id);
+        if (idx == null) return;
+        const current = ingredients[idx];
+        if (!current) return;
+        saveIngredient({ ...current, inBar }).catch(() => {});
+      });
+    };
+  }, [ingredients]);
 
   if (loading) {
     return (
@@ -262,9 +335,17 @@ export default function AllIngredientsScreen() {
         data={filtered}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        estimatedItemSize={ITEM_HEIGHT} // ⚡ Головне для швидкості
+        estimatedItemSize={ITEM_HEIGHT}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
+        removeClippedSubviews
+        initialNumToRender={12}
+        getItemType={() => "ING"} // допомагає реюзу типів елементів
+        ListEmptyComponent={
+          <View style={{ padding: 24 }}>
+            <Text>No ingredients found</Text>
+          </View>
+        }
       />
     </View>
   );
@@ -343,8 +424,5 @@ const styles = StyleSheet.create({
   },
 
   checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
-  pressedCheck: {
-    opacity: 0.7,
-    transform: [{ scale: 0.92 }],
-  },
+  pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },
 });

@@ -5,12 +5,12 @@ import React, {
   useRef,
   useMemo,
   memo,
+  useDeferredValue,
 } from "react";
 import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   Image,
   StyleSheet,
   ScrollView,
@@ -20,6 +20,7 @@ import {
   InteractionManager,
   ActivityIndicator,
   FlatList, // 👈 для меню (стабільний скрол)
+  Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -45,35 +46,47 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
+const RIPPLE = { color: "#E3F2FD" };
 
-// pills for tags (memo)
-const TagPill = memo(({ tag, onPress }) => (
-  <TouchableOpacity
-    style={[styles.tag, { backgroundColor: tag.color || "#ccc" }]}
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
-    <Text style={styles.tagText}>{tag.name}</Text>
-  </TouchableOpacity>
-));
+// pills for tags (memo + стабільний onPress через id)
+const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+  return (
+    <Pressable
+      onPress={() => onToggle(id)}
+      style={({ pressed }) => [
+        styles.tag,
+        { backgroundColor: color || "#ccc" },
+        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+      ]}
+      android_ripple={RIPPLE}
+    >
+      <Text style={styles.tagText}>{name}</Text>
+    </Pressable>
+  );
+});
 
-// row in base menu (memo)
-const BaseRow = memo(({ item, onPress }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={styles.menuRow}
-    activeOpacity={0.7}
-  >
-    <View style={styles.menuRowInner}>
-      {item.photoUri ? (
-        <Image source={{ uri: item.photoUri }} style={styles.menuImg} />
-      ) : (
-        <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
-      )}
-      <PaperText numberOfLines={1}>{item.name}</PaperText>
-    </View>
-  </TouchableOpacity>
-));
+// row in base menu (memo + стабільний onPress через id)
+const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+  return (
+    <Pressable
+      onPress={() => onSelect(id)}
+      style={({ pressed }) => [
+        styles.menuRow,
+        pressed && { opacity: 0.8, transform: [{ scale: 0.997 }] },
+      ]}
+      android_ripple={RIPPLE}
+    >
+      <View style={styles.menuRowInner}>
+        {photoUri ? (
+          <Image source={{ uri: photoUri }} style={styles.menuImg} />
+        ) : (
+          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+        )}
+        <PaperText numberOfLines={1}>{name}</PaperText>
+      </View>
+    </Pressable>
+  );
+});
 
 export default function AddIngredientScreen() {
   const theme = useTheme();
@@ -94,7 +107,7 @@ export default function AddIngredientScreen() {
   const [availableTags, setAvailableTags] = useState([]); // builtin + custom
 
   // base list (lazy)
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]);
+  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
 
@@ -108,11 +121,12 @@ export default function AddIngredientScreen() {
   // search in base menu
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
+  const deferredQuery = useDeferredValue(debouncedQuery); // ще плавніше на довгих списках
   const filteredBase = useMemo(() => {
-    const q = debouncedQuery.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.name.toLowerCase().includes(q));
-  }, [baseOnlySorted, debouncedQuery]);
+    return baseOnlySorted.filter((i) => i.nameLower.includes(q));
+  }, [baseOnlySorted, deferredQuery]);
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -120,6 +134,14 @@ export default function AddIngredientScreen() {
   const [anchorWidth, setAnchorWidth] = useState(0);
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // go back fast
   const handleGoBack = useCallback(() => {
@@ -150,56 +172,67 @@ export default function AddIngredientScreen() {
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
-
-    getAllTags().then((customTags) => {
-      if (cancelled) return;
-      const mergedTags = [...BUILTIN_INGREDIENT_TAGS, ...customTags];
-      setAvailableTags(mergedTags);
-    });
-
+    (async () => {
+      const customTags = await getAllTags();
+      if (cancelled || !isMountedRef.current) return;
+      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...customTags]);
+    })();
     return () => {
       cancelled = true;
     };
   }, [isFocused]);
 
-  // lazy-load bases
+  // lazy-load bases (з наповненням nameLower для швидкого фільтру)
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
     try {
-      // після анімацій, щоб не блокувати перехід
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
-      const baseOnly = ingredients.filter((i) => !i.baseIngredientId);
-      baseOnly.sort((a, b) =>
-        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-      );
+      const baseOnly = ingredients
+        .filter((i) => !i.baseIngredientId)
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+        )
+        .map((i) => ({
+          id: i.id,
+          name: i.name,
+          photoUri: i.photoUri || null,
+          nameLower: (i.name || "").toLowerCase(), // 👈 кешуємо
+        }));
+      if (!isMountedRef.current) return;
       setBaseOnlySorted(baseOnly);
       setBasesLoaded(true);
     } finally {
-      setLoadingBases(false);
+      if (isMountedRef.current) setLoadingBases(false);
     }
   }, [basesLoaded, loadingBases]);
 
-  // optional: м’який префетч баз після першого рендера
+  // optional: префетч баз після першого рендера
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
-      // префетч лише якщо користувач ще не відкрив меню
       if (!basesLoaded && !loadingBases) {
         loadBases().catch(() => {});
       }
-    }, 500); // через півсекунди після відкриття екрана
+    }, 400);
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  const toggleTag = useCallback((tag) => {
-    setTags((prev) =>
-      prev.some((t) => t.id === tag.id)
-        ? prev.filter((t) => t.id !== tag.id)
-        : [...prev, tag]
-    );
-  }, []);
+  // stable toggleTag через id (менше нових функцій у .map)
+  const toggleTagById = useCallback(
+    (id) => {
+      setTags((prev) => {
+        const exists = prev.some((t) => t.id === id);
+        if (exists) return prev.filter((t) => t.id !== id);
+        const toAdd =
+          availableTags.find((t) => t.id === id) ||
+          BUILTIN_INGREDIENT_TAGS.find((t) => t.id === id);
+        return toAdd ? [...prev, toAdd] : prev;
+      });
+    },
+    [availableTags]
+  );
 
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -217,14 +250,15 @@ export default function AddIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!name.trim()) {
+    const trimmed = name.trim();
+    if (!trimmed) {
       Alert.alert("Please enter a name for the ingredient.");
       return;
     }
     const id = Date.now();
     const ingredient = {
       id,
-      name: name.trim(),
+      name: trimmed,
       description,
       photoUri,
       tags,
@@ -240,8 +274,7 @@ export default function AddIngredientScreen() {
       setAnchorWidth(w);
       setMenuAnchor({ x, y: y + h });
       setMenuVisible(true);
-      // запускаємо підвантаження баз (якщо ще не)
-      loadBases();
+      loadBases(); // якщо ще не завантажено
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
@@ -279,7 +312,7 @@ export default function AddIngredientScreen() {
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Photo:
         </Text>
-        <TouchableOpacity
+        <Pressable
           style={[
             styles.imageButton,
             {
@@ -288,7 +321,7 @@ export default function AddIngredientScreen() {
             },
           ]}
           onPress={pickImage}
-          activeOpacity={0.7}
+          android_ripple={RIPPLE}
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
@@ -302,14 +335,20 @@ export default function AddIngredientScreen() {
               Tap to select image
             </Text>
           )}
-        </TouchableOpacity>
+        </Pressable>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Tags:
         </Text>
         <View style={styles.tagContainer}>
           {tags.map((tag) => (
-            <TagPill key={tag.id} tag={tag} onPress={() => toggleTag(tag)} />
+            <TagPill
+              key={tag.id}
+              id={tag.id}
+              name={tag.name}
+              color={tag.color}
+              onToggle={toggleTagById}
+            />
           ))}
         </View>
 
@@ -319,8 +358,14 @@ export default function AddIngredientScreen() {
         <View style={styles.tagContainer}>
           {availableTags
             .filter((t) => !tags.some((tag) => tag.id === t.id))
-            .map((tag) => (
-              <TagPill key={tag.id} tag={tag} onPress={() => toggleTag(tag)} />
+            .map((t) => (
+              <TagPill
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                color={t.color}
+                onToggle={toggleTagById}
+              />
             ))}
         </View>
 
@@ -334,7 +379,7 @@ export default function AddIngredientScreen() {
           collapsable={false}
           onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
         >
-          <TouchableOpacity
+          <Pressable
             onPress={openMenu}
             style={[
               styles.input,
@@ -344,7 +389,7 @@ export default function AddIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
-            activeOpacity={0.7}
+            android_ripple={RIPPLE}
           >
             <View style={styles.anchorRow}>
               {selectedBase?.photoUri && (
@@ -367,7 +412,7 @@ export default function AddIngredientScreen() {
                   : "(loading...)"}
               </PaperText>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <Menu
@@ -416,32 +461,40 @@ export default function AddIngredientScreen() {
             </View>
           ) : (
             <FlatList
-              data={[{ id: "__none__", name: "None" }, ...filteredBase]}
+              data={[
+                { id: "__none__", name: "None", nameLower: "none" },
+                ...filteredBase,
+              ]}
               keyExtractor={(item, i) => String(item.id ?? i)}
               renderItem={({ item }) =>
                 item.id === "__none__" ? (
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => {
                       setBaseIngredientId(null);
                       setMenuVisible(false);
                     }}
-                    style={styles.menuRow}
+                    style={({ pressed }) => [
+                      styles.menuRow,
+                      pressed && { opacity: 0.9 },
+                    ]}
+                    android_ripple={RIPPLE}
                   >
-                    <View style={styles.menuRowInner}>
+                    <View className="menuRowInner">
                       <PaperText>None</PaperText>
                     </View>
-                  </TouchableOpacity>
+                  </Pressable>
                 ) : (
                   <BaseRow
-                    item={item}
-                    onPress={() => {
-                      setBaseIngredientId(item.id);
+                    id={item.id}
+                    name={item.name}
+                    photoUri={item.photoUri}
+                    onSelect={(id) => {
+                      setBaseIngredientId(id);
                       setMenuVisible(false);
                     }}
                   />
                 )
               }
-              // 👇 фіксована висота => стабільний скрол усередині меню
               style={{
                 height: Math.min(
                   300,
@@ -449,6 +502,13 @@ export default function AddIngredientScreen() {
                 ),
               }}
               keyboardShouldPersistTaps="handled"
+              removeClippedSubviews
+              initialNumToRender={10}
+              getItemLayout={(_, index) => ({
+                length: MENU_ROW_HEIGHT,
+                offset: MENU_ROW_HEIGHT * index,
+                index,
+              })}
             />
           )}
         </Menu>
@@ -473,16 +533,16 @@ export default function AddIngredientScreen() {
           multiline
         />
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          activeOpacity={0.7}
+          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Ingredient
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
