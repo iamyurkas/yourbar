@@ -9,10 +9,11 @@ import React, {
 import {
   View,
   Text,
-  TouchableOpacity,
   Image,
   StyleSheet,
   ActivityIndicator,
+  Platform,
+  Pressable,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -31,17 +32,24 @@ const ROW_BORDER = 1;
 const ITEM_HEIGHT = ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
 
 // ---- Рядок списку ----
-const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
+const ItemRow = memo(function ItemRow({
+  item,
+  onPress,
+  onToggleInBar,
+  navigatingId,
+}) {
   const isBranded = !!item.baseIngredientId;
   const inBar = item?.inBar === true;
+  const isNavigating = navigatingId === item.id;
 
   return (
-    <View style={inBar ? styles.highlightWrapper : null}>
+    <View style={inBar ? styles.highlightWrapper : styles.normalWrapper}>
       <View
         style={[
           styles.item,
           isBranded && styles.brandedStripe,
           !inBar && styles.dimmed,
+          isNavigating && styles.navigatingRow, // миттєвий стан після тапу
         ]}
       >
         {item.inShoppingList && (
@@ -53,10 +61,15 @@ const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
           />
         )}
 
-        <TouchableOpacity
+        {/* Ліва зона — відкриття деталей */}
+        <Pressable
           onPress={() => onPress(item.id)}
-          activeOpacity={0.7}
-          style={styles.leftTapZone}
+          android_ripple={{ color: "#E3F2FD" }}
+          style={({ pressed }) => [
+            styles.leftTapZone,
+            pressed && styles.pressedLeft, // миттєвий відгук
+          ]}
+          hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
         >
           {item.photoUri ? (
             <Image
@@ -86,20 +99,24 @@ const ItemRow = memo(function ItemRow({ item, onPress, onToggleInBar }) {
               </View>
             )}
           </View>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        {/* Чекбокс — оптимістичний апдейт + прес-ефект */}
+        <Pressable
           onPress={() => onToggleInBar(item.id)}
-          style={styles.checkButton}
-          activeOpacity={0.6}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          android_ripple={{ color: "#E3F2FD", borderless: true }}
+          style={({ pressed }) => [
+            styles.checkButton,
+            pressed && styles.pressedCheck,
+          ]}
         >
           <MaterialIcons
             name={inBar ? "check-circle" : "radio-button-unchecked"}
             size={22}
             color={inBar ? "#4DABF7" : "#999"}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -114,6 +131,7 @@ export default function AllIngredientsScreen() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
+  const [navigatingId, setNavigatingId] = useState(null); // миттєва підсвітка рядка
 
   const didSetTabRef = useRef(false);
   useEffect(() => {
@@ -165,6 +183,7 @@ export default function AllIngredientsScreen() {
       const idx = indexMapRef.current.get(id);
       if (idx === undefined) return;
 
+      // оптимістичне оновлення
       setIngredients((prev) => {
         if (!prev[idx]) return prev;
         const next = [...prev];
@@ -174,6 +193,7 @@ export default function AllIngredientsScreen() {
         return next;
       });
 
+      // збереження у фоні
       const current = ingredients[indexMapRef.current.get(id)];
       const nextInBar = !current?.inBar;
       saveIngredient({ ...current, inBar: nextInBar }).catch((err) =>
@@ -185,10 +205,14 @@ export default function AllIngredientsScreen() {
 
   const onItemPress = useCallback(
     (id) => {
+      // миттєвий візуальний фідбек до переходу
+      setNavigatingId(id);
       navigation.navigate("Create", {
         screen: "IngredientDetails",
         params: { id },
       });
+      // якщо екран лишається (наприклад, швидке повернення), приберемо стан через мить
+      setTimeout(() => setNavigatingId(null), 600);
     },
     [navigation]
   );
@@ -201,9 +225,14 @@ export default function AllIngredientsScreen() {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <ItemRow item={item} onPress={onItemPress} onToggleInBar={toggleInBar} />
+      <ItemRow
+        item={item}
+        onPress={onItemPress}
+        onToggleInBar={toggleInBar}
+        navigatingId={navigatingId}
+      />
     ),
-    [onItemPress, toggleInBar]
+    [onItemPress, toggleInBar, navigatingId]
   );
 
   const keyExtractor = useCallback(
@@ -248,7 +277,11 @@ const styles = StyleSheet.create({
 
   highlightWrapper: {
     backgroundColor: "#E3F2FD",
-    borderBottomWidth: 1,
+    borderBottomWidth: ROW_BORDER,
+    borderBottomColor: "#fff",
+  },
+  normalWrapper: {
+    borderBottomWidth: ROW_BORDER,
     borderBottomColor: "#fff",
   },
   item: {
@@ -256,17 +289,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: ROW_VERTICAL,
     paddingHorizontal: 12,
-    borderBottomWidth: ROW_BORDER,
-    borderBottomColor: "#eee",
     position: "relative",
   },
   dimmed: { opacity: 0.88 },
+
+  // миттєва підсвітка рядка під час навігації
+  navigatingRow: {
+    opacity: 0.6,
+    backgroundColor: "#F0F7FF",
+  },
 
   leftTapZone: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     paddingRight: 8,
+  },
+  // стиль під час натиснення (Pressable)
+  pressedLeft: {
+    opacity: 0.7,
+    transform: [{ scale: Platform.OS === "ios" ? 0.98 : 0.99 }],
   },
 
   image: {
@@ -299,5 +341,10 @@ const styles = StyleSheet.create({
     borderLeftColor: "green",
     paddingLeft: 4,
   },
+
   checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
+  pressedCheck: {
+    opacity: 0.7,
+    transform: [{ scale: 0.92 }],
+  },
 });
