@@ -6,6 +6,7 @@ import React, {
   useMemo,
   memo,
   useDeferredValue,
+  useLayoutEffect,
 } from "react";
 import {
   View,
@@ -19,12 +20,14 @@ import {
   Platform,
   InteractionManager,
   ActivityIndicator,
-  FlatList, // 👈 для меню (стабільний скрол)
+  FlatList,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
@@ -121,7 +124,7 @@ export default function AddIngredientScreen() {
   // search in base menu
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
-  const deferredQuery = useDeferredValue(debouncedQuery); // ще плавніше на довгих списках
+  const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
     const q = deferredQuery.trim().toLowerCase();
     if (!q) return baseOnlySorted;
@@ -149,6 +152,28 @@ export default function AddIngredientScreen() {
     else navigation.goBack();
   }, [navigation, previousTab]);
 
+  // 👈 завжди видима стрілка «Назад» (платформенно-специфічна форма)
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: false,
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleGoBack}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <MaterialIcons
+            name={Platform.OS === "ios" ? "chevron-left" : "arrow-back"}
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, handleGoBack, theme.colors.onSurface]);
+
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
@@ -168,7 +193,7 @@ export default function AddIngredientScreen() {
     setBaseIngredientSearch("");
   }, [isFocused]);
 
-  // load tags immediately (no waiting for bases)
+  // load tags immediately
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
@@ -182,7 +207,7 @@ export default function AddIngredientScreen() {
     };
   }, [isFocused]);
 
-  // lazy-load bases (з наповненням nameLower для швидкого фільтру)
+  // lazy-load bases
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
@@ -198,7 +223,7 @@ export default function AddIngredientScreen() {
           id: i.id,
           name: i.name,
           photoUri: i.photoUri || null,
-          nameLower: (i.name || "").toLowerCase(), // 👈 кешуємо
+          nameLower: (i.name || "").toLowerCase(),
         }));
       if (!isMountedRef.current) return;
       setBaseOnlySorted(baseOnly);
@@ -208,7 +233,7 @@ export default function AddIngredientScreen() {
     }
   }, [basesLoaded, loadingBases]);
 
-  // optional: префетч баз після першого рендера
+  // optional: префетч баз
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
@@ -219,7 +244,7 @@ export default function AddIngredientScreen() {
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  // stable toggleTag через id (менше нових функцій у .map)
+  // toggleTag
   const toggleTagById = useCallback(
     (id) => {
       setTags((prev) => {
@@ -274,7 +299,7 @@ export default function AddIngredientScreen() {
       setAnchorWidth(w);
       setMenuAnchor({ x, y: y + h });
       setMenuVisible(true);
-      loadBases(); // якщо ще не завантажено
+      loadBases();
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
@@ -479,7 +504,7 @@ export default function AddIngredientScreen() {
                     ]}
                     android_ripple={RIPPLE}
                   >
-                    <View className="menuRowInner">
+                    <View style={styles.menuRowInner}>
                       <PaperText>None</PaperText>
                     </View>
                   </Pressable>

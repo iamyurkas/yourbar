@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -17,10 +18,12 @@ import {
 } from "../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../context/TabMemoryContext";
+import { useTheme } from "react-native-paper";
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
+  const theme = useTheme();
 
   const [ingredient, setIngredient] = useState(null);
   const [allIngredients, setAllIngredients] = useState([]);
@@ -46,19 +49,37 @@ export default function IngredientDetailsScreen() {
   const previousTab = getTab("ingredients");
 
   const handleGoBack = () => {
-    if (previousTab) {
-      navigation.navigate(previousTab);
-    } else {
-      navigation.goBack();
-    }
+    if (previousTab) navigation.navigate(previousTab);
+    else navigation.goBack();
   };
+
+  // Завжди показуємо власну кнопку «Назад» + колір із теми + iOS/Android іконка
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: false,
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleGoBack}
+          style={styles.headerBackBtn}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <MaterialIcons
+            name={Platform.OS === "ios" ? "arrow-back-ios" : "arrow-back"}
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, handleGoBack, theme.colors.onSurface]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
       handleGoBack();
     });
-
     return unsubscribe;
   }, [navigation, previousTab]);
 
@@ -70,7 +91,6 @@ export default function IngredientDetailsScreen() {
       setAllIngredients(all);
 
       if (loaded) {
-        // Діти (брендовані) цього інгредієнта
         const children = all
           .filter((i) => i.baseIngredientId === loaded.id)
           .sort((a, b) =>
@@ -78,7 +98,6 @@ export default function IngredientDetailsScreen() {
           );
         setBrandedChildren(children);
 
-        // Його базовий (якщо це брендований)
         const base = loaded.baseIngredientId
           ? all.find((i) => i.id === loaded.baseIngredientId)
           : null;
@@ -91,7 +110,6 @@ export default function IngredientDetailsScreen() {
     load();
   }, [id]);
 
-  // Перераховуємо зв’язки, якщо змінився ingredient (наприклад, тумблери)
   useEffect(() => {
     if (!ingredient || allIngredients.length === 0) return;
     const children = allIngredients
@@ -178,7 +196,6 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
-      {/* Tags */}
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Tags:</Text>
@@ -195,7 +212,6 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
-      {/* Description */}
       {ingredient.description ? (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Description:</Text>
@@ -203,7 +219,6 @@ export default function IngredientDetailsScreen() {
         </View>
       ) : null}
 
-      {/* Base / Branded relations */}
       <View style={styles.section}>
         {isBase ? (
           <>
@@ -274,19 +289,9 @@ export default function IngredientDetailsScreen() {
 const IMAGE_SIZE = 140;
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    padding: 24,
-    backgroundColor: "white",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { padding: 24, backgroundColor: "white" },
+  title: { fontSize: 22, fontWeight: "bold" },
   image: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -294,17 +299,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     marginBottom: 16,
   },
-  section: {
-    marginTop: 16,
-  },
-  sectionLabel: {
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  tagRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
+  section: { marginTop: 16 },
+  sectionLabel: { fontWeight: "bold", marginBottom: 8 },
+  tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -312,28 +309,16 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginBottom: 6,
   },
-  tagText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+  tagText: { color: "white", fontWeight: "bold" },
 
-  // Relations box
-  listBox: {
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 8,
-  },
+  listBox: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
   row: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 8,
   },
-  singleRow: {
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 8,
-  },
+  singleRow: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
   thumb: {
     width: 40,
     height: 40,
@@ -341,15 +326,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     backgroundColor: "#fff",
   },
-  rowText: {
-    flex: 1,
-    fontSize: 16,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#e9e9e9",
-    marginLeft: 8 + 40 + 10, // відступ під текст (під картинку)
-  },
+  rowText: { flex: 1, fontSize: 16 },
+  divider: { height: 1, backgroundColor: "#e9e9e9", marginLeft: 8 + 40 + 10 },
 
   addCocktailButton: {
     marginTop: 24,
@@ -358,18 +336,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  addCocktailText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+  addCocktailText: { color: "white", fontWeight: "bold" },
+
   iconRow: {
     flexDirection: "row",
     alignSelf: "flex-end",
     marginTop: 8,
     marginBottom: 12,
   },
-  iconButton: {
-    marginLeft: 12,
-    padding: 4,
-  },
+  iconButton: { marginLeft: 12, padding: 4 },
+
+  headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
 });

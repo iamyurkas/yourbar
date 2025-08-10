@@ -6,6 +6,7 @@ import React, {
   useMemo,
   memo,
   useDeferredValue,
+  useLayoutEffect,
 } from "react";
 import {
   View,
@@ -21,6 +22,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -39,6 +41,7 @@ import {
   getAllIngredients,
 } from "../storage/ingredientsStorage";
 import { useTabMemory } from "../context/TabMemoryContext";
+import { MaterialIcons } from "@expo/vector-icons";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -101,6 +104,7 @@ export default function EditIngredientScreen() {
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
+  const currentId = route.params?.id;
 
   // entity + form state
   const [ingredient, setIngredient] = useState(null);
@@ -124,6 +128,13 @@ export default function EditIngredientScreen() {
     [baseOnlySorted, baseIngredientId]
   );
 
+  // anchored menu (🔥 єдина декларація)
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
+  const [anchorWidth, setAnchorWidth] = useState(0);
+  const anchorRef = useRef(null);
+  const searchInputRef = useRef(null);
+
   // search in base menu (debounced + deferred)
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
@@ -134,14 +145,7 @@ export default function EditIngredientScreen() {
     return baseOnlySorted.filter((i) => i.nameLower.includes(q));
   }, [baseOnlySorted, deferredQuery]);
 
-  // anchored menu
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
-  const [anchorWidth, setAnchorWidth] = useState(0);
-  const anchorRef = useRef(null);
-  const searchInputRef = useRef(null);
   const isMountedRef = useRef(true);
-
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -149,12 +153,34 @@ export default function EditIngredientScreen() {
     };
   }, []);
 
-  // go back fast
+  // 👉 завжди повертаємось на деталі поточного інгредієнта
   const handleGoBack = useCallback(() => {
-    if (previousTab) navigation.navigate(previousTab);
-    else navigation.goBack();
-  }, [navigation, previousTab]);
+    navigation.navigate("IngredientDetails", { id: currentId });
+  }, [navigation, currentId]);
 
+  // показуємо видиму кнопку «Назад» у хедері
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: false,
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleGoBack}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <MaterialIcons
+            name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, handleGoBack, theme.colors.onSurface]);
+
+  // перехоплюємо системний back/gesture і ведемо на деталі
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
@@ -172,7 +198,7 @@ export default function EditIngredientScreen() {
       try {
         const [customTags, data] = await Promise.all([
           getAllTags(),
-          getIngredientById(route.params?.id),
+          getIngredientById(currentId),
         ]);
         if (cancelled || !isMountedRef.current) return;
 
@@ -186,15 +212,13 @@ export default function EditIngredientScreen() {
           setTags(Array.isArray(data.tags) ? data.tags : []);
           setBaseIngredientId(data.baseIngredientId || null);
         }
-      } catch {
-        // no-op
-      }
+      } catch {}
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [isFocused, route.params?.id]);
+  }, [isFocused, currentId]);
 
   // lazy-load bases (exclude current ingredient from options)
   const loadBases = useCallback(async () => {
@@ -203,7 +227,6 @@ export default function EditIngredientScreen() {
     try {
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
-      const currentId = route.params?.id;
       const baseOnly = ingredients
         .filter((i) => !i.baseIngredientId && i.id !== currentId)
         .sort((a, b) =>
@@ -221,15 +244,13 @@ export default function EditIngredientScreen() {
     } finally {
       if (isMountedRef.current) setLoadingBases(false);
     }
-  }, [basesLoaded, loadingBases, route.params?.id]);
+  }, [basesLoaded, loadingBases, currentId]);
 
-  // optional: м’який префетч баз через півсекунди після відкриття екрана
+  // optional: префетч баз
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
-      if (!basesLoaded && !loadingBases) {
-        loadBases().catch(() => {});
-      }
+      if (!basesLoaded && !loadingBases) loadBases().catch(() => {});
     }, 500);
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
@@ -301,11 +322,12 @@ export default function EditIngredientScreen() {
         style: "destructive",
         onPress: async () => {
           await deleteIngredient(ingredient.id);
-          handleGoBack();
+          if (previousTab) navigation.navigate(previousTab);
+          else navigation.goBack();
         },
       },
     ]);
-  }, [ingredient, handleGoBack]);
+  }, [ingredient, navigation, previousTab]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
