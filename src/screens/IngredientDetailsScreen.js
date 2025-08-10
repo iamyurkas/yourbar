@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect, memo } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Platform,
+  Alert,
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -20,6 +21,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 
+const IMAGE_SIZE = 140;
+const THUMB = 40;
+
+// Photo or plain gray square (no icon/initials)
+const PhotoThumb = memo(function PhotoThumb({ uri }) {
+  if (uri) return <Image source={{ uri }} style={styles.thumb} />;
+  return <View style={[styles.thumb, styles.thumbPlaceholder]} />;
+});
+
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
@@ -30,21 +40,6 @@ export default function IngredientDetailsScreen() {
   const [brandedChildren, setBrandedChildren] = useState([]);
   const [baseIngredient, setBaseIngredient] = useState(null);
 
-  const toggleInBar = async () => {
-    const updated = { ...ingredient, inBar: !ingredient.inBar };
-    await saveIngredient(updated);
-    setIngredient(updated);
-  };
-
-  const toggleInShoppingList = async () => {
-    const updated = {
-      ...ingredient,
-      inShoppingList: !ingredient.inShoppingList,
-    };
-    await saveIngredient(updated);
-    setIngredient(updated);
-  };
-
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
 
@@ -53,7 +48,6 @@ export default function IngredientDetailsScreen() {
     else navigation.goBack();
   };
 
-  // Завжди показуємо власну кнопку «Назад» + колір із теми + iOS/Android іконка
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -76,11 +70,11 @@ export default function IngredientDetailsScreen() {
   }, [navigation, handleGoBack, theme.colors.onSurface]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+    const unsub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
       handleGoBack();
     });
-    return unsubscribe;
+    return unsub;
   }, [navigation, previousTab]);
 
   useEffect(() => {
@@ -124,6 +118,62 @@ export default function IngredientDetailsScreen() {
       : null;
     setBaseIngredient(base || null);
   }, [ingredient, allIngredients]);
+
+  const toggleInBar = async () => {
+    const updated = { ...ingredient, inBar: !ingredient.inBar };
+    await saveIngredient(updated);
+    setIngredient(updated);
+  };
+
+  const toggleInShoppingList = async () => {
+    const updated = {
+      ...ingredient,
+      inShoppingList: !ingredient.inShoppingList,
+    };
+    await saveIngredient(updated);
+    setIngredient(updated);
+  };
+
+  // Unlink this branded ingredient from its base
+  const unlinkFromBase = async () => {
+    if (!ingredient?.baseIngredientId) return;
+    Alert.alert("Unlink", "Remove link to base ingredient?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Unlink",
+        style: "destructive",
+        onPress: async () => {
+          const updated = { ...ingredient, baseIngredientId: null };
+          await saveIngredient(updated);
+          setIngredient(updated);
+          setBaseIngredient(null);
+        },
+      },
+    ]);
+  };
+
+  // Unlink a child from this base (when viewing a base ingredient)
+  const unlinkChild = (child) => {
+    Alert.alert(
+      "Unlink",
+      `Remove link for "${child.name}" from this base ingredient?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Unlink",
+          style: "destructive",
+          onPress: async () => {
+            const updatedChild = { ...child, baseIngredientId: null };
+            await saveIngredient(updatedChild);
+            setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
+            setAllIngredients((prev) =>
+              prev.map((i) => (i.id === child.id ? updatedChild : i))
+            );
+          },
+        },
+      ]
+    );
+  };
 
   if (!ingredient) {
     return (
@@ -196,6 +246,7 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
+      {/* Tags */}
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Tags:</Text>
@@ -212,13 +263,7 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
-      {ingredient.description ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Description:</Text>
-          <Text>{ingredient.description}</Text>
-        </View>
-      ) : null}
-
+      {/* Relations */}
       <View style={styles.section}>
         {isBase ? (
           <>
@@ -226,24 +271,36 @@ export default function IngredientDetailsScreen() {
             <View style={styles.listBox}>
               {brandedChildren.map((child, idx) => (
                 <View key={child.id}>
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() => goToIngredient(child.id)}
-                    activeOpacity={0.7}
-                  >
-                    {child.photoUri ? (
-                      <Image
-                        source={{ uri: child.photoUri }}
-                        style={styles.thumb}
+                  <View style={styles.row}>
+                    <TouchableOpacity
+                      style={styles.rowMain}
+                      onPress={() => goToIngredient(child.id)}
+                      activeOpacity={0.7}
+                    >
+                      <PhotoThumb uri={child.photoUri} />
+                      <Text style={styles.rowText}>{child.name}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => unlinkChild(child)}
+                      style={styles.unlinkBtn}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      accessibilityLabel={`Unlink ${child.name}`}
+                    >
+                      <MaterialIcons
+                        name="link-off"
+                        size={20}
+                        color={theme.colors.error}
                       />
-                    ) : null}
-                    <Text style={styles.rowText}>{child.name}</Text>
+                    </TouchableOpacity>
+
                     <MaterialIcons
                       name="chevron-right"
                       size={20}
                       color="#999"
                     />
-                  </TouchableOpacity>
+                  </View>
+
                   {idx !== brandedChildren.length - 1 && (
                     <View style={styles.divider} />
                   )}
@@ -254,20 +311,31 @@ export default function IngredientDetailsScreen() {
         ) : isBranded && baseIngredient ? (
           <>
             <Text style={styles.sectionLabel}>Base ingredient:</Text>
-            <TouchableOpacity
-              style={[styles.row, styles.singleRow]}
-              onPress={() => goToIngredient(baseIngredient.id)}
-              activeOpacity={0.7}
-            >
-              {baseIngredient.photoUri ? (
-                <Image
-                  source={{ uri: baseIngredient.photoUri }}
-                  style={styles.thumb}
+            <View style={[styles.row, styles.singleRow]}>
+              <TouchableOpacity
+                style={styles.rowMain}
+                onPress={() => goToIngredient(baseIngredient.id)}
+                activeOpacity={0.7}
+              >
+                <PhotoThumb uri={baseIngredient.photoUri} />
+                <Text style={styles.rowText}>{baseIngredient.name}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={unlinkFromBase}
+                style={styles.unlinkBtn}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityLabel="Unlink from base ingredient"
+              >
+                <MaterialIcons
+                  name="link-off"
+                  size={20}
+                  color={theme.colors.error}
                 />
-              ) : null}
-              <Text style={styles.rowText}>{baseIngredient.name}</Text>
+              </TouchableOpacity>
+
               <MaterialIcons name="chevron-right" size={20} color="#999" />
-            </TouchableOpacity>
+            </View>
           </>
         ) : null}
       </View>
@@ -286,12 +354,11 @@ export default function IngredientDetailsScreen() {
   );
 }
 
-const IMAGE_SIZE = 140;
-
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { padding: 24, backgroundColor: "white" },
   title: { fontSize: 22, fontWeight: "bold" },
+
   image: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -299,8 +366,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     marginBottom: 16,
   },
+
   section: { marginTop: 16 },
   sectionLabel: { fontWeight: "bold", marginBottom: 8 },
+
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
@@ -312,22 +381,35 @@ const styles = StyleSheet.create({
   tagText: { color: "white", fontWeight: "bold" },
 
   listBox: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
+
   row: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 8,
   },
+  rowMain: { flexDirection: "row", alignItems: "center", flex: 1 },
   singleRow: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
+
   thumb: {
-    width: 40,
-    height: 40,
+    width: THUMB,
+    height: THUMB,
     borderRadius: 8,
     marginRight: 10,
     backgroundColor: "#fff",
   },
+  thumbPlaceholder: {
+    backgroundColor: "#EAEAEA",
+  },
+
   rowText: { flex: 1, fontSize: 16 },
-  divider: { height: 1, backgroundColor: "#e9e9e9", marginLeft: 8 + 40 + 10 },
+  divider: {
+    height: 1,
+    backgroundColor: "#e9e9e9",
+    marginLeft: 8 + THUMB + 10,
+  },
+
+  unlinkBtn: { paddingHorizontal: 6, paddingVertical: 4, marginRight: 4 },
 
   addCocktailButton: {
     marginTop: 24,
