@@ -23,6 +23,7 @@ export const AppTheme = {
     onPrimary: "#FFFFFF",
     onBackground: "#000000",
     onSurface: "#000000",
+    onSurfaceVariant: "#A1A1A1",
 
     disabled: "#CED4DA",
     placeholder: "#A1A1A1",
