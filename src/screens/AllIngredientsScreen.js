@@ -25,13 +25,23 @@ import {
 import HeaderWithSearch from "../components/HeaderWithSearch";
 import { useTabMemory } from "../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "react-native-paper";
+
+// ---- Helpers ----
+const withAlpha = (hex, alpha) => {
+  // hex = #RRGGBB -> #RRGGBBAA
+  if (!hex || hex[0] !== "#" || hex.length !== 7) return hex;
+  const a = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0");
+  return `${hex}${a}`;
+};
 
 // ---- Константи для лісту ----
 const IMAGE_SIZE = 50;
 const ROW_VERTICAL = 8;
 const ROW_BORDER = 1;
 const ITEM_HEIGHT = ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
-const RIPPLE = { color: "#E3F2FD" };
 
 // ---- Рядок списку ----
 const ItemRow = memo(
@@ -47,23 +57,41 @@ const ItemRow = memo(
     onToggleInBar,
     isNavigating,
   }) {
+    const theme = useTheme();
     const isBranded = !!baseIngredientId;
 
+    const ripple = useMemo(
+      () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
+      [theme.colors.tertiary]
+    );
+
     return (
-      <View style={inBar ? styles.highlightWrapper : styles.normalWrapper}>
+      <View
+        style={[
+          inBar ? styles.highlightWrapper : styles.normalWrapper,
+          { borderBottomColor: theme.colors.background },
+          inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        ]}
+      >
         <View
           style={[
             styles.item,
-            isBranded && styles.brandedStripe,
+            isBranded && {
+              ...styles.brandedStripe,
+              borderLeftColor: theme.colors.primary,
+            },
             !inBar && styles.dimmed,
-            isNavigating && styles.navigatingRow, // миттєвий стан після тапу
+            isNavigating && {
+              ...styles.navigatingRow,
+              backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
+            },
           ]}
         >
           {inShoppingList && (
             <MaterialIcons
               name="shopping-cart"
               size={16}
-              color="#4DABF7"
+              color={theme.colors.primary}
               style={styles.cartIcon}
             />
           )}
@@ -71,26 +99,45 @@ const ItemRow = memo(
           {/* Ліва зона — відкриття деталей */}
           <Pressable
             onPress={() => onPress(id)}
-            android_ripple={RIPPLE}
+            android_ripple={ripple}
             style={({ pressed }) => [
               styles.leftTapZone,
-              pressed && styles.pressedLeft, // миттєвий відгук
+              pressed && styles.pressedLeft,
             ]}
             hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
           >
             {photoUri ? (
               <Image
                 source={{ uri: photoUri }}
-                style={styles.image}
+                style={[
+                  styles.image,
+                  { backgroundColor: theme.colors.background },
+                ]}
                 resizeMode="cover"
               />
             ) : (
-              <View style={[styles.image, styles.placeholder]}>
-                <Text style={styles.placeholderText}>No image</Text>
+              <View
+                style={[
+                  styles.image,
+                  styles.placeholder,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.placeholderText,
+                    { color: theme.colors.onSurfaceVariant },
+                  ]}
+                >
+                  No image
+                </Text>
               </View>
             )}
             <View style={styles.info}>
-              <Text numberOfLines={1} style={styles.name}>
+              <Text
+                numberOfLines={1}
+                style={[styles.name, { color: theme.colors.onSurface }]}
+              >
                 {name}
               </Text>
               {Array.isArray(tags) && tags.length > 0 && (
@@ -112,7 +159,7 @@ const ItemRow = memo(
           <Pressable
             onPress={() => onToggleInBar(id)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            android_ripple={{ ...RIPPLE, borderless: true }}
+            android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [
               styles.checkButton,
               pressed && styles.pressedCheck,
@@ -121,14 +168,15 @@ const ItemRow = memo(
             <MaterialIcons
               name={inBar ? "check-circle" : "radio-button-unchecked"}
               size={22}
-              color={inBar ? "#4DABF7" : "#999"}
+              color={
+                inBar ? theme.colors.primary : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         </View>
       </View>
     );
   },
-  // 🔒 ререндер тільки при реальній зміні відображуваних полів
   (prev, next) =>
     prev.id === next.id &&
     prev.name === next.name &&
@@ -137,11 +185,11 @@ const ItemRow = memo(
     prev.inShoppingList === next.inShoppingList &&
     prev.baseIngredientId === next.baseIngredientId &&
     prev.isNavigating === next.isNavigating &&
-    // shallow-порівняння масиву тегів (посилання), щоб не дорого
     prev.tags === next.tags
 );
 
 export default function AllIngredientsScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
@@ -150,9 +198,8 @@ export default function AllIngredientsScreen() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [navigatingId, setNavigatingId] = useState(null); // миттєва підсвітка рядка
+  const [navigatingId, setNavigatingId] = useState(null);
 
-  // ⚠️ уникаємо повторного setTab
   const didSetTabRef = useRef(false);
   useEffect(() => {
     if (!didSetTabRef.current) {
@@ -161,11 +208,9 @@ export default function AllIngredientsScreen() {
     }
   }, [setTab]);
 
-  // мапа id -> index
   const indexMapRef = useRef(new Map());
 
   const sortIngredients = useCallback((data) => {
-    // сортуємо 1 раз при завантаженні
     return [...data].sort((a, b) =>
       a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
     );
@@ -193,36 +238,29 @@ export default function AllIngredientsScreen() {
     };
   }, [isFocused, loadIngredients]);
 
-  // 🔔 легкий debounce на пошуку
   useEffect(() => {
     const id = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(id);
   }, [search]);
 
-  // ⏳ відкладений рендер відфільтрованого списку (React 18)
   const deferredSearch = useDeferredValue(searchDebounced);
 
-  // ✅ Функціональний toggle без залежності від зовнішнього `ingredients`
-  // + батчинг записів у сховище
-  const pendingSaveRef = useRef(new Map()); // id -> latestValue
+  // батчинг збережень
+  const pendingSaveRef = useRef(new Map());
   const flushTimerRef = useRef(null);
 
   const flushSaves = useCallback(() => {
     const pending = pendingSaveRef.current;
     pendingSaveRef.current = new Map();
     flushTimerRef.current = null;
-
     if (pending.size === 0) return;
-    // зберігаємо пачкою, але окремими викликами API
+
     pending.forEach((inBar, id) => {
       const idx = indexMapRef.current.get(id);
       if (idx == null) return;
       const current = ingredients[idx];
-      // якщо за час батчингу дані оновилися — підстрахуємось
       if (!current) return;
-      saveIngredient({ ...current, inBar }).catch((err) =>
-        console.error("Save failed", err)
-      );
+      saveIngredient({ ...current, inBar }).catch(() => {});
     });
   }, [ingredients]);
 
@@ -240,11 +278,8 @@ export default function AllIngredientsScreen() {
         const item = next[idx];
         const nextInBar = !item?.inBar;
         next[idx] = { ...item, inBar: nextInBar };
-
-        // запис у чергу збереження
         pendingSaveRef.current.set(id, nextInBar);
         scheduleFlush();
-
         return next;
       });
     },
@@ -253,12 +288,11 @@ export default function AllIngredientsScreen() {
 
   const onItemPress = useCallback(
     (id) => {
-      setNavigatingId(id); // миттєва підсвітка
+      setNavigatingId(id);
       navigation.navigate("Create", {
         screen: "IngredientDetails",
         params: { id },
       });
-      // запасний таймер — на випадок швидкого повернення
       setTimeout(() => setNavigatingId(null), 600);
     },
     [navigation]
@@ -294,13 +328,9 @@ export default function AllIngredientsScreen() {
   );
 
   useEffect(() => {
-    // при розмонтуванні — доженемо незбережені записи
     return () => {
       if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
       flushTimerRef.current = null;
-      // синхронно флашнемо, щоб нічого не втратити
-      // (у реальному проді можна лишити як є, якщо це не критично)
-      // викликати прямо тут не можемо, бо залежить від state — просто прогорнемо мапу
       const pending = pendingSaveRef.current;
       pendingSaveRef.current = new Map();
       pending.forEach((inBar, id) => {
@@ -316,14 +346,18 @@ export default function AllIngredientsScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4DABF7" />
-        <Text style={{ marginTop: 12 }}>Loading ingredients...</Text>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text style={{ marginTop: 12, color: theme.colors.onSurface }}>
+          Loading ingredients...
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -336,14 +370,19 @@ export default function AllIngredientsScreen() {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         estimatedItemSize={ITEM_HEIGHT}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { backgroundColor: theme.colors.background },
+        ]}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews
         initialNumToRender={12}
-        getItemType={() => "ING"} // допомагає реюзу типів елементів
+        getItemType={() => "ING"}
         ListEmptyComponent={
           <View style={{ padding: 24 }}>
-            <Text>No ingredients found</Text>
+            <Text style={{ color: theme.colors.onSurfaceVariant }}>
+              No ingredients found
+            </Text>
           </View>
         }
       />
@@ -353,17 +392,14 @@ export default function AllIngredientsScreen() {
 
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  container: { flex: 1, backgroundColor: "white" },
-  listContent: { backgroundColor: "white" },
+  container: { flex: 1 },
+  listContent: {},
 
   highlightWrapper: {
-    backgroundColor: "#E3F2FD",
     borderBottomWidth: ROW_BORDER,
-    borderBottomColor: "#fff",
   },
   normalWrapper: {
     borderBottomWidth: ROW_BORDER,
-    borderBottomColor: "#fff",
   },
   item: {
     flexDirection: "row",
@@ -374,10 +410,8 @@ const styles = StyleSheet.create({
   },
   dimmed: { opacity: 0.88 },
 
-  // миттєва підсвітка рядка під час навігації
   navigatingRow: {
     opacity: 0.6,
-    backgroundColor: "#F0F7FF",
   },
 
   leftTapZone: {
@@ -386,7 +420,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingRight: 8,
   },
-  // стиль під час натиснення (Pressable)
   pressedLeft: {
     opacity: 0.7,
     transform: [{ scale: Platform.OS === "ios" ? 0.98 : 0.99 }],
@@ -397,11 +430,10 @@ const styles = StyleSheet.create({
     height: IMAGE_SIZE,
     borderRadius: 8,
     marginRight: 12,
-    backgroundColor: "#ffffff",
     overflow: "hidden",
   },
   placeholder: { justifyContent: "center", alignItems: "center" },
-  placeholderText: { color: "#999", fontSize: 10, textAlign: "center" },
+  placeholderText: { fontSize: 10, textAlign: "center" },
 
   info: { flex: 1, paddingRight: 8 },
   name: { fontSize: 16, fontWeight: "bold" },
@@ -419,7 +451,6 @@ const styles = StyleSheet.create({
   cartIcon: { position: "absolute", bottom: 4, right: 36, zIndex: 1 },
   brandedStripe: {
     borderLeftWidth: 4,
-    borderLeftColor: "green",
     paddingLeft: 4,
   },
 

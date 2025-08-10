@@ -55,31 +55,36 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
-const RIPPLE = { color: "#E3F2FD" };
 
 // pills for tags (memo, стабільний onPress через id)
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+  const theme = useTheme();
+  const ripple = { color: theme.colors.outlineVariant };
   return (
     <Pressable
       onPress={() => onToggle(id)}
-      android_ripple={RIPPLE}
+      android_ripple={ripple}
       style={({ pressed }) => [
         styles.tag,
-        { backgroundColor: color || "#ccc" },
+        { backgroundColor: color || theme.colors.disabled },
         pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Text style={styles.tagText}>{name}</Text>
+      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
+        {name}
+      </Text>
     </Pressable>
   );
 });
 
 // row in base menu (memo, стабільний onPress через id)
 const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+  const theme = useTheme();
+  const ripple = { color: theme.colors.outlineVariant };
   return (
     <Pressable
       onPress={() => onSelect(id)}
-      android_ripple={RIPPLE}
+      android_ripple={ripple}
       style={({ pressed }) => [
         styles.menuRow,
         pressed && { opacity: 0.9, transform: [{ scale: 0.997 }] },
@@ -87,11 +92,24 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
     >
       <View style={styles.menuRowInner}>
         {photoUri ? (
-          <Image source={{ uri: photoUri }} style={styles.menuImg} />
+          <Image
+            source={{ uri: photoUri }}
+            style={[
+              styles.menuImg,
+              { backgroundColor: theme.colors.background },
+            ]}
+          />
         ) : (
-          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+          <View
+            style={[
+              styles.menuImg,
+              { backgroundColor: theme.colors.outlineVariant },
+            ]}
+          />
         )}
-        <PaperText numberOfLines={1}>{name}</PaperText>
+        <PaperText numberOfLines={1} style={{ color: theme.colors.onSurface }}>
+          {name}
+        </PaperText>
       </View>
     </Pressable>
   );
@@ -128,7 +146,7 @@ export default function EditIngredientScreen() {
     [baseOnlySorted, baseIngredientId]
   );
 
-  // anchored menu (🔥 єдина декларація)
+  // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
   const [anchorWidth, setAnchorWidth] = useState(0);
@@ -153,12 +171,12 @@ export default function EditIngredientScreen() {
     };
   }, []);
 
-  // 👉 завжди повертаємось на деталі поточного інгредієнта
+  // завжди повертаємось на деталі поточного інгредієнта
   const handleGoBack = useCallback(() => {
     navigation.navigate("IngredientDetails", { id: currentId });
   }, [navigation, currentId]);
 
-  // показуємо видиму кнопку «Назад» у хедері
+  // видима кнопка Back у хедері
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -180,7 +198,7 @@ export default function EditIngredientScreen() {
     });
   }, [navigation, handleGoBack, theme.colors.onSurface]);
 
-  // перехоплюємо системний back/gesture і ведемо на деталі
+  // перехоплюємо системний back/gesture
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
@@ -189,7 +207,7 @@ export default function EditIngredientScreen() {
     return unsub;
   }, [navigation, handleGoBack]);
 
-  // load tags + entity on focus (паралельно, з безпечним setState)
+  // load tags + entity on focus (паралельно)
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
@@ -220,7 +238,7 @@ export default function EditIngredientScreen() {
     };
   }, [isFocused, currentId]);
 
-  // lazy-load bases (exclude current ingredient from options)
+  // lazy-load bases (exclude current ingredient)
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
@@ -246,7 +264,7 @@ export default function EditIngredientScreen() {
     }
   }, [basesLoaded, loadingBases, currentId]);
 
-  // optional: префетч баз
+  // префетч баз
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
@@ -255,7 +273,7 @@ export default function EditIngredientScreen() {
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  // стабільний toggleTag через id
+  // toggleTag через id
   const toggleTagById = useCallback(
     (id) => {
       setTags((prev) => {
@@ -345,10 +363,12 @@ export default function EditIngredientScreen() {
   if (!ingredient) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
+        <ActivityIndicator color={theme.colors.primary} />
       </View>
     );
   }
+
+  const ripple = { color: theme.colors.outlineVariant };
 
   return (
     <KeyboardAvoidingView
@@ -389,7 +409,7 @@ export default function EditIngredientScreen() {
             },
           ]}
           onPress={pickImage}
-          android_ripple={RIPPLE}
+          android_ripple={ripple}
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
@@ -457,13 +477,16 @@ export default function EditIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
-            android_ripple={RIPPLE}
+            android_ripple={ripple}
           >
             <View style={styles.anchorRow}>
               {selectedBase?.photoUri && (
                 <Image
                   source={{ uri: selectedBase.photoUri }}
-                  style={styles.menuImg}
+                  style={[
+                    styles.menuImg,
+                    { backgroundColor: theme.colors.background },
+                  ]}
                 />
               )}
               <PaperText
@@ -520,7 +543,7 @@ export default function EditIngredientScreen() {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.colors.primary} />
               <Text
                 style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}
               >
@@ -541,14 +564,16 @@ export default function EditIngredientScreen() {
                       setBaseIngredientId(null);
                       setMenuVisible(false);
                     }}
-                    android_ripple={RIPPLE}
+                    android_ripple={ripple}
                     style={({ pressed }) => [
                       styles.menuRow,
                       pressed && { opacity: 0.9 },
                     ]}
                   >
                     <View style={styles.menuRowInner}>
-                      <PaperText>None</PaperText>
+                      <PaperText style={{ color: theme.colors.onSurface }}>
+                        None
+                      </PaperText>
                     </View>
                   </Pressable>
                 ) : (
@@ -563,7 +588,6 @@ export default function EditIngredientScreen() {
                   />
                 )
               }
-              // стабільний скрол усередині меню
               style={{
                 height: Math.min(
                   300,
@@ -605,7 +629,7 @@ export default function EditIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
+          android_ripple={{ color: theme.colors.onPrimary }}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
@@ -616,7 +640,7 @@ export default function EditIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
           onPress={handleDelete}
-          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
+          android_ripple={{ color: theme.colors.onErrorContainer }}
         >
           <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
             Delete Ingredient
@@ -654,7 +678,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {
@@ -665,8 +689,7 @@ const styles = StyleSheet.create({
   },
   menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
   menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
-  menuImg: { width: 40, height: 40, borderRadius: 8, backgroundColor: "#fff" },
-  menuImgPlaceholder: { backgroundColor: "#eee" },
+  menuImg: { width: 40, height: 40, borderRadius: 8 },
 
   saveButton: {
     marginTop: 24,

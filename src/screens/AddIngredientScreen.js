@@ -47,29 +47,45 @@ const useDebounced = (value, delay = 300) => {
   return v;
 };
 
+const withAlpha = (hex, alpha = 1) => {
+  // hex -> rgba, supports #rgb and #rrggbb
+  let h = hex?.replace("#", "");
+  if (!h) return `rgba(0,0,0,${alpha})`;
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+};
+
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
-const RIPPLE = { color: "#E3F2FD" };
 
 // pills for tags (memo + стабільний onPress через id)
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+const TagPill = memo(function TagPill({ id, name, color, onToggle, theme }) {
   return (
     <Pressable
       onPress={() => onToggle(id)}
       style={({ pressed }) => [
         styles.tag,
-        { backgroundColor: color || "#ccc" },
+        { backgroundColor: color || theme.colors.disabled },
         pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
       ]}
-      android_ripple={RIPPLE}
+      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
-      <Text style={styles.tagText}>{name}</Text>
+      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
+        {name}
+      </Text>
     </Pressable>
   );
 });
 
 // row in base menu (memo + стабільний onPress через id)
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect, theme }) {
   return (
     <Pressable
       onPress={() => onSelect(id)}
@@ -77,13 +93,24 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
         styles.menuRow,
         pressed && { opacity: 0.8, transform: [{ scale: 0.997 }] },
       ]}
-      android_ripple={RIPPLE}
+      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
       <View style={styles.menuRowInner}>
         {photoUri ? (
-          <Image source={{ uri: photoUri }} style={styles.menuImg} />
+          <Image
+            source={{ uri: photoUri }}
+            style={[
+              styles.menuImg,
+              { backgroundColor: theme.colors.background },
+            ]}
+          />
         ) : (
-          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+          <View
+            style={[
+              styles.menuImg,
+              { backgroundColor: theme.colors.outlineVariant },
+            ]}
+          />
         )}
         <PaperText numberOfLines={1}>{name}</PaperText>
       </View>
@@ -97,6 +124,16 @@ export default function AddIngredientScreen() {
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
+
+  // ripples from theme
+  const ripple = useMemo(
+    () => ({ color: withAlpha(theme.colors.primary, 0.12) }),
+    [theme.colors.primary]
+  );
+  const lightRipple = useMemo(
+    () => ({ color: withAlpha(theme.colors.onPrimary, 0.15) }),
+    [theme.colors.onPrimary]
+  );
 
   // form state
   const [name, setName] = useState("");
@@ -152,7 +189,7 @@ export default function AddIngredientScreen() {
     else navigation.goBack();
   }, [navigation, previousTab]);
 
-  // 👈 завжди видима стрілка «Назад» (платформенно-специфічна форма)
+  // always visible back arrow
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -233,7 +270,7 @@ export default function AddIngredientScreen() {
     }
   }, [basesLoaded, loadingBases]);
 
-  // optional: префетч баз
+  // optional: prefetch bases
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
@@ -346,7 +383,7 @@ export default function AddIngredientScreen() {
             },
           ]}
           onPress={pickImage}
-          android_ripple={RIPPLE}
+          android_ripple={ripple}
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
@@ -373,6 +410,7 @@ export default function AddIngredientScreen() {
               name={tag.name}
               color={tag.color}
               onToggle={toggleTagById}
+              theme={theme}
             />
           ))}
         </View>
@@ -390,6 +428,7 @@ export default function AddIngredientScreen() {
                 name={t.name}
                 color={t.color}
                 onToggle={toggleTagById}
+                theme={theme}
               />
             ))}
         </View>
@@ -414,13 +453,16 @@ export default function AddIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
-            android_ripple={RIPPLE}
+            android_ripple={ripple}
           >
             <View style={styles.anchorRow}>
               {selectedBase?.photoUri && (
                 <Image
                   source={{ uri: selectedBase.photoUri }}
-                  style={styles.menuImg}
+                  style={[
+                    styles.menuImg,
+                    { backgroundColor: theme.colors.background },
+                  ]}
                 />
               )}
               <PaperText
@@ -477,7 +519,7 @@ export default function AddIngredientScreen() {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.colors.primary} />
               <Text
                 style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}
               >
@@ -502,9 +544,9 @@ export default function AddIngredientScreen() {
                       styles.menuRow,
                       pressed && { opacity: 0.9 },
                     ]}
-                    android_ripple={RIPPLE}
+                    android_ripple={ripple}
                   >
-                    <View style={styles.menuRowInner}>
+                    <View className="menuRowInner" style={styles.menuRowInner}>
                       <PaperText>None</PaperText>
                     </View>
                   </Pressable>
@@ -517,6 +559,7 @@ export default function AddIngredientScreen() {
                       setBaseIngredientId(id);
                       setMenuVisible(false);
                     }}
+                    theme={theme}
                   />
                 )
               }
@@ -561,7 +604,7 @@ export default function AddIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
+          android_ripple={lightRipple}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
@@ -600,7 +643,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {
@@ -611,9 +654,7 @@ const styles = StyleSheet.create({
   },
   menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
   menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
-  menuImg: { width: 40, height: 40, borderRadius: 8, backgroundColor: "#fff" },
-  menuImgPlaceholder: { backgroundColor: "#eee" },
-
+  menuImg: { width: 40, height: 40, borderRadius: 8 },
   saveButton: {
     marginTop: 24,
     paddingVertical: 12,

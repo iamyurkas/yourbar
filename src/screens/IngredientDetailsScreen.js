@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useLayoutEffect, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useCallback,
+  useMemo,
+  memo,
+} from "react";
 import {
   View,
   Text,
@@ -10,8 +17,11 @@ import {
   Platform,
   Alert,
 } from "react-native";
-
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import {
   getIngredientById,
   getAllIngredients,
@@ -24,10 +34,62 @@ import { useTheme } from "react-native-paper";
 const IMAGE_SIZE = 140;
 const THUMB = 40;
 
-// Photo or plain gray square (no icon/initials)
+/** Gray-square photo (no icon/initials), uses theme */
 const PhotoThumb = memo(function PhotoThumb({ uri }) {
-  if (uri) return <Image source={{ uri }} style={styles.thumb} />;
-  return <View style={[styles.thumb, styles.thumbPlaceholder]} />;
+  const theme = useTheme();
+  if (uri) {
+    return (
+      <Image
+        source={{ uri }}
+        style={[styles.thumb, { backgroundColor: theme.colors.surface }]}
+      />
+    );
+  }
+  return (
+    <View style={[styles.thumb, { backgroundColor: theme.colors.surface }]} />
+  );
+});
+
+/** One relation row (child or base), uses theme */
+const RelationRow = memo(function RelationRow({
+  name,
+  photoUri,
+  onOpen,
+  onUnlink,
+  unlinkLabel = "Unlink",
+}) {
+  const theme = useTheme();
+  return (
+    <View style={styles.row}>
+      <TouchableOpacity
+        style={styles.rowMain}
+        onPress={onOpen}
+        activeOpacity={0.7}
+      >
+        <PhotoThumb uri={photoUri} />
+        <Text style={[styles.rowText, { color: theme.colors.onSurface }]}>
+          {name}
+        </Text>
+      </TouchableOpacity>
+
+      {onUnlink && (
+        <TouchableOpacity
+          onPress={onUnlink}
+          style={styles.unlinkBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityLabel={unlinkLabel}
+        >
+          <MaterialIcons name="link-off" size={20} color={theme.colors.error} />
+        </TouchableOpacity>
+      )}
+
+      <MaterialIcons
+        name="chevron-right"
+        size={20}
+        color={theme.colors.onSurfaceVariant}
+      />
+    </View>
+  );
 });
 
 export default function IngredientDetailsScreen() {
@@ -36,18 +98,23 @@ export default function IngredientDetailsScreen() {
   const theme = useTheme();
 
   const [ingredient, setIngredient] = useState(null);
-  const [allIngredients, setAllIngredients] = useState([]);
   const [brandedChildren, setBrandedChildren] = useState([]);
   const [baseIngredient, setBaseIngredient] = useState(null);
+
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
 
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     if (previousTab) navigation.navigate(previousTab);
     else navigation.goBack();
-  };
+  }, [navigation, previousTab]);
 
+  // Always show custom back button
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -75,67 +142,65 @@ export default function IngredientDetailsScreen() {
       handleGoBack();
     });
     return unsub;
-  }, [navigation, previousTab]);
+  }, [navigation, handleGoBack]);
 
-  useEffect(() => {
-    const load = async () => {
-      const loaded = await getIngredientById(id);
-      const all = await getAllIngredients();
-      setIngredient(loaded || null);
-      setAllIngredients(all);
+  const load = useCallback(async () => {
+    const [loaded, all] = await Promise.all([
+      getIngredientById(id),
+      getAllIngredients(),
+    ]);
+    setIngredient(loaded || null);
 
-      if (loaded) {
-        const children = all
-          .filter((i) => i.baseIngredientId === loaded.id)
-          .sort((a, b) =>
-            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-          );
-        setBrandedChildren(children);
+    if (!loaded) {
+      setBrandedChildren([]);
+      setBaseIngredient(null);
+      return;
+    }
 
-        const base = loaded.baseIngredientId
-          ? all.find((i) => i.id === loaded.baseIngredientId)
-          : null;
-        setBaseIngredient(base || null);
-      } else {
-        setBrandedChildren([]);
-        setBaseIngredient(null);
-      }
-    };
-    load();
-  }, [id]);
-
-  useEffect(() => {
-    if (!ingredient || allIngredients.length === 0) return;
-    const children = allIngredients
-      .filter((i) => i.baseIngredientId === ingredient.id)
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-      );
+    const children = all
+      .filter((i) => i.baseIngredientId === loaded.id)
+      .sort((a, b) => collator.compare(a.name, b.name));
     setBrandedChildren(children);
 
-    const base = ingredient.baseIngredientId
-      ? allIngredients.find((i) => i.id === ingredient.baseIngredientId)
+    const base = loaded.baseIngredientId
+      ? all.find((i) => i.id === loaded.baseIngredientId)
       : null;
     setBaseIngredient(base || null);
-  }, [ingredient, allIngredients]);
+  }, [id, collator]);
 
-  const toggleInBar = async () => {
-    const updated = { ...ingredient, inBar: !ingredient.inBar };
-    await saveIngredient(updated);
-    setIngredient(updated);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        try {
+          if (!cancelled) await load();
+        } catch {}
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [load])
+  );
 
-  const toggleInShoppingList = async () => {
-    const updated = {
-      ...ingredient,
-      inShoppingList: !ingredient.inShoppingList,
-    };
-    await saveIngredient(updated);
-    setIngredient(updated);
-  };
+  const toggleInBar = useCallback(() => {
+    setIngredient((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, inBar: !prev.inBar };
+      saveIngredient(next);
+      return next;
+    });
+  }, []);
 
-  // Unlink this branded ingredient from its base
-  const unlinkFromBase = async () => {
+  const toggleInShoppingList = useCallback(() => {
+    setIngredient((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, inShoppingList: !prev.inShoppingList };
+      saveIngredient(next);
+      return next;
+    });
+  }, []);
+
+  const unlinkFromBase = useCallback(() => {
     if (!ingredient?.baseIngredientId) return;
     Alert.alert("Unlink", "Remove link to base ingredient?", [
       { text: "Cancel", style: "cancel" },
@@ -150,10 +215,9 @@ export default function IngredientDetailsScreen() {
         },
       },
     ]);
-  };
+  }, [ingredient]);
 
-  // Unlink a child from this base (when viewing a base ingredient)
-  const unlinkChild = (child) => {
+  const unlinkChild = useCallback((child) => {
     Alert.alert(
       "Unlink",
       `Remove link for "${child.name}" from this base ingredient?`,
@@ -166,20 +230,26 @@ export default function IngredientDetailsScreen() {
             const updatedChild = { ...child, baseIngredientId: null };
             await saveIngredient(updatedChild);
             setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
-            setAllIngredients((prev) =>
-              prev.map((i) => (i.id === child.id ? updatedChild : i))
-            );
           },
         },
       ]
     );
-  };
+  }, []);
+
+  const goToIngredient = useCallback(
+    (goId) => {
+      navigation.push("IngredientDetails", { id: goId });
+    },
+    [navigation]
+  );
 
   if (!ingredient) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4DABF7" />
-        <Text style={{ marginTop: 12 }}>Loading ingredient...</Text>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text style={{ marginTop: 12, color: theme.colors.onSurface }}>
+          Loading ingredient...
+        </Text>
       </View>
     );
   }
@@ -187,20 +257,23 @@ export default function IngredientDetailsScreen() {
   const isBase = brandedChildren.length > 0;
   const isBranded = !!ingredient.baseIngredientId;
 
-  const goToIngredient = (goId) => {
-    navigation.push("IngredientDetails", { id: goId });
-  };
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{ingredient.name}</Text>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
+      <Text style={[styles.title, { color: theme.colors.onBackground }]}>
+        {ingredient.name}
+      </Text>
 
       <View style={styles.iconRow}>
         <TouchableOpacity
           onPress={() => navigation.navigate("EditIngredient", { id })}
           style={styles.iconButton}
         >
-          <MaterialIcons name="edit" size={24} color="#4DABF7" />
+          <MaterialIcons name="edit" size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -212,7 +285,11 @@ export default function IngredientDetailsScreen() {
               ingredient.inShoppingList ? "shopping-cart" : "add-shopping-cart"
             }
             size={24}
-            color={ingredient.inShoppingList ? "#4DABF7" : "#999"}
+            color={
+              ingredient.inShoppingList
+                ? theme.colors.primary
+                : theme.colors.onSurfaceVariant
+            }
           />
         </TouchableOpacity>
 
@@ -220,7 +297,11 @@ export default function IngredientDetailsScreen() {
           <MaterialIcons
             name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
             size={24}
-            color={ingredient.inBar ? "#4DABF7" : "#999"}
+            color={
+              ingredient.inBar
+                ? theme.colors.primary
+                : theme.colors.onSurfaceVariant
+            }
           />
         </TouchableOpacity>
       </View>
@@ -228,7 +309,7 @@ export default function IngredientDetailsScreen() {
       {ingredient.photoUri ? (
         <Image
           source={{ uri: ingredient.photoUri }}
-          style={styles.image}
+          style={[styles.image, { backgroundColor: theme.colors.surface }]}
           resizeMode="contain"
         />
       ) : (
@@ -236,20 +317,23 @@ export default function IngredientDetailsScreen() {
           style={[
             styles.image,
             {
-              backgroundColor: "#eee",
+              backgroundColor: theme.colors.surface,
               justifyContent: "center",
               alignItems: "center",
             },
           ]}
         >
-          <Text style={{ color: "#aaa" }}>No image</Text>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>No image</Text>
         </View>
       )}
 
-      {/* Tags */}
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Tags:</Text>
+          <Text
+            style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
+          >
+            Tags:
+          </Text>
           <View style={styles.tagRow}>
             {ingredient.tags.map((tag) => (
               <View
@@ -263,46 +347,33 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
-      {/* Relations */}
       <View style={styles.section}>
         {isBase ? (
           <>
-            <Text style={styles.sectionLabel}>Branded ingredients:</Text>
-            <View style={styles.listBox}>
+            <Text
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
+            >
+              Branded ingredients:
+            </Text>
+            <View
+              style={[styles.listBox, { borderColor: theme.colors.outline }]}
+            >
               {brandedChildren.map((child, idx) => (
                 <View key={child.id}>
-                  <View style={styles.row}>
-                    <TouchableOpacity
-                      style={styles.rowMain}
-                      onPress={() => goToIngredient(child.id)}
-                      activeOpacity={0.7}
-                    >
-                      <PhotoThumb uri={child.photoUri} />
-                      <Text style={styles.rowText}>{child.name}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      onPress={() => unlinkChild(child)}
-                      style={styles.unlinkBtn}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      accessibilityLabel={`Unlink ${child.name}`}
-                    >
-                      <MaterialIcons
-                        name="link-off"
-                        size={20}
-                        color={theme.colors.error}
-                      />
-                    </TouchableOpacity>
-
-                    <MaterialIcons
-                      name="chevron-right"
-                      size={20}
-                      color="#999"
-                    />
-                  </View>
-
+                  <RelationRow
+                    name={child.name}
+                    photoUri={child.photoUri}
+                    onOpen={() => goToIngredient(child.id)}
+                    onUnlink={() => unlinkChild(child)}
+                    unlinkLabel={`Unlink ${child.name}`}
+                  />
                   {idx !== brandedChildren.length - 1 && (
-                    <View style={styles.divider} />
+                    <View
+                      style={[
+                        styles.divider,
+                        { backgroundColor: theme.colors.outlineVariant },
+                      ]}
+                    />
                   )}
                 </View>
               ))}
@@ -310,45 +381,48 @@ export default function IngredientDetailsScreen() {
           </>
         ) : isBranded && baseIngredient ? (
           <>
-            <Text style={styles.sectionLabel}>Base ingredient:</Text>
-            <View style={[styles.row, styles.singleRow]}>
-              <TouchableOpacity
-                style={styles.rowMain}
-                onPress={() => goToIngredient(baseIngredient.id)}
-                activeOpacity={0.7}
-              >
-                <PhotoThumb uri={baseIngredient.photoUri} />
-                <Text style={styles.rowText}>{baseIngredient.name}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={unlinkFromBase}
-                style={styles.unlinkBtn}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                accessibilityLabel="Unlink from base ingredient"
-              >
-                <MaterialIcons
-                  name="link-off"
-                  size={20}
-                  color={theme.colors.error}
-                />
-              </TouchableOpacity>
-
-              <MaterialIcons name="chevron-right" size={20} color="#999" />
+            <Text
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
+            >
+              Base ingredient:
+            </Text>
+            <View
+              style={[styles.singleRow, { borderColor: theme.colors.outline }]}
+            >
+              <RelationRow
+                name={baseIngredient.name}
+                photoUri={baseIngredient.photoUri}
+                onOpen={() => goToIngredient(baseIngredient.id)}
+                onUnlink={unlinkFromBase}
+                unlinkLabel="Unlink from base ingredient"
+              />
             </View>
           </>
         ) : null}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Used in cocktails:</Text>
-        <Text style={{ fontStyle: "italic", color: "#888" }}>
+        <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>
+          Used in cocktails:
+        </Text>
+        <Text
+          style={{ fontStyle: "italic", color: theme.colors.onSurfaceVariant }}
+        >
           (coming soon)
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.addCocktailButton}>
-        <Text style={styles.addCocktailText}>+ Add Cocktail</Text>
+      <TouchableOpacity
+        style={[
+          styles.addCocktailButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+      >
+        <Text
+          style={[styles.addCocktailText, { color: theme.colors.onPrimary }]}
+        >
+          + Add Cocktail
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -356,14 +430,13 @@ export default function IngredientDetailsScreen() {
 
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  container: { padding: 24, backgroundColor: "white" },
+  container: { padding: 24 }, // bg is set via theme inline
   title: { fontSize: 22, fontWeight: "bold" },
 
   image: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
     borderRadius: 8,
-    backgroundColor: "#ffffff",
     marginBottom: 16,
   },
 
@@ -380,7 +453,7 @@ const styles = StyleSheet.create({
   },
   tagText: { color: "white", fontWeight: "bold" },
 
-  listBox: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
+  listBox: { borderWidth: 1, borderRadius: 8 },
 
   row: {
     flexDirection: "row",
@@ -389,36 +462,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   rowMain: { flexDirection: "row", alignItems: "center", flex: 1 },
-  singleRow: { borderWidth: 1, borderColor: "#eee", borderRadius: 8 },
+  singleRow: { borderWidth: 1, borderRadius: 8 },
 
-  thumb: {
-    width: THUMB,
-    height: THUMB,
-    borderRadius: 8,
-    marginRight: 10,
-    backgroundColor: "#fff",
-  },
-  thumbPlaceholder: {
-    backgroundColor: "#EAEAEA",
-  },
+  thumb: { width: THUMB, height: THUMB, borderRadius: 8, marginRight: 10 },
+  thumbPlaceholder: {},
 
   rowText: { flex: 1, fontSize: 16 },
-  divider: {
-    height: 1,
-    backgroundColor: "#e9e9e9",
-    marginLeft: 8 + THUMB + 10,
-  },
+  divider: { height: StyleSheet.hairlineWidth, marginLeft: 8 + THUMB + 10 },
 
   unlinkBtn: { paddingHorizontal: 6, paddingVertical: 4, marginRight: 4 },
 
   addCocktailButton: {
     marginTop: 24,
-    backgroundColor: "#4DABF7",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
   },
-  addCocktailText: { color: "white", fontWeight: "bold" },
+  addCocktailText: { fontWeight: "bold" },
 
   iconRow: {
     flexDirection: "row",
