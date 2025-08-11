@@ -17,10 +17,15 @@ import {
   Alert,
   Pressable,
   Platform,
+  FlatList,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "react-native-paper";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
+import { useTheme, Menu, Divider } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { getAllIngredients } from "../../storage/ingredientsStorage";
@@ -66,49 +71,107 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-/* ---------- SuggestionRow (ingredient search) ---------- */
-const SuggestionRow = memo(function SuggestionRow({ item, onSelect }) {
+/* ---------- Anchored suggestions dropdown ---------- */
+const SUGGEST_ROW_H = 48;
+
+const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
+  visible,
+  anchor, // {x,y}
+  anchorWidth,
+  items,
+  onSelect,
+  onDismiss,
+}) {
   const theme = useTheme();
   return (
-    <Pressable
-      onPress={() => onSelect(item)}
-      android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-      style={({ pressed }) => [
-        styles.suggestRow,
-        {
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.outline,
-        },
-        pressed && { opacity: 0.95 },
-      ]}
+    <Menu
+      visible={visible}
+      onDismiss={onDismiss}
+      anchor={anchor || { x: 0, y: 0 }}
+      contentStyle={{
+        width: anchorWidth || 260,
+        backgroundColor: theme.colors.surface,
+      }}
     >
-      <View style={styles.suggestLeft}>
-        {item.photoUri ? (
-          <Image
-            source={{ uri: item.photoUri }}
-            style={[
-              styles.suggestThumb,
-              { backgroundColor: theme.colors.background },
-            ]}
-          />
-        ) : (
-          <View
-            style={[
-              styles.suggestThumb,
-              { backgroundColor: theme.colors.outlineVariant },
-            ]}
-          />
+      <FlatList
+        data={items}
+        keyExtractor={(it) => String(it.id)}
+        renderItem={({ item, index }) => (
+          <>
+            {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
+            <Pressable
+              onPress={() => {
+                onSelect?.(item);
+                onDismiss?.();
+              }}
+              android_ripple={{ color: theme.colors.outlineVariant }}
+              style={({ pressed }) => [
+                {
+                  height: SUGGEST_ROW_H,
+                  paddingHorizontal: 12,
+                  flexDirection: "row",
+                  alignItems: "center",
+                },
+                pressed && { opacity: 0.96 },
+              ]}
+            >
+              {/* 4px stripe for branded; transparent for regular to keep alignment */}
+              <View
+                style={{
+                  width: 4,
+                  height: 28,
+                  borderRadius: 2,
+                  marginRight: 8,
+                  backgroundColor: item.baseIngredientId
+                    ? theme.colors.onSurfaceVariant
+                    : "transparent",
+                }}
+              />
+              {item.photoUri ? (
+                <Image
+                  source={{ uri: item.photoUri }}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 6,
+                    marginRight: 10,
+                    backgroundColor: theme.colors.background,
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 6,
+                    marginRight: 10,
+                    backgroundColor: theme.colors.outlineVariant,
+                  }}
+                />
+              )}
+              <Text
+                style={{ color: theme.colors.onSurface, flex: 1 }}
+                numberOfLines={1}
+              >
+                {item.name}
+              </Text>
+            </Pressable>
+          </>
         )}
-        <Text style={{ color: theme.colors.onSurface }} numberOfLines={1}>
-          {item.name}
-        </Text>
-      </View>
-      {item.baseIngredientId ? (
-        <Text style={{ color: theme.colors.onSurfaceVariant, fontSize: 12 }}>
-          branded
-        </Text>
-      ) : null}
-    </Pressable>
+        style={{
+          height: Math.min(
+            300,
+            SUGGEST_ROW_H * Math.max(1, items?.length || 0)
+          ),
+        }}
+        keyboardShouldPersistTaps="handled"
+        getItemLayout={(_, i) => ({
+          length: SUGGEST_ROW_H,
+          offset: SUGGEST_ROW_H * i,
+          index: i,
+        })}
+      />
+    </Menu>
   );
 });
 
@@ -120,28 +183,93 @@ const IngredientRow = memo(function IngredientRow({
   onRemove,
   onOpenUnitPicker, // (anchorRef) => void
   allIngredients,
+  onAddNewIngredient, // (name: string) => void
 }) {
   const theme = useTheme();
   const [query, setQuery] = useState(row.name || "");
   const debounced = useDebounced(query, 200);
-  const showSuggest = debounced.trim().length >= 2 && !row.selectedId;
+
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
+
+  // anchors
+  const nameAnchorRef = useRef(null);
   const unitAnchorRef = useRef(null);
 
+  // anchored suggest state
+  const [suggestMenu, setSuggestMenu] = useState({
+    visible: false,
+    anchor: null,
+    width: 0,
+  });
+
+  // show suggestions whenever 2+ chars AND not selected
+  const showSuggest = debounced.trim().length >= 2 && !row.selectedId;
+
+  // filter suggestions — refine as user types more
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
     const q = debounced.trim().toLowerCase();
-    const list = allIngredients.filter((i) =>
-      (i.name || "").toLowerCase().includes(q)
-    );
-    return list.slice(0, 12);
+    return allIngredients
+      .filter((i) => (i.name || "").toLowerCase().includes(q))
+      .slice(0, 20);
   }, [allIngredients, debounced, showSuggest]);
 
+  // keep input in sync if changed externally
   useEffect(() => {
     if (row.name !== query) setQuery(row.name || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.name]);
 
+  // open/close suggestions menu (slightly raised by 2px)
+  useEffect(() => {
+    if (showSuggest && suggestions.length > 0 && nameAnchorRef.current) {
+      nameAnchorRef.current.measureInWindow((x, y, w, h) => {
+        setSuggestMenu({
+          visible: true,
+          anchor: { x, y: y + h - 2 },
+          width: w,
+        });
+      });
+    } else if (
+      suggestMenu.visible &&
+      (!showSuggest || suggestions.length === 0)
+    ) {
+      setSuggestMenu((m) => ({ ...m, visible: false }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSuggest, suggestions.length]);
+
+  // Auto-bind selection if exact match (case/accents-insensitive)
+  useEffect(() => {
+    const raw = query;
+    const stable = debounced;
+    if (!raw || row.selectedId) return;
+    if (raw !== stable) return; // user still typing
+    if (raw.trim() !== raw) return; // leading/trailing space
+    const match = allIngredients.find(
+      (i) => collator.compare((i.name || "").trim(), raw.trim()) === 0
+    );
+    if (match) {
+      onChange({ selectedId: match.id, selectedItem: match });
+    }
+  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
+
   const selectedUnit = getUnitById(row.unitId) || getUnitById(UNIT_ID.ML);
+
+  // exact match check for showing [+]
+  const hasExactMatch = useMemo(() => {
+    const t = query.trim();
+    if (!t) return true;
+    return allIngredients.some(
+      (i) => collator.compare((i.name || "").trim(), t) === 0
+    );
+  }, [allIngredients, collator, query]);
+
+  const showAddNewBtn =
+    !row.selectedId && query.trim().length > 0 && !hasExactMatch;
 
   const checkbox = (checked, label, onToggle) => (
     <Pressable
@@ -203,56 +331,53 @@ const IngredientRow = memo(function IngredientRow({
         </Pressable>
       </View>
 
-      {/* Name + suggestions */}
-      <Text style={[styles.label, { color: theme.colors.onSurface }]}>
-        Ingredient
-      </Text>
-      <TextInput
-        placeholder="Type ingredient name"
-        placeholderTextColor={theme.colors.onSurfaceVariant}
-        value={query}
-        onChangeText={(t) => {
-          setQuery(t);
-          onChange({ name: t, selectedId: null, selectedItem: null });
-        }}
-        style={[
-          styles.input,
-          {
-            borderColor: theme.colors.outline,
-            color: theme.colors.onSurface,
-            backgroundColor: theme.colors.background,
-          },
-        ]}
-        returnKeyType="done"
-      />
+      {/* Ingredient label + [+] */}
+      <View style={styles.labelRow}>
+        <Text style={[styles.labelText, { color: theme.colors.onSurface }]}>
+          Ingredient
+        </Text>
 
-      {showSuggest && suggestions.length > 0 ? (
-        <View
+        {showAddNewBtn ? (
+          <Pressable
+            onPress={() => onAddNewIngredient(query.trim())}
+            android_ripple={{
+              color: withAlpha(theme.colors.tertiary, 0.2),
+              borderless: true,
+            }}
+            style={styles.addInlineBtn}
+            accessibilityLabel="Add new ingredient"
+          >
+            <MaterialIcons name="add" size={18} color={theme.colors.primary} />
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+              Add
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      {/* Name (anchored) */}
+      <View ref={nameAnchorRef} collapsable={false}>
+        <TextInput
+          placeholder="Type ingredient name"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={query}
+          onChangeText={(t) => {
+            setQuery(t);
+            onChange({ name: t, selectedId: null, selectedItem: null });
+          }}
           style={[
-            styles.suggestBox,
+            styles.input,
             {
-              backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.background,
             },
           ]}
-        >
-          {suggestions.map((s) => (
-            <SuggestionRow
-              key={s.id}
-              item={s}
-              onSelect={(item) => {
-                onChange({
-                  name: item.name,
-                  selectedId: item.id,
-                  selectedItem: item,
-                });
-              }}
-            />
-          ))}
-        </View>
-      ) : null}
+          returnKeyType="done"
+        />
+      </View>
 
-      {/* Quantity + Unit */}
+      {/* Amount + Unit */}
       <View style={styles.row2}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>
@@ -335,6 +460,23 @@ const IngredientRow = memo(function IngredientRow({
           Add substitute
         </Text>
       </Pressable>
+
+      {/* Suggestions dropdown (anchored) */}
+      <IngredientSuggestMenu
+        visible={suggestMenu.visible}
+        anchor={suggestMenu.anchor}
+        anchorWidth={suggestMenu.width}
+        items={suggestions}
+        onSelect={(item) => {
+          onChange({
+            name: item.name,
+            selectedId: item.id,
+            selectedItem: item,
+          });
+          setQuery(item.name);
+        }}
+        onDismiss={() => setSuggestMenu((m) => ({ ...m, visible: false }))}
+      />
     </View>
   );
 });
@@ -343,6 +485,7 @@ const IngredientRow = memo(function IngredientRow({
 export default function AddCocktailScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const route = useRoute();
 
   // base fields
   const [name, setName] = useState("");
@@ -463,6 +606,56 @@ export default function AddCocktailScreen() {
   const closeUnitMenu = useCallback(
     () => setUnitMenu((m) => ({ ...m, visible: false })),
     []
+  );
+
+  // OPEN AddIngredient with prefilled name; return result via params (serializable)
+  const openAddIngredient = useCallback(
+    (initialName, localId) => {
+      navigation.navigate("Ingredients", {
+        screen: "Create",
+        params: {
+          screen: "AddIngredient",
+          params: {
+            initialName, // ← тут обов'язково передати
+            targetLocalId: localId,
+            returnTo: "AddCocktail",
+          },
+        },
+      });
+    },
+    [navigation]
+  );
+
+  // Catch created ingredient returned from AddIngredient (serializable)
+  useFocusEffect(
+    useCallback(() => {
+      const created = route.params?.createdIngredient;
+      const targetLocalId = route.params?.targetLocalId;
+      if (!created || targetLocalId == null) return;
+
+      setAllIngredients((prev) =>
+        prev.some((i) => i.id === created.id) ? prev : [...prev, created]
+      );
+
+      setIngs((prev) =>
+        prev.map((r) =>
+          r.localId === targetLocalId
+            ? {
+                ...r,
+                name: created.name,
+                selectedId: created.id,
+                selectedItem: created,
+              }
+            : r
+        )
+      );
+
+      // clear params so it won't re-apply on next focus
+      navigation.setParams({
+        createdIngredient: undefined,
+        targetLocalId: undefined,
+      });
+    }, [route.params, navigation])
   );
 
   const handleSave = useCallback(async () => {
@@ -640,6 +833,7 @@ export default function AddCocktailScreen() {
           onChange={(patch) => updateRow(row.localId, patch)}
           onRemove={() => removeRow(row.localId)}
           onOpenUnitPicker={(anchorRef) => openUnitMenu(anchorRef, row.localId)}
+          onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
         />
       ))}
 
@@ -699,6 +893,22 @@ const IMAGE_SIZE = 150;
 const styles = StyleSheet.create({
   container: { padding: 24, paddingBottom: 40 },
   label: { fontWeight: "bold", marginTop: 16 },
+
+  // special for Ingredient + [+]
+  labelRow: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  labelText: { fontWeight: "bold" },
+  addInlineBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
 
   input: {
     borderWidth: 1,
@@ -773,30 +983,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-
-  // suggestions dropdown
-  suggestBox: {
-    borderWidth: 1,
-    borderTopWidth: 0, // щоб не було подвійного бордера
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    marginTop: -2, // піднімаємо на 2px
-    overflow: "hidden",
-    maxHeight: 220,
-  },
-  suggestRow: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
-  },
-  suggestLeft: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
-  suggestThumb: { width: 32, height: 32, borderRadius: 6 },
 
   addIngBtn: {
     marginTop: 16,

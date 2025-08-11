@@ -1,3 +1,4 @@
+// src/screens/Ingredients/AddIngredientScreen.js
 import React, {
   useState,
   useEffect,
@@ -22,12 +23,14 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
-  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
@@ -35,9 +38,8 @@ import {
   addIngredient,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
-import { useTabMemory } from "../../context/TabMemoryContext";
 
-// ----------- helpers -----------
+/* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
   const [v, setV] = useState(value);
   useEffect(() => {
@@ -47,70 +49,43 @@ const useDebounced = (value, delay = 300) => {
   return v;
 };
 
-const withAlpha = (hex, alpha = 1) => {
-  // hex -> rgba, supports #rgb and #rrggbb
-  let h = hex?.replace("#", "");
-  if (!h) return `rgba(0,0,0,${alpha})`;
-  if (h.length === 3)
-    h = h
-      .split("")
-      .map((c) => c + c)
-      .join("");
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-};
-
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
+const RIPPLE = { color: "#E3F2FD" };
 
-// pills for tags (memo + стабільний onPress через id)
-const TagPill = memo(function TagPill({ id, name, color, onToggle, theme }) {
+/* -------------- pills for tags (memo) -------------- */
+const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   return (
     <Pressable
       onPress={() => onToggle(id)}
+      android_ripple={RIPPLE}
       style={({ pressed }) => [
         styles.tag,
-        { backgroundColor: color || theme.colors.disabled },
-        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+        { backgroundColor: color || "#ccc" },
+        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
-      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
-      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
-        {name}
-      </Text>
+      <Text style={styles.tagText}>{name}</Text>
     </Pressable>
   );
 });
 
-// row in base menu (memo + стабільний onPress через id)
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect, theme }) {
+/* -------------- row in base menu (memo) -------------- */
+const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
   return (
     <Pressable
       onPress={() => onSelect(id)}
+      android_ripple={RIPPLE}
       style={({ pressed }) => [
         styles.menuRow,
-        pressed && { opacity: 0.8, transform: [{ scale: 0.997 }] },
+        pressed && { opacity: 0.96, transform: [{ scale: 0.997 }] },
       ]}
-      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
       <View style={styles.menuRowInner}>
         {photoUri ? (
-          <Image
-            source={{ uri: photoUri }}
-            style={[
-              styles.menuImg,
-              { backgroundColor: theme.colors.background },
-            ]}
-          />
+          <Image source={{ uri: photoUri }} style={styles.menuImg} />
         ) : (
-          <View
-            style={[
-              styles.menuImg,
-              { backgroundColor: theme.colors.outlineVariant },
-            ]}
-          />
+          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
         )}
         <PaperText numberOfLines={1}>{name}</PaperText>
       </View>
@@ -121,22 +96,16 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect, theme }) {
 export default function AddIngredientScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const route = useRoute();
   const isFocused = useIsFocused();
-  const { getTab } = useTabMemory();
-  const previousTab = getTab("ingredients");
 
-  // ripples from theme
-  const ripple = useMemo(
-    () => ({ color: withAlpha(theme.colors.primary, 0.12) }),
-    [theme.colors.primary]
-  );
-  const lightRipple = useMemo(
-    () => ({ color: withAlpha(theme.colors.onPrimary, 0.15) }),
-    [theme.colors.onPrimary]
-  );
+  // read incoming params (safe defaults)
+  const initialNameParam = route.params?.initialName || "";
+  const targetLocalId = route.params?.targetLocalId;
+  const returnTo = route.params?.returnTo || "AddCocktail"; // screen name inside Cocktails stack
 
   // form state
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialNameParam);
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([
@@ -144,9 +113,9 @@ export default function AddIngredientScreen() {
   ]);
 
   // reference lists
-  const [availableTags, setAvailableTags] = useState([]); // builtin + custom
+  const [availableTags, setAvailableTags] = useState([]);
 
-  // base list (lazy)
+  // base list (lazy) — cached nameLower for filtering
   const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
@@ -158,7 +127,7 @@ export default function AddIngredientScreen() {
     [baseOnlySorted, baseIngredientId]
   );
 
-  // search in base menu
+  // search in base menu (debounced + deferred)
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
@@ -176,6 +145,31 @@ export default function AddIngredientScreen() {
   const searchInputRef = useRef(null);
   const isMountedRef = useRef(true);
 
+  // Always show a back button (consistent across stacks)
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: false,
+      headerLeft: () => (
+        <Pressable
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          android_ripple={{ color: "#00000011", borderless: true }}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <Image
+            // If you use vector icons in header, you can switch to MaterialIcons here.
+            // Using a simple chevron via text/icon is also fine; kept as minimal touch zone.
+            // For consistency with other screens, swap to <MaterialIcons ... /> if preferred.
+            source={undefined}
+            style={{ width: 0, height: 0 }}
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -183,68 +177,29 @@ export default function AddIngredientScreen() {
     };
   }, []);
 
-  // go back fast
-  const handleGoBack = useCallback(() => {
-    if (previousTab) navigation.navigate(previousTab);
-    else navigation.goBack();
-  }, [navigation, previousTab]);
-
-  // always visible back arrow
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerBackVisible: false,
-      headerLeft: () => (
-        <TouchableOpacity
-          onPress={handleGoBack}
-          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <MaterialIcons
-            name={Platform.OS === "ios" ? "chevron-left" : "arrow-back"}
-            size={24}
-            color={theme.colors.onSurface}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, handleGoBack, theme.colors.onSurface]);
-
+  // preset initial name when screen opens
   useEffect(() => {
-    const unsub = navigation.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-      handleGoBack();
-    });
-    return unsub;
-  }, [navigation, handleGoBack]);
+    if (isFocused) {
+      setName(initialNameParam);
+    }
+  }, [isFocused, initialNameParam]);
 
-  // reset form on focus
-  useEffect(() => {
-    if (!isFocused) return;
-    setName("");
-    setDescription("");
-    setPhotoUri(null);
-    setTags([{ id: 10, name: "custom", color: "#AFC9C3FF" }]);
-    setBaseIngredientId(null);
-    setBaseIngredientSearch("");
-  }, [isFocused]);
-
-  // load tags immediately
+  // load tags on focus (fast)
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
     (async () => {
-      const customTags = await getAllTags();
-      if (cancelled || !isMountedRef.current) return;
-      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...customTags]);
+      const custom = await getAllTags();
+      if (!cancelled) {
+        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
+      }
     })();
     return () => {
       cancelled = true;
     };
   }, [isFocused]);
 
-  // lazy-load bases
+  // lazy-load bases (exclude none; it's Add screen)
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
@@ -270,18 +225,18 @@ export default function AddIngredientScreen() {
     }
   }, [basesLoaded, loadingBases]);
 
-  // optional: prefetch bases
+  // gentle prefetch
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
       if (!basesLoaded && !loadingBases) {
         loadBases().catch(() => {});
       }
-    }, 400);
+    }, 500);
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  // toggleTag
+  // stable toggleTag by id
   const toggleTagById = useCallback(
     (id) => {
       setTags((prev) => {
@@ -312,23 +267,55 @@ export default function AddIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    const trimmed = name.trim();
+    const trimmed = (name || "").trim();
     if (!trimmed) {
-      Alert.alert("Please enter a name for the ingredient.");
+      Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    const id = Date.now();
-    const ingredient = {
-      id,
+    const newIng = {
+      id: Date.now(),
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId || null,
+      createdAt: Date.now(),
     };
-    await addIngredient(ingredient);
-    navigation.navigate("IngredientDetails", { id });
-  }, [name, description, photoUri, tags, baseIngredientId, navigation]);
+
+    await addIngredient(newIng);
+
+    // If this screen was opened from AddCocktail, return with params
+    if (targetLocalId != null) {
+      // Navigate back to cocktails stack screen with merge + params
+      navigation.navigate("Cocktails", {
+        screen: returnTo, // e.g., "AddCocktail"
+        params: {
+          createdIngredient: {
+            id: newIng.id,
+            name: newIng.name,
+            photoUri: newIng.photoUri || null,
+            baseIngredientId: newIng.baseIngredientId || null,
+            tags: newIng.tags || [],
+          },
+          targetLocalId,
+        },
+        merge: true,
+      });
+      return;
+    }
+
+    // Fallback: if opened from Ingredients flow directly, go to details (optional)
+    navigation.navigate("IngredientDetails", { id: newIng.id });
+  }, [
+    name,
+    description,
+    photoUri,
+    tags,
+    baseIngredientId,
+    navigation,
+    targetLocalId,
+    returnTo,
+  ]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
@@ -343,7 +330,6 @@ export default function AddIngredientScreen() {
     });
   }, [loadBases]);
 
-  // ---- render ----
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: theme.colors.background }}
@@ -354,7 +340,7 @@ export default function AddIngredientScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Name:
+          Name
         </Text>
         <TextInput
           placeholder="e.g. Lemon juice"
@@ -372,7 +358,7 @@ export default function AddIngredientScreen() {
         />
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Photo:
+          Photo
         </Text>
         <Pressable
           style={[
@@ -383,7 +369,7 @@ export default function AddIngredientScreen() {
             },
           ]}
           onPress={pickImage}
-          android_ripple={ripple}
+          android_ripple={RIPPLE}
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
@@ -400,27 +386,26 @@ export default function AddIngredientScreen() {
         </Pressable>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Tags:
+          Tags
         </Text>
         <View style={styles.tagContainer}>
-          {tags.map((tag) => (
+          {tags.map((t) => (
             <TagPill
-              key={tag.id}
-              id={tag.id}
-              name={tag.name}
-              color={tag.color}
+              key={t.id}
+              id={t.id}
+              name={t.name}
+              color={t.color}
               onToggle={toggleTagById}
-              theme={theme}
             />
           ))}
         </View>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Add Tag:
+          Add Tag
         </Text>
         <View style={styles.tagContainer}>
           {availableTags
-            .filter((t) => !tags.some((tag) => tag.id === t.id))
+            .filter((t) => !tags.some((x) => x.id === t.id))
             .map((t) => (
               <TagPill
                 key={t.id}
@@ -428,16 +413,15 @@ export default function AddIngredientScreen() {
                 name={t.name}
                 color={t.color}
                 onToggle={toggleTagById}
-                theme={theme}
               />
             ))}
         </View>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Base Ingredient:
+          Base Ingredient
         </Text>
 
-        {/* Поле-якір для меню з координатним позиціонуванням */}
+        {/* Anchor field for positioned menu */}
         <View
           ref={anchorRef}
           collapsable={false}
@@ -453,18 +437,17 @@ export default function AddIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
-            android_ripple={ripple}
+            android_ripple={RIPPLE}
           >
             <View style={styles.anchorRow}>
-              {selectedBase?.photoUri && (
+              {selectedBase?.photoUri ? (
                 <Image
                   source={{ uri: selectedBase.photoUri }}
-                  style={[
-                    styles.menuImg,
-                    { backgroundColor: theme.colors.background },
-                  ]}
+                  style={styles.menuImg}
                 />
-              )}
+              ) : selectedBase ? (
+                <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+              ) : null}
               <PaperText
                 style={{
                   color: selectedBase
@@ -519,7 +502,7 @@ export default function AddIngredientScreen() {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator color={theme.colors.primary} />
+              <ActivityIndicator />
               <Text
                 style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}
               >
@@ -540,13 +523,13 @@ export default function AddIngredientScreen() {
                       setBaseIngredientId(null);
                       setMenuVisible(false);
                     }}
+                    android_ripple={RIPPLE}
                     style={({ pressed }) => [
                       styles.menuRow,
-                      pressed && { opacity: 0.9 },
+                      pressed && { opacity: 0.96 },
                     ]}
-                    android_ripple={ripple}
                   >
-                    <View className="menuRowInner" style={styles.menuRowInner}>
+                    <View style={styles.menuRowInner}>
                       <PaperText>None</PaperText>
                     </View>
                   </Pressable>
@@ -559,7 +542,6 @@ export default function AddIngredientScreen() {
                       setBaseIngredientId(id);
                       setMenuVisible(false);
                     }}
-                    theme={theme}
                   />
                 )
               }
@@ -582,7 +564,7 @@ export default function AddIngredientScreen() {
         </Menu>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Description:
+          Description
         </Text>
         <TextInput
           placeholder="Optional description"
@@ -604,7 +586,7 @@ export default function AddIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={lightRipple}
+          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
@@ -616,9 +598,11 @@ export default function AddIngredientScreen() {
   );
 }
 
+/* ---------------- styles ---------------- */
 const styles = StyleSheet.create({
   container: { padding: 24 },
   label: { fontWeight: "bold", marginTop: 16 },
+
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
   anchorInput: { justifyContent: "center", minHeight: 44 },
   anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
@@ -643,7 +627,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { fontWeight: "bold" },
+  tagText: { color: "white", fontWeight: "bold" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {
@@ -654,7 +638,9 @@ const styles = StyleSheet.create({
   },
   menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
   menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
-  menuImg: { width: 40, height: 40, borderRadius: 8 },
+  menuImg: { width: 40, height: 40, borderRadius: 8, backgroundColor: "#fff" },
+  menuImgPlaceholder: { backgroundColor: "#EAEAEA" },
+
   saveButton: {
     marginTop: 24,
     paddingVertical: 12,
