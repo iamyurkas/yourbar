@@ -56,6 +56,18 @@ const useDebounced = (value, delay = 250) => {
   return v;
 };
 
+// --- word-prefix matching (початок кожного слова) ---
+const normalizeUk = (s) => (s || "").toLocaleLowerCase("uk");
+// розбиваємо на слова: латиниця + цифри + кирилиця (U+0400..U+04FF)
+const WORD_SPLIT_RE = /[^a-z0-9\u0400-\u04FF]+/i;
+const wordPrefixMatch = (name, query) => {
+  const n = normalizeUk(name);
+  const q = normalizeUk(query).trim();
+  if (!q) return false;
+  const words = n.split(WORD_SPLIT_RE).filter(Boolean);
+  return words.some((w) => w.startsWith(q));
+};
+
 /* ---------- TagPill ---------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   const theme = useTheme();
@@ -82,18 +94,21 @@ const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
   anchor, // {x,y} — точка під інпутом
   anchorWidth, // ширина інпуту
   items,
+  menuKey,
   maxHeight, // динамічна межа висоти щоб не flip-илось вгору
   onSelect,
   onDismiss,
 }) {
   const theme = useTheme();
+  if (!visible || !items?.length) return null; // ← не рендеримо порожнє меню
   const height =
     typeof maxHeight === "number"
-      ? maxHeight
-      : Math.min(300, SUGGEST_ROW_H * Math.max(1, items?.length || 0));
+      ? Math.min(maxHeight, SUGGEST_ROW_H * items.length)
+      : Math.min(300, SUGGEST_ROW_H * items.length);
 
   return (
     <Menu
+      key={menuKey}
       visible={visible}
       onDismiss={onDismiss}
       anchor={anchor || { x: 0, y: 0 }}
@@ -273,6 +288,7 @@ const IngredientRow = memo(function IngredientRow({
   allIngredients,
   onAddNewIngredient,
 }) {
+  const MIN_CHARS = 2;
   const theme = useTheme();
   const [query, setQuery] = useState(row.name || "");
   const debounced = useDebounced(query, 200);
@@ -288,6 +304,7 @@ const IngredientRow = memo(function IngredientRow({
 
   // keyboard height (щоб не перевертати меню наверх)
   const [kbHeight, setKbHeight] = useState(0);
+  const [menuKey, setMenuKey] = useState(0); // змінюємо щоб ремоунтити Menu
   useEffect(() => {
     const sh = Keyboard.addListener("keyboardDidShow", (e) =>
       setKbHeight(e?.endCoordinates?.height || 0)
@@ -308,14 +325,15 @@ const IngredientRow = memo(function IngredientRow({
   });
 
   // show suggestions whenever 2+ chars AND not selected
-  const showSuggest = debounced.trim().length >= 2 && !row.selectedId;
+  const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
 
-  // filter suggestions
+  // filter suggestions (пошук тільки за префіксом слова)
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
-    const q = debounced.trim().toLowerCase();
+    const q = debounced.trim();
+    if (!q) return [];
     return allIngredients
-      .filter((i) => (i.name || "").toLowerCase().includes(q))
+      .filter((i) => wordPrefixMatch(i.name || "", q))
       .slice(0, 20);
   }, [allIngredients, debounced, showSuggest]);
 
@@ -331,7 +349,7 @@ const IngredientRow = memo(function IngredientRow({
     nameAnchorRef.current.measureInWindow((x, y, w, h) => {
       const screenH = Dimensions.get("window").height;
       const SAFE = 12;
-      const anchorY = y + h - 2;
+      const anchorY = y + h + 28;
       const spaceBelow = Math.max(0, screenH - kbHeight - anchorY - SAFE);
 
       const needed = SUGGEST_ROW_H * Math.max(1, suggestions.length || 1);
@@ -343,6 +361,7 @@ const IngredientRow = memo(function IngredientRow({
         width: w,
         maxHeight: Math.min(needed, maxFit),
       });
+      setMenuKey((k) => k + 1);
     });
   }, [kbHeight, suggestions.length]);
 
@@ -353,8 +372,12 @@ const IngredientRow = memo(function IngredientRow({
     } else if (suggestMenu.visible) {
       setSuggestMenu((m) => ({ ...m, visible: false }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSuggest, suggestions.length, recalcMenu]);
+
+  // додатково — кожна зміна введення (навіть якщо length не змінився)
+  useEffect(() => {
+    if (suggestMenu.visible) recalcMenu();
+  }, [debounced, recalcMenu, suggestMenu.visible]);
 
   // ремірка при зміні розмірів (обертання тощо)
   useEffect(() => {
@@ -477,6 +500,9 @@ const IngredientRow = memo(function IngredientRow({
             onChangeText={(t) => {
               setQuery(t);
               onChange({ name: t, selectedId: null, selectedItem: null });
+              if (t.trim().length < MIN_CHARS) {
+                setSuggestMenu((m) => ({ ...m, visible: false }));
+              }
             }}
             style={[
               styles.input,
@@ -598,6 +624,7 @@ const IngredientRow = memo(function IngredientRow({
         visible={suggestMenu.visible}
         anchor={suggestMenu.anchor}
         anchorWidth={suggestMenu.width}
+        menuKey={menuKey}
         items={suggestions}
         maxHeight={suggestMenu.maxHeight}
         onSelect={(item) => {
@@ -874,6 +901,7 @@ export default function AddCocktailScreen() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
+      onScrollBeginDrag={() => Keyboard.dismiss()}
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: theme.colors.background }}
     >
