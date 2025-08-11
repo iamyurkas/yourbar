@@ -23,6 +23,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -31,6 +32,7 @@ import {
   useIsFocused,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
@@ -38,6 +40,7 @@ import {
   addIngredient,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
+import { useTabMemory } from "../../context/TabMemoryContext";
 
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
@@ -98,11 +101,15 @@ export default function AddIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const { getTab } = useTabMemory();
 
-  // read incoming params (safe defaults)
+  // read incoming params
   const initialNameParam = route.params?.initialName || "";
   const targetLocalId = route.params?.targetLocalId;
-  const returnTo = route.params?.returnTo || "AddCocktail"; // screen name inside Cocktails stack
+  const returnTo = route.params?.returnTo || "AddCocktail";
+  const fromCocktailFlow = targetLocalId != null;
+  const lastIngredientsTab =
+    (typeof getTab === "function" && getTab("ingredients")) || "All";
 
   // form state
   const [name, setName] = useState(initialNameParam);
@@ -115,19 +122,18 @@ export default function AddIngredientScreen() {
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
 
-  // base list (lazy) — cached nameLower for filtering
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
+  // base list
+  const [baseOnlySorted, setBaseOnlySorted] = useState([]);
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
 
-  // base link
   const [baseIngredientId, setBaseIngredientId] = useState(null);
   const selectedBase = useMemo(
     () => baseOnlySorted.find((i) => i.id === baseIngredientId),
     [baseOnlySorted, baseIngredientId]
   );
 
-  // search in base menu (debounced + deferred)
+  // search in base menu
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
@@ -139,37 +145,64 @@ export default function AddIngredientScreen() {
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
+  const [menuAnchor, setMenuAnchor] = useState(null);
   const [anchorWidth, setAnchorWidth] = useState(0);
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  // Always show a back button (consistent across stacks)
+  /* ---------- Back button logic ---------- */
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerBackVisible: false,
-      headerLeft: () => (
-        <Pressable
-          onPress={() => navigation.goBack()}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          android_ripple={{ color: "#00000011", borderless: true }}
-          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <Image
-            // If you use vector icons in header, you can switch to MaterialIcons here.
-            // Using a simple chevron via text/icon is also fine; kept as minimal touch zone.
-            // For consistency with other screens, swap to <MaterialIcons ... /> if preferred.
-            source={undefined}
-            style={{ width: 0, height: 0 }}
+      headerLeft: (props) =>
+        fromCocktailFlow ? (
+          <HeaderBackButton
+            {...props}
+            onPress={() =>
+              navigation.navigate("Cocktails", { screen: returnTo })
+            }
+            labelVisible={false}
           />
-        </Pressable>
-      ),
+        ) : (
+          <HeaderBackButton
+            {...props}
+            onPress={() =>
+              navigation.navigate("Ingredients", { screen: lastIngredientsTab })
+            }
+            labelVisible={false}
+          />
+        ),
     });
-  }, [navigation]);
+  }, [navigation, fromCocktailFlow, returnTo, lastIngredientsTab]);
 
+  useEffect(() => {
+    if (!isFocused) return;
+
+    const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      if (fromCocktailFlow) {
+        navigation.navigate("Cocktails", { screen: returnTo });
+      } else {
+        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+      }
+    });
+
+    const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (fromCocktailFlow) {
+        navigation.navigate("Cocktails", { screen: returnTo });
+      } else {
+        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+      }
+      return true;
+    });
+
+    return () => {
+      beforeRemoveSub();
+      hwSub.remove();
+    };
+  }, [isFocused, navigation, fromCocktailFlow, returnTo, lastIngredientsTab]);
+
+  /* ---------- Lifecycle ---------- */
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -177,14 +210,12 @@ export default function AddIngredientScreen() {
     };
   }, []);
 
-  // preset initial name when screen opens
   useEffect(() => {
     if (isFocused) {
       setName(initialNameParam);
     }
   }, [isFocused, initialNameParam]);
 
-  // load tags on focus (fast)
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
@@ -199,7 +230,6 @@ export default function AddIngredientScreen() {
     };
   }, [isFocused]);
 
-  // lazy-load bases (exclude none; it's Add screen)
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
@@ -225,7 +255,6 @@ export default function AddIngredientScreen() {
     }
   }, [basesLoaded, loadingBases]);
 
-  // gentle prefetch
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
@@ -236,7 +265,7 @@ export default function AddIngredientScreen() {
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  // stable toggleTag by id
+  /* ---------- UI handlers ---------- */
   const toggleTagById = useCallback(
     (id) => {
       setTags((prev) => {
@@ -284,11 +313,9 @@ export default function AddIngredientScreen() {
 
     await addIngredient(newIng);
 
-    // If this screen was opened from AddCocktail, return with params
-    if (targetLocalId != null) {
-      // Navigate back to cocktails stack screen with merge + params
+    if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
-        screen: returnTo, // e.g., "AddCocktail"
+        screen: returnTo,
         params: {
           createdIngredient: {
             id: newIng.id,
@@ -304,7 +331,6 @@ export default function AddIngredientScreen() {
       return;
     }
 
-    // Fallback: if opened from Ingredients flow directly, go to details (optional)
     navigation.navigate("IngredientDetails", { id: newIng.id });
   }, [
     name,
@@ -313,8 +339,9 @@ export default function AddIngredientScreen() {
     tags,
     baseIngredientId,
     navigation,
-    targetLocalId,
+    fromCocktailFlow,
     returnTo,
+    targetLocalId,
   ]);
 
   const openMenu = useCallback(() => {
@@ -330,6 +357,7 @@ export default function AddIngredientScreen() {
     });
   }, [loadBases]);
 
+  /* ---------- Render ---------- */
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: theme.colors.background }}
@@ -421,7 +449,6 @@ export default function AddIngredientScreen() {
           Base Ingredient
         </Text>
 
-        {/* Anchor field for positioned menu */}
         <View
           ref={anchorRef}
           collapsable={false}
@@ -598,7 +625,6 @@ export default function AddIngredientScreen() {
   );
 }
 
-/* ---------------- styles ---------------- */
 const styles = StyleSheet.create({
   container: { padding: 24 },
   label: { fontWeight: "bold", marginTop: 16 },
