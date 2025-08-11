@@ -21,7 +21,7 @@ import {
   useTheme,
 } from "react-native-paper";
 
-import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
+import { getUserTags, saveUserTags } from "../../storage/ingredientTagsStorage";
 
 // ====== ТЕМА (MD3) — твої кольори ======
 const theme = {

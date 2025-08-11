@@ -10,3 +10,15 @@ export const BUILTIN_INGREDIENT_TAGS = [
   { id: 9, name: "dairy", color: "#4DABF7" },
   { id: 10, name: "custom", color: "#AFC9C3FF" },
 ];
+
+// Утиліти
+export const ingredientTagById = (id) =>
+  BUILTIN_INGREDIENT_TAGS.find((t) => t.id === id) || null;
+
+export const searchIngredientTags = (q) => {
+  const s = (q || "").trim().toLowerCase();
+  if (!s) return BUILTIN_INGREDIENT_TAGS;
+  return BUILTIN_INGREDIENT_TAGS.filter((t) =>
+    t.name.toLowerCase().includes(s)
+  );
+};

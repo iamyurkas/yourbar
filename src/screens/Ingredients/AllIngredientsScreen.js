@@ -21,15 +21,14 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import {
   getAllIngredients,
   saveIngredient,
-} from "../storage/ingredientsStorage";
-import HeaderWithSearch from "../components/HeaderWithSearch";
-import { useTabMemory } from "../context/TabMemoryContext";
+} from "../../storage/ingredientsStorage";
+import HeaderWithSearch from "../../components/HeaderWithSearch";
+import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 
 // ---- Helpers ----
 const withAlpha = (hex, alpha) => {
-  // hex = #RRGGBB -> #RRGGBBAA
   if (!hex || hex[0] !== "#" || hex.length !== 7) return hex;
   const a = Math.round(alpha * 255)
     .toString(16)
@@ -96,7 +95,6 @@ const ItemRow = memo(
             />
           )}
 
-          {/* Ліва зона — відкриття деталей */}
           <Pressable
             onPress={() => onPress(id)}
             android_ripple={ripple}
@@ -155,7 +153,6 @@ const ItemRow = memo(
             </View>
           </Pressable>
 
-          {/* Чекбокс — оптимістичний апдейт + прес-ефект */}
           <Pressable
             onPress={() => onToggleInBar(id)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -245,7 +242,7 @@ export default function AllIngredientsScreen() {
 
   const deferredSearch = useDeferredValue(searchDebounced);
 
-  // батчинг збережень
+  // batch saves
   const pendingSaveRef = useRef(new Map());
   const flushTimerRef = useRef(null);
 
@@ -370,10 +367,6 @@ export default function AllIngredientsScreen() {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         estimatedItemSize={ITEM_HEIGHT}
-        contentContainerStyle={[
-          styles.listContent,
-          { backgroundColor: theme.colors.background },
-        ]}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews
         initialNumToRender={12}
@@ -393,14 +386,10 @@ export default function AllIngredientsScreen() {
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1 },
-  listContent: {},
 
-  highlightWrapper: {
-    borderBottomWidth: ROW_BORDER,
-  },
-  normalWrapper: {
-    borderBottomWidth: ROW_BORDER,
-  },
+  highlightWrapper: { borderBottomWidth: ROW_BORDER },
+  normalWrapper: { borderBottomWidth: ROW_BORDER },
+
   item: {
     flexDirection: "row",
     alignItems: "center",
@@ -410,9 +399,7 @@ const styles = StyleSheet.create({
   },
   dimmed: { opacity: 0.88 },
 
-  navigatingRow: {
-    opacity: 0.6,
-  },
+  navigatingRow: { opacity: 0.6 },
 
   leftTapZone: {
     flex: 1,
@@ -449,10 +436,7 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
 
   cartIcon: { position: "absolute", bottom: 4, right: 36, zIndex: 1 },
-  brandedStripe: {
-    borderLeftWidth: 4,
-    paddingLeft: 4,
-  },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 4 },
 
   checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
   pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },

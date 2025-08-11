@@ -4,10 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import AllIngredientsScreen from "./AllIngredientsScreen";
+
+import MyIngredientsScreen from "./MyIngredientsScreen";
+
+import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
+
 import IngredientDetailsScreen from "./IngredientDetailsScreen";
 import EditIngredientScreen from "./EditIngredientScreen";
-import MyIngredientsScreen from "./MyIngredientsScreen";
-import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
 import AddIngredientScreen from "./AddIngredientScreen";
 
 const Tab = createBottomTabNavigator();

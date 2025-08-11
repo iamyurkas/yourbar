@@ -26,9 +26,9 @@ import {
   getIngredientById,
   getAllIngredients,
   saveIngredient,
-} from "../storage/ingredientsStorage";
+} from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTabMemory } from "../context/TabMemoryContext";
+import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 
 const IMAGE_SIZE = 140;

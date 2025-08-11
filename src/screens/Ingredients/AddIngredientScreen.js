@@ -25,23 +25,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import {
-  useNavigation,
-  useRoute,
-  useIsFocused,
-} from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
-
-import { getAllTags } from "../storage/ingredientTagsStorage";
-import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
-import {
-  saveIngredient,
-  deleteIngredient,
-  getIngredientById,
-  getAllIngredients,
-} from "../storage/ingredientsStorage";
-import { useTabMemory } from "../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
+
+import { getAllTags } from "../../storage/ingredientTagsStorage";
+import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
+import {
+  addIngredient,
+  getAllIngredients,
+} from "../../storage/ingredientsStorage";
+import { useTabMemory } from "../../context/TabMemoryContext";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -53,22 +47,35 @@ const useDebounced = (value, delay = 300) => {
   return v;
 };
 
+const withAlpha = (hex, alpha = 1) => {
+  // hex -> rgba, supports #rgb and #rrggbb
+  let h = hex?.replace("#", "");
+  if (!h) return `rgba(0,0,0,${alpha})`;
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+};
+
 const IMAGE_SIZE = 120;
 const MENU_ROW_HEIGHT = 56;
 
-// pills for tags (memo, стабільний onPress через id)
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
-  const theme = useTheme();
-  const ripple = { color: theme.colors.outlineVariant };
+// pills for tags (memo + стабільний onPress через id)
+const TagPill = memo(function TagPill({ id, name, color, onToggle, theme }) {
   return (
     <Pressable
       onPress={() => onToggle(id)}
-      android_ripple={ripple}
       style={({ pressed }) => [
         styles.tag,
         { backgroundColor: color || theme.colors.disabled },
-        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
       ]}
+      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
       <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
         {name}
@@ -77,18 +84,16 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-// row in base menu (memo, стабільний onPress через id)
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
-  const theme = useTheme();
-  const ripple = { color: theme.colors.outlineVariant };
+// row in base menu (memo + стабільний onPress через id)
+const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect, theme }) {
   return (
     <Pressable
       onPress={() => onSelect(id)}
-      android_ripple={ripple}
       style={({ pressed }) => [
         styles.menuRow,
-        pressed && { opacity: 0.9, transform: [{ scale: 0.997 }] },
+        pressed && { opacity: 0.8, transform: [{ scale: 0.997 }] },
       ]}
+      android_ripple={{ color: withAlpha(theme.colors.primary, 0.12) }}
     >
       <View style={styles.menuRowInner}>
         {photoUri ? (
@@ -107,34 +112,41 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
             ]}
           />
         )}
-        <PaperText numberOfLines={1} style={{ color: theme.colors.onSurface }}>
-          {name}
-        </PaperText>
+        <PaperText numberOfLines={1}>{name}</PaperText>
       </View>
     </Pressable>
   );
 });
 
-export default function EditIngredientScreen() {
+export default function AddIngredientScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
   const previousTab = getTab("ingredients");
-  const currentId = route.params?.id;
 
-  // entity + form state
-  const [ingredient, setIngredient] = useState(null);
+  // ripples from theme
+  const ripple = useMemo(
+    () => ({ color: withAlpha(theme.colors.primary, 0.12) }),
+    [theme.colors.primary]
+  );
+  const lightRipple = useMemo(
+    () => ({ color: withAlpha(theme.colors.onPrimary, 0.15) }),
+    [theme.colors.onPrimary]
+  );
+
+  // form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState([
+    { id: 10, name: "other", color: "#AFC9C3FF" },
+  ]);
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]); // builtin + custom
 
-  // base list (lazy) — кешуємо nameLower для швидкого фільтру
+  // base list (lazy)
   const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
@@ -146,14 +158,7 @@ export default function EditIngredientScreen() {
     [baseOnlySorted, baseIngredientId]
   );
 
-  // anchored menu
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
-  const [anchorWidth, setAnchorWidth] = useState(0);
-  const anchorRef = useRef(null);
-  const searchInputRef = useRef(null);
-
-  // search in base menu (debounced + deferred)
+  // search in base menu
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
@@ -163,7 +168,14 @@ export default function EditIngredientScreen() {
     return baseOnlySorted.filter((i) => i.nameLower.includes(q));
   }, [baseOnlySorted, deferredQuery]);
 
+  // anchored menu
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null); // { x, y }
+  const [anchorWidth, setAnchorWidth] = useState(0);
+  const anchorRef = useRef(null);
+  const searchInputRef = useRef(null);
   const isMountedRef = useRef(true);
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -171,12 +183,13 @@ export default function EditIngredientScreen() {
     };
   }, []);
 
-  // завжди повертаємось на деталі поточного інгредієнта
+  // go back fast
   const handleGoBack = useCallback(() => {
-    navigation.navigate("IngredientDetails", { id: currentId });
-  }, [navigation, currentId]);
+    if (previousTab) navigation.navigate(previousTab);
+    else navigation.goBack();
+  }, [navigation, previousTab]);
 
-  // видима кнопка Back у хедері
+  // always visible back arrow
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -189,7 +202,7 @@ export default function EditIngredientScreen() {
           accessibilityLabel="Back"
         >
           <MaterialIcons
-            name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+            name={Platform.OS === "ios" ? "chevron-left" : "arrow-back"}
             size={24}
             color={theme.colors.onSurface}
           />
@@ -198,7 +211,6 @@ export default function EditIngredientScreen() {
     });
   }, [navigation, handleGoBack, theme.colors.onSurface]);
 
-  // перехоплюємо системний back/gesture
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
@@ -207,38 +219,32 @@ export default function EditIngredientScreen() {
     return unsub;
   }, [navigation, handleGoBack]);
 
-  // load tags + entity on focus (паралельно)
+  // reset form on focus
+  useEffect(() => {
+    if (!isFocused) return;
+    setName("");
+    setDescription("");
+    setPhotoUri(null);
+    setTags([{ id: 10, name: "custom", color: "#AFC9C3FF" }]);
+    setBaseIngredientId(null);
+    setBaseIngredientSearch("");
+  }, [isFocused]);
+
+  // load tags immediately
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
-
     (async () => {
-      try {
-        const [customTags, data] = await Promise.all([
-          getAllTags(),
-          getIngredientById(currentId),
-        ]);
-        if (cancelled || !isMountedRef.current) return;
-
-        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(customTags || [])]);
-
-        if (data) {
-          setIngredient(data);
-          setName(data.name || "");
-          setDescription(data.description || "");
-          setPhotoUri(data.photoUri || null);
-          setTags(Array.isArray(data.tags) ? data.tags : []);
-          setBaseIngredientId(data.baseIngredientId || null);
-        }
-      } catch {}
+      const customTags = await getAllTags();
+      if (cancelled || !isMountedRef.current) return;
+      setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...customTags]);
     })();
-
     return () => {
       cancelled = true;
     };
-  }, [isFocused, currentId]);
+  }, [isFocused]);
 
-  // lazy-load bases (exclude current ingredient)
+  // lazy-load bases
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
     setLoadingBases(true);
@@ -246,7 +252,7 @@ export default function EditIngredientScreen() {
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
       const baseOnly = ingredients
-        .filter((i) => !i.baseIngredientId && i.id !== currentId)
+        .filter((i) => !i.baseIngredientId)
         .sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         )
@@ -262,18 +268,20 @@ export default function EditIngredientScreen() {
     } finally {
       if (isMountedRef.current) setLoadingBases(false);
     }
-  }, [basesLoaded, loadingBases, currentId]);
+  }, [basesLoaded, loadingBases]);
 
-  // префетч баз
+  // optional: prefetch bases
   useEffect(() => {
     if (!isFocused) return;
     const t = setTimeout(() => {
-      if (!basesLoaded && !loadingBases) loadBases().catch(() => {});
-    }, 500);
+      if (!basesLoaded && !loadingBases) {
+        loadBases().catch(() => {});
+      }
+    }, 400);
     return () => clearTimeout(t);
   }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
-  // toggleTag через id
+  // toggleTag
   const toggleTagById = useCallback(
     (id) => {
       setTags((prev) => {
@@ -309,43 +317,18 @@ export default function EditIngredientScreen() {
       Alert.alert("Please enter a name for the ingredient.");
       return;
     }
-    if (!ingredient) return;
-
-    const updated = {
-      ...ingredient,
+    const id = Date.now();
+    const ingredient = {
+      id,
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId || null,
     };
-    await saveIngredient(updated);
-    navigation.navigate("IngredientDetails", { id: updated.id });
-  }, [
-    ingredient,
-    name,
-    description,
-    photoUri,
-    tags,
-    baseIngredientId,
-    navigation,
-  ]);
-
-  const handleDelete = useCallback(() => {
-    if (!ingredient) return;
-    Alert.alert("Delete Ingredient", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          await deleteIngredient(ingredient.id);
-          if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
-        },
-      },
-    ]);
-  }, [ingredient, navigation, previousTab]);
+    await addIngredient(ingredient);
+    navigation.navigate("IngredientDetails", { id });
+  }, [name, description, photoUri, tags, baseIngredientId, navigation]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
@@ -360,16 +343,7 @@ export default function EditIngredientScreen() {
     });
   }, [loadBases]);
 
-  if (!ingredient) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator color={theme.colors.primary} />
-      </View>
-    );
-  }
-
-  const ripple = { color: theme.colors.outlineVariant };
-
+  // ---- render ----
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: theme.colors.background }}
@@ -429,13 +403,14 @@ export default function EditIngredientScreen() {
           Tags:
         </Text>
         <View style={styles.tagContainer}>
-          {tags.map((t) => (
+          {tags.map((tag) => (
             <TagPill
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              color={t.color}
+              key={tag.id}
+              id={tag.id}
+              name={tag.name}
+              color={tag.color}
               onToggle={toggleTagById}
+              theme={theme}
             />
           ))}
         </View>
@@ -445,7 +420,7 @@ export default function EditIngredientScreen() {
         </Text>
         <View style={styles.tagContainer}>
           {availableTags
-            .filter((t) => !tags.some((x) => x.id === t.id))
+            .filter((t) => !tags.some((tag) => tag.id === t.id))
             .map((t) => (
               <TagPill
                 key={t.id}
@@ -453,6 +428,7 @@ export default function EditIngredientScreen() {
                 name={t.name}
                 color={t.color}
                 onToggle={toggleTagById}
+                theme={theme}
               />
             ))}
         </View>
@@ -564,16 +540,14 @@ export default function EditIngredientScreen() {
                       setBaseIngredientId(null);
                       setMenuVisible(false);
                     }}
-                    android_ripple={ripple}
                     style={({ pressed }) => [
                       styles.menuRow,
                       pressed && { opacity: 0.9 },
                     ]}
+                    android_ripple={ripple}
                   >
-                    <View style={styles.menuRowInner}>
-                      <PaperText style={{ color: theme.colors.onSurface }}>
-                        None
-                      </PaperText>
+                    <View className="menuRowInner" style={styles.menuRowInner}>
+                      <PaperText>None</PaperText>
                     </View>
                   </Pressable>
                 ) : (
@@ -585,6 +559,7 @@ export default function EditIngredientScreen() {
                       setBaseIngredientId(id);
                       setMenuVisible(false);
                     }}
+                    theme={theme}
                   />
                 )
               }
@@ -629,21 +604,11 @@ export default function EditIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={{ color: theme.colors.onPrimary }}
+          android_ripple={lightRipple}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Changes
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
-          onPress={handleDelete}
-          android_ripple={{ color: theme.colors.onErrorContainer }}
-        >
-          <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
-            Delete Ingredient
+            Save Ingredient
           </Text>
         </Pressable>
       </ScrollView>
@@ -690,7 +655,6 @@ const styles = StyleSheet.create({
   menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
   menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
   menuImg: { width: 40, height: 40, borderRadius: 8 },
-
   saveButton: {
     marginTop: 24,
     paddingVertical: 12,

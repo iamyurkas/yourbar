@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function CocktailsScreen() {
+export default function EditCocktailScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Cocktails coming soon!</Text>
+      <Text style={styles.text}>Edit cocktail coming soon!</Text>
     </View>
   );
 }

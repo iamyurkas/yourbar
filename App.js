@@ -7,12 +7,12 @@ import { TabMemoryProvider } from "./src/context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import CocktailsScreen from "./src/screens/CocktailsScreen";
+import CocktailsTabScreen from "./src/screens/Cocktails/CocktailsTabScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
-import IngredientsTabsScreen from "./src/screens/IngredientsTabsScreen";
+import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScreen";
 
 import GeneralMenuScreen from "./src/screens/GeneralMenuScreen";
-import EditCustomTagsScreen from "./src/screens/EditCustomTagsScreen";
+import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
 import { Provider as PaperProvider } from "react-native-paper";
 import { AppTheme } from "./src/theme";
 import { useEffect } from "react";
@@ -43,7 +43,7 @@ function Tabs() {
         tabBarInactiveTintColor: "#888",
       })}
     >
-      <Tab.Screen name="Cocktails" component={CocktailsScreen} />
+      <Tab.Screen name="Cocktails" component={CocktailsTabScreen} />
       <Tab.Screen name="Shaker" component={ShakerScreen} />
       <Tab.Screen name="Ingredients" component={IngredientsTabsScreen} />
     </Tab.Navigator>
