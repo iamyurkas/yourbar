@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "react-native-paper";
 
 import AllIngredientsScreen from "./AllIngredientsScreen";
 
@@ -40,6 +41,7 @@ function CreateIngredientStack() {
 }
 
 export default function IngredientsTabsScreen() {
+  const theme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -52,8 +54,8 @@ export default function IngredientsTabsScreen() {
           else if (route.name === "Create") iconName = "add-circle-outline";
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#4DABF7",
-        tabBarInactiveTintColor: "#888",
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
       })}
     >
       <Tab.Screen name="All" component={AllIngredientsScreen} />

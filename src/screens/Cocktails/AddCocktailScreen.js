@@ -18,6 +18,8 @@ import {
   Pressable,
   Platform,
   FlatList,
+  Dimensions,
+  Keyboard,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -33,6 +35,7 @@ import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import UnitPicker from "../../components/UnitPicker";
 import { UNIT_ID, getUnitById } from "../../constants/measureUnits";
+import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -71,27 +74,35 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-/* ---------- Anchored suggestions dropdown ---------- */
-const SUGGEST_ROW_H = 48;
+/* ---------- Ingredient suggestions dropdown (як базові/брендовані, без пошуку) ---------- */
+const SUGGEST_ROW_H = 56; // візуальний паритет з іншим меню
 
 const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
   visible,
-  anchor, // {x,y}
-  anchorWidth,
+  anchor, // {x,y} — точка під інпутом
+  anchorWidth, // ширина інпуту
   items,
+  maxHeight, // динамічна межа висоти щоб не flip-илось вгору
   onSelect,
   onDismiss,
 }) {
   const theme = useTheme();
+  const height =
+    typeof maxHeight === "number"
+      ? maxHeight
+      : Math.min(300, SUGGEST_ROW_H * Math.max(1, items?.length || 0));
+
   return (
     <Menu
       visible={visible}
       onDismiss={onDismiss}
       anchor={anchor || { x: 0, y: 0 }}
+      anchorPosition="bottom"
       contentStyle={{
         width: anchorWidth || 260,
         backgroundColor: theme.colors.surface,
       }}
+      style={{}} // без transform — працюємо координатним якорем
     >
       <FlatList
         data={items}
@@ -115,7 +126,7 @@ const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
                 pressed && { opacity: 0.96 },
               ]}
             >
-              {/* 4px stripe for branded; transparent for regular to keep alignment */}
+              {/* 4px stripe для branded — як у головному меню */}
               <View
                 style={{
                   width: 4,
@@ -159,15 +170,92 @@ const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
           </>
         )}
         style={{
-          height: Math.min(
-            300,
-            SUGGEST_ROW_H * Math.max(1, items?.length || 0)
-          ),
+          height,
         }}
         keyboardShouldPersistTaps="handled"
         getItemLayout={(_, i) => ({
           length: SUGGEST_ROW_H,
           offset: SUGGEST_ROW_H * i,
+          index: i,
+        })}
+      />
+    </Menu>
+  );
+});
+
+/* ---------- GlasswareMenu (no search) ---------- */
+const GLASS_ROW_H = 56;
+const GLASS_MENU_W = 249; // фіксована ширина меню склянок
+
+const GlasswareMenu = memo(function GlasswareMenu({
+  visible,
+  anchor, // {x, y} — ЛІВИЙ край меню
+  onSelect,
+  onDismiss,
+}) {
+  const theme = useTheme();
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={onDismiss}
+      anchor={anchor || { x: 0, y: 0 }}
+      contentStyle={{
+        width: GLASS_MENU_W,
+        backgroundColor: theme.colors.surface,
+      }}
+    >
+      <FlatList
+        data={GLASSWARE}
+        keyExtractor={(g) => g.id}
+        renderItem={({ item, index }) => (
+          <>
+            {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
+            <Pressable
+              onPress={() => {
+                onSelect?.(item);
+                onDismiss?.();
+              }}
+              android_ripple={{ color: theme.colors.outlineVariant }}
+              style={({ pressed }) => [
+                {
+                  height: GLASS_ROW_H,
+                  paddingHorizontal: 12,
+                  flexDirection: "row",
+                  alignItems: "center",
+                },
+                pressed && { opacity: 0.96 },
+              ]}
+            >
+              {item.image ? (
+                <Image
+                  source={item.image}
+                  style={{ width: 32, height: 32, marginRight: 10 }}
+                  resizeMode="contain"
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    marginRight: 10,
+                    backgroundColor: theme.colors.outlineVariant,
+                    borderRadius: 6,
+                  }}
+                />
+              )}
+              <Text style={{ color: theme.colors.onSurface, flex: 1 }}>
+                {item.name}
+              </Text>
+            </Pressable>
+          </>
+        )}
+        style={{
+          height: Math.min(360, GLASS_ROW_H * GLASSWARE.length),
+        }}
+        keyboardShouldPersistTaps="handled"
+        getItemLayout={(_, i) => ({
+          length: GLASS_ROW_H,
+          offset: GLASS_ROW_H * i,
           index: i,
         })}
       />
@@ -181,9 +269,9 @@ const IngredientRow = memo(function IngredientRow({
   row,
   onChange,
   onRemove,
-  onOpenUnitPicker, // (anchorRef) => void
+  onOpenUnitPicker,
   allIngredients,
-  onAddNewIngredient, // (name: string) => void
+  onAddNewIngredient,
 }) {
   const theme = useTheme();
   const [query, setQuery] = useState(row.name || "");
@@ -198,17 +286,31 @@ const IngredientRow = memo(function IngredientRow({
   const nameAnchorRef = useRef(null);
   const unitAnchorRef = useRef(null);
 
+  // keyboard height (щоб не перевертати меню наверх)
+  const [kbHeight, setKbHeight] = useState(0);
+  useEffect(() => {
+    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
+      setKbHeight(e?.endCoordinates?.height || 0)
+    );
+    const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
+    return () => {
+      sh.remove();
+      hd.remove();
+    };
+  }, []);
+
   // anchored suggest state
   const [suggestMenu, setSuggestMenu] = useState({
     visible: false,
     anchor: null,
     width: 0,
+    maxHeight: 0,
   });
 
   // show suggestions whenever 2+ chars AND not selected
   const showSuggest = debounced.trim().length >= 2 && !row.selectedId;
 
-  // filter suggestions — refine as user types more
+  // filter suggestions
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
     const q = debounced.trim().toLowerCase();
@@ -223,32 +325,52 @@ const IngredientRow = memo(function IngredientRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.name]);
 
-  // open/close suggestions menu (slightly raised by 2px)
-  useEffect(() => {
-    if (showSuggest && suggestions.length > 0 && nameAnchorRef.current) {
-      nameAnchorRef.current.measureInWindow((x, y, w, h) => {
-        setSuggestMenu({
-          visible: true,
-          anchor: { x, y: y + h - 2 },
-          width: w,
-        });
+  // утиліта: порахувати позицію + максимально допустиму висоту
+  const recalcMenu = useCallback(() => {
+    if (!nameAnchorRef.current) return;
+    nameAnchorRef.current.measureInWindow((x, y, w, h) => {
+      const screenH = Dimensions.get("window").height;
+      const SAFE = 12;
+      const anchorY = y + h - 2;
+      const spaceBelow = Math.max(0, screenH - kbHeight - anchorY - SAFE);
+
+      const needed = SUGGEST_ROW_H * Math.max(1, suggestions.length || 1);
+      const maxFit = Math.min(300, Math.max(SUGGEST_ROW_H, spaceBelow));
+
+      setSuggestMenu({
+        visible: true,
+        anchor: { x, y: anchorY },
+        width: w,
+        maxHeight: Math.min(needed, maxFit),
       });
-    } else if (
-      suggestMenu.visible &&
-      (!showSuggest || suggestions.length === 0)
-    ) {
+    });
+  }, [kbHeight, suggestions.length]);
+
+  // open/close + ремірка при звуженні пошуку
+  useEffect(() => {
+    if (showSuggest && suggestions.length > 0) {
+      recalcMenu();
+    } else if (suggestMenu.visible) {
       setSuggestMenu((m) => ({ ...m, visible: false }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showSuggest, suggestions.length]);
+  }, [showSuggest, suggestions.length, recalcMenu]);
 
-  // Auto-bind selection if exact match (case/accents-insensitive)
+  // ремірка при зміні розмірів (обертання тощо)
+  useEffect(() => {
+    const sub = Dimensions.addEventListener("change", () => {
+      if (suggestMenu.visible) recalcMenu();
+    });
+    return () => sub?.remove?.();
+  }, [suggestMenu.visible, recalcMenu]);
+
+  // Auto-bind selection if exact match
   useEffect(() => {
     const raw = query;
     const stable = debounced;
     if (!raw || row.selectedId) return;
-    if (raw !== stable) return; // user still typing
-    if (raw.trim() !== raw) return; // leading/trailing space
+    if (raw !== stable) return;
+    if (raw.trim() !== raw) return;
     const match = allIngredients.find(
       (i) => collator.compare((i.name || "").trim(), raw.trim()) === 0
     );
@@ -259,7 +381,7 @@ const IngredientRow = memo(function IngredientRow({
 
   const selectedUnit = getUnitById(row.unitId) || getUnitById(UNIT_ID.ML);
 
-  // exact match check for showing [+]
+  // exact match check for showing [+] — >1 символа
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
     if (!t) return true;
@@ -269,7 +391,7 @@ const IngredientRow = memo(function IngredientRow({
   }, [allIngredients, collator, query]);
 
   const showAddNewBtn =
-    !row.selectedId && query.trim().length > 0 && !hasExactMatch;
+    !row.selectedId && query.trim().length > 1 && !hasExactMatch;
 
   const checkbox = (checked, label, onToggle) => (
     <Pressable
@@ -331,11 +453,43 @@ const IngredientRow = memo(function IngredientRow({
         </Pressable>
       </View>
 
-      {/* Ingredient label + [+] */}
+      {/* Ingredient */}
       <View style={styles.labelRow}>
         <Text style={[styles.labelText, { color: theme.colors.onSurface }]}>
           Ingredient
         </Text>
+      </View>
+
+      {/* Name input + inline [+Add] in one row */}
+      <View style={styles.inputRow}>
+        <View
+          ref={nameAnchorRef}
+          collapsable={false}
+          style={{ flex: 1 }}
+          onLayout={() => {
+            if (suggestMenu.visible) recalcMenu();
+          }}
+        >
+          <TextInput
+            placeholder="Type ingredient name"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={query}
+            onChangeText={(t) => {
+              setQuery(t);
+              onChange({ name: t, selectedId: null, selectedItem: null });
+            }}
+            style={[
+              styles.input,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.background,
+                marginTop: 0,
+              },
+            ]}
+            returnKeyType="done"
+          />
+        </View>
 
         {showAddNewBtn ? (
           <Pressable
@@ -353,28 +507,6 @@ const IngredientRow = memo(function IngredientRow({
             </Text>
           </Pressable>
         ) : null}
-      </View>
-
-      {/* Name (anchored) */}
-      <View ref={nameAnchorRef} collapsable={false}>
-        <TextInput
-          placeholder="Type ingredient name"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={query}
-          onChangeText={(t) => {
-            setQuery(t);
-            onChange({ name: t, selectedId: null, selectedItem: null });
-          }}
-          style={[
-            styles.input,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.background,
-            },
-          ]}
-          returnKeyType="done"
-        />
       </View>
 
       {/* Amount + Unit */}
@@ -467,6 +599,7 @@ const IngredientRow = memo(function IngredientRow({
         anchor={suggestMenu.anchor}
         anchorWidth={suggestMenu.width}
         items={suggestions}
+        maxHeight={suggestMenu.maxHeight}
         onSelect={(item) => {
           onChange({
             name: item.name,
@@ -493,6 +626,7 @@ export default function AddCocktailScreen() {
   const [tags, setTags] = useState([]);
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
+  const [glassId, setGlassId] = useState("cocktail_glass");
 
   // ingredients list
   const [ings, setIngs] = useState([
@@ -517,6 +651,13 @@ export default function AddCocktailScreen() {
     anchor: null, // { x, y }
     width: 0,
   });
+
+  // glass anchored menu state (вирівняно по правому краю)
+  const [glassMenu, setGlassMenu] = useState({
+    visible: false,
+    anchor: null, // { x: leftOfMenu, y: top }
+  });
+  const glassAnchorRef = useRef(null);
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
@@ -545,6 +686,29 @@ export default function AddCocktailScreen() {
       quality: 0.7,
     });
     if (!result.canceled) setPhotoUri(result.assets[0].uri);
+  }, []);
+
+  // open glass menu — рахуємо ЛІВИЙ край меню, щоб змістити вліво на GLASS_MENU_W
+  const openGlassMenu = useCallback(() => {
+    if (!glassAnchorRef.current) return;
+    const { width: winW } = Dimensions.get("window");
+
+    glassAnchorRef.current.measureInWindow((x, y, w, h) => {
+      const rightX = x + w;
+      // лівий край меню = правий край кнопки - ширина меню
+      let leftX = rightX - GLASS_MENU_W;
+
+      // відступи від країв екрана
+      const PADDING = 8;
+      if (leftX < PADDING) leftX = PADDING;
+      const maxLeft = winW - PADDING - GLASS_MENU_W;
+      if (leftX > maxLeft) leftX = maxLeft;
+
+      setGlassMenu({
+        visible: true,
+        anchor: { x: leftX, y: y + h },
+      });
+    });
   }, []);
 
   const toggleTagById = useCallback(
@@ -616,7 +780,7 @@ export default function AddCocktailScreen() {
         params: {
           screen: "AddIngredient",
           params: {
-            initialName, // ← тут обов'язково передати
+            initialName,
             targetLocalId: localId,
             returnTo: "AddCocktail",
           },
@@ -677,6 +841,7 @@ export default function AddCocktailScreen() {
       tags,
       description: description.trim(),
       instructions: instructions.trim(),
+      glassId,
       ingredients: nonEmptyIngredients.map((r, idx) => ({
         order: idx + 1,
         ingredientId: r.selectedId,
@@ -693,7 +858,18 @@ export default function AddCocktailScreen() {
 
     await addCocktail(cocktail);
     navigation.navigate("CocktailDetails", { id: cocktail.id });
-  }, [name, photoUri, tags, description, instructions, ings, navigation]);
+  }, [
+    name,
+    photoUri,
+    tags,
+    description,
+    instructions,
+    glassId,
+    ings,
+    navigation,
+  ]);
+
+  const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
 
   return (
     <ScrollView
@@ -720,29 +896,86 @@ export default function AddCocktailScreen() {
         ]}
       />
 
-      {/* Photo */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Photo
-      </Text>
-      <Pressable
-        onPress={pickImage}
-        android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-        style={[
-          styles.photoBtn,
-          {
-            borderColor: theme.colors.outline,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
-      >
-        {photoUri ? (
-          <Image source={{ uri: photoUri }} style={styles.photo} />
-        ) : (
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>
-            Tap to select image
+      {/* Photo + Glass in one row */}
+      <View style={styles.mediaRow}>
+        {/* Photo */}
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Photo
           </Text>
-        )}
-      </Pressable>
+          <Pressable
+            onPress={pickImage}
+            android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
+            style={[
+              styles.mediaSquare,
+              {
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+          >
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.mediaImg} />
+            ) : (
+              <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                Tap to select image
+              </Text>
+            )}
+          </Pressable>
+        </View>
+
+        {/* Glass */}
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Glass
+          </Text>
+
+          <View ref={glassAnchorRef} collapsable={false}>
+            <Pressable
+              onPress={openGlassMenu}
+              android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
+              style={[
+                styles.mediaSquare,
+                {
+                  borderColor: theme.colors.outline,
+                  backgroundColor: theme.colors.surface,
+                },
+              ]}
+            >
+              {selectedGlass?.image ? (
+                <Image
+                  source={selectedGlass.image}
+                  style={styles.mediaImg}
+                  resizeMode="contain"
+                />
+              ) : (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 6,
+                  }}
+                >
+                  <Text
+                    style={{ color: theme.colors.onSurface, fontWeight: "600" }}
+                    numberOfLines={2}
+                  >
+                    {selectedGlass?.name || "Cocktail glass"}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          </View>
+
+          {/* Glass menu (left-shifted by fixed width) */}
+          <GlasswareMenu
+            visible={glassMenu.visible}
+            anchor={glassMenu.anchor}
+            onSelect={(g) => setGlassId(g.id)}
+            onDismiss={() => setGlassMenu((m) => ({ ...m, visible: false }))}
+          />
+        </View>
+      </View>
 
       {/* Tags */}
       <Text style={[styles.label, { color: theme.colors.onBackground }]}>
@@ -902,12 +1135,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   labelText: { fontWeight: "bold" },
-  addInlineBtn: {
+
+  // input + inline add in one row
+  inputRow: {
+    marginTop: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    gap: 8,
   },
 
   input: {
@@ -919,7 +1153,14 @@ const styles = StyleSheet.create({
   },
   multiline: { minHeight: 80, textAlignVertical: "top" },
 
-  photoBtn: {
+  // media row: photo + glass
+  mediaRow: {
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 16,
+  },
+  mediaSquare: {
     marginTop: 8,
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -929,7 +1170,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  photo: { width: IMAGE_SIZE, height: IMAGE_SIZE, resizeMode: "cover" },
+  mediaImg: { width: IMAGE_SIZE, height: IMAGE_SIZE, resizeMode: "cover" },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
   tag: {
@@ -1001,5 +1242,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
+  },
+
+  addInlineBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderRadius: 8,
   },
 });
