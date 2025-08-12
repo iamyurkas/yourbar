@@ -27,7 +27,7 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
-import { useTheme } from "react-native-paper";
+import { useTheme, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
@@ -40,6 +40,7 @@ import {
 } from "react-native-popup-menu";
 const { Popover } = renderers;
 
+import UnitPicker from "../../components/UnitPicker";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
@@ -74,13 +75,12 @@ const wordPrefixMatch = (name, query) => {
   const words = normalizeUk(name).split(WORD_SPLIT_RE).filter(Boolean);
   const parts = normalizeUk(query).trim().split(WORD_SPLIT_RE).filter(Boolean);
   if (parts.length === 0) return false;
-  // кожна частина запиту має послідовно матчити префікс слова
   let wi = 0;
   for (let i = 0; i < parts.length; i++) {
     const p = parts[i];
     while (wi < words.length && !words[wi].startsWith(p)) wi++;
     if (wi === words.length) return false;
-    wi++; // далі шукаємо після знайденого слова
+    wi++;
   }
   return true;
 };
@@ -117,7 +117,7 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-/* ---------- IngredientRow (з popup-menu для підказок) ---------- */
+/* ---------- IngredientRow (кастомний дропдаун через Portal) ---------- */
 const SUGGEST_ROW_H = 56;
 
 const IngredientRow = memo(function IngredientRow({
@@ -141,6 +141,7 @@ const IngredientRow = memo(function IngredientRow({
 
   // refs + layout
   const nameAnchorRef = useRef(null);
+  const unitAnchorRef = useRef(null);
   const [nameWidth, setNameWidth] = useState(260);
 
   // keyboard height
@@ -156,11 +157,13 @@ const IngredientRow = memo(function IngredientRow({
     };
   }, []);
 
-  // відкриття/розміщення поповеру
+  // положення випадаючого списку
   const [suggestState, setSuggestState] = useState({
     visible: false,
-    placement: "bottom", // 'bottom' | 'top'
+    placement: "bottom",
     maxHeight: 300,
+    top: 0,
+    left: 0,
   });
   const [openedFor, setOpenedFor] = useState(null);
 
@@ -181,12 +184,12 @@ const IngredientRow = memo(function IngredientRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.name]);
 
-  // перерахунок placement/maxHeight відносно клавіатури й екрану
+  // перерахунок placement/maxHeight/позиції
   const recalcPlacement = useCallback(() => {
     if (!nameAnchorRef.current) return;
     nameAnchorRef.current.measureInWindow((x, y, w, h) => {
       const screenH = Dimensions.get("window").height;
-      const SAFE = 12;
+      const SAFE = 8;
       const spaceAbove = Math.max(0, y - SAFE);
       const bottomEdge = y + h;
       const spaceBelow = Math.max(0, screenH - kbHeight - bottomEdge - SAFE);
@@ -196,14 +199,24 @@ const IngredientRow = memo(function IngredientRow({
 
       const openDown = spaceBelow >= spaceAbove;
       const maxFit = Math.min(
-        300,
-        Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
+        +300,
+        +Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
       );
+      // реальна висота контейнера, яку використаємо і для точного top
+      const containerHeight = Math.min(needed, maxFit);
+
+      // трохи опускаємо меню при відкритті знизу (+6), а при відкритті згори
+      // прибираємо зайвий від’ємний відступ (було -2)
+      const top = openDown
+        ? bottomEdge + 28
+        : Math.max(SAFE, y - containerHeight + 28);
 
       setSuggestState((s) => ({
         ...s,
         placement: openDown ? "bottom" : "top",
-        maxHeight: Math.min(needed, maxFit),
+        maxHeight: containerHeight,
+        top,
+        left: x,
       }));
       setNameWidth(w || nameWidth);
     });
@@ -348,144 +361,35 @@ const IngredientRow = memo(function IngredientRow({
         </Text>
       </View>
 
-      {/* Name input + inline [+Add] wrapped with Popup Menu (Popover) */}
+      {/* Name input + inline [+Add] */}
       <View style={styles.inputRow}>
-        <Menu
-          renderer={Popover}
-          opened={suggestState.visible}
-          onBackdropPress={handleDismissSuggest}
-          style={styles.inputRowMenu}
-          rendererProps={{
-            placement: suggestState.placement,
-            preferredPlacement: suggestState.placement,
-          }}
+        <View
+          ref={nameAnchorRef}
+          collapsable={false}
+          style={styles.nameInputWrap}
+          onLayout={(e) => setNameWidth(e.nativeEvent.layout.width)}
         >
-          <MenuTrigger disabled>
-            <View
-              ref={nameAnchorRef}
-              collapsable={false}
-              style={styles.nameInputWrap}
-              onLayout={(e) => setNameWidth(e.nativeEvent.layout.width)}
-            >
-              <TextInput
-                placeholder="Type ingredient name"
-                placeholderTextColor={theme.colors.onSurfaceVariant}
-                value={query}
-                onChangeText={(t) => {
-                  setQuery(t);
-                  onChange({ name: t, selectedId: null, selectedItem: null });
-                }}
-                style={[
-                  styles.input,
-                  styles.nameInput,
-                  {
-                    borderColor: theme.colors.outline,
-                    color: theme.colors.onSurface,
-                    backgroundColor: theme.colors.background,
-                    marginTop: 0,
-                  },
-                ]}
-                returnKeyType="done"
-              />
-            </View>
-          </MenuTrigger>
-
-          <MenuOptions
-            customStyles={{
-              optionsContainer: {
-                width: nameWidth || 260,
-                maxHeight: suggestState.maxHeight,
-                backgroundColor: theme.colors.surface,
-                padding: 0,
-                borderRadius: 8,
-                overflow: "hidden",
-              },
+          <TextInput
+            placeholder="Type ingredient name"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={query}
+            onChangeText={(t) => {
+              setQuery(t);
+              onChange({ name: t, selectedId: null, selectedItem: null });
             }}
-          >
-            <FlatList
-              data={suggestions}
-              keyExtractor={(it) => String(it.id)}
-              renderItem={({ item, index }) => (
-                <View>
-                  {index > 0 ? (
-                    <Divider color={theme.colors.outlineVariant} />
-                  ) : null}
-                  <MenuOption
-                    closeOnSelect
-                    onSelect={() => {
-                      onChange({
-                        name: item.name,
-                        selectedId: item.id,
-                        selectedItem: item,
-                      });
-                      setQuery(item.name);
-                      handleDismissSuggest();
-                    }}
-                    customStyles={{
-                      optionWrapper: { padding: 0 },
-                    }}
-                  >
-                    <View
-                      style={{
-                        height: SUGGEST_ROW_H,
-                        paddingHorizontal: 12,
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      {/* stripe for branded */}
-                      <View
-                        style={{
-                          width: 4,
-                          height: 28,
-                          borderRadius: 2,
-                          marginRight: 8,
-                          backgroundColor: item.baseIngredientId
-                            ? theme.colors.onSurfaceVariant
-                            : "transparent",
-                        }}
-                      />
-                      {item.photoUri ? (
-                        <Image
-                          source={{ uri: item.photoUri }}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: 6,
-                            marginRight: 10,
-                            backgroundColor: theme.colors.background,
-                          }}
-                        />
-                      ) : (
-                        <View
-                          style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: 6,
-                            marginRight: 10,
-                            backgroundColor: theme.colors.outlineVariant,
-                          }}
-                        />
-                      )}
-                      <Text
-                        style={{ color: theme.colors.onSurface, flex: 1 }}
-                        numberOfLines={1}
-                      >
-                        {item.name}
-                      </Text>
-                    </View>
-                  </MenuOption>
-                </View>
-              )}
-              keyboardShouldPersistTaps="handled"
-              getItemLayout={(_, i) => ({
-                length: SUGGEST_ROW_H,
-                offset: SUGGEST_ROW_H * i,
-                index: i,
-              })}
-            />
-          </MenuOptions>
-        </Menu>
+            style={[
+              styles.input,
+              styles.nameInput,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.background,
+                marginTop: 0,
+              },
+            ]}
+            returnKeyType="done"
+          />
+        </View>
 
         {showAddNewBtn ? (
           <Pressable
@@ -507,6 +411,110 @@ const IngredientRow = memo(function IngredientRow({
           </Pressable>
         ) : null}
       </View>
+
+      {/* Suggest dropdown (через Portal, без стрілки) */}
+      {suggestState.visible ? (
+        <Portal>
+          {/* бекдроп для закриття */}
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={handleDismissSuggest}
+          />
+          <View
+            style={[
+              styles.suggestBox,
+              {
+                top: suggestState.top,
+                left: suggestState.left,
+                width: nameWidth || 260,
+                maxHeight: suggestState.maxHeight,
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.outline,
+                shadowColor: "#000",
+              },
+            ]}
+          >
+            <FlatList
+              data={suggestions}
+              keyExtractor={(it) => String(it.id)}
+              renderItem={({ item, index }) => (
+                <Pressable
+                  onPress={() => {
+                    onChange({
+                      name: item.name,
+                      selectedId: item.id,
+                      selectedItem: item,
+                    });
+                    setQuery(item.name);
+                    handleDismissSuggest();
+                  }}
+                  android_ripple={{
+                    color: withAlpha(theme.colors.tertiary, 0.1),
+                  }}
+                >
+                  {index > 0 ? (
+                    <Divider color={theme.colors.outlineVariant} />
+                  ) : null}
+                  <View
+                    style={{
+                      height: SUGGEST_ROW_H,
+                      paddingHorizontal: 12,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 4,
+                        height: 28,
+                        borderRadius: 2,
+                        marginRight: 8,
+                        backgroundColor: item.baseIngredientId
+                          ? theme.colors.onSurfaceVariant
+                          : "transparent",
+                      }}
+                    />
+                    {item.photoUri ? (
+                      <Image
+                        source={{ uri: item.photoUri }}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 6,
+                          marginRight: 10,
+                          backgroundColor: theme.colors.background,
+                        }}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 6,
+                          marginRight: 10,
+                          backgroundColor: theme.colors.outlineVariant,
+                        }}
+                      />
+                    )}
+                    <Text
+                      style={{ color: theme.colors.onSurface, flex: 1 }}
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+                </Pressable>
+              )}
+              keyboardShouldPersistTaps="handled"
+              getItemLayout={(_, i) => ({
+                length: SUGGEST_ROW_H,
+                offset: SUGGEST_ROW_H * i,
+                index: i,
+              })}
+            />
+          </View>
+        </Portal>
+      ) : null}
 
       {/* Amount + Unit */}
       <View style={styles.row2}>
@@ -531,12 +539,12 @@ const IngredientRow = memo(function IngredientRow({
           />
         </View>
 
-        <View style={{ width: 140 }}>
+        <View ref={unitAnchorRef} collapsable={false} style={{ width: 140 }}>
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>
             Unit
           </Text>
           <Pressable
-            onPress={onOpenUnitPicker}
+            onPress={() => onOpenUnitPicker(unitAnchorRef)}
             android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
             style={[
               styles.input,
@@ -548,7 +556,8 @@ const IngredientRow = memo(function IngredientRow({
             ]}
           >
             <Text style={{ color: theme.colors.onSurface }}>
-              {selectedUnit?.name || "ml"}
+              {(getUnitById(row.unitId) || getUnitById(UNIT_ID.ML))?.name ||
+                "ml"}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
@@ -568,8 +577,8 @@ const IngredientRow = memo(function IngredientRow({
           onChange({ optional: !row.optional })
         )}
         {row.selectedItem?.baseIngredientId
-          ? checkbox(row.allowBaseFallback, "Allow base fallback", () =>
-              onChange({ allowBaseFallback: !row.allowBaseFallback })
+          ? checkbox(row.allowBaseSubstitute, "Allow base substitute", () =>
+              onChange({ allowBaseSubstitute: !row.allowBaseSubstitute })
             )
           : null}
       </View>
@@ -605,7 +614,7 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
       rendererProps={{
         placement: "bottom",
         preferredPlacement: "bottom",
-        showArrow: false, // прибираємо маленький «квадратик»/стрілку
+        showArrow: false, // прибираємо «стрілку»
       }}
     >
       <MenuTrigger>
@@ -646,14 +655,12 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
       <MenuOptions
         customStyles={{
           optionsContainer: {
-            width: 249, // фіксована ширина меню
+            width: 249,
             maxHeight: 360,
             backgroundColor: theme.colors.surface,
             padding: 0,
             borderRadius: 8,
             overflow: "hidden",
-            marginTop: -90, // щільно під плейсхолдером
-            marginLeft: 18,
           },
         }}
       >
@@ -726,6 +733,7 @@ export default function AddCocktailScreen() {
   const [tags, setTags] = useState([]);
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
+
   const [glassId, setGlassId] = useState("cocktail_glass");
 
   // ingredients list
@@ -739,10 +747,35 @@ export default function AddCocktailScreen() {
       unitId: UNIT_ID.ML,
       garnish: false,
       optional: false,
-      allowBaseFallback: false,
+      allowBaseSubstitute: false,
       substitutes: [],
     },
   ]);
+
+  // unit anchored menu state (для UnitPicker)
+  const [unitMenu, setUnitMenu] = useState({
+    visible: false,
+    forLocalId: null,
+    anchor: null, // { x, y }
+    width: 0,
+  });
+
+  const openUnitMenu = useCallback((anchorRef, localId) => {
+    if (!anchorRef?.current) return;
+    anchorRef.current.measureInWindow((x, y, w, h) => {
+      setUnitMenu({
+        visible: true,
+        forLocalId: localId,
+        anchor: { x, y: y + h + 28 },
+        width: w,
+      });
+    });
+  }, []);
+
+  const closeUnitMenu = useCallback(
+    () => setUnitMenu((m) => ({ ...m, visible: false })),
+    []
+  );
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
@@ -811,7 +844,7 @@ export default function AddCocktailScreen() {
         unitId: UNIT_ID.ML,
         garnish: false,
         optional: false,
-        allowBaseFallback: false,
+        allowBaseSubstitute: false,
         substitutes: [],
       },
     ]);
@@ -859,7 +892,6 @@ export default function AddCocktailScreen() {
         )
       );
 
-      // clear params so it won't re-apply on next focus
       navigation.setParams({
         createdIngredient: undefined,
         targetLocalId: undefined,
@@ -895,7 +927,7 @@ export default function AddCocktailScreen() {
         unitId: r.unitId,
         garnish: !!r.garnish,
         optional: !!r.optional,
-        allowBaseFallback: !!r.allowBaseFallback,
+        allowBaseSubstitute: !!r.allowBaseSubstitute,
         substitutes: r.substitutes || [],
       })),
       createdAt: Date.now(),
@@ -917,7 +949,6 @@ export default function AddCocktailScreen() {
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
 
   return (
-    // ⚠️ Якщо MenuProvider вже є глобально — цей локальний прибери
     <MenuProvider>
       <ScrollView
         contentContainerStyle={styles.container}
@@ -944,9 +975,8 @@ export default function AddCocktailScreen() {
           ]}
         />
 
-        {/* Glass (ліворуч) + Photo (праворуч) */}
+        {/* Glass (left) + Photo (right) */}
         <View style={styles.mediaRow}>
-          {/* Glass */}
           <View style={{ flex: 1 }}>
             <Text style={[styles.label, { color: theme.colors.onBackground }]}>
               Glass
@@ -957,7 +987,6 @@ export default function AddCocktailScreen() {
             />
           </View>
 
-          {/* Photo */}
           <View style={{ flex: 1 }}>
             <Text style={[styles.label, { color: theme.colors.onBackground }]}>
               Photo
@@ -1072,8 +1101,8 @@ export default function AddCocktailScreen() {
             allIngredients={allIngredients}
             onChange={(patch) => updateRow(row.localId, patch)}
             onRemove={() => removeRow(row.localId)}
-            onOpenUnitPicker={
-              () => null /* твій UnitPicker можна додати окремо */
+            onOpenUnitPicker={(anchorRef) =>
+              openUnitMenu(anchorRef, row.localId)
             }
             onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
           />
@@ -1107,6 +1136,24 @@ export default function AddCocktailScreen() {
             Save cocktail
           </Text>
         </Pressable>
+
+        {/* Unit anchored menu */}
+        <UnitPicker
+          visible={unitMenu.visible}
+          anchor={unitMenu.anchor}
+          anchorWidth={unitMenu.width}
+          value={
+            unitMenu.forLocalId != null
+              ? ings.find((r) => r.localId === unitMenu.forLocalId)?.unitId ??
+                UNIT_ID.ML
+              : UNIT_ID.ML
+          }
+          onSelect={(unitId) => {
+            if (unitMenu.forLocalId == null) return;
+            updateRow(unitMenu.forLocalId, { unitId });
+          }}
+          onDismiss={closeUnitMenu}
+        />
       </ScrollView>
     </MenuProvider>
   );
@@ -1138,8 +1185,6 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
 
-  // контейнер саме під інпут назви: розтягується на всю ширину,
-  // і ВАЖЛИВО: може стискатися, коли з'являється кнопка +Add
   nameInputWrap: {
     flex: 1,
     minWidth: 0,
@@ -1153,10 +1198,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  // інпут назви трохи ширший (внутрішні відступи/типографіка можна регулювати тут)
-  nameInput: {
-    // можна збільшити висоту/шрифт за потреби
-  },
+  nameInput: {},
 
   multiline: { minHeight: 80, textAlignVertical: "top" },
 
@@ -1242,7 +1284,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    flexShrink: 0, // щоб кнопка не стискалась і давала простір інпуту
+    flexShrink: 0,
   },
 
   saveBtn: {
@@ -1251,6 +1293,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+
   addInlineBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1258,12 +1301,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 8,
     borderRadius: 8,
-    flexShrink: 0, // кнопка НЕ стискається
-    flexWrap: "nowrap", // текст не переноситься під іконку
+    flexShrink: 0,
+    flexWrap: "nowrap",
   },
 
-  inputRowMenu: {
-    flex: 1,
-    minWidth: 0,
+  // контейнер меню підказок (прямокутник без трикутника)
+  suggestBox: {
+    position: "absolute",
+    zIndex: 1000,
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    elevation: 6, // Android shadow
+    // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
 });
