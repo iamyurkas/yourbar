@@ -36,7 +36,6 @@ import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
-  MenuProvider,
   Menu,
   MenuOptions,
   MenuOption,
@@ -45,7 +44,6 @@ import {
 } from "react-native-popup-menu";
 const { Popover } = renderers;
 
-import UnitPicker from "../../components/UnitPicker";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
@@ -73,9 +71,7 @@ const useDebounced = (value, delay = 250) => {
 
 // --- word-prefix matching (початок кожного слова) ---
 const normalizeUk = (s) => (s || "").toLocaleLowerCase("uk");
-// розбиваємо на слова: латиниця + цифри + кирилиця (U+0400..U+04FF)
 const WORD_SPLIT_RE = /[^a-z0-9\u0400-\u04FF]+/i;
-// підтримка багатослівного запиту: "black p" -> "black pepper"
 const wordPrefixMatch = (name, query) => {
   const words = normalizeUk(name).split(WORD_SPLIT_RE).filter(Boolean);
   const parts = normalizeUk(query).trim().split(WORD_SPLIT_RE).filter(Boolean);
@@ -122,7 +118,7 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-/* ---------- IngredientRow (кастомний дропдаун через Portal) ---------- */
+/* ---------- IngredientRow ---------- */
 const SUGGEST_ROW_H = 56;
 
 const IngredientRow = memo(function IngredientRow({
@@ -130,7 +126,6 @@ const IngredientRow = memo(function IngredientRow({
   row,
   onChange,
   onRemove,
-  onOpenUnitPicker,
   allIngredients,
   onAddNewIngredient,
   canRemove,
@@ -152,7 +147,6 @@ const IngredientRow = memo(function IngredientRow({
 
   // refs + layout
   const nameAnchorRef = useRef(null);
-  const unitAnchorRef = useRef(null);
   const [nameWidth, setNameWidth] = useState(260);
 
   // keyboard height
@@ -321,6 +315,16 @@ const IngredientRow = memo(function IngredientRow({
     }
   }, [showSuggest, suggestions.length, debounced, openedFor, recalcPlacement]);
 
+  // ⚙️ Список юнітів з constants
+  const UNIT_LIST = useMemo(() => {
+    return Object.values(UNIT_ID)
+      .map((id) => getUnitById(id))
+      .filter(Boolean);
+  }, []);
+
+  const selectedUnit = getUnitById(row.unitId) ||
+    getUnitById(UNIT_ID.ML) || { name: "ml" };
+
   const checkbox = (checked, label, onToggle) => (
     <Pressable
       onPress={onToggle}
@@ -484,7 +488,6 @@ const IngredientRow = memo(function IngredientRow({
       {/* Suggest dropdown (через Portal, без стрілки) */}
       {suggestState.visible ? (
         <Portal>
-          {/* бекдроп для закриття */}
           <Pressable
             style={StyleSheet.absoluteFill}
             onPress={handleDismissSuggest}
@@ -608,32 +611,114 @@ const IngredientRow = memo(function IngredientRow({
           />
         </View>
 
-        <View ref={unitAnchorRef} collapsable={false} style={{ width: 140 }}>
+        {/* NEW: Unit popover via react-native-popup-menu */}
+        <View style={{ width: 160 }}>
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>
             Unit
           </Text>
-          <Pressable
-            onPress={() => onOpenUnitPicker(unitAnchorRef)}
-            android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-            style={[
-              styles.input,
-              styles.unitAnchor,
-              {
-                borderColor: theme.colors.outline,
-                backgroundColor: theme.colors.background,
-              },
-            ]}
+
+          <Menu
+            renderer={Popover}
+            rendererProps={{
+              placement: "bottom",
+              preferredPlacement: "bottom",
+              showArrow: false,
+            }}
           >
-            <Text style={{ color: theme.colors.onSurface }}>
-              {(getUnitById(row.unitId) || getUnitById(UNIT_ID.ML))?.name ||
-                "ml"}
-            </Text>
-            <MaterialIcons
-              name="arrow-drop-down"
-              size={22}
-              color={theme.colors.onSurfaceVariant}
-            />
-          </Pressable>
+            <MenuTrigger
+              customStyles={{
+                // Використовуємо Pressable замість дефолтного touchable
+                TriggerTouchableComponent: Pressable,
+                // Будь-які пропси підуть прямо в Pressable:
+                triggerTouchable: {
+                  // без зміни прозорості/рі́плу
+                },
+              }}
+            >
+              <View
+                style={[
+                  styles.input,
+                  styles.unitAnchor,
+                  {
+                    borderColor: theme.colors.outline,
+                    backgroundColor: theme.colors.background,
+                  },
+                ]}
+              >
+                <Text style={{ color: theme.colors.onSurface }}>
+                  {selectedUnit?.name || "ml"}
+                </Text>
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={22}
+                  color={theme.colors.onSurfaceVariant}
+                />
+              </View>
+            </MenuTrigger>
+
+            <MenuOptions
+              customStyles={{
+                optionsContainer: {
+                  width: 160,
+                  maxHeight: 360,
+                  backgroundColor: theme.colors.surface,
+                  padding: 0,
+                  borderRadius: 8,
+                  marginTop: -6,
+                  overflow: "hidden",
+                },
+              }}
+            >
+              <FlatList
+                data={UNIT_LIST}
+                keyExtractor={(u) => String(u.id || u.name)}
+                renderItem={({ item, index }) => (
+                  <View>
+                    {index > 0 ? (
+                      <Divider color={theme.colors.outlineVariant} />
+                    ) : null}
+                    <MenuOption
+                      closeOnSelect
+                      onSelect={() => onChange({ unitId: item.id })}
+                      customStyles={{ optionWrapper: { padding: 0 } }}
+                    >
+                      <View
+                        style={{
+                          height: 48,
+                          paddingHorizontal: 12,
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: theme.colors.onSurface,
+                            flex: 1,
+                            fontWeight: row.unitId === item.id ? "700" : "400",
+                          }}
+                        >
+                          {item.name}
+                        </Text>
+                        {row.unitId === item.id ? (
+                          <MaterialIcons
+                            name="check"
+                            size={18}
+                            color={theme.colors.primary}
+                          />
+                        ) : null}
+                      </View>
+                    </MenuOption>
+                  </View>
+                )}
+                keyboardShouldPersistTaps="handled"
+                getItemLayout={(_, i) => ({
+                  length: 48,
+                  offset: 48 * i,
+                  index: i,
+                })}
+              />
+            </MenuOptions>
+          </Menu>
         </View>
       </View>
 
@@ -800,10 +885,19 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
       rendererProps={{
         placement: "bottom",
         preferredPlacement: "bottom",
-        showArrow: false, // прибираємо «стрілку»
+        showArrow: false,
       }}
     >
-      <MenuTrigger>
+      <MenuTrigger
+        customStyles={{
+          // Використовуємо Pressable замість дефолтного touchable
+          TriggerTouchableComponent: Pressable,
+          // Будь-які пропси підуть прямо в Pressable:
+          triggerTouchable: {
+            // без зміни прозорості/рі́плу
+          },
+        }}
+      >
         <View
           style={[
             styles.mediaSquare,
@@ -841,11 +935,13 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
       <MenuOptions
         customStyles={{
           optionsContainer: {
-            width: 249,
+            width: 200,
             maxHeight: 360,
             backgroundColor: theme.colors.surface,
             padding: 0,
             borderRadius: 8,
+            marginLeft: 18,
+            marginTop: -6,
             overflow: "hidden",
           },
         }}
@@ -939,32 +1035,7 @@ export default function AddCocktailScreen() {
     },
   ]);
 
-  // unit anchored menu state (для UnitPicker)
-  const [unitMenu, setUnitMenu] = useState({
-    visible: false,
-    forLocalId: null,
-    anchor: null, // { x, y }
-    width: 0,
-  });
-
-  const openUnitMenu = useCallback((anchorRef, localId) => {
-    if (!anchorRef?.current) return;
-    anchorRef.current.measureInWindow((x, y, w, h) => {
-      setUnitMenu({
-        visible: true,
-        forLocalId: localId,
-        anchor: { x, y: y + 28 + h },
-        width: w,
-      });
-    });
-  }, []);
-
-  const closeUnitMenu = useCallback(
-    () => setUnitMenu((m) => ({ ...m, visible: false })),
-    []
-  );
-
-  // ingredients for suggestions (ensure array)
+  // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
   useEffect(() => {
     let cancel = false;
@@ -988,7 +1059,6 @@ export default function AddCocktailScreen() {
   const openSubstituteModal = useCallback((localId) => {
     setSubModal({ visible: true, forLocalId: localId, query: "" });
   }, []);
-
   const closeSubstituteModal = useCallback(() => {
     setSubModal((s) => ({ ...s, visible: false }));
   }, []);
@@ -1009,7 +1079,6 @@ export default function AddCocktailScreen() {
     let list = Array.isArray(allIngredients) ? allIngredients : [];
     const q = debouncedSubQuery.trim();
     if (q) list = list.filter((i) => wordPrefixMatch(i.name || "", q));
-    // Прибрати вже додані та сам вибраний інгредієнт
     list = list.filter((i) => !modalExcludedIds.has(i.id));
     return list.slice(0, 40);
   }, [allIngredients, debouncedSubQuery, modalExcludedIds]);
@@ -1075,7 +1144,7 @@ export default function AddCocktailScreen() {
     ]);
   }, []);
 
-  /* Move ingredient (Reanimated layout animates position automatically) */
+  /* Move ingredient (Reanimated layout transition handles animation) */
   const moveIngredient = useCallback((fromIndex, toIndex) => {
     setIngs((prev) => {
       if (
@@ -1094,7 +1163,7 @@ export default function AddCocktailScreen() {
     });
   }, []);
 
-  // OPEN AddIngredient with prefilled name; return result via params (serializable)
+  // OPEN AddIngredient with prefilled name; return result via params
   const openAddIngredient = useCallback(
     (initialName, localId) => {
       navigation.navigate("Ingredients", {
@@ -1112,7 +1181,7 @@ export default function AddCocktailScreen() {
     [navigation]
   );
 
-  // Catch created ingredient returned from AddIngredient (serializable)
+  // Catch created ingredient returned from AddIngredient
   useFocusEffect(
     useCallback(() => {
       const created = route.params?.createdIngredient;
@@ -1216,7 +1285,7 @@ export default function AddCocktailScreen() {
   );
 
   return (
-    <MenuProvider>
+    <>
       <ScrollView
         contentContainerStyle={styles.container}
         onScrollBeginDrag={() => Keyboard.dismiss()}
@@ -1373,9 +1442,6 @@ export default function AddCocktailScreen() {
               allIngredients={allIngredients}
               onChange={(patch) => updateRow(row.localId, patch)}
               onRemove={() => removeRow(row.localId)}
-              onOpenUnitPicker={(anchorRef) =>
-                openUnitMenu(anchorRef, row.localId)
-              }
               onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
               canRemove={ings.length > 1}
               canMoveUp={ings.length > 1 && idx > 0}
@@ -1467,8 +1533,6 @@ export default function AddCocktailScreen() {
                 <Pressable
                   onPress={() => {
                     addSubstituteToTarget(item);
-                    // закриваємо модалку разом з додаванням
-                    // (ще раз не викликаємо closeSubstituteModal тут, бо вже всередині addSubstituteToTarget)
                   }}
                   android_ripple={{
                     color: withAlpha(theme.colors.tertiary, 0.1),
@@ -1529,7 +1593,7 @@ export default function AddCocktailScreen() {
           </Text>
         </Modal>
       </Portal>
-    </MenuProvider>
+    </>
   );
 }
 
@@ -1709,8 +1773,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     overflow: "hidden",
-    elevation: 6, // Android shadow
-    // iOS shadow
+    elevation: 6,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

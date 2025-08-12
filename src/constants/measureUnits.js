@@ -1,7 +1,7 @@
 // src/constants/measureUnits.js
 
 export const MEASURE_UNITS = [
-  { id: 1, name: "" }, // пустий пункт
+  { id: 1, name: " " }, // пустий пункт
   { id: 2, name: "bar spoon" },
   { id: 3, name: "cl" },
   { id: 4, name: "cube" },

@@ -1,11 +1,13 @@
 // App.js
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TabMemoryProvider } from "./src/context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider as PaperProvider } from "react-native-paper";
+import { MenuProvider } from "react-native-popup-menu";
 
 import CocktailsTabScreen from "./src/screens/Cocktails/CocktailsTabScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
@@ -13,17 +15,15 @@ import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScre
 
 import GeneralMenuScreen from "./src/screens/GeneralMenuScreen";
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
-import { Provider as PaperProvider } from "react-native-paper";
 import { AppTheme } from "./src/theme";
-import { useEffect } from "react";
 
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 
+import { importIngredients } from "./scripts/importIngredients";
+
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
-
-import { importIngredients } from "./scripts/importIngredients";
 
 function Tabs() {
   return (
@@ -52,34 +52,37 @@ function Tabs() {
 
 export default function App() {
   useEffect(() => {
-    importIngredients(); // ⬅ Одноразово викличемо
+    importIngredients();
   }, []);
 
   return (
     <PaperProvider theme={AppTheme}>
-      <SafeAreaProvider>
-        <TabMemoryProvider>
-          <NavigationContainer>
-            <RootStack.Navigator>
-              <RootStack.Screen
-                name="Tabs"
-                component={Tabs}
-                options={{ headerShown: false }}
-              />
-              <RootStack.Screen
-                name="GeneralMenu"
-                component={GeneralMenuScreen}
-                options={{ title: "Menu" }}
-              />
-              <RootStack.Screen
-                name="EditCustomTags"
-                component={EditCustomTagsScreen}
-                options={{ title: "Custom tags" }}
-              />
-            </RootStack.Navigator>
-          </NavigationContainer>
-        </TabMemoryProvider>
-      </SafeAreaProvider>
+      {/* MenuProvider має бути єдиним і на корені додатку */}
+      <MenuProvider>
+        <SafeAreaProvider>
+          <TabMemoryProvider>
+            <NavigationContainer>
+              <RootStack.Navigator>
+                <RootStack.Screen
+                  name="Tabs"
+                  component={Tabs}
+                  options={{ headerShown: false }}
+                />
+                <RootStack.Screen
+                  name="GeneralMenu"
+                  component={GeneralMenuScreen}
+                  options={{ title: "Menu" }}
+                />
+                <RootStack.Screen
+                  name="EditCustomTags"
+                  component={EditCustomTagsScreen}
+                  options={{ title: "Custom tags" }}
+                />
+              </RootStack.Navigator>
+            </NavigationContainer>
+          </TabMemoryProvider>
+        </SafeAreaProvider>
+      </MenuProvider>
     </PaperProvider>
   );
 }
