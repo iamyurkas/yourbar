@@ -21,6 +21,11 @@ import {
   Dimensions,
   Keyboard,
 } from "react-native";
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+  LinearTransition,
+} from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
 import {
   useNavigation,
@@ -129,6 +134,10 @@ const IngredientRow = memo(function IngredientRow({
   allIngredients,
   onAddNewIngredient,
   canRemove,
+  canMoveUp,
+  canMoveDown,
+  onMoveUp,
+  onMoveDown,
 }) {
   const MIN_CHARS = 2;
   const theme = useTheme();
@@ -182,7 +191,6 @@ const IngredientRow = memo(function IngredientRow({
   // sync from external
   useEffect(() => {
     if (row.name !== query) setQuery(row.name || "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.name]);
 
   // перерахунок placement/maxHeight/позиції
@@ -203,11 +211,8 @@ const IngredientRow = memo(function IngredientRow({
         +300,
         +Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
       );
-      // реальна висота контейнера, яку використаємо і для точного top
       const containerHeight = Math.min(needed, maxFit);
 
-      // трохи опускаємо меню при відкритті знизу (+6), а при відкритті згори
-      // прибираємо зайвий від’ємний відступ (було -2)
       const top = openDown
         ? bottomEdge + 28
         : Math.max(SAFE, y - containerHeight + 28);
@@ -254,8 +259,6 @@ const IngredientRow = memo(function IngredientRow({
       onChange({ selectedId: match.id, selectedItem: match });
     }
   }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
-
-  const selectedUnit = getUnitById(row.unitId) || getUnitById(UNIT_ID.ML);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
@@ -315,8 +318,7 @@ const IngredientRow = memo(function IngredientRow({
         setSuggestState((s) => ({ ...s, visible: false }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showSuggest, suggestions.length, debounced, openedFor]);
+  }, [showSuggest, suggestions.length, debounced, openedFor, recalcPlacement]);
 
   const checkbox = (checked, label, onToggle) => (
     <Pressable
@@ -357,28 +359,67 @@ const IngredientRow = memo(function IngredientRow({
         },
       ]}
     >
-      {/* Header: index + remove */}
+      {/* Header: index + reorder + remove */}
       <View style={styles.ingHeader}>
         <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
           {index + 1}.
         </Text>
 
-        {canRemove ? (
-          <Pressable
-            onPress={onRemove}
-            android_ripple={{
-              color: withAlpha(theme.colors.error, 0.12),
-              borderless: true,
-            }}
-            style={styles.removeBtn}
-          >
-            <MaterialIcons
-              name="delete-outline"
-              size={20}
-              color={theme.colors.error}
-            />
-          </Pressable>
-        ) : null}
+        <View style={styles.headerControls}>
+          {canRemove ? (
+            <>
+              {/* Move up */}
+              <Pressable
+                onPress={onMoveUp}
+                disabled={!canMoveUp}
+                android_ripple={{
+                  color: withAlpha(theme.colors.tertiary, 0.12),
+                  borderless: true,
+                }}
+                style={[styles.iconBtn, !canMoveUp && { opacity: 0.4 }]}
+              >
+                <MaterialIcons
+                  name="arrow-upward"
+                  size={20}
+                  color={theme.colors.onSurfaceVariant}
+                />
+              </Pressable>
+
+              {/* Move down */}
+              <Pressable
+                onPress={onMoveDown}
+                disabled={!canMoveDown}
+                android_ripple={{
+                  color: withAlpha(theme.colors.tertiary, 0.12),
+                  borderless: true,
+                }}
+                style={[styles.iconBtn, !canMoveDown && { opacity: 0.4 }]}
+              >
+                <MaterialIcons
+                  name="arrow-downward"
+                  size={20}
+                  color={theme.colors.onSurfaceVariant}
+                />
+              </Pressable>
+
+              {/* Remove */}
+              <Pressable
+                onPress={onRemove}
+                android_ripple={{
+                  color: withAlpha(theme.colors.error, 0.12),
+                  borderless: true,
+                }}
+                style={styles.removeBtn}
+              >
+                <MaterialIcons
+                  name="delete-outline"
+                  size={20}
+                  color={theme.colors.error}
+                />
+              </Pressable>
+            </>
+          ) : null}
+        </View>
       </View>
 
       {/* Ingredient */}
@@ -943,6 +984,25 @@ export default function AddCocktailScreen() {
     ]);
   }, []);
 
+  /* Move ingredient (Reanimated layout animates position automatically) */
+  const moveIngredient = useCallback((fromIndex, toIndex) => {
+    setIngs((prev) => {
+      if (
+        fromIndex === toIndex ||
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= prev.length ||
+        toIndex >= prev.length
+      ) {
+        return prev;
+      }
+      const next = [...prev];
+      const [item] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, item);
+      return next;
+    });
+  }, []);
+
   // OPEN AddIngredient with prefilled name; return result via params (serializable)
   const openAddIngredient = useCallback(
     (initialName, localId) => {
@@ -1188,19 +1248,29 @@ export default function AddCocktailScreen() {
         </Text>
 
         {ings.map((row, idx) => (
-          <IngredientRow
+          <Animated.View
             key={row.localId}
-            index={idx}
-            row={row}
-            allIngredients={allIngredients}
-            onChange={(patch) => updateRow(row.localId, patch)}
-            onRemove={() => removeRow(row.localId)}
-            onOpenUnitPicker={(anchorRef) =>
-              openUnitMenu(anchorRef, row.localId)
-            }
-            onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
-            canRemove={ings.length > 1}
-          />
+            layout={LinearTransition.springify().damping(18).stiffness(220)}
+            entering={FadeInDown.duration(180)}
+            exiting={FadeOutUp.duration(140)}
+          >
+            <IngredientRow
+              index={idx}
+              row={row}
+              allIngredients={allIngredients}
+              onChange={(patch) => updateRow(row.localId, patch)}
+              onRemove={() => removeRow(row.localId)}
+              onOpenUnitPicker={(anchorRef) =>
+                openUnitMenu(anchorRef, row.localId)
+              }
+              onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
+              canRemove={ings.length > 1}
+              canMoveUp={ings.length > 1 && idx > 0}
+              canMoveDown={ings.length > 1 && idx < ings.length - 1}
+              onMoveUp={() => moveIngredient(idx, idx - 1)}
+              onMoveDown={() => moveIngredient(idx, idx + 1)}
+            />
+          </Animated.View>
         ))}
 
         {/* Add ingredient button */}
@@ -1338,7 +1408,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  removeBtn: { padding: 4 },
+  headerControls: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconBtn: { padding: 4, marginLeft: 2 },
+  removeBtn: { padding: 4, marginLeft: 4 },
 
   row2: {
     flexDirection: "row",
