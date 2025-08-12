@@ -267,6 +267,29 @@ const IngredientRow = memo(function IngredientRow({
   const showAddNewBtn =
     !row.selectedId && query.trim().length > 1 && !hasExactMatch;
 
+  // базовий інгредієнт для підказки
+  const baseIngredientName = useMemo(() => {
+    const baseId = row.selectedItem?.baseIngredientId;
+    if (!baseId) return null;
+    return allIngredients.find((i) => i.id === baseId)?.name || null;
+  }, [row.selectedItem?.baseIngredientId, allIngredients]);
+
+  // інші брендовані інгредієнти того ж базового (крім вибраного)
+  const brandedSiblings = useMemo(() => {
+    const baseId = row.selectedItem?.baseIngredientId;
+    if (!baseId) return [];
+    return allIngredients
+      .filter(
+        (i) => i.baseIngredientId === baseId && i.id !== row.selectedItem?.id
+      )
+      .map((i) => i.name)
+      .filter(Boolean);
+  }, [
+    row.selectedItem?.baseIngredientId,
+    row.selectedItem?.id,
+    allIngredients,
+  ]);
+
   const handleDismissSuggest = useCallback(() => {
     setSuggestState((s) => ({ ...s, visible: false }));
     setOpenedFor(debounced);
@@ -576,21 +599,75 @@ const IngredientRow = memo(function IngredientRow({
         {checkbox(row.optional, "Optional", () =>
           onChange({ optional: !row.optional })
         )}
-        {row.selectedItem?.baseIngredientId
-          ? checkbox(row.allowBaseSubstitute, "Allow base substitute", () =>
+
+        {row.selectedItem?.baseIngredientId ? (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {checkbox(row.allowBaseSubstitute, "Allow base substitute", () =>
               onChange({ allowBaseSubstitute: !row.allowBaseSubstitute })
-            )
-          : null}
-        {row.selectedItem?.baseIngredientId
-          ? checkbox(
+            )}
+            <Pressable
+              onPress={() =>
+                Alert.alert(
+                  "Allow base substitute",
+                  `If the specified ingredient isn't available, the cocktail will be shown as available with its base ingredient.\n\nBase ingredient:\n ${
+                    baseIngredientName || "—"
+                  }`
+                )
+              }
+              hitSlop={8}
+              android_ripple={{
+                color: withAlpha(theme.colors.tertiary, 0.2),
+                borderless: true,
+              }}
+              style={{ padding: 4, marginLeft: 4 }}
+            >
+              <MaterialIcons
+                name="help-outline"
+                size={18}
+                color={theme.colors.primary}
+              />
+            </Pressable>
+          </View>
+        ) : null}
+
+        {row.selectedItem?.baseIngredientId ? (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {checkbox(
               row.allowBrandedSubstitutes,
               "Allow branded substitutes",
               () =>
                 onChange({
                   allowBrandedSubstitutes: !row.allowBrandedSubstitutes,
                 })
-            )
-          : null}
+            )}
+            <Pressable
+              onPress={() => {
+                const list =
+                  brandedSiblings.length > 0
+                    ? `\n\nOther branded ingredients of the base:\n- ${brandedSiblings.join(
+                        "\n- "
+                      )}`
+                    : "";
+                Alert.alert(
+                  "Allow branded substitutes",
+                  `If the specified ingredient isn't available, the cocktail will be shown as available with branded ingredients of the base.${list}`
+                );
+              }}
+              hitSlop={8}
+              android_ripple={{
+                color: withAlpha(theme.colors.tertiary, 0.2),
+                borderless: true,
+              }}
+              style={{ padding: 4, marginLeft: 4 }}
+            >
+              <MaterialIcons
+                name="help-outline"
+                size={18}
+                color={theme.colors.primary}
+              />
+            </Pressable>
+          </View>
+        ) : null}
       </View>
 
       {/* Substitute button (stub) */}
@@ -1085,7 +1162,7 @@ export default function AddCocktailScreen() {
           Instructions
         </Text>
         <TextInput
-          placeholder="Steps to prepare the cocktail"
+          placeholder="1. Grab some ice..."
           placeholderTextColor={theme.colors.onSurfaceVariant}
           value={instructions}
           onChangeText={setInstructions}
