@@ -27,7 +27,7 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
-import { useTheme, Menu, Divider } from "react-native-paper";
+import { useTheme, Menu, Divider, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { getAllIngredients } from "../../storage/ingredientsStorage";
@@ -96,6 +96,7 @@ const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
   items,
   menuKey,
   maxHeight, // динамічна межа висоти щоб не flip-илось вгору
+  anchorPosition,
   onSelect,
   onDismiss,
 }) {
@@ -107,94 +108,96 @@ const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
       : Math.min(300, SUGGEST_ROW_H * items.length);
 
   return (
-    <Menu
-      key={menuKey}
-      visible={visible}
-      onDismiss={onDismiss}
-      anchor={anchor || { x: 0, y: 0 }}
-      anchorPosition="bottom"
-      contentStyle={{
-        width: anchorWidth || 260,
-        backgroundColor: theme.colors.surface,
-      }}
-      style={{}} // без transform — працюємо координатним якорем
-    >
-      <FlatList
-        data={items}
-        keyExtractor={(it) => String(it.id)}
-        renderItem={({ item, index }) => (
-          <>
-            {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
-            <Pressable
-              onPress={() => {
-                onSelect?.(item);
-                onDismiss?.();
-              }}
-              android_ripple={{ color: theme.colors.outlineVariant }}
-              style={({ pressed }) => [
-                {
-                  height: SUGGEST_ROW_H,
-                  paddingHorizontal: 12,
-                  flexDirection: "row",
-                  alignItems: "center",
-                },
-                pressed && { opacity: 0.96 },
-              ]}
-            >
-              {/* 4px stripe для branded — як у головному меню */}
-              <View
-                style={{
-                  width: 4,
-                  height: 28,
-                  borderRadius: 2,
-                  marginRight: 8,
-                  backgroundColor: item.baseIngredientId
-                    ? theme.colors.onSurfaceVariant
-                    : "transparent",
+    <Portal>
+      <Menu
+        key={menuKey}
+        visible={visible}
+        onDismiss={onDismiss}
+        anchor={anchor || { x: 0, y: 0 }}
+        anchorPosition={anchorPosition || "bottom"}
+        contentStyle={{
+          width: anchorWidth || 260,
+          backgroundColor: theme.colors.surface,
+        }}
+        style={{}} // без transform — працюємо координатним якорем
+      >
+        <FlatList
+          data={items}
+          keyExtractor={(it) => String(it.id)}
+          renderItem={({ item, index }) => (
+            <>
+              {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
+              <Pressable
+                onPress={() => {
+                  onSelect?.(item);
+                  onDismiss?.();
                 }}
-              />
-              {item.photoUri ? (
-                <Image
-                  source={{ uri: item.photoUri }}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 6,
-                    marginRight: 10,
-                    backgroundColor: theme.colors.background,
-                  }}
-                />
-              ) : (
+                android_ripple={{ color: theme.colors.outlineVariant }}
+                style={({ pressed }) => [
+                  {
+                    height: SUGGEST_ROW_H,
+                    paddingHorizontal: 12,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  },
+                  pressed && { opacity: 0.96 },
+                ]}
+              >
+                {/* 4px stripe для branded — як у головному меню */}
                 <View
                   style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 6,
-                    marginRight: 10,
-                    backgroundColor: theme.colors.outlineVariant,
+                    width: 4,
+                    height: 28,
+                    borderRadius: 2,
+                    marginRight: 8,
+                    backgroundColor: item.baseIngredientId
+                      ? theme.colors.onSurfaceVariant
+                      : "transparent",
                   }}
                 />
-              )}
-              <Text
-                style={{ color: theme.colors.onSurface, flex: 1 }}
-                numberOfLines={1}
-              >
-                {item.name}
-              </Text>
-            </Pressable>
-          </>
-        )}
-        style={{
-          height,
-        }}
-        keyboardShouldPersistTaps="handled"
-        getItemLayout={(_, i) => ({
-          length: SUGGEST_ROW_H,
-          offset: SUGGEST_ROW_H * i,
-          index: i,
-        })}
-      />
-    </Menu>
+                {item.photoUri ? (
+                  <Image
+                    source={{ uri: item.photoUri }}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 6,
+                      marginRight: 10,
+                      backgroundColor: theme.colors.background,
+                    }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 6,
+                      marginRight: 10,
+                      backgroundColor: theme.colors.outlineVariant,
+                    }}
+                  />
+                )}
+                <Text
+                  style={{ color: theme.colors.onSurface, flex: 1 }}
+                  numberOfLines={1}
+                >
+                  {item.name}
+                </Text>
+              </Pressable>
+            </>
+          )}
+          style={{
+            height,
+          }}
+          keyboardShouldPersistTaps="handled"
+          getItemLayout={(_, i) => ({
+            length: SUGGEST_ROW_H,
+            offset: SUGGEST_ROW_H * i,
+            index: i,
+          })}
+        />
+      </Menu>
+    </Portal>
   );
 });
 
@@ -210,71 +213,73 @@ const GlasswareMenu = memo(function GlasswareMenu({
 }) {
   const theme = useTheme();
   return (
-    <Menu
-      visible={visible}
-      onDismiss={onDismiss}
-      anchor={anchor || { x: 0, y: 0 }}
-      contentStyle={{
-        width: GLASS_MENU_W,
-        backgroundColor: theme.colors.surface,
-      }}
-    >
-      <FlatList
-        data={GLASSWARE}
-        keyExtractor={(g) => g.id}
-        renderItem={({ item, index }) => (
-          <>
-            {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
-            <Pressable
-              onPress={() => {
-                onSelect?.(item);
-                onDismiss?.();
-              }}
-              android_ripple={{ color: theme.colors.outlineVariant }}
-              style={({ pressed }) => [
-                {
-                  height: GLASS_ROW_H,
-                  paddingHorizontal: 12,
-                  flexDirection: "row",
-                  alignItems: "center",
-                },
-                pressed && { opacity: 0.96 },
-              ]}
-            >
-              {item.image ? (
-                <Image
-                  source={item.image}
-                  style={{ width: 32, height: 32, marginRight: 10 }}
-                  resizeMode="contain"
-                />
-              ) : (
-                <View
-                  style={{
-                    width: 32,
-                    height: 32,
-                    marginRight: 10,
-                    backgroundColor: theme.colors.outlineVariant,
-                    borderRadius: 6,
-                  }}
-                />
-              )}
-              <Text style={{ color: theme.colors.onSurface, flex: 1 }}>
-                {item.name}
-              </Text>
-            </Pressable>
-          </>
-        )}
-        style={{
-          height: Math.min(360, GLASS_ROW_H * GLASSWARE.length),
+    <Portal>
+      <Menu
+        visible={visible}
+        onDismiss={onDismiss}
+        anchor={anchor || { x: 0, y: 0 }}
+        contentStyle={{
+          width: GLASS_MENU_W,
+          backgroundColor: theme.colors.surface,
         }}
-        keyboardShouldPersistTaps="handled"
-        getItemLayout={(_, i) => ({
-          length: GLASS_ROW_H,
-          offset: GLASS_ROW_H * i,
-          index: i,
-        })}
-      />
-    </Menu>
+      >
+        <FlatList
+          data={GLASSWARE}
+          keyExtractor={(g) => g.id}
+          renderItem={({ item, index }) => (
+            <>
+              {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
+              <Pressable
+                onPress={() => {
+                  onSelect?.(item);
+                  onDismiss?.();
+                }}
+                android_ripple={{ color: theme.colors.outlineVariant }}
+                style={({ pressed }) => [
+                  {
+                    height: GLASS_ROW_H,
+                    paddingHorizontal: 12,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  },
+                  pressed && { opacity: 0.96 },
+                ]}
+              >
+                {item.image ? (
+                  <Image
+                    source={item.image}
+                    style={{ width: 32, height: 32, marginRight: 10 }}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      marginRight: 10,
+                      backgroundColor: theme.colors.outlineVariant,
+                      borderRadius: 6,
+                    }}
+                  />
+                )}
+                <Text style={{ color: theme.colors.onSurface, flex: 1 }}>
+                  {item.name}
+                </Text>
+              </Pressable>
+            </>
+          )}
+          style={{
+            height: Math.min(360, GLASS_ROW_H * GLASSWARE.length),
+          }}
+          keyboardShouldPersistTaps="handled"
+          getItemLayout={(_, i) => ({
+            length: GLASS_ROW_H,
+            offset: GLASS_ROW_H * i,
+            index: i,
+          })}
+        />
+      </Menu>
+    </Portal>
   );
 });
 
@@ -322,7 +327,11 @@ const IngredientRow = memo(function IngredientRow({
     anchor: null,
     width: 0,
     maxHeight: 0,
+    anchorPosition: "bottom", // "bottom" | "top"
   });
+
+  // 🔹 пам'ятаємо, для якого запиту було відкрите меню
+  const [openedFor, setOpenedFor] = useState(null);
 
   // show suggestions whenever 2+ chars AND not selected
   const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
@@ -344,35 +353,84 @@ const IngredientRow = memo(function IngredientRow({
   }, [row.name]);
 
   // утиліта: порахувати позицію + максимально допустиму висоту
-  const recalcMenu = useCallback(() => {
-    if (!nameAnchorRef.current) return;
-    nameAnchorRef.current.measureInWindow((x, y, w, h) => {
-      const screenH = Dimensions.get("window").height;
-      const SAFE = 12;
-      const anchorY = y + h + 28;
-      const spaceBelow = Math.max(0, screenH - kbHeight - anchorY - SAFE);
+  const recalcMenu = useCallback(
+    (openIfHidden = false) => {
+      if (!nameAnchorRef.current) return;
+      nameAnchorRef.current.measureInWindow((x, y, w, h) => {
+        const screenH = Dimensions.get("window").height;
+        const SAFE = 12;
+        const DOWN_Y = 28; // невеличке «притискання» до поля
+        const TOP_Y = 13; // невеличке «притискання» до поля
 
-      const needed = SUGGEST_ROW_H * Math.max(1, suggestions.length || 1);
-      const maxFit = Math.min(300, Math.max(SUGGEST_ROW_H, spaceBelow));
+        // простір над та під полем
+        const spaceAbove = Math.max(0, y - SAFE);
+        const bottomEdge = y + h;
+        const spaceBelow = Math.max(0, screenH - kbHeight - bottomEdge - SAFE);
 
-      setSuggestMenu({
-        visible: true,
-        anchor: { x, y: anchorY },
-        width: w,
-        maxHeight: Math.min(needed, maxFit),
+        // скільки потрібно для всіх елементів (потім обмежимо)
+        const needed =
+          SUGGEST_ROW_H * Math.max(1, Math.min(suggestions.length, 5) || 1);
+        console.log(needed);
+        // вибираємо напрямок: де більше простору — там і відкривати
+        const openDown = spaceBelow >= spaceAbove;
+        const maxFit = Math.min(
+          300,
+          Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
+        );
+
+        // якір: для "bottom" — лівий-нижній кут поля, для "top" — лівий-верхній
+        const anchorX = x;
+
+        const anchorY = openDown ? bottomEdge + DOWN_Y : y + TOP_Y - needed;
+
+        setSuggestMenu((m) => ({
+          ...m,
+          visible: openIfHidden ? true : m.visible,
+          anchor: { x: anchorX, y: anchorY },
+          width: w,
+          maxHeight: Math.min(needed, maxFit),
+          anchorPosition: openDown ? "bottom" : "top",
+        }));
       });
-      setMenuKey((k) => k + 1);
-    });
-  }, [kbHeight, suggestions.length]);
+    },
+    [kbHeight, suggestions.length]
+  );
 
-  // open/close + ремірка при звуженні пошуку
+  // 🔹 закриття меню запам'ятовує поточний запит, щоб не відкривати одразу знову
+  const handleDismissSuggest = useCallback(() => {
+    setSuggestMenu((m) => ({ ...m, visible: false }));
+    setOpenedFor(debounced);
+  }, [debounced]);
+
+  // якщо користувач очистив до < MIN_CHARS — дозволяємо авто-відкриття знову
+  useEffect(() => {
+    if (debounced.trim().length < MIN_CHARS) {
+      setOpenedFor(null);
+    }
+  }, [debounced]);
+
+  // open/close + ремірка (відкривати лише коли змінився текст у полі)
   useEffect(() => {
     if (showSuggest && suggestions.length > 0) {
-      recalcMenu();
-    } else if (suggestMenu.visible) {
-      setSuggestMenu((m) => ({ ...m, visible: false }));
+      if (suggestMenu.visible) {
+        recalcMenu(); // оновити позицію/висоту без пере-монту
+      } else if (openedFor !== debounced) {
+        setSuggestMenu((m) => ({ ...m, visible: true }));
+        setOpenedFor(debounced);
+        recalcMenu(true); // відкрити і одразу порахувати позицію
+      }
+    } else {
+      if (suggestMenu.visible)
+        setSuggestMenu((m) => ({ ...m, visible: false }));
     }
-  }, [showSuggest, suggestions.length, recalcMenu]);
+  }, [
+    showSuggest,
+    suggestions.length,
+    debounced,
+    openedFor,
+    suggestMenu.visible,
+    recalcMenu,
+  ]);
 
   // додатково — кожна зміна введення (навіть якщо length не змінився)
   useEffect(() => {
@@ -624,7 +682,7 @@ const IngredientRow = memo(function IngredientRow({
         visible={suggestMenu.visible}
         anchor={suggestMenu.anchor}
         anchorWidth={suggestMenu.width}
-        menuKey={menuKey}
+        anchorPosition={suggestMenu.anchorPosition}
         items={suggestions}
         maxHeight={suggestMenu.maxHeight}
         onSelect={(item) => {
@@ -635,7 +693,7 @@ const IngredientRow = memo(function IngredientRow({
           });
           setQuery(item.name);
         }}
-        onDismiss={() => setSuggestMenu((m) => ({ ...m, visible: false }))}
+        onDismiss={handleDismissSuggest}
       />
     </View>
   );
@@ -903,6 +961,11 @@ export default function AddCocktailScreen() {
       contentContainerStyle={styles.container}
       onScrollBeginDrag={() => Keyboard.dismiss()}
       keyboardShouldPersistTaps="handled"
+      onTouchStart={() => {
+        if (glassMenu.visible) {
+          setGlassMenu((m) => ({ ...m, visible: false }));
+        }
+      }}
       style={{ backgroundColor: theme.colors.background }}
     >
       {/* Name */}
