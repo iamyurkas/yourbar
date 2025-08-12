@@ -32,7 +32,7 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
-import { useTheme, Portal } from "react-native-paper";
+import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
@@ -138,6 +138,7 @@ const IngredientRow = memo(function IngredientRow({
   canMoveDown,
   onMoveUp,
   onMoveDown,
+  onOpenSubstitutePicker,
 }) {
   const MIN_CHARS = 2;
   const theme = useTheme();
@@ -715,9 +716,9 @@ const IngredientRow = memo(function IngredientRow({
         ) : null}
       </View>
 
-      {/* Substitute button (stub) */}
+      {/* Substitute button */}
       <Pressable
-        onPress={() => {}}
+        onPress={onOpenSubstitutePicker}
         android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
         style={[
           styles.subBtn,
@@ -732,6 +733,59 @@ const IngredientRow = memo(function IngredientRow({
           Add substitute
         </Text>
       </Pressable>
+
+      {/* Substitutes header + list */}
+      {Array.isArray(row.substitutes) && row.substitutes.length > 0 ? (
+        <View style={{ marginTop: 8 }}>
+          <Text style={[styles.subHeader, { color: theme.colors.onSurface }]}>
+            Substitutes
+          </Text>
+          <View style={styles.subList}>
+            {row.substitutes.map((s) => (
+              <View
+                key={s.id}
+                style={[
+                  styles.subItem,
+                  {
+                    borderColor: theme.colors.outline,
+                    backgroundColor:
+                      theme.colors.surfaceVariant ??
+                      withAlpha(theme.colors.onSurface, 0.04),
+                  },
+                ]}
+              >
+                <Text
+                  style={{ color: theme.colors.onSurface, flex: 1 }}
+                  numberOfLines={1}
+                >
+                  {s.name}
+                </Text>
+                <Pressable
+                  onPress={() =>
+                    onChange({
+                      substitutes: (row.substitutes || []).filter(
+                        (x) => x.id !== s.id
+                      ),
+                    })
+                  }
+                  android_ripple={{
+                    color: withAlpha(theme.colors.tertiary, 0.15),
+                    borderless: true,
+                  }}
+                  style={{ padding: 6, marginLeft: 6 }}
+                  accessibilityLabel={`Remove substitute ${s.name}`}
+                >
+                  <MaterialIcons
+                    name="close"
+                    size={18}
+                    color={theme.colors.onSurfaceVariant}
+                  />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 });
@@ -880,7 +934,7 @@ export default function AddCocktailScreen() {
       garnish: false,
       optional: false,
       allowBaseSubstitute: false,
-      allowBrandedSubstitutes: false, // <-- нове поле
+      allowBrandedSubstitutes: false,
       substitutes: [],
     },
   ]);
@@ -899,7 +953,7 @@ export default function AddCocktailScreen() {
       setUnitMenu({
         visible: true,
         forLocalId: localId,
-        anchor: { x, y: y + h + 28 },
+        anchor: { x, y: y + 28 + h },
         width: w,
       });
     });
@@ -910,18 +964,55 @@ export default function AddCocktailScreen() {
     []
   );
 
-  // ingredients for suggestions
+  // ingredients for suggestions (ensure array)
   const [allIngredients, setAllIngredients] = useState([]);
   useEffect(() => {
     let cancel = false;
     (async () => {
       const list = await getAllIngredients();
-      if (!cancel) setAllIngredients(list);
+      if (!cancel) setAllIngredients(Array.isArray(list) ? list : []);
     })();
     return () => {
       cancel = true;
     };
   }, []);
+
+  // SUBSTITUTE MODAL STATE
+  const [subModal, setSubModal] = useState({
+    visible: false,
+    forLocalId: null,
+    query: "",
+  });
+  const debouncedSubQuery = useDebounced(subModal.query, 150);
+
+  const openSubstituteModal = useCallback((localId) => {
+    setSubModal({ visible: true, forLocalId: localId, query: "" });
+  }, []);
+
+  const closeSubstituteModal = useCallback(() => {
+    setSubModal((s) => ({ ...s, visible: false }));
+  }, []);
+
+  const modalTargetRow = useMemo(
+    () => ings.find((r) => r.localId === subModal.forLocalId) || null,
+    [ings, subModal.forLocalId]
+  );
+
+  const modalExcludedIds = useMemo(() => {
+    const ids = new Set();
+    if (modalTargetRow?.selectedId) ids.add(modalTargetRow.selectedId);
+    (modalTargetRow?.substitutes || []).forEach((s) => ids.add(s.id));
+    return ids;
+  }, [modalTargetRow]);
+
+  const modalSuggestions = useMemo(() => {
+    let list = Array.isArray(allIngredients) ? allIngredients : [];
+    const q = debouncedSubQuery.trim();
+    if (q) list = list.filter((i) => wordPrefixMatch(i.name || "", q));
+    // Прибрати вже додані та сам вибраний інгредієнт
+    list = list.filter((i) => !modalExcludedIds.has(i.id));
+    return list.slice(0, 40);
+  }, [allIngredients, debouncedSubQuery, modalExcludedIds]);
 
   const availableTags = BUILTIN_COCKTAIL_TAGS;
 
@@ -978,7 +1069,7 @@ export default function AddCocktailScreen() {
         garnish: false,
         optional: false,
         allowBaseSubstitute: false,
-        allowBrandedSubstitutes: false, // <-- нове поле
+        allowBrandedSubstitutes: false,
         substitutes: [],
       },
     ]);
@@ -1081,7 +1172,7 @@ export default function AddCocktailScreen() {
         garnish: !!r.garnish,
         optional: !!r.optional,
         allowBaseSubstitute: !!r.allowBaseSubstitute,
-        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes, // <-- збереження
+        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
         substitutes: r.substitutes || [],
       })),
       createdAt: Date.now(),
@@ -1101,6 +1192,28 @@ export default function AddCocktailScreen() {
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
+
+  // Додавання сабституту з модалки + закриття модалки
+  const addSubstituteToTarget = useCallback(
+    (ingredient) => {
+      setIngs((prev) =>
+        prev.map((r) => {
+          if (r.localId !== subModal.forLocalId) return r;
+          const existing = r.substitutes || [];
+          if (existing.some((s) => s.id === ingredient.id)) return r;
+          return {
+            ...r,
+            substitutes: [
+              ...existing,
+              { id: ingredient.id, name: ingredient.name },
+            ],
+          };
+        })
+      );
+      closeSubstituteModal();
+    },
+    [subModal.forLocalId, closeSubstituteModal]
+  );
 
   return (
     <MenuProvider>
@@ -1269,6 +1382,7 @@ export default function AddCocktailScreen() {
               canMoveDown={ings.length > 1 && idx < ings.length - 1}
               onMoveUp={() => moveIngredient(idx, idx - 1)}
               onMoveDown={() => moveIngredient(idx, idx + 1)}
+              onOpenSubstitutePicker={() => openSubstituteModal(row.localId)}
             />
           </Animated.View>
         ))}
@@ -1301,25 +1415,120 @@ export default function AddCocktailScreen() {
             Save cocktail
           </Text>
         </Pressable>
-
-        {/* Unit anchored menu */}
-        <UnitPicker
-          visible={unitMenu.visible}
-          anchor={unitMenu.anchor}
-          anchorWidth={unitMenu.width}
-          value={
-            unitMenu.forLocalId != null
-              ? ings.find((r) => r.localId === unitMenu.forLocalId)?.unitId ??
-                UNIT_ID.ML
-              : UNIT_ID.ML
-          }
-          onSelect={(unitId) => {
-            if (unitMenu.forLocalId == null) return;
-            updateRow(unitMenu.forLocalId, { unitId });
-          }}
-          onDismiss={closeUnitMenu}
-        />
       </ScrollView>
+
+      {/* Substitute Picker Modal */}
+      <Portal>
+        <Modal
+          visible={subModal.visible}
+          onDismiss={closeSubstituteModal}
+          contentContainerStyle={[
+            styles.modalContainer,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.outline,
+            },
+          ]}
+        >
+          <Text style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
+            Add substitute
+          </Text>
+
+          <TextInput
+            placeholder="Search ingredient..."
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={subModal.query}
+            onChangeText={(t) => setSubModal((s) => ({ ...s, query: t }))}
+            style={[
+              styles.input,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.background,
+                marginTop: 12,
+              },
+            ]}
+          />
+
+          <View
+            style={[
+              styles.modalListWrap,
+              {
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+          >
+            <FlatList
+              data={modalSuggestions}
+              keyExtractor={(it) => String(it.id)}
+              keyboardShouldPersistTaps="handled"
+              renderItem={({ item, index }) => (
+                <Pressable
+                  onPress={() => {
+                    addSubstituteToTarget(item);
+                    // закриваємо модалку разом з додаванням
+                    // (ще раз не викликаємо closeSubstituteModal тут, бо вже всередині addSubstituteToTarget)
+                  }}
+                  android_ripple={{
+                    color: withAlpha(theme.colors.tertiary, 0.1),
+                  }}
+                  style={styles.modalItemPressable}
+                >
+                  {index > 0 ? (
+                    <Divider color={theme.colors.outlineVariant} />
+                  ) : null}
+                  <View style={styles.modalItemRow}>
+                    {item.photoUri ? (
+                      <Image
+                        source={{ uri: item.photoUri }}
+                        style={styles.modalItemAvatar}
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.modalItemAvatar,
+                          { backgroundColor: theme.colors.outlineVariant },
+                        ]}
+                      />
+                    )}
+                    <Text
+                      style={{ color: theme.colors.onSurface, flex: 1 }}
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                    <MaterialIcons
+                      name="add-circle-outline"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
+                  </View>
+                </Pressable>
+              )}
+              ListEmptyComponent={
+                <View style={{ padding: 16 }}>
+                  <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                    No ingredients found
+                  </Text>
+                </View>
+              }
+              style={{ maxHeight: 360 }}
+            />
+          </View>
+
+          <Text
+            style={{
+              marginTop: 10,
+              color: theme.colors.onSurfaceVariant,
+              fontSize: 12,
+              textAlign: "center",
+            }}
+          >
+            Tap outside to close
+          </Text>
+        </Modal>
+      </Portal>
     </MenuProvider>
   );
 }
@@ -1444,6 +1653,24 @@ const styles = StyleSheet.create({
     gap: 6,
   },
 
+  // substitutes
+  subHeader: {
+    fontWeight: "700",
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  subList: {
+    gap: 6,
+  },
+  subItem: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   addIngBtn: {
     marginTop: 16,
     borderWidth: 1,
@@ -1487,5 +1714,34 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
+  },
+
+  /* Modal */
+  modalContainer: {
+    marginHorizontal: 24,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+  },
+  modalTitle: { fontWeight: "700", fontSize: 16 },
+  modalListWrap: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  modalItemPressable: {},
+  modalItemRow: {
+    paddingHorizontal: 12,
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  modalItemAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: "#ccc",
   },
 });
