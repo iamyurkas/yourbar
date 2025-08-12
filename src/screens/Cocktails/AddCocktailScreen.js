@@ -581,6 +581,16 @@ const IngredientRow = memo(function IngredientRow({
               onChange({ allowBaseSubstitute: !row.allowBaseSubstitute })
             )
           : null}
+        {row.selectedItem?.baseIngredientId
+          ? checkbox(
+              row.allowBrandedSubstitutes,
+              "Allow branded substitutes",
+              () =>
+                onChange({
+                  allowBrandedSubstitutes: !row.allowBrandedSubstitutes,
+                })
+            )
+          : null}
       </View>
 
       {/* Substitute button (stub) */}
@@ -748,6 +758,7 @@ export default function AddCocktailScreen() {
       garnish: false,
       optional: false,
       allowBaseSubstitute: false,
+      allowBrandedSubstitutes: false, // <-- нове поле
       substitutes: [],
     },
   ]);
@@ -845,6 +856,7 @@ export default function AddCocktailScreen() {
         garnish: false,
         optional: false,
         allowBaseSubstitute: false,
+        allowBrandedSubstitutes: false, // <-- нове поле
         substitutes: [],
       },
     ]);
@@ -928,6 +940,7 @@ export default function AddCocktailScreen() {
         garnish: !!r.garnish,
         optional: !!r.optional,
         allowBaseSubstitute: !!r.allowBaseSubstitute,
+        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes, // <-- збереження
         substitutes: r.substitutes || [],
       })),
       createdAt: Date.now(),
