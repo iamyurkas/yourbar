@@ -149,6 +149,27 @@ const IngredientRow = memo(function IngredientRow({
   const nameAnchorRef = useRef(null);
   const [nameWidth, setNameWidth] = useState(260);
 
+  // --- Unit menu control (auto flip up/down) ---
+  const unitTriggerRef = useRef(null);
+  const [unitPlacement, setUnitPlacement] = useState("bottom");
+  const [unitMenuOpen, setUnitMenuOpen] = useState(false);
+  const openUnitMenuMeasured = useCallback(() => {
+    if (!unitTriggerRef.current) {
+      setUnitPlacement("bottom");
+      setUnitMenuOpen(true);
+      return;
+    }
+    unitTriggerRef.current.measureInWindow((x, y, w, h) => {
+      const screenH = Dimensions.get("window").height;
+      const SAFE = 8;
+      const spaceBelow = Math.max(0, screenH - (y + h) - SAFE);
+      const estimatedMenuH = 350; // має збігатися з maxHeight
+      setUnitPlacement(spaceBelow < estimatedMenuH ? "top" : "bottom");
+      // Відкриємо після оновлення стейту в наступному кадрі
+      requestAnimationFrame(() => setUnitMenuOpen(true));
+    });
+  }, []);
+
   // keyboard height
   const [kbHeight, setKbHeight] = useState(0);
   useEffect(() => {
@@ -162,7 +183,7 @@ const IngredientRow = memo(function IngredientRow({
     };
   }, []);
 
-  // положення випадаючого списку
+  // положення випадаючого списку назв інгредієнтів
   const [suggestState, setSuggestState] = useState({
     visible: false,
     placement: "bottom",
@@ -611,31 +632,35 @@ const IngredientRow = memo(function IngredientRow({
           />
         </View>
 
-        {/* NEW: Unit popover via react-native-popup-menu */}
+        {/* Unit popover with auto flip */}
         <View style={{ width: 160 }}>
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>
             Unit
           </Text>
 
           <Menu
+            opened={unitMenuOpen}
+            onBackdropPress={() => setUnitMenuOpen(false)}
+            onClose={() => setUnitMenuOpen(false)}
             renderer={Popover}
             rendererProps={{
-              placement: "bottom",
+              placement: unitPlacement, // ← динамічно: top/bottom
               preferredPlacement: "bottom",
               showArrow: false,
             }}
           >
             <MenuTrigger
+              disabled // вимикаємо дефолтне відкриття
               customStyles={{
-                // Використовуємо Pressable замість дефолтного touchable
                 TriggerTouchableComponent: Pressable,
-                // Будь-які пропси підуть прямо в Pressable:
                 triggerTouchable: {
-                  // без зміни прозорості/рі́плу
+                  onPress: openUnitMenuMeasured, // міряємо і відкриваємо
                 },
               }}
             >
               <View
+                ref={unitTriggerRef}
+                collapsable={false}
                 style={[
                   styles.input,
                   styles.unitAnchor,
@@ -660,12 +685,16 @@ const IngredientRow = memo(function IngredientRow({
               customStyles={{
                 optionsContainer: {
                   width: 160,
-                  maxHeight: 360,
+                  maxHeight: 300, // ← має відповідати estimatedMenuH
                   backgroundColor: theme.colors.surface,
                   padding: 0,
                   borderRadius: 8,
-                  marginTop: -6,
                   overflow: "hidden",
+                  ...(unitPlacement === "top"
+                    ? {
+                        transform: [{ translateY: 14 }],
+                      } // ближче до тригера, коли зверху
+                    : { marginTop: -6 }), // ближче до тригера, коли знизу
                 },
               }}
             >
@@ -679,7 +708,10 @@ const IngredientRow = memo(function IngredientRow({
                     ) : null}
                     <MenuOption
                       closeOnSelect
-                      onSelect={() => onChange({ unitId: item.id })}
+                      onSelect={() => {
+                        onChange({ unitId: item.id });
+                        setUnitMenuOpen(false);
+                      }}
                       customStyles={{ optionWrapper: { padding: 0 } }}
                     >
                       <View
@@ -890,12 +922,8 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
     >
       <MenuTrigger
         customStyles={{
-          // Використовуємо Pressable замість дефолтного touchable
           TriggerTouchableComponent: Pressable,
-          // Будь-які пропси підуть прямо в Pressable:
-          triggerTouchable: {
-            // без зміни прозорості/рі́плу
-          },
+          triggerTouchable: {},
         }}
       >
         <View
@@ -1773,7 +1801,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     overflow: "hidden",
-    elevation: 6,
+    elevation: 6, // Android shadow
+    // iOS shadow
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
