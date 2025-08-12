@@ -128,6 +128,7 @@ const IngredientRow = memo(function IngredientRow({
   onOpenUnitPicker,
   allIngredients,
   onAddNewIngredient,
+  canRemove,
 }) {
   const MIN_CHARS = 2;
   const theme = useTheme();
@@ -361,20 +362,23 @@ const IngredientRow = memo(function IngredientRow({
         <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
           {index + 1}.
         </Text>
-        <Pressable
-          onPress={onRemove}
-          android_ripple={{
-            color: withAlpha(theme.colors.error, 0.12),
-            borderless: true,
-          }}
-          style={styles.removeBtn}
-        >
-          <MaterialIcons
-            name="delete-outline"
-            size={20}
-            color={theme.colors.error}
-          />
-        </Pressable>
+
+        {canRemove ? (
+          <Pressable
+            onPress={onRemove}
+            android_ripple={{
+              color: withAlpha(theme.colors.error, 0.12),
+              borderless: true,
+            }}
+            style={styles.removeBtn}
+          >
+            <MaterialIcons
+              name="delete-outline"
+              size={20}
+              color={theme.colors.error}
+            />
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Ingredient */}
@@ -1195,6 +1199,7 @@ export default function AddCocktailScreen() {
               openUnitMenu(anchorRef, row.localId)
             }
             onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
+            canRemove={ings.length > 1}
           />
         ))}
 
