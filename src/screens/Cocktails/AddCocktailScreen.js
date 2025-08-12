@@ -27,13 +27,22 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
-import { useTheme, Menu, Divider, Portal } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+
+import {
+  MenuProvider,
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+  renderers,
+} from "react-native-popup-menu";
+const { Popover } = renderers;
 
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
-import UnitPicker from "../../components/UnitPicker";
 import { UNIT_ID, getUnitById } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
@@ -60,13 +69,35 @@ const useDebounced = (value, delay = 250) => {
 const normalizeUk = (s) => (s || "").toLocaleLowerCase("uk");
 // розбиваємо на слова: латиниця + цифри + кирилиця (U+0400..U+04FF)
 const WORD_SPLIT_RE = /[^a-z0-9\u0400-\u04FF]+/i;
+// підтримка багатослівного запиту: "black p" -> "black pepper"
 const wordPrefixMatch = (name, query) => {
-  const n = normalizeUk(name);
-  const q = normalizeUk(query).trim();
-  if (!q) return false;
-  const words = n.split(WORD_SPLIT_RE).filter(Boolean);
-  return words.some((w) => w.startsWith(q));
+  const words = normalizeUk(name).split(WORD_SPLIT_RE).filter(Boolean);
+  const parts = normalizeUk(query).trim().split(WORD_SPLIT_RE).filter(Boolean);
+  if (parts.length === 0) return false;
+  // кожна частина запиту має послідовно матчити префікс слова
+  let wi = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    while (wi < words.length && !words[wi].startsWith(p)) wi++;
+    if (wi === words.length) return false;
+    wi++; // далі шукаємо після знайденого слова
+  }
+  return true;
 };
+
+/* ---------- Tiny Divider ---------- */
+const Divider = ({ color, style }) => (
+  <View
+    style={[
+      {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: color,
+        opacity: 0.5,
+      },
+      style,
+    ]}
+  />
+);
 
 /* ---------- TagPill ---------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
@@ -86,204 +117,9 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   );
 });
 
-/* ---------- Ingredient suggestions dropdown (як базові/брендовані, без пошуку) ---------- */
-const SUGGEST_ROW_H = 56; // візуальний паритет з іншим меню
+/* ---------- IngredientRow (з popup-menu для підказок) ---------- */
+const SUGGEST_ROW_H = 56;
 
-const IngredientSuggestMenu = memo(function IngredientSuggestMenu({
-  visible,
-  anchor, // {x,y} — точка під інпутом
-  anchorWidth, // ширина інпуту
-  items,
-  menuKey,
-  maxHeight, // динамічна межа висоти щоб не flip-илось вгору
-  anchorPosition,
-  onSelect,
-  onDismiss,
-}) {
-  const theme = useTheme();
-  if (!visible || !items?.length) return null; // ← не рендеримо порожнє меню
-  const height =
-    typeof maxHeight === "number"
-      ? Math.min(maxHeight, SUGGEST_ROW_H * items.length)
-      : Math.min(300, SUGGEST_ROW_H * items.length);
-
-  return (
-    <Portal>
-      <Menu
-        key={menuKey}
-        visible={visible}
-        onDismiss={onDismiss}
-        anchor={anchor || { x: 0, y: 0 }}
-        anchorPosition={anchorPosition || "bottom"}
-        contentStyle={{
-          width: anchorWidth || 260,
-          backgroundColor: theme.colors.surface,
-        }}
-        style={{}} // без transform — працюємо координатним якорем
-      >
-        <FlatList
-          data={items}
-          keyExtractor={(it) => String(it.id)}
-          renderItem={({ item, index }) => (
-            <>
-              {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
-              <Pressable
-                onPress={() => {
-                  onSelect?.(item);
-                  onDismiss?.();
-                }}
-                android_ripple={{ color: theme.colors.outlineVariant }}
-                style={({ pressed }) => [
-                  {
-                    height: SUGGEST_ROW_H,
-                    paddingHorizontal: 12,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  },
-                  pressed && { opacity: 0.96 },
-                ]}
-              >
-                {/* 4px stripe для branded — як у головному меню */}
-                <View
-                  style={{
-                    width: 4,
-                    height: 28,
-                    borderRadius: 2,
-                    marginRight: 8,
-                    backgroundColor: item.baseIngredientId
-                      ? theme.colors.onSurfaceVariant
-                      : "transparent",
-                  }}
-                />
-                {item.photoUri ? (
-                  <Image
-                    source={{ uri: item.photoUri }}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 6,
-                      marginRight: 10,
-                      backgroundColor: theme.colors.background,
-                    }}
-                  />
-                ) : (
-                  <View
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 6,
-                      marginRight: 10,
-                      backgroundColor: theme.colors.outlineVariant,
-                    }}
-                  />
-                )}
-                <Text
-                  style={{ color: theme.colors.onSurface, flex: 1 }}
-                  numberOfLines={1}
-                >
-                  {item.name}
-                </Text>
-              </Pressable>
-            </>
-          )}
-          style={{
-            height,
-          }}
-          keyboardShouldPersistTaps="handled"
-          getItemLayout={(_, i) => ({
-            length: SUGGEST_ROW_H,
-            offset: SUGGEST_ROW_H * i,
-            index: i,
-          })}
-        />
-      </Menu>
-    </Portal>
-  );
-});
-
-/* ---------- GlasswareMenu (no search) ---------- */
-const GLASS_ROW_H = 56;
-const GLASS_MENU_W = 249; // фіксована ширина меню склянок
-
-const GlasswareMenu = memo(function GlasswareMenu({
-  visible,
-  anchor, // {x, y} — ЛІВИЙ край меню
-  onSelect,
-  onDismiss,
-}) {
-  const theme = useTheme();
-  return (
-    <Portal>
-      <Menu
-        visible={visible}
-        onDismiss={onDismiss}
-        anchor={anchor || { x: 0, y: 0 }}
-        contentStyle={{
-          width: GLASS_MENU_W,
-          backgroundColor: theme.colors.surface,
-        }}
-      >
-        <FlatList
-          data={GLASSWARE}
-          keyExtractor={(g) => g.id}
-          renderItem={({ item, index }) => (
-            <>
-              {index > 0 ? <Divider style={{ opacity: 0.5 }} /> : null}
-              <Pressable
-                onPress={() => {
-                  onSelect?.(item);
-                  onDismiss?.();
-                }}
-                android_ripple={{ color: theme.colors.outlineVariant }}
-                style={({ pressed }) => [
-                  {
-                    height: GLASS_ROW_H,
-                    paddingHorizontal: 12,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  },
-                  pressed && { opacity: 0.96 },
-                ]}
-              >
-                {item.image ? (
-                  <Image
-                    source={item.image}
-                    style={{ width: 32, height: 32, marginRight: 10 }}
-                    resizeMode="contain"
-                  />
-                ) : (
-                  <View
-                    style={{
-                      width: 32,
-                      height: 32,
-                      marginRight: 10,
-                      backgroundColor: theme.colors.outlineVariant,
-                      borderRadius: 6,
-                    }}
-                  />
-                )}
-                <Text style={{ color: theme.colors.onSurface, flex: 1 }}>
-                  {item.name}
-                </Text>
-              </Pressable>
-            </>
-          )}
-          style={{
-            height: Math.min(360, GLASS_ROW_H * GLASSWARE.length),
-          }}
-          keyboardShouldPersistTaps="handled"
-          getItemLayout={(_, i) => ({
-            length: GLASS_ROW_H,
-            offset: GLASS_ROW_H * i,
-            index: i,
-          })}
-        />
-      </Menu>
-    </Portal>
-  );
-});
-
-/* ---------- IngredientRow ---------- */
 const IngredientRow = memo(function IngredientRow({
   index,
   row,
@@ -303,13 +139,12 @@ const IngredientRow = memo(function IngredientRow({
     []
   );
 
-  // anchors
+  // refs + layout
   const nameAnchorRef = useRef(null);
-  const unitAnchorRef = useRef(null);
+  const [nameWidth, setNameWidth] = useState(260);
 
-  // keyboard height (щоб не перевертати меню наверх)
+  // keyboard height
   const [kbHeight, setKbHeight] = useState(0);
-  const [menuKey, setMenuKey] = useState(0); // змінюємо щоб ремоунтити Menu
   useEffect(() => {
     const sh = Keyboard.addListener("keyboardDidShow", (e) =>
       setKbHeight(e?.endCoordinates?.height || 0)
@@ -321,22 +156,16 @@ const IngredientRow = memo(function IngredientRow({
     };
   }, []);
 
-  // anchored suggest state
-  const [suggestMenu, setSuggestMenu] = useState({
+  // відкриття/розміщення поповеру
+  const [suggestState, setSuggestState] = useState({
     visible: false,
-    anchor: null,
-    width: 0,
-    maxHeight: 0,
-    anchorPosition: "bottom", // "bottom" | "top"
+    placement: "bottom", // 'bottom' | 'top'
+    maxHeight: 300,
   });
-
-  // 🔹 пам'ятаємо, для якого запиту було відкрите меню
   const [openedFor, setOpenedFor] = useState(null);
 
-  // show suggestions whenever 2+ chars AND not selected
   const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
 
-  // filter suggestions (пошук тільки за префіксом слова)
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
     const q = debounced.trim();
@@ -346,106 +175,58 @@ const IngredientRow = memo(function IngredientRow({
       .slice(0, 20);
   }, [allIngredients, debounced, showSuggest]);
 
-  // keep input in sync if changed externally
+  // sync from external
   useEffect(() => {
     if (row.name !== query) setQuery(row.name || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.name]);
 
-  // утиліта: порахувати позицію + максимально допустиму висоту
-  const recalcMenu = useCallback(
-    (openIfHidden = false) => {
-      if (!nameAnchorRef.current) return;
-      nameAnchorRef.current.measureInWindow((x, y, w, h) => {
-        const screenH = Dimensions.get("window").height;
-        const SAFE = 12;
-        const DOWN_Y = 28; // невеличке «притискання» до поля
-        const TOP_Y = 13; // невеличке «притискання» до поля
+  // перерахунок placement/maxHeight відносно клавіатури й екрану
+  const recalcPlacement = useCallback(() => {
+    if (!nameAnchorRef.current) return;
+    nameAnchorRef.current.measureInWindow((x, y, w, h) => {
+      const screenH = Dimensions.get("window").height;
+      const SAFE = 12;
+      const spaceAbove = Math.max(0, y - SAFE);
+      const bottomEdge = y + h;
+      const spaceBelow = Math.max(0, screenH - kbHeight - bottomEdge - SAFE);
 
-        // простір над та під полем
-        const spaceAbove = Math.max(0, y - SAFE);
-        const bottomEdge = y + h;
-        const spaceBelow = Math.max(0, screenH - kbHeight - bottomEdge - SAFE);
+      const rows = Math.max(1, Math.min(suggestions.length, 5) || 1);
+      const needed = SUGGEST_ROW_H * rows;
 
-        // скільки потрібно для всіх елементів (потім обмежимо)
-        const needed =
-          SUGGEST_ROW_H * Math.max(1, Math.min(suggestions.length, 5) || 1);
-        console.log(needed);
-        // вибираємо напрямок: де більше простору — там і відкривати
-        const openDown = spaceBelow >= spaceAbove;
-        const maxFit = Math.min(
-          300,
-          Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
-        );
+      const openDown = spaceBelow >= spaceAbove;
+      const maxFit = Math.min(
+        300,
+        Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
+      );
 
-        // якір: для "bottom" — лівий-нижній кут поля, для "top" — лівий-верхній
-        const anchorX = x;
+      setSuggestState((s) => ({
+        ...s,
+        placement: openDown ? "bottom" : "top",
+        maxHeight: Math.min(needed, maxFit),
+      }));
+      setNameWidth(w || nameWidth);
+    });
+  }, [kbHeight, suggestions.length, nameWidth]);
 
-        const anchorY = openDown ? bottomEdge + DOWN_Y : y + TOP_Y - needed;
-
-        setSuggestMenu((m) => ({
-          ...m,
-          visible: openIfHidden ? true : m.visible,
-          anchor: { x: anchorX, y: anchorY },
-          width: w,
-          maxHeight: Math.min(needed, maxFit),
-          anchorPosition: openDown ? "bottom" : "top",
-        }));
-      });
-    },
-    [kbHeight, suggestions.length]
-  );
-
-  // 🔹 закриття меню запам'ятовує поточний запит, щоб не відкривати одразу знову
-  const handleDismissSuggest = useCallback(() => {
-    setSuggestMenu((m) => ({ ...m, visible: false }));
-    setOpenedFor(debounced);
-  }, [debounced]);
-
-  // якщо користувач очистив до < MIN_CHARS — дозволяємо авто-відкриття знову
   useEffect(() => {
-    if (debounced.trim().length < MIN_CHARS) {
-      setOpenedFor(null);
-    }
-  }, [debounced]);
-
-  // open/close + ремірка (відкривати лише коли змінився текст у полі)
-  useEffect(() => {
-    if (showSuggest && suggestions.length > 0) {
-      if (suggestMenu.visible) {
-        recalcMenu(); // оновити позицію/висоту без пере-монту
-      } else if (openedFor !== debounced) {
-        setSuggestMenu((m) => ({ ...m, visible: true }));
-        setOpenedFor(debounced);
-        recalcMenu(true); // відкрити і одразу порахувати позицію
-      }
-    } else {
-      if (suggestMenu.visible)
-        setSuggestMenu((m) => ({ ...m, visible: false }));
-    }
+    if (suggestState.visible) recalcPlacement();
   }, [
-    showSuggest,
     suggestions.length,
     debounced,
-    openedFor,
-    suggestMenu.visible,
-    recalcMenu,
+    kbHeight,
+    suggestState.visible,
+    recalcPlacement,
   ]);
 
-  // додатково — кожна зміна введення (навіть якщо length не змінився)
-  useEffect(() => {
-    if (suggestMenu.visible) recalcMenu();
-  }, [debounced, recalcMenu, suggestMenu.visible]);
-
-  // ремірка при зміні розмірів (обертання тощо)
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", () => {
-      if (suggestMenu.visible) recalcMenu();
+      if (suggestState.visible) recalcPlacement();
     });
     return () => sub?.remove?.();
-  }, [suggestMenu.visible, recalcMenu]);
+  }, [suggestState.visible, recalcPlacement]);
 
-  // Auto-bind selection if exact match
+  // авто-бінд по exact match
   useEffect(() => {
     const raw = query;
     const stable = debounced;
@@ -462,7 +243,6 @@ const IngredientRow = memo(function IngredientRow({
 
   const selectedUnit = getUnitById(row.unitId) || getUnitById(UNIT_ID.ML);
 
-  // exact match check for showing [+] — >1 символа
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
     if (!t) return true;
@@ -473,6 +253,33 @@ const IngredientRow = memo(function IngredientRow({
 
   const showAddNewBtn =
     !row.selectedId && query.trim().length > 1 && !hasExactMatch;
+
+  const handleDismissSuggest = useCallback(() => {
+    setSuggestState((s) => ({ ...s, visible: false }));
+    setOpenedFor(debounced);
+  }, [debounced]);
+
+  useEffect(() => {
+    if (debounced.trim().length < MIN_CHARS) {
+      setOpenedFor(null);
+    }
+  }, [debounced]);
+
+  useEffect(() => {
+    if (showSuggest && suggestions.length > 0) {
+      if (!suggestState.visible && openedFor !== debounced) {
+        setSuggestState((s) => ({ ...s, visible: true }));
+        recalcPlacement();
+      } else if (suggestState.visible) {
+        recalcPlacement();
+      }
+    } else {
+      if (suggestState.visible) {
+        setSuggestState((s) => ({ ...s, visible: false }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSuggest, suggestions.length, debounced, openedFor]);
 
   const checkbox = (checked, label, onToggle) => (
     <Pressable
@@ -541,39 +348,144 @@ const IngredientRow = memo(function IngredientRow({
         </Text>
       </View>
 
-      {/* Name input + inline [+Add] in one row */}
+      {/* Name input + inline [+Add] wrapped with Popup Menu (Popover) */}
       <View style={styles.inputRow}>
-        <View
-          ref={nameAnchorRef}
-          collapsable={false}
-          style={{ flex: 1 }}
-          onLayout={() => {
-            if (suggestMenu.visible) recalcMenu();
+        <Menu
+          renderer={Popover}
+          opened={suggestState.visible}
+          onBackdropPress={handleDismissSuggest}
+          style={styles.inputRowMenu}
+          rendererProps={{
+            placement: suggestState.placement,
+            preferredPlacement: suggestState.placement,
           }}
         >
-          <TextInput
-            placeholder="Type ingredient name"
-            placeholderTextColor={theme.colors.onSurfaceVariant}
-            value={query}
-            onChangeText={(t) => {
-              setQuery(t);
-              onChange({ name: t, selectedId: null, selectedItem: null });
-              if (t.trim().length < MIN_CHARS) {
-                setSuggestMenu((m) => ({ ...m, visible: false }));
-              }
-            }}
-            style={[
-              styles.input,
-              {
-                borderColor: theme.colors.outline,
-                color: theme.colors.onSurface,
-                backgroundColor: theme.colors.background,
-                marginTop: 0,
+          <MenuTrigger disabled>
+            <View
+              ref={nameAnchorRef}
+              collapsable={false}
+              style={styles.nameInputWrap}
+              onLayout={(e) => setNameWidth(e.nativeEvent.layout.width)}
+            >
+              <TextInput
+                placeholder="Type ingredient name"
+                placeholderTextColor={theme.colors.onSurfaceVariant}
+                value={query}
+                onChangeText={(t) => {
+                  setQuery(t);
+                  onChange({ name: t, selectedId: null, selectedItem: null });
+                }}
+                style={[
+                  styles.input,
+                  styles.nameInput,
+                  {
+                    borderColor: theme.colors.outline,
+                    color: theme.colors.onSurface,
+                    backgroundColor: theme.colors.background,
+                    marginTop: 0,
+                  },
+                ]}
+                returnKeyType="done"
+              />
+            </View>
+          </MenuTrigger>
+
+          <MenuOptions
+            customStyles={{
+              optionsContainer: {
+                width: nameWidth || 260,
+                maxHeight: suggestState.maxHeight,
+                backgroundColor: theme.colors.surface,
+                padding: 0,
+                borderRadius: 8,
+                overflow: "hidden",
               },
-            ]}
-            returnKeyType="done"
-          />
-        </View>
+            }}
+          >
+            <FlatList
+              data={suggestions}
+              keyExtractor={(it) => String(it.id)}
+              renderItem={({ item, index }) => (
+                <View>
+                  {index > 0 ? (
+                    <Divider color={theme.colors.outlineVariant} />
+                  ) : null}
+                  <MenuOption
+                    closeOnSelect
+                    onSelect={() => {
+                      onChange({
+                        name: item.name,
+                        selectedId: item.id,
+                        selectedItem: item,
+                      });
+                      setQuery(item.name);
+                      handleDismissSuggest();
+                    }}
+                    customStyles={{
+                      optionWrapper: { padding: 0 },
+                    }}
+                  >
+                    <View
+                      style={{
+                        height: SUGGEST_ROW_H,
+                        paddingHorizontal: 12,
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* stripe for branded */}
+                      <View
+                        style={{
+                          width: 4,
+                          height: 28,
+                          borderRadius: 2,
+                          marginRight: 8,
+                          backgroundColor: item.baseIngredientId
+                            ? theme.colors.onSurfaceVariant
+                            : "transparent",
+                        }}
+                      />
+                      {item.photoUri ? (
+                        <Image
+                          source={{ uri: item.photoUri }}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 6,
+                            marginRight: 10,
+                            backgroundColor: theme.colors.background,
+                          }}
+                        />
+                      ) : (
+                        <View
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 6,
+                            marginRight: 10,
+                            backgroundColor: theme.colors.outlineVariant,
+                          }}
+                        />
+                      )}
+                      <Text
+                        style={{ color: theme.colors.onSurface, flex: 1 }}
+                        numberOfLines={1}
+                      >
+                        {item.name}
+                      </Text>
+                    </View>
+                  </MenuOption>
+                </View>
+              )}
+              keyboardShouldPersistTaps="handled"
+              getItemLayout={(_, i) => ({
+                length: SUGGEST_ROW_H,
+                offset: SUGGEST_ROW_H * i,
+                index: i,
+              })}
+            />
+          </MenuOptions>
+        </Menu>
 
         {showAddNewBtn ? (
           <Pressable
@@ -586,7 +498,10 @@ const IngredientRow = memo(function IngredientRow({
             accessibilityLabel="Add new ingredient"
           >
             <MaterialIcons name="add" size={18} color={theme.colors.primary} />
-            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+            <Text
+              numberOfLines={1}
+              style={{ color: theme.colors.primary, fontWeight: "600" }}
+            >
               Add
             </Text>
           </Pressable>
@@ -616,12 +531,12 @@ const IngredientRow = memo(function IngredientRow({
           />
         </View>
 
-        <View ref={unitAnchorRef} collapsable={false} style={{ width: 140 }}>
+        <View style={{ width: 140 }}>
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>
             Unit
           </Text>
           <Pressable
-            onPress={() => onOpenUnitPicker(unitAnchorRef)}
+            onPress={onOpenUnitPicker}
             android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
             style={[
               styles.input,
@@ -676,26 +591,126 @@ const IngredientRow = memo(function IngredientRow({
           Add substitute
         </Text>
       </Pressable>
-
-      {/* Suggestions dropdown (anchored) */}
-      <IngredientSuggestMenu
-        visible={suggestMenu.visible}
-        anchor={suggestMenu.anchor}
-        anchorWidth={suggestMenu.width}
-        anchorPosition={suggestMenu.anchorPosition}
-        items={suggestions}
-        maxHeight={suggestMenu.maxHeight}
-        onSelect={(item) => {
-          onChange({
-            name: item.name,
-            selectedId: item.id,
-            selectedItem: item,
-          });
-          setQuery(item.name);
-        }}
-        onDismiss={handleDismissSuggest}
-      />
     </View>
+  );
+});
+
+/* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
+const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
+  const theme = useTheme();
+
+  return (
+    <Menu
+      renderer={Popover}
+      rendererProps={{
+        placement: "bottom",
+        preferredPlacement: "bottom",
+        showArrow: false, // прибираємо маленький «квадратик»/стрілку
+      }}
+    >
+      <MenuTrigger>
+        <View
+          style={[
+            styles.mediaSquare,
+            {
+              borderColor: theme.colors.outline,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+        >
+          {selectedGlass?.image ? (
+            <Image
+              source={selectedGlass.image}
+              style={styles.mediaImg}
+              resizeMode="contain"
+            />
+          ) : (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingHorizontal: 6,
+              }}
+            >
+              <Text
+                style={{ color: theme.colors.onSurface, fontWeight: "600" }}
+                numberOfLines={2}
+              >
+                {selectedGlass?.name || "Cocktail glass"}
+              </Text>
+            </View>
+          )}
+        </View>
+      </MenuTrigger>
+
+      <MenuOptions
+        customStyles={{
+          optionsContainer: {
+            width: 249, // фіксована ширина меню
+            maxHeight: 360,
+            backgroundColor: theme.colors.surface,
+            padding: 0,
+            borderRadius: 8,
+            overflow: "hidden",
+            marginTop: -90, // щільно під плейсхолдером
+            marginLeft: 18,
+          },
+        }}
+      >
+        <FlatList
+          data={GLASSWARE}
+          keyExtractor={(g) => g.id}
+          renderItem={({ item, index }) => (
+            <View>
+              {index > 0 ? (
+                <Divider color={theme.colors.outlineVariant} />
+              ) : null}
+              <MenuOption
+                closeOnSelect
+                onSelect={() => onSelect(item)}
+                customStyles={{ optionWrapper: { padding: 0 } }}
+              >
+                <View
+                  style={{
+                    height: 56,
+                    paddingHorizontal: 12,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {item.image ? (
+                    <Image
+                      source={item.image}
+                      style={{ width: 32, height: 32, marginRight: 10 }}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 32,
+                        height: 32,
+                        marginRight: 10,
+                        backgroundColor: theme.colors.outlineVariant,
+                        borderRadius: 6,
+                      }}
+                    />
+                  )}
+                  <Text style={{ color: theme.colors.onSurface, flex: 1 }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </MenuOption>
+            </View>
+          )}
+          keyboardShouldPersistTaps="handled"
+          getItemLayout={(_, i) => ({
+            length: 56,
+            offset: 56 * i,
+            index: i,
+          })}
+        />
+      </MenuOptions>
+    </Menu>
   );
 });
 
@@ -729,21 +744,6 @@ export default function AddCocktailScreen() {
     },
   ]);
 
-  // unit anchored menu state
-  const [unitMenu, setUnitMenu] = useState({
-    visible: false,
-    forLocalId: null,
-    anchor: null, // { x, y }
-    width: 0,
-  });
-
-  // glass anchored menu state (вирівняно по правому краю)
-  const [glassMenu, setGlassMenu] = useState({
-    visible: false,
-    anchor: null, // { x: leftOfMenu, y: top }
-  });
-  const glassAnchorRef = useRef(null);
-
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
   useEffect(() => {
@@ -771,29 +771,6 @@ export default function AddCocktailScreen() {
       quality: 0.7,
     });
     if (!result.canceled) setPhotoUri(result.assets[0].uri);
-  }, []);
-
-  // open glass menu — рахуємо ЛІВИЙ край меню, щоб змістити вліво на GLASS_MENU_W
-  const openGlassMenu = useCallback(() => {
-    if (!glassAnchorRef.current) return;
-    const { width: winW } = Dimensions.get("window");
-
-    glassAnchorRef.current.measureInWindow((x, y, w, h) => {
-      const rightX = x + w;
-      // лівий край меню = правий край кнопки - ширина меню
-      let leftX = rightX - GLASS_MENU_W;
-
-      // відступи від країв екрана
-      const PADDING = 8;
-      if (leftX < PADDING) leftX = PADDING;
-      const maxLeft = winW - PADDING - GLASS_MENU_W;
-      if (leftX > maxLeft) leftX = maxLeft;
-
-      setGlassMenu({
-        visible: true,
-        anchor: { x: leftX, y: y + h },
-      });
-    });
   }, []);
 
   const toggleTagById = useCallback(
@@ -839,23 +816,6 @@ export default function AddCocktailScreen() {
       },
     ]);
   }, []);
-
-  const openUnitMenu = useCallback((anchorRef, localId) => {
-    if (!anchorRef?.current) return;
-    anchorRef.current.measureInWindow((x, y, w, h) => {
-      setUnitMenu({
-        visible: true,
-        forLocalId: localId,
-        anchor: { x, y: y + h },
-        width: w,
-      });
-    });
-  }, []);
-
-  const closeUnitMenu = useCallback(
-    () => setUnitMenu((m) => ({ ...m, visible: false })),
-    []
-  );
 
   // OPEN AddIngredient with prefilled name; return result via params (serializable)
   const openAddIngredient = useCallback(
@@ -957,73 +917,53 @@ export default function AddCocktailScreen() {
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      onScrollBeginDrag={() => Keyboard.dismiss()}
-      keyboardShouldPersistTaps="handled"
-      onTouchStart={() => {
-        if (glassMenu.visible) {
-          setGlassMenu((m) => ({ ...m, visible: false }));
-        }
-      }}
-      style={{ backgroundColor: theme.colors.background }}
-    >
-      {/* Name */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Name
-      </Text>
-      <TextInput
-        placeholder="e.g. Margarita"
-        placeholderTextColor={theme.colors.onSurfaceVariant}
-        value={name}
-        onChangeText={setName}
-        style={[
-          styles.input,
-          {
-            borderColor: theme.colors.outline,
-            color: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
-      />
+    // ⚠️ Якщо MenuProvider вже є глобально — цей локальний прибери
+    <MenuProvider>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="handled"
+        style={{ backgroundColor: theme.colors.background }}
+      >
+        {/* Name */}
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Name
+        </Text>
+        <TextInput
+          placeholder="e.g. Margarita"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={name}
+          onChangeText={setName}
+          style={[
+            styles.input,
+            {
+              borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+        />
 
-      {/* Photo + Glass in one row */}
-      <View style={styles.mediaRow}>
-        {/* Photo */}
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-            Photo
-          </Text>
-          <Pressable
-            onPress={pickImage}
-            android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-            style={[
-              styles.mediaSquare,
-              {
-                borderColor: theme.colors.outline,
-                backgroundColor: theme.colors.surface,
-              },
-            ]}
-          >
-            {photoUri ? (
-              <Image source={{ uri: photoUri }} style={styles.mediaImg} />
-            ) : (
-              <Text style={{ color: theme.colors.onSurfaceVariant }}>
-                Tap to select image
-              </Text>
-            )}
-          </Pressable>
-        </View>
+        {/* Glass (ліворуч) + Photo (праворуч) */}
+        <View style={styles.mediaRow}>
+          {/* Glass */}
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+              Glass
+            </Text>
+            <GlassPopover
+              selectedGlass={selectedGlass}
+              onSelect={(g) => setGlassId(g.id)}
+            />
+          </View>
 
-        {/* Glass */}
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-            Glass
-          </Text>
-
-          <View ref={glassAnchorRef} collapsable={false}>
+          {/* Photo */}
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+              Photo
+            </Text>
             <Pressable
-              onPress={openGlassMenu}
+              onPress={pickImage}
               android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
               style={[
                 styles.mediaSquare,
@@ -1033,181 +973,142 @@ export default function AddCocktailScreen() {
                 },
               ]}
             >
-              {selectedGlass?.image ? (
-                <Image
-                  source={selectedGlass.image}
-                  style={styles.mediaImg}
-                  resizeMode="contain"
-                />
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.mediaImg} />
               ) : (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingHorizontal: 6,
-                  }}
-                >
-                  <Text
-                    style={{ color: theme.colors.onSurface, fontWeight: "600" }}
-                    numberOfLines={2}
-                  >
-                    {selectedGlass?.name || "Cocktail glass"}
-                  </Text>
-                </View>
+                <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                  Tap to select image
+                </Text>
               )}
             </Pressable>
           </View>
-
-          {/* Glass menu (left-shifted by fixed width) */}
-          <GlasswareMenu
-            visible={glassMenu.visible}
-            anchor={glassMenu.anchor}
-            onSelect={(g) => setGlassId(g.id)}
-            onDismiss={() => setGlassMenu((m) => ({ ...m, visible: false }))}
-          />
         </View>
-      </View>
 
-      {/* Tags */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Tags
-      </Text>
-      <View style={styles.tagContainer}>
-        {tags.map((t) => (
-          <TagPill
-            key={t.id}
-            id={t.id}
-            name={t.name}
-            color={t.color}
-            onToggle={toggleTagById}
-          />
-        ))}
-      </View>
+        {/* Tags */}
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Tags
+        </Text>
+        <View style={styles.tagContainer}>
+          {tags.map((t) => (
+            <TagPill
+              key={t.id}
+              id={t.id}
+              name={t.name}
+              color={t.color}
+              onToggle={toggleTagById}
+            />
+          ))}
+        </View>
 
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Add Tag
-      </Text>
-      <View style={styles.tagContainer}>
-        {BUILTIN_COCKTAIL_TAGS.filter(
-          (t) => !tags.some((x) => x.id === t.id)
-        ).map((t) => (
-          <TagPill
-            key={t.id}
-            id={t.id}
-            name={t.name}
-            color={t.color}
-            onToggle={toggleTagById}
-          />
-        ))}
-      </View>
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Add Tag
+        </Text>
+        <View style={styles.tagContainer}>
+          {BUILTIN_COCKTAIL_TAGS.filter(
+            (t) => !tags.some((x) => x.id === t.id)
+          ).map((t) => (
+            <TagPill
+              key={t.id}
+              id={t.id}
+              name={t.name}
+              color={t.color}
+              onToggle={toggleTagById}
+            />
+          ))}
+        </View>
 
-      {/* Description */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Description
-      </Text>
-      <TextInput
-        placeholder="Optional description"
-        placeholderTextColor={theme.colors.onSurfaceVariant}
-        value={description}
-        onChangeText={setDescription}
-        style={[
-          styles.input,
-          styles.multiline,
-          {
-            borderColor: theme.colors.outline,
-            color: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
-        multiline
-      />
-
-      {/* Instructions */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Instructions
-      </Text>
-      <TextInput
-        placeholder="Steps to prepare the cocktail"
-        placeholderTextColor={theme.colors.onSurfaceVariant}
-        value={instructions}
-        onChangeText={setInstructions}
-        style={[
-          styles.input,
-          styles.multiline,
-          {
-            borderColor: theme.colors.outline,
-            color: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
-        multiline
-      />
-
-      {/* Ingredients list */}
-      <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-        Ingredients
-      </Text>
-
-      {ings.map((row, idx) => (
-        <IngredientRow
-          key={row.localId}
-          index={idx}
-          row={row}
-          allIngredients={allIngredients}
-          onChange={(patch) => updateRow(row.localId, patch)}
-          onRemove={() => removeRow(row.localId)}
-          onOpenUnitPicker={(anchorRef) => openUnitMenu(anchorRef, row.localId)}
-          onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
+        {/* Description */}
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Description
+        </Text>
+        <TextInput
+          placeholder="Optional description"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={description}
+          onChangeText={setDescription}
+          style={[
+            styles.input,
+            styles.multiline,
+            {
+              borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+          multiline
         />
-      ))}
 
-      {/* Add ingredient button */}
-      <Pressable
-        onPress={addRow}
-        android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-        style={[
-          styles.addIngBtn,
-          {
-            borderColor: theme.colors.outline,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
-      >
-        <MaterialIcons name="add" size={20} color={theme.colors.primary} />
-        <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
-          Add ingredient
+        {/* Instructions */}
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Instructions
         </Text>
-      </Pressable>
+        <TextInput
+          placeholder="Steps to prepare the cocktail"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          value={instructions}
+          onChangeText={setInstructions}
+          style={[
+            styles.input,
+            styles.multiline,
+            {
+              borderColor: theme.colors.outline,
+              color: theme.colors.onSurface,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+          multiline
+        />
 
-      {/* Save */}
-      <Pressable
-        onPress={handleSave}
-        android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-        style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
-      >
-        <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
-          Save cocktail
+        {/* Ingredients list */}
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          Ingredients
         </Text>
-      </Pressable>
 
-      {/* Unit anchored menu */}
-      <UnitPicker
-        visible={unitMenu.visible}
-        anchor={unitMenu.anchor}
-        anchorWidth={unitMenu.width}
-        value={
-          unitMenu.forLocalId != null
-            ? ings.find((r) => r.localId === unitMenu.forLocalId)?.unitId ??
-              UNIT_ID.ML
-            : UNIT_ID.ML
-        }
-        onSelect={(unitId) => {
-          if (unitMenu.forLocalId == null) return;
-          updateRow(unitMenu.forLocalId, { unitId });
-        }}
-        onDismiss={closeUnitMenu}
-      />
-    </ScrollView>
+        {ings.map((row, idx) => (
+          <IngredientRow
+            key={row.localId}
+            index={idx}
+            row={row}
+            allIngredients={allIngredients}
+            onChange={(patch) => updateRow(row.localId, patch)}
+            onRemove={() => removeRow(row.localId)}
+            onOpenUnitPicker={
+              () => null /* твій UnitPicker можна додати окремо */
+            }
+            onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
+          />
+        ))}
+
+        {/* Add ingredient button */}
+        <Pressable
+          onPress={addRow}
+          android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
+          style={[
+            styles.addIngBtn,
+            {
+              borderColor: theme.colors.outline,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+        >
+          <MaterialIcons name="add" size={20} color={theme.colors.primary} />
+          <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+            Add ingredient
+          </Text>
+        </Pressable>
+
+        {/* Save */}
+        <Pressable
+          onPress={handleSave}
+          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
+          style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
+        >
+          <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
+            Save cocktail
+          </Text>
+        </Pressable>
+      </ScrollView>
+    </MenuProvider>
   );
 }
 
@@ -1233,6 +1134,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    flex: 1,
+    minWidth: 0,
+  },
+
+  // контейнер саме під інпут назви: розтягується на всю ширину,
+  // і ВАЖЛИВО: може стискатися, коли з'являється кнопка +Add
+  nameInputWrap: {
+    flex: 1,
+    minWidth: 0,
   },
 
   input: {
@@ -1242,9 +1152,15 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 12 : 10,
     marginTop: 8,
   },
+
+  // інпут назви трохи ширший (внутрішні відступи/типографіка можна регулювати тут)
+  nameInput: {
+    // можна збільшити висоту/шрифт за потреби
+  },
+
   multiline: { minHeight: 80, textAlignVertical: "top" },
 
-  // media row: photo + glass
+  // media row: glass + photo
   mediaRow: {
     marginTop: 8,
     flexDirection: "row",
@@ -1326,6 +1242,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    flexShrink: 0, // щоб кнопка не стискалась і давала простір інпуту
   },
 
   saveBtn: {
@@ -1334,7 +1251,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-
   addInlineBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1342,5 +1258,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 8,
     borderRadius: 8,
+    flexShrink: 0, // кнопка НЕ стискається
+    flexWrap: "nowrap", // текст не переноситься під іконку
+  },
+
+  inputRowMenu: {
+    flex: 1,
+    minWidth: 0,
   },
 });
