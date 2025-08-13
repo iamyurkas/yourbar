@@ -365,5 +365,5 @@ const styles = StyleSheet.create({
   },
   tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
 
-  brandedStripe: { borderLeftWidth: 4, paddingLeft: 4 },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });

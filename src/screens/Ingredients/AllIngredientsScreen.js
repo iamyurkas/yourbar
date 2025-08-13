@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
 
   cartIcon: { position: "absolute", bottom: 4, right: 36, zIndex: 1 },
-  brandedStripe: { borderLeftWidth: 4, paddingLeft: 4 },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 
   checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
   pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },
