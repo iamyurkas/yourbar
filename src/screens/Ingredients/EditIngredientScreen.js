@@ -396,6 +396,26 @@ export default function EditIngredientScreen() {
     ]);
   }, [ingredient, navigation, previousTab]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleSave}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Save"
+        >
+          <MaterialIcons
+            name="check"
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, handleSave, theme.colors.onSurface]);
+
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
@@ -665,8 +685,8 @@ export default function EditIngredientScreen() {
           onChangeText={setDescription}
           style={[
             styles.input,
+            styles.multiline,
             {
-              height: 60,
               borderColor: theme.colors.outline,
               color: theme.colors.onSurface,
               backgroundColor: theme.colors.surface,
@@ -674,17 +694,6 @@ export default function EditIngredientScreen() {
           ]}
           multiline
         />
-
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
-          onPress={handleSave}
-          android_ripple={{ color: theme.colors.onPrimary }}
-          disabled={!name.trim()}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Changes
-          </Text>
-        </Pressable>
 
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
@@ -706,6 +715,8 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
   anchorInput: { justifyContent: "center", minHeight: 44 },
   anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+
+  multiline: { minHeight: 80, textAlignVertical: "top" },
 
   imageButton: {
     marginTop: 8,

@@ -27,7 +27,6 @@ import {
   getIngredientById,
   getAllIngredients,
   saveIngredient,
-  deleteIngredient,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
@@ -124,26 +123,6 @@ export default function IngredientDetailsScreen() {
     navigation.navigate("EditIngredient", { id });
   }, [navigation, id]);
 
-  const handleDelete = useCallback(() => {
-    Alert.alert("Delete", "Delete this ingredient?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          await deleteIngredient(id);
-          if (fromCocktailId)
-            navigation.navigate("Cocktails", {
-              screen: "CocktailDetails",
-              params: { id: fromCocktailId },
-            });
-          else if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
-        },
-      },
-    ]);
-  }, [id, navigation, previousTab, fromCocktailId]);
-
   // Always show custom back button
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -164,41 +143,25 @@ export default function IngredientDetailsScreen() {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            onPress={handleEdit}
-            style={styles.headerEditBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            accessibilityRole="button"
-            accessibilityLabel="Edit"
-          >
-            <MaterialIcons
-              name="edit"
-              size={24}
-              color={theme.colors.onSurface}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleDelete}
-            style={styles.headerEditBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            accessibilityRole="button"
-            accessibilityLabel="Delete ingredient"
-          >
-            <MaterialIcons
-              name="delete"
-              size={24}
-              color={theme.colors.onSurface}
-            />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={handleEdit}
+          style={styles.headerEditBtn}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Edit"
+        >
+          <MaterialIcons
+            name="edit"
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
       ),
     });
   }, [
     navigation,
     handleGoBack,
     handleEdit,
-    handleDelete,
     theme.colors.onSurface,
   ]);
 
