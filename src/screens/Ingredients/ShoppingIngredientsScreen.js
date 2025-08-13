@@ -400,6 +400,7 @@ const styles = StyleSheet.create({
     paddingVertical: ROW_VERTICAL,
     paddingHorizontal: 12,
     position: "relative",
+    height: ITEM_HEIGHT - ROW_BORDER,
   },
   dimmed: { opacity: 0.88 },
 
@@ -430,7 +431,11 @@ const styles = StyleSheet.create({
   name: { fontSize: 16 },
   usage: { fontSize: 12, marginTop: 4 },
 
-  tagDots: { flexDirection: "row", marginRight: 8 },
+  tagDots: {
+    flexDirection: "row",
+    marginRight: 8,
+    alignSelf: "flex-start",
+  },
   tagDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 4 },
   firstTagDot: { marginLeft: 0 },
 
