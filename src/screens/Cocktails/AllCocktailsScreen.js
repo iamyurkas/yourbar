@@ -237,7 +237,27 @@ export default function AllCocktailsScreen() {
         required.length > 0 &&
         required.every((r) => {
           const ing = ingMap.get(r.ingredientId);
-          return ing && ing.inBar;
+          if (ing?.inBar) return true;
+          if (ing) {
+            const baseId = ing.baseIngredientId ?? ing.id;
+            if (r.allowBaseSubstitution) {
+              const base = ingMap.get(baseId);
+              if (base?.inBar) return true;
+            }
+            if (r.allowBrandedSubstitutes) {
+              const brand = ingredients.find(
+                (i) => i.inBar && i.baseIngredientId === baseId
+              );
+              if (brand) return true;
+            }
+          }
+          if (Array.isArray(r.substitutes)) {
+            for (const s of r.substitutes) {
+              const candidate = ingMap.get(s.id);
+              if (candidate?.inBar) return true;
+            }
+          }
+          return false;
         });
       const branded = (c.ingredients || []).some((r) => {
         const ing = ingMap.get(r.ingredientId);
