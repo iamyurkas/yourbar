@@ -1062,8 +1062,11 @@ export default function AddCocktailScreen() {
           onPress={() => {
             if (fromIngredientFlow) {
               navigation.navigate("Ingredients", {
-                screen: "IngredientDetails",
-                params: { id: initialIngredient?.id },
+                screen: "Create",
+                params: {
+                  screen: "IngredientDetails",
+                  params: { id: initialIngredient?.id },
+                },
               });
             } else {
               navigation.navigate("Cocktails", { screen: lastCocktailsTab });
@@ -1082,8 +1085,11 @@ export default function AddCocktailScreen() {
       e.preventDefault();
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "IngredientDetails",
-          params: { id: initialIngredient?.id },
+          screen: "Create",
+          params: {
+            screen: "IngredientDetails",
+            params: { id: initialIngredient?.id },
+          },
         });
       } else {
         navigation.navigate("Cocktails", { screen: lastCocktailsTab });
@@ -1093,8 +1099,11 @@ export default function AddCocktailScreen() {
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "IngredientDetails",
-          params: { id: initialIngredient?.id },
+          screen: "Create",
+          params: {
+            screen: "IngredientDetails",
+            params: { id: initialIngredient?.id },
+          },
         });
       } else {
         navigation.navigate("Cocktails", { screen: lastCocktailsTab });
