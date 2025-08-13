@@ -51,6 +51,7 @@ const IngredientRow = memo(function IngredientRow({
   unitName,
   inBar,
   garnish,
+  optional,
   substituteFor,
   onPress,
 }) {
@@ -104,6 +105,13 @@ const IngredientRow = memo(function IngredientRow({
           >
             {name}
           </Text>
+          {optional && (
+            <Text
+              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
+            >
+              (optional)
+            </Text>
+          )}
           {garnish && (
             <Text
               style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
@@ -274,6 +282,7 @@ export default function CocktailDetailsScreen() {
         unitName: getUnitById(r.unitId)?.name || "",
         inBar: substitute ? substitute.inBar : inBar,
         garnish: !!r.garnish,
+        optional: !!r.optional,
         substituteFor: substitute ? originalName : null,
       };
     });
