@@ -365,7 +365,10 @@ export default function EditIngredientScreen() {
       await saveIngredient(updated);
       initialHashRef.current = serialize();
       setDirty(false);
-      if (!stay) navigation.navigate("IngredientDetails", { id: updated.id });
+      if (!stay) {
+        skipPromptRef.current = true;
+        navigation.navigate("IngredientDetails", { id: updated.id });
+      }
       return updated;
     },
     [
