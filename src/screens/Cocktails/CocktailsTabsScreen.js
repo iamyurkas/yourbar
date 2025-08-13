@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 
@@ -39,7 +40,16 @@ function CreateCocktailStack() {
 
 export default function CocktailsTabsScreen() {
   const theme = useTheme();
+  // ключ, який примусово перемонтовує стек "Create"
+  const [createKey, setCreateKey] = React.useState(0);
 
+  // Коли ВСЯ вкладка "Cocktails" втрачає фокус (перейшли на Shaker/Ingredients),
+  // збільшуємо ключ — при поверненні "Create" буде чистим.
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => setCreateKey((k) => k + 1);
+    }, [])
+  );
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -61,13 +71,15 @@ export default function CocktailsTabsScreen() {
       <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
       <Tab.Screen
         name="Create"
-        component={CreateCocktailStack}
+        // Через render-prop ми можемо підставити key для примусового ремоунта
+        children={() => <CreateCocktailStack key={createKey} />}
         listeners={({ navigation }) => ({
+          // При перемиканні з Create на інші саб-таби (All/My/Favorite)
+          blur: () => setCreateKey((k) => k + 1),
+          // І залишаємо авто-перехід на корінь створення по тапу на таб
           tabPress: (e) => {
             e.preventDefault();
-            navigation.navigate("Create", {
-              screen: "AddCocktail",
-            });
+            navigation.navigate("Create", { screen: "AddCocktail" });
           },
         })}
       />

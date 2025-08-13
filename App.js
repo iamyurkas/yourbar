@@ -6,10 +6,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TabMemoryProvider } from "./src/context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider as PaperProvider } from "react-native-paper";
+import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
 
-import CocktailsTabScreen from "./src/screens/Cocktails/CocktailsTabScreen";
+import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
 import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScreen";
 
@@ -26,6 +26,7 @@ const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
 
 function Tabs() {
+  const theme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -38,12 +39,15 @@ function Tabs() {
           } else if (route.name === "Ingredients") {
             return <IngredientIcon width={size} height={size} fill={color} />;
           }
+          return null;
         },
-        tabBarActiveTintColor: "#4DABF7",
-        tabBarInactiveTintColor: "#888",
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarStyle: { backgroundColor: theme.colors.surface },
       })}
     >
-      <Tab.Screen name="Cocktails" component={CocktailsTabScreen} />
+      {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
+      <Tab.Screen name="Cocktails" component={CocktailsTabsScreen} />
       <Tab.Screen name="Shaker" component={ShakerScreen} />
       <Tab.Screen name="Ingredients" component={IngredientsTabsScreen} />
     </Tab.Navigator>
@@ -57,7 +61,6 @@ export default function App() {
 
   return (
     <PaperProvider theme={AppTheme}>
-      {/* MenuProvider має бути єдиним і на корені додатку */}
       <MenuProvider>
         <SafeAreaProvider>
           <TabMemoryProvider>
