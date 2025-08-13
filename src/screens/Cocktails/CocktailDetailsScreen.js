@@ -147,9 +147,8 @@ export default function CocktailDetailsScreen() {
   const [loading, setLoading] = useState(true);
 
   const handleGoBack = useCallback(() => {
-    if (previousTab) navigation.navigate(previousTab);
-    else navigation.goBack();
-  }, [navigation, previousTab]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditCocktail", { id });
@@ -200,7 +199,6 @@ export default function CocktailDetailsScreen() {
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       if (e.data.action.type === "NAVIGATE" || !previousTab) return;
-      e.preventDefault();
       navigation.navigate(previousTab);
     });
     return unsub;
