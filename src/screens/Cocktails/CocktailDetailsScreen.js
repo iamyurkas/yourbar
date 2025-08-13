@@ -272,6 +272,26 @@ export default function CocktailDetailsScreen() {
 
   const glass = cocktail.glassId ? getGlassById(cocktail.glassId) : null;
 
+  const ratingStars = (
+    <View style={styles.ratingRow}>
+      {[1, 2, 3, 4, 5].map((value) => (
+        <TouchableOpacity
+          key={value}
+          onPress={() => handleRate(value)}
+          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+        >
+          <MaterialIcons
+            name={
+              value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
+            }
+            size={24}
+            color={theme.colors.secondary}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -287,15 +307,18 @@ export default function CocktailDetailsScreen() {
 
       <View style={styles.body}>
         <View style={styles.glassRow}>
-          {glass && (
+          {glass ? (
             <>
-              <Image
-                source={glass.image}
-                style={[
-                  styles.glassImage,
-                  { backgroundColor: theme.colors.surface },
-                ]}
-              />
+              <View style={styles.glassImageWrap}>
+                {ratingStars}
+                <Image
+                  source={glass.image}
+                  style={[
+                    styles.glassImage,
+                    { backgroundColor: theme.colors.surface },
+                  ]}
+                />
+              </View>
               <Text
                 style={[
                   styles.glassText,
@@ -305,24 +328,9 @@ export default function CocktailDetailsScreen() {
                 {glass.name}
               </Text>
             </>
+          ) : (
+            ratingStars
           )}
-          <View style={styles.ratingRow}>
-            {[1, 2, 3, 4, 5].map((value) => (
-              <TouchableOpacity
-                key={value}
-                onPress={() => handleRate(value)}
-                hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
-              >
-                <MaterialIcons
-                  name={
-                    value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
-                  }
-                  size={24}
-                  color={theme.colors.secondary}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
@@ -415,9 +423,10 @@ const styles = StyleSheet.create({
   },
   body: { paddingHorizontal: 24, marginTop: 16 },
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  glassImageWrap: { alignItems: "center" },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8 },
-  ratingRow: { flexDirection: "row", marginLeft: 8 },
+  ratingRow: { flexDirection: "row", justifyContent: "center", marginBottom: 4 },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
