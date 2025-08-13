@@ -52,6 +52,7 @@ const IngredientRow = memo(function IngredientRow({
   inBar,
   garnish,
   substituteFor,
+  onPress,
 }) {
   const theme = useTheme();
   const backgroundColor = inBar
@@ -59,7 +60,9 @@ const IngredientRow = memo(function IngredientRow({
     : theme.colors.background;
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
       style={[
         styles.ingWrapper,
         { borderBottomColor: theme.colors.background, backgroundColor },
@@ -125,7 +128,7 @@ const IngredientRow = memo(function IngredientRow({
           </Text>
         ) : null}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 });
 
@@ -145,6 +148,10 @@ export default function CocktailDetailsScreen() {
     else navigation.goBack();
   }, [navigation, previousTab]);
 
+  const handleEdit = useCallback(() => {
+    navigation.navigate("EditCocktail", { id });
+  }, [navigation, id]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -163,8 +170,19 @@ export default function CocktailDetailsScreen() {
           />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleEdit}
+          style={styles.headerEditBtn}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Edit"
+        >
+          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation, handleGoBack, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
@@ -216,6 +234,7 @@ export default function CocktailDetailsScreen() {
       const display = substitute || ing || {};
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
+        ingredientId: display.id || null,
         name: display.name || r.name,
         photoUri: display.photoUri || null,
         amount: r.amount,
@@ -246,49 +265,69 @@ export default function CocktailDetailsScreen() {
   const glass = cocktail.glassId ? getGlassById(cocktail.glassId) : null;
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {cocktail.photoUri && (
-          <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
-        )}
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={{ paddingBottom: 24 }}
+    >
+      <Text style={[styles.title, { color: theme.colors.onBackground }]}> 
+        {cocktail.name}
+      </Text>
 
-        <Text style={[styles.title, { color: theme.colors.onSurface }]}>
-          {cocktail.name}
-        </Text>
+      {cocktail.photoUri && (
+        <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
+      )}
 
+      <View style={styles.body}>
         {glass && (
-          <Text
-            style={[styles.glass, { color: theme.colors.onSurfaceVariant }]}
-          >
-            {glass.name}
-          </Text>
+          <View style={styles.glassRow}>
+            <Image
+              source={glass.image}
+              style={[styles.glassImage, { backgroundColor: theme.colors.surface }]}
+            />
+            <Text
+              style={[styles.glassText, { color: theme.colors.onSurfaceVariant }]}
+            >
+              {glass.name}
+            </Text>
+          </View>
         )}
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
-          <View style={styles.tagRow}>
-            {cocktail.tags.map((tag) => (
-              <View
-                key={tag.id}
-                style={[styles.tag, { backgroundColor: tag.color }]}
-              >
-                <Text style={styles.tagText}>{tag.name}</Text>
-              </View>
-            ))}
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
+            >
+              Tags:
+            </Text>
+            <View style={styles.tagRow}>
+              {cocktail.tags.map((tag) => (
+                <View
+                  key={tag.id}
+                  style={[styles.tag, { backgroundColor: tag.color }]}
+                >
+                  <Text style={styles.tagText}>{tag.name}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 
         {cocktail.description ? (
-          <Text style={[styles.sectionText, { color: theme.colors.onSurface }]}>
-            {cocktail.description}
-          </Text>
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionText, { color: theme.colors.onSurface }]}
+            >
+              {cocktail.description}
+            </Text>
+          </View>
         ) : null}
 
         {cocktail.instructions ? (
-          <View style={{ marginTop: 16 }}>
+          <View style={styles.section}>
             <Text
-              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
             >
-              Instructions
+              Instructions:
             </Text>
             <Text
               style={[styles.sectionText, { color: theme.colors.onSurface }]}
@@ -299,21 +338,25 @@ export default function CocktailDetailsScreen() {
         ) : null}
 
         {rows.length > 0 && (
-          <View style={{ marginTop: 24 }}>
+          <View style={styles.section}>
             <Text
-              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
             >
-              Ingredients
+              Ingredients:
             </Text>
-            <View style={styles.ingList}>
-              {rows.map(({ key, ...props }) => (
-                <IngredientRow key={key} {...props} />
+            <View style={[styles.ingList, { marginHorizontal: -24 }]}> 
+              {rows.map(({ key, ingredientId, ...props }) => (
+                <IngredientRow
+                  key={key}
+                  {...props}
+                  onPress={ingredientId ? () => navigation.push("IngredientDetails", { id: ingredientId }) : undefined}
+                />
               ))}
             </View>
           </View>
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -321,36 +364,25 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
-  scrollContent: { paddingBottom: 24 },
-  photo: { width: "100%", height: 200 },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginHorizontal: 16,
-    marginTop: 16,
-  },
-  glass: { marginHorizontal: 16, marginTop: 4 },
-  tagRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: 16,
-    marginTop: 8,
-  },
+  headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  photo: { width: "100%", height: 200, marginTop: 12 },
+  title: { fontSize: 22, fontWeight: "bold", marginTop: 24, marginHorizontal: 24 },
+  body: { paddingHorizontal: 24, marginTop: 16 },
+  glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  glassImage: { width: 40, height: 40, borderRadius: 8 },
+  glassText: { marginLeft: 8 },
+  tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 16,
     marginRight: 6,
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 16,
-    marginBottom: 4,
-  },
-  sectionText: { marginHorizontal: 16, marginTop: 8, lineHeight: 20 },
+  tagText: { color: "white", fontWeight: "bold" },
+  section: { marginTop: 16 },
+  sectionLabel: { fontWeight: "bold", marginBottom: 8 },
+  sectionText: { lineHeight: 20 },
 
   ingList: { marginTop: 8 },
   ingWrapper: { borderBottomWidth: ROW_BORDER },
