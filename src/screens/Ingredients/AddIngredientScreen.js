@@ -237,7 +237,7 @@ export default function AddIngredientScreen() {
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
       const baseOnly = ingredients
-        .filter((i) => !i.baseIngredientId)
+        .filter((i) => i.baseIngredientId == null)
         .sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         )
@@ -307,7 +307,7 @@ export default function AddIngredientScreen() {
       description,
       photoUri,
       tags,
-      baseIngredientId: baseIngredientId || null,
+      baseIngredientId: baseIngredientId ?? null,
       createdAt: Date.now(),
     };
 
@@ -321,7 +321,7 @@ export default function AddIngredientScreen() {
             id: newIng.id,
             name: newIng.name,
             photoUri: newIng.photoUri || null,
-            baseIngredientId: newIng.baseIngredientId || null,
+            baseIngredientId: newIng.baseIngredientId ?? null,
             tags: newIng.tags || [],
           },
           targetLocalId,

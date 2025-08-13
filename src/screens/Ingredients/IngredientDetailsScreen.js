@@ -162,9 +162,10 @@ export default function IngredientDetailsScreen() {
       .sort((a, b) => collator.compare(a.name, b.name));
     setBrandedChildren(children);
 
-    const base = loaded.baseIngredientId
-      ? all.find((i) => i.id === loaded.baseIngredientId)
-      : null;
+    const base =
+      loaded.baseIngredientId != null
+        ? all.find((i) => i.id === loaded.baseIngredientId)
+        : null;
     setBaseIngredient(base || null);
   }, [id, collator]);
 
@@ -201,7 +202,7 @@ export default function IngredientDetailsScreen() {
   }, []);
 
   const unlinkFromBase = useCallback(() => {
-    if (!ingredient?.baseIngredientId) return;
+    if (ingredient?.baseIngredientId == null) return;
     Alert.alert("Unlink", "Remove link to base ingredient?", [
       { text: "Cancel", style: "cancel" },
       {
@@ -255,7 +256,7 @@ export default function IngredientDetailsScreen() {
   }
 
   const isBase = brandedChildren.length > 0;
-  const isBranded = !!ingredient.baseIngredientId;
+  const isBranded = ingredient.baseIngredientId != null;
 
   return (
     <ScrollView

@@ -228,7 +228,7 @@ export default function EditIngredientScreen() {
           setDescription(data.description || "");
           setPhotoUri(data.photoUri || null);
           setTags(Array.isArray(data.tags) ? data.tags : []);
-          setBaseIngredientId(data.baseIngredientId || null);
+          setBaseIngredientId(data.baseIngredientId ?? null);
         }
       } catch {}
     })();
@@ -246,7 +246,7 @@ export default function EditIngredientScreen() {
       await InteractionManager.runAfterInteractions();
       const ingredients = await getAllIngredients();
       const baseOnly = ingredients
-        .filter((i) => !i.baseIngredientId && i.id !== currentId)
+        .filter((i) => i.baseIngredientId == null && i.id !== currentId)
         .sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         )
@@ -317,7 +317,7 @@ export default function EditIngredientScreen() {
       description,
       photoUri,
       tags,
-      baseIngredientId: baseIngredientId || null,
+      baseIngredientId: baseIngredientId ?? null,
     };
     await saveIngredient(updated);
     navigation.navigate("IngredientDetails", { id: updated.id });

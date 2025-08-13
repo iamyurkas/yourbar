@@ -34,7 +34,7 @@ export async function addIngredient(ingredient) {
       ...ingredient,
       inBar: false,
       inShoppingList: false,
-      baseIngredientId: ingredient.baseIngredientId || null,
+      baseIngredientId: ingredient.baseIngredientId ?? null,
     },
   ];
   await saveAllIngredients(newList);
