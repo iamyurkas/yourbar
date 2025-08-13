@@ -400,21 +400,21 @@ export default function EditIngredientScreen() {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          onPress={handleSave}
+          onPress={handleDelete}
           style={{ paddingHorizontal: 8, paddingVertical: 4 }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityRole="button"
-          accessibilityLabel="Save"
+          accessibilityLabel="Delete ingredient"
         >
           <MaterialIcons
-            name="check"
+            name="delete"
             size={24}
             color={theme.colors.onSurface}
           />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, handleSave, theme.colors.onSurface]);
+  }, [navigation, handleDelete, theme.colors.onSurface]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
@@ -696,12 +696,12 @@ export default function EditIngredientScreen() {
         />
 
         <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
-          onPress={handleDelete}
-          android_ripple={{ color: theme.colors.onErrorContainer }}
+          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+          onPress={handleSave}
+          android_ripple={{ color: theme.colors.onPrimaryContainer }}
         >
-          <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
-            Delete Ingredient
+          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
+            Save changes
           </Text>
         </Pressable>
       </ScrollView>
