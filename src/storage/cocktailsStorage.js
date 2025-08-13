@@ -21,11 +21,17 @@ const sanitizeIngredient = (r, idx) => ({
   order: Number(r?.order ?? idx + 1),
   ingredientId: r?.ingredientId ?? null, // може бути null для фрітекасту
   name: String(r?.name ?? "").trim(),
-  amount: String(r?.amount ?? "").trim(),
+  amount: String(r?.amount ?? r?.quantity ?? "").trim(),
   unitId: Number(r?.unitId ?? 11), // ml за замовчуванням
   garnish: !!r?.garnish,
   optional: !!r?.optional,
-  allowBaseSubstitution: !!r?.allowBaseSubstitution,
+  allowBaseSubstitution: !!(
+    r?.allowBaseSubstitution ?? r?.allowBaseSubstitute
+  ),
+  allowBrandedSubstitutes: !!r?.allowBrandedSubstitutes,
+  substitutes: Array.isArray(r?.substitutes)
+    ? r.substitutes.map((s) => ({ id: s.id, name: s.name }))
+    : [],
 });
 
 const sanitizeCocktail = (c) => {
