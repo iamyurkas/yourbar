@@ -280,15 +280,7 @@ const IngredientRow = memo(function IngredientRow({
       const match = matches[0];
       onChange({ selectedId: match.id, selectedItem: match });
     }
-  }, [
-    query,
-    debounced,
-    row.selectedId,
-    allIngredients,
-    collator,
-    onChange,
-    wordPrefixMatch,
-  ]);
+  }, [query, debounced, row.selectedId, allIngredients, collator, onChange, wordPrefixMatch]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
@@ -1080,12 +1072,7 @@ export default function AddCocktailScreen() {
         />
       ),
     });
-  }, [
-    navigation,
-    fromIngredientFlow,
-    initialIngredient?.id,
-    lastCocktailsTab,
-  ]);
+  }, [navigation, fromIngredientFlow, initialIngredient?.id, lastCocktailsTab]);
 
   useEffect(() => {
     if (!isFocused) return;
@@ -1553,7 +1540,13 @@ export default function AddCocktailScreen() {
                 {photoUri ? (
                   <Image source={{ uri: photoUri }} style={styles.mediaImg} />
                 ) : (
-                  <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                  <Text
+                    style={{
+                      color: theme.colors.onSurfaceVariant,
+                      margin: 8,
+                      textAlign: "center",
+                    }}
+                  >
                     Tap to select image
                   </Text>
                 )}

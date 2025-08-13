@@ -121,9 +121,7 @@ const IngredientRow = memo(function IngredientRow({
         </View>
 
         {amount ? (
-          <Text
-            style={[styles.amountText, { color: theme.colors.onSurface }]}
-          >
+          <Text style={[styles.amountText, { color: theme.colors.onSurface }]}>
             {amount} {unitName}
           </Text>
         ) : null}
@@ -269,7 +267,7 @@ export default function CocktailDetailsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={{ paddingBottom: 24 }}
     >
-      <Text style={[styles.title, { color: theme.colors.onBackground }]}> 
+      <Text style={[styles.title, { color: theme.colors.onBackground }]}>
         {cocktail.name}
       </Text>
 
@@ -282,10 +280,16 @@ export default function CocktailDetailsScreen() {
           <View style={styles.glassRow}>
             <Image
               source={glass.image}
-              style={[styles.glassImage, { backgroundColor: theme.colors.surface }]}
+              style={[
+                styles.glassImage,
+                { backgroundColor: theme.colors.surface },
+              ]}
             />
             <Text
-              style={[styles.glassText, { color: theme.colors.onSurfaceVariant }]}
+              style={[
+                styles.glassText,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
             >
               {glass.name}
             </Text>
@@ -344,12 +348,19 @@ export default function CocktailDetailsScreen() {
             >
               Ingredients:
             </Text>
-            <View style={[styles.ingList, { marginHorizontal: -24 }]}> 
+            <View style={[styles.ingList, { marginHorizontal: -24 }]}>
               {rows.map(({ key, ingredientId, ...props }) => (
                 <IngredientRow
                   key={key}
                   {...props}
-                  onPress={ingredientId ? () => navigation.push("IngredientDetails", { id: ingredientId }) : undefined}
+                  onPress={
+                    ingredientId
+                      ? () =>
+                          navigation.push("IngredientDetails", {
+                            id: ingredientId,
+                          })
+                      : undefined
+                  }
                 />
               ))}
             </View>
@@ -366,7 +377,12 @@ const styles = StyleSheet.create({
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   photo: { width: "100%", height: 200, marginTop: 12 },
-  title: { fontSize: 22, fontWeight: "bold", marginTop: 24, marginHorizontal: 24 },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 24,
+    marginHorizontal: 24,
+  },
   body: { paddingHorizontal: 24, marginTop: 16 },
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
