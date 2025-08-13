@@ -10,12 +10,12 @@ export const BUILTIN_COCKTAIL_TAGS = [
   { id: 6, name: "shooter", color: "#c78acfff" },
   { id: 7, name: "non-alcoholic", color: "#69DB7C" },
   { id: 8, name: "custom", color: "#AFC9C3FF" },
-  { id: 9, name: "sweet", color: "#FF7F7F" },
-  { id: 10, name: "sour", color: "#66C7C7" },
-  { id: 11, name: "bitter", color: "#A970C4" },
-  { id: 12, name: "spicy", color: "#FF9060" },
-  { id: 13, name: "fruity", color: "#79C28D" },
-  { id: 14, name: "creamy", color: "#9E9EF7" },
+  //  { id: 9, name: "sweet", color: "#FF7F7F" },
+  //  { id: 10, name: "sour", color: "#66C7C7" },
+  //  { id: 11, name: "bitter", color: "#A970C4" },
+  //  { id: 12, name: "spicy", color: "#FF9060" },
+  //  { id: 13, name: "fruity", color: "#79C28D" },
+  //  { id: 14, name: "creamy", color: "#9E9EF7" },
 ];
 
 // Утиліти
