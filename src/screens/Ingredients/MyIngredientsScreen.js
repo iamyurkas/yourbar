@@ -27,7 +27,7 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { calculateIngredientUsage } from "../../utils/ingredientUsage";
+import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 
 // ---- Helpers ----
 const withAlpha = (hex, alpha) => {
@@ -52,6 +52,7 @@ const ItemRow = memo(
     photoUri,
     tags,
     usageCount,
+    singleCocktailName,
     inBar,
     inShoppingList,
     baseIngredientId,
@@ -149,7 +150,9 @@ const ItemRow = memo(
                 ]}
               >
                 {usageCount > 0
-                  ? `${usageCount} cocktail${usageCount === 1 ? "" : "s"}`
+                  ? usageCount === 1
+                    ? singleCocktailName || "1 cocktail"
+                    : `${usageCount} cocktails`
                   : "\u00A0"}
               </Text>
             </View>
@@ -182,7 +185,8 @@ const ItemRow = memo(
     prev.baseIngredientId === next.baseIngredientId &&
     prev.isNavigating === next.isNavigating &&
     prev.tags === next.tags &&
-    prev.usageCount === next.usageCount
+    prev.usageCount === next.usageCount &&
+    prev.singleCocktailName === next.singleCocktailName
 );
 
 export default function MyIngredientsScreen() {
@@ -233,14 +237,21 @@ export default function MyIngredientsScreen() {
       getAllIngredients(),
       getAllCocktails(),
     ]);
-    const usage = calculateIngredientUsage(data, cocktails);
+    const usageMap = mapCocktailsByIngredient(data, cocktails);
+    const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
 
     const filtered = data.filter((i) => i.inBar === true);
-    const sorted = sortIngredients(filtered).map((item) => ({
-      ...item,
-      searchName: item.name.toLowerCase(),
-      usageCount: usage[item.id] || 0,
-    }));
+    const sorted = sortIngredients(filtered).map((item) => {
+      const ids = usageMap[item.id] || [];
+      const usageCount = ids.length;
+      const singleCocktailName = usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+      return {
+        ...item,
+        searchName: item.name.toLowerCase(),
+        usageCount,
+        singleCocktailName,
+      };
+    });
     setIngredients(sorted);
   }, [sortIngredients]);
 
@@ -296,6 +307,7 @@ export default function MyIngredientsScreen() {
         photoUri={item.photoUri}
         tags={item.tags}
         usageCount={item.usageCount}
+        singleCocktailName={item.singleCocktailName}
         inBar={item.inBar === true}
         inShoppingList={item.inShoppingList === true}
         baseIngredientId={item.baseIngredientId}
