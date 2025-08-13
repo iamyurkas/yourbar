@@ -1,9 +1,19 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Pressable, Text, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Pressable,
+  Text,
+  StyleSheet,
+} from "react-native";
 import { Menu, useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function TagFilterMenu({ tags = [], selected = [], setSelected }) {
+export default function TagFilterMenu({
+  tags = [],
+  selected = [],
+  setSelected,
+}) {
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
 
@@ -21,7 +31,7 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
         <TouchableOpacity
           onPress={() => setVisible(true)}
           style={{ paddingVertical: 4, paddingHorizontal: 2 }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8, borderRadius: 16 }}
         >
           <MaterialIcons
             name="filter-list"
@@ -34,6 +44,7 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
         paddingHorizontal: 4,
         paddingVertical: 4,
         backgroundColor: theme.colors.surface,
+        borderRadius: 8,
       }}
     >
       <View style={styles.tagContainer}>
@@ -72,7 +83,11 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
 }
 
 const styles = StyleSheet.create({
-  tagContainer: { maxWidth: 220, alignItems: "flex-start" },
+  tagContainer: {
+    maxWidth: 220,
+    alignItems: "flex-start",
+    borderRadius: 8,
+  },
   tag: {
     paddingHorizontal: 10,
     paddingVertical: 6,
