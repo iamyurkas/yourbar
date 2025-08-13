@@ -260,6 +260,7 @@ export default function AllCocktailsScreen() {
       );
     return list.map((c) => {
       const required = (c.ingredients || []).filter((r) => !r.optional);
+      const missing = [];
       const allAvail =
         required.length > 0 &&
         required.every((r) => {
@@ -284,6 +285,7 @@ export default function AllCocktailsScreen() {
               if (candidate?.inBar) return true;
             }
           }
+          if (ing?.name) missing.push(ing.name);
           return false;
         });
       const branded = (c.ingredients || []).some((r) => {
@@ -293,7 +295,14 @@ export default function AllCocktailsScreen() {
       const ingredientNames = (c.ingredients || [])
         .map((r) => ingMap.get(String(r.ingredientId))?.name)
         .filter(Boolean);
-      const ingredientLine = ingredientNames.join(", ");
+      let ingredientLine = ingredientNames.join(", ");
+      if (!allAvail) {
+        if (missing.length > 0 && missing.length <= 2) {
+          ingredientLine = `Missing: ${missing.join(", ")}`;
+        } else if (missing.length >= 3) {
+          ingredientLine = `Missing: ${missing.length} ingredients`;
+        }
+      }
       return {
         ...c,
         isAllAvailable: allAvail,
