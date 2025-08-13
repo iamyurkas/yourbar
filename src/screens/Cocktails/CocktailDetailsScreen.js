@@ -115,7 +115,7 @@ const IngredientRow = memo(function IngredientRow({
             <Text
               style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
             >
-              substitute for: {substituteFor}
+              Substitute for: {substituteFor}
             </Text>
           )}
         </View>
