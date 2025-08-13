@@ -30,6 +30,7 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
+import { calculateIngredientUsage } from "../../utils/ingredientUsage";
 
 // ---- Helpers ----
 const withAlpha = (hex, alpha) => {
@@ -256,15 +257,7 @@ export default function AllIngredientsScreen() {
       getAllCocktails(),
     ]);
 
-    const usage = {};
-    cocktails.forEach((c) => {
-      if (Array.isArray(c.ingredients)) {
-        c.ingredients.forEach((ing) => {
-          if (ing.ingredientId != null)
-            usage[ing.ingredientId] = (usage[ing.ingredientId] || 0) + 1;
-        });
-      }
-    });
+    const usage = calculateIngredientUsage(data, cocktails);
 
     const sorted = sortIngredients(data).map((item) => ({
       ...item,
