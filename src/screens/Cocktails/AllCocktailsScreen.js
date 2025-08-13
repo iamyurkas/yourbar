@@ -226,11 +226,12 @@ export default function AllCocktailsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
+  const firstLoad = useRef(true);
   useEffect(() => {
     let cancel = false;
     if (!isFocused) return;
     (async () => {
-      setLoading(true);
+      if (firstLoad.current) setLoading(true);
       const [cocktailsList, ingredientsList] = await Promise.all([
         getAllCocktails(),
         getAllIngredients(),
@@ -238,7 +239,10 @@ export default function AllCocktailsScreen() {
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
       setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
-      setLoading(false);
+      if (firstLoad.current) {
+        setLoading(false);
+        firstLoad.current = false;
+      }
     })();
     return () => {
       cancel = true;
