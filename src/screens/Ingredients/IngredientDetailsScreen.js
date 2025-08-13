@@ -318,8 +318,8 @@ export default function IngredientDetailsScreen() {
       {ingredient.photoUri ? (
         <Image
           source={{ uri: ingredient.photoUri }}
-          style={[styles.photo, { backgroundColor: theme.colors.surface }]}
-          resizeMode="contain"
+          style={styles.photo}
+          resizeMode="cover"
         />
       ) : (
         <View
