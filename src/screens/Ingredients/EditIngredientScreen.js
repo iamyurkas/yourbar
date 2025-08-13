@@ -173,8 +173,8 @@ export default function EditIngredientScreen() {
 
   // завжди повертаємось на деталі поточного інгредієнта
   const handleGoBack = useCallback(() => {
-    navigation.navigate("IngredientDetails", { id: currentId });
-  }, [navigation, currentId]);
+    navigation.goBack();
+  }, [navigation]);
 
   // видима кнопка Back у хедері
   useLayoutEffect(() => {
@@ -198,15 +198,56 @@ export default function EditIngredientScreen() {
     });
   }, [navigation, handleGoBack, theme.colors.onSurface]);
 
-  // перехоплюємо системний back/gesture
+  const skipPromptRef = useRef(false);
+  const initialHashRef = useRef("{}");
+  const [dirty, setDirty] = useState(false);
+
+  const serialize = useCallback(
+    () =>
+      JSON.stringify({
+        name: name.trim(),
+        description,
+        photoUri,
+        tags,
+        baseIngredientId,
+      }),
+    [name, description, photoUri, tags, baseIngredientId]
+  );
+
+  useEffect(() => {
+    if (ingredient) initialHashRef.current = serialize();
+  }, [ingredient, serialize]);
+
+  useEffect(() => {
+    setDirty(serialize() !== initialHashRef.current);
+  }, [serialize]);
+
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
-      if (e.data.action.type === "NAVIGATE") return;
+      if (skipPromptRef.current || !dirty) return;
       e.preventDefault();
-      handleGoBack();
+      Alert.alert("Save changes?", "Do you want to save changes?", [
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => {
+            skipPromptRef.current = true;
+            navigation.dispatch(e.data.action);
+          },
+        },
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Save",
+          onPress: async () => {
+            skipPromptRef.current = true;
+            await handleSave(true);
+            navigation.dispatch(e.data.action);
+          },
+        },
+      ]);
     });
     return unsub;
-  }, [navigation, handleGoBack]);
+  }, [navigation, dirty, handleSave]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -304,37 +345,44 @@ export default function EditIngredientScreen() {
     if (!result.canceled) setPhotoUri(result.assets[0].uri);
   }, []);
 
-  const handleSave = useCallback(async () => {
-    const trimmed = name.trim();
-    if (!trimmed) {
-      Alert.alert("Please enter a name for the ingredient.");
-      return;
-    }
-    if (!ingredient) return;
+  const handleSave = useCallback(
+    async (stay = false) => {
+      const trimmed = name.trim();
+      if (!trimmed) {
+        Alert.alert("Please enter a name for the ingredient.");
+        return;
+      }
+      if (!ingredient) return;
 
-    const updated = {
-      ...ingredient,
-      name: trimmed,
+      const updated = {
+        ...ingredient,
+        name: trimmed,
+        description,
+        photoUri,
+        tags,
+        baseIngredientId: baseIngredientId ?? null,
+      };
+      await saveIngredient(updated);
+      initialHashRef.current = serialize();
+      setDirty(false);
+      if (!stay) navigation.navigate("IngredientDetails", { id: updated.id });
+      return updated;
+    },
+    [
+      ingredient,
+      name,
       description,
       photoUri,
       tags,
-      baseIngredientId: baseIngredientId ?? null,
-    };
-    await saveIngredient(updated);
-    navigation.navigate("IngredientDetails", { id: updated.id });
-  }, [
-    ingredient,
-    name,
-    description,
-    photoUri,
-    tags,
-    baseIngredientId,
-    navigation,
-  ]);
+      baseIngredientId,
+      navigation,
+      serialize,
+    ]
+  );
 
   const handleDelete = useCallback(() => {
     if (!ingredient) return;
-    Alert.alert("Delete Ingredient", "Are you sure?", [
+    Alert.alert("Delete", "Delete this ingredient?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
