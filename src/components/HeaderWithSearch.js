@@ -47,6 +47,19 @@ export default function HeaderWithSearch({
             returnKeyType="search"
             style={styles.input}
           />
+          {searchValue?.length ? (
+            <TouchableOpacity
+              onPress={() => setSearchValue("")}
+              style={styles.clearBtn}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <MaterialIcons
+                name="close"
+                size={16}
+                color={theme.colors.onSurfaceVariant}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {filterComponent ? (
@@ -99,5 +112,8 @@ const makeStyles = (theme) =>
     iconBtn: {
       paddingVertical: 4,
       paddingHorizontal: 2,
+    },
+    clearBtn: {
+      padding: 4,
     },
   });
