@@ -271,9 +271,11 @@ export default function CocktailDetailsScreen() {
         {cocktail.name}
       </Text>
 
-      {cocktail.photoUri && (
+      {cocktail.photoUri ? (
         <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
-      )}
+      ) : glass ? (
+        <Image source={glass.image} style={styles.photo} />
+      ) : null}
 
       <View style={styles.body}>
         {glass && (
