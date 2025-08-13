@@ -6,6 +6,7 @@ import React, {
   useMemo,
   memo,
   useRef,
+  useLayoutEffect,
 } from "react";
 import {
   View,
@@ -20,6 +21,7 @@ import {
   FlatList,
   Dimensions,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -31,9 +33,12 @@ import {
   useNavigation,
   useRoute,
   useFocusEffect,
+  useIsFocused,
 } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { HeaderBackButton } from "@react-navigation/elements";
+import { useTabMemory } from "../../context/TabMemoryContext";
 
 import {
   Menu,
@@ -1036,6 +1041,43 @@ export default function AddCocktailScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
+  const isFocused = useIsFocused();
+  const { getTab } = useTabMemory();
+  const lastCocktailsTab =
+    (typeof getTab === "function" && getTab("cocktails")) || "All";
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          onPress={() =>
+            navigation.navigate("Cocktails", { screen: lastCocktailsTab })
+          }
+          labelVisible={false}
+        />
+      ),
+    });
+  }, [navigation, lastCocktailsTab]);
+
+  useEffect(() => {
+    if (!isFocused) return;
+
+    const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+    });
+
+    const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+      return true;
+    });
+
+    return () => {
+      beforeRemoveSub();
+      hwSub.remove();
+    };
+  }, [isFocused, navigation, lastCocktailsTab]);
 
   // base fields
   const [name, setName] = useState("");
