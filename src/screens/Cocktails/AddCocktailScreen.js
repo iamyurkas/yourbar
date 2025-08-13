@@ -1057,6 +1057,7 @@ export default function AddCocktailScreen() {
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
   const initialIngredient = route.params?.initialIngredient;
+  const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
     (typeof getTab === "function" && getTab("cocktails")) || "All";
 
@@ -1065,25 +1066,51 @@ export default function AddCocktailScreen() {
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
-          onPress={() =>
-            navigation.navigate("Cocktails", { screen: lastCocktailsTab })
-          }
+          onPress={() => {
+            if (fromIngredientFlow) {
+              navigation.navigate("Ingredients", {
+                screen: "IngredientDetails",
+                params: { id: initialIngredient?.id },
+              });
+            } else {
+              navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+            }
+          }}
           labelVisible={false}
         />
       ),
     });
-  }, [navigation, lastCocktailsTab]);
+  }, [
+    navigation,
+    fromIngredientFlow,
+    initialIngredient?.id,
+    lastCocktailsTab,
+  ]);
 
   useEffect(() => {
     if (!isFocused) return;
 
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
-      navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+      if (fromIngredientFlow) {
+        navigation.navigate("Ingredients", {
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
+        });
+      } else {
+        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+      }
     });
 
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+      if (fromIngredientFlow) {
+        navigation.navigate("Ingredients", {
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
+        });
+      } else {
+        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+      }
       return true;
     });
 
@@ -1091,7 +1118,13 @@ export default function AddCocktailScreen() {
       beforeRemoveSub();
       hwSub.remove();
     };
-  }, [isFocused, navigation, lastCocktailsTab]);
+  }, [
+    isFocused,
+    navigation,
+    fromIngredientFlow,
+    initialIngredient?.id,
+    lastCocktailsTab,
+  ]);
 
   // base fields
   const [name, setName] = useState("");
