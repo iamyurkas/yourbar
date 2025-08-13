@@ -215,7 +215,10 @@ export default function AllIngredientsScreen() {
 
   const loadIngredients = useCallback(async () => {
     const data = await getAllIngredients();
-    const sorted = sortIngredients(data);
+    const sorted = sortIngredients(data).map((item) => ({
+      ...item,
+      searchName: item.name.toLowerCase(),
+    }));
     setIngredients(sorted);
     const map = new Map();
     for (let i = 0; i < sorted.length; i++) map.set(sorted[i].id, i);
@@ -257,7 +260,8 @@ export default function AllIngredientsScreen() {
       if (idx == null) return;
       const current = ingredients[idx];
       if (!current) return;
-      saveIngredient({ ...current, inBar }).catch(() => {});
+      const { searchName, ...rest } = current;
+      saveIngredient({ ...rest, inBar }).catch(() => {});
     });
   }, [ingredients]);
 
@@ -298,7 +302,7 @@ export default function AllIngredientsScreen() {
   const filtered = useMemo(() => {
     const q = deferredSearch.trim().toLowerCase();
     if (!q) return ingredients;
-    return ingredients.filter((i) => i.name.toLowerCase().includes(q));
+    return ingredients.filter((i) => i.searchName.includes(q));
   }, [ingredients, deferredSearch]);
 
   const renderItem = useCallback(
@@ -335,7 +339,8 @@ export default function AllIngredientsScreen() {
         if (idx == null) return;
         const current = ingredients[idx];
         if (!current) return;
-        saveIngredient({ ...current, inBar }).catch(() => {});
+        const { searchName, ...rest } = current;
+        saveIngredient({ ...rest, inBar }).catch(() => {});
       });
     };
   }, [ingredients]);
