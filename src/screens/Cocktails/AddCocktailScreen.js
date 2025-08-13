@@ -1043,6 +1043,7 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
+  const initialIngredient = route.params?.initialIngredient;
   const lastCocktailsTab =
     (typeof getTab === "function" && getTab("cocktails")) || "All";
 
@@ -1092,8 +1093,8 @@ export default function AddCocktailScreen() {
   const [glassId, setGlassId] = useState("cocktail_glass");
 
   // ingredients list
-  const [ings, setIngs] = useState([
-    {
+  const [ings, setIngs] = useState(() => {
+    const baseRow = {
       localId: Date.now(),
       name: "",
       selectedId: null,
@@ -1105,8 +1106,19 @@ export default function AddCocktailScreen() {
       allowBaseSubstitute: false,
       allowBrandedSubstitutes: false,
       substitutes: [],
-    },
-  ]);
+    };
+    if (initialIngredient) {
+      return [
+        {
+          ...baseRow,
+          name: initialIngredient.name || "",
+          selectedId: initialIngredient.id ?? null,
+          selectedItem: initialIngredient,
+        },
+      ];
+    }
+    return [baseRow];
+  });
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
