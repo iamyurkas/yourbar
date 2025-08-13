@@ -221,7 +221,9 @@ export default function AllCocktailsScreen() {
   }, [isFocused]);
 
   const filtered = useMemo(() => {
-    const ingMap = new Map((ingredients || []).map((i) => [i.id, i]));
+    const ingMap = new Map(
+      (ingredients || []).map((i) => [String(i.id), i])
+    );
     const q = searchDebounced.trim().toLowerCase();
     let list = cocktails;
     if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
@@ -236,31 +238,31 @@ export default function AllCocktailsScreen() {
       const allAvail =
         required.length > 0 &&
         required.every((r) => {
-          const ing = ingMap.get(r.ingredientId);
+          const ing = ingMap.get(String(r.ingredientId));
           if (ing?.inBar) return true;
           if (ing) {
-            const baseId = ing.baseIngredientId ?? ing.id;
+            const baseId = String(ing.baseIngredientId ?? ing.id);
             if (r.allowBaseSubstitution) {
               const base = ingMap.get(baseId);
               if (base?.inBar) return true;
             }
             if (r.allowBrandedSubstitutes) {
               const brand = ingredients.find(
-                (i) => i.inBar && i.baseIngredientId === baseId
+                (i) => i.inBar && String(i.baseIngredientId) === baseId
               );
               if (brand) return true;
             }
           }
           if (Array.isArray(r.substitutes)) {
             for (const s of r.substitutes) {
-              const candidate = ingMap.get(s.id);
+              const candidate = ingMap.get(String(s.id));
               if (candidate?.inBar) return true;
             }
           }
           return false;
         });
       const branded = (c.ingredients || []).some((r) => {
-        const ing = ingMap.get(r.ingredientId);
+        const ing = ingMap.get(String(r.ingredientId));
         return ing && ing.baseIngredientId != null;
       });
       return { ...c, isAllAvailable: allAvail, hasBranded: branded };
