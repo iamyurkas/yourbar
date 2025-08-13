@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  BackHandler,
 } from "react-native";
 import {
   useNavigation,
@@ -163,6 +164,17 @@ export default function IngredientDetailsScreen() {
     });
     return unsub;
   }, [navigation, handleGoBack]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBack = () => {
+        handleGoBack();
+        return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBack);
+      return () => BackHandler.removeEventListener("hardwareBackPress", onBack);
+    }, [handleGoBack])
+  );
 
   const load = useCallback(async () => {
     const [loaded, all] = await Promise.all([
