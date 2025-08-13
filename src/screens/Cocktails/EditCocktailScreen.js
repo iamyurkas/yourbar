@@ -1909,13 +1909,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
+    aspectRatio: 1,
     borderWidth: 1,
     borderRadius: 8,
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
   },
-  mediaImg: { width: IMAGE_SIZE, height: IMAGE_SIZE, resizeMode: "cover" },
+  mediaImg: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    aspectRatio: 1,
+    resizeMode: "cover",
+  },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
   tag: {
@@ -2063,6 +2069,7 @@ const styles = StyleSheet.create({
   modalItemAvatar: {
     width: 32,
     height: 32,
+    aspectRatio: 1,
     borderRadius: 6,
     backgroundColor: "#ccc",
   },

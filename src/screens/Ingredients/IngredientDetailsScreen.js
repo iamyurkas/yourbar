@@ -32,6 +32,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 
+const PHOTO_SIZE = 200;
 const THUMB = 40;
 
 /** Gray-square photo (no icon/initials), uses theme */
@@ -317,8 +318,8 @@ export default function IngredientDetailsScreen() {
       {ingredient.photoUri ? (
         <Image
           source={{ uri: ingredient.photoUri }}
-          style={[styles.photo, { backgroundColor: theme.colors.surface }]}
-          resizeMode="contain"
+          style={styles.photo}
+          resizeMode="cover"
         />
       ) : (
         <View
@@ -481,7 +482,12 @@ const styles = StyleSheet.create({
   container: { padding: 24 }, // bg is set via theme inline
   title: { fontSize: 22, fontWeight: "bold" },
 
-  photo: { width: "100%", height: 200, marginTop: 12, alignSelf: "center" },
+  photo: {
+    width: PHOTO_SIZE,
+    height: PHOTO_SIZE,
+    marginTop: 12,
+    alignSelf: "center",
+  },
 
   section: { marginTop: 16 },
   sectionLabel: { fontWeight: "bold", marginBottom: 8 },
@@ -507,7 +513,13 @@ const styles = StyleSheet.create({
   rowMain: { flexDirection: "row", alignItems: "center", flex: 1 },
   singleRow: { borderWidth: 1, borderRadius: 8 },
 
-  thumb: { width: THUMB, height: THUMB, borderRadius: 8, marginRight: 10 },
+  thumb: {
+    width: THUMB,
+    height: THUMB,
+    aspectRatio: 1,
+    borderRadius: 8,
+    marginRight: 10,
+  },
   thumbPlaceholder: {},
 
   rowText: { flex: 1, fontSize: 16 },
