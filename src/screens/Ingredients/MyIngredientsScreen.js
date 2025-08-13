@@ -406,13 +406,16 @@ const styles = StyleSheet.create({
 
   tagDots: {
     flexDirection: "row",
-    marginRight: 8,
+    // Reserve space for a trailing action button so tag dots
+    // align with other ingredient lists that show one
+    marginRight: 38,
     alignSelf: "flex-start",
   },
   tagDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 4 },
   firstTagDot: { marginLeft: 0 },
 
-  cartIcon: { position: "absolute", bottom: 4, right: 36, zIndex: 1 },
+  // Keep the shopping cart icon aligned with the image across all lists
+  cartIcon: { position: "absolute", bottom: 4, right: 60, zIndex: 1 },
   brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
 
