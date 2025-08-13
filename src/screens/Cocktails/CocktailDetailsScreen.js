@@ -121,7 +121,9 @@ const IngredientRow = memo(function IngredientRow({
         </View>
 
         {amount ? (
-          <Text style={[styles.amountText, { color: theme.colors.onSurface }]}>
+          <Text
+            style={[styles.amountText, { color: theme.colors.onSurfaceVariant }]}
+          >
             {amount} {unitName}
           </Text>
         ) : null}
