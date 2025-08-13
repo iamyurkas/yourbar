@@ -117,8 +117,8 @@ export default function IngredientDetailsScreen() {
   const handleGoBack = useCallback(() => {
     if (fromCocktailId)
       navigation.navigate("Cocktails", {
-        screen: "CocktailDetails",
-        params: { id: fromCocktailId },
+        screen: "Create",
+        params: { screen: "CocktailDetails", params: { id: fromCocktailId } },
       });
     else if (previousTab) navigation.navigate(previousTab);
     else navigation.goBack();
@@ -366,8 +366,8 @@ export default function IngredientDetailsScreen() {
   const goToCocktail = useCallback(
     (goId) => {
       navigation.navigate("Cocktails", {
-        screen: "CocktailDetails",
-        params: { id: goId },
+        screen: "Create",
+        params: { screen: "CocktailDetails", params: { id: goId } },
       });
     },
     [navigation]
