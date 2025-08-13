@@ -30,7 +30,11 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
           />
         </TouchableOpacity>
       }
-      contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
+      contentStyle={{
+        paddingHorizontal: 4,
+        paddingVertical: 4,
+        backgroundColor: theme.colors.surface,
+      }}
     >
       <View style={styles.tagContainer}>
         {tags.map((tag) => {
@@ -45,7 +49,7 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
                 active
                   ? { backgroundColor: tag.color }
                   : {
-                      backgroundColor: theme.colors.onSurfaceVariant,
+                      backgroundColor: theme.colors.surface,
                       borderColor: tag.color,
                       borderWidth: 1,
                     },
@@ -68,12 +72,14 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
 }
 
 const styles = StyleSheet.create({
-  tagContainer: { flexDirection: "row", flexWrap: "wrap", maxWidth: 220 },
+  tagContainer: { maxWidth: 220, alignItems: "flex-start" },
   tag: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 16,
-    margin: 4,
+    marginVertical: 4,
+    marginHorizontal: 4,
+    alignSelf: "flex-start",
   },
   tagText: { fontWeight: "bold" },
 });
