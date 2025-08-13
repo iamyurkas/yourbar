@@ -91,6 +91,25 @@ const wordPrefixMatch = (name, query) => {
   return true;
 };
 
+const createEmptyRow = () => ({
+  localId: Date.now(),
+  name: "",
+  selectedId: null,
+  selectedItem: null,
+  quantity: "",
+  unitId: UNIT_ID.ML,
+  garnish: false,
+  optional: false,
+  allowBaseSubstitute: false,
+  allowBrandedSubstitutes: false,
+  substitutes: [],
+});
+
+const getDefaultTags = () => {
+  const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
+  return custom ? [custom] : [{ id: 8, name: "custom", color: "#AFC9C3FF" }];
+};
+
 /* ---------- Tiny Divider ---------- */
 const Divider = ({ color, style }) => (
   <View
@@ -1096,10 +1115,7 @@ export default function AddCocktailScreen() {
   // base fields
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState(() => {
-    const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
-    return custom ? [custom] : [{ id: 8, name: "custom", color: "#AFC9C3FF" }];
-  });
+  const [tags, setTags] = useState(getDefaultTags);
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
 
@@ -1107,19 +1123,7 @@ export default function AddCocktailScreen() {
 
   // ingredients list
   const [ings, setIngs] = useState(() => {
-    const baseRow = {
-      localId: Date.now(),
-      name: "",
-      selectedId: null,
-      selectedItem: null,
-      quantity: "",
-      unitId: UNIT_ID.ML,
-      garnish: false,
-      optional: false,
-      allowBaseSubstitute: false,
-      allowBrandedSubstitutes: false,
-      substitutes: [],
-    };
+    const baseRow = createEmptyRow();
     if (initialIngredient) {
       return [
         {
@@ -1132,6 +1136,33 @@ export default function AddCocktailScreen() {
     }
     return [baseRow];
   });
+
+  const cameFromIngredient = useRef(false);
+
+  const resetForm = useCallback(
+    (ingredient) => {
+      setName("");
+      setPhotoUri(null);
+      setTags(getDefaultTags());
+      setDescription("");
+      setInstructions("");
+      setGlassId("cocktail_glass");
+      const row = createEmptyRow();
+      if (ingredient) {
+        setIngs([
+          {
+            ...row,
+            name: ingredient.name || "",
+            selectedId: ingredient.id ?? null,
+            selectedItem: ingredient,
+          },
+        ]);
+      } else {
+        setIngs([row]);
+      }
+    },
+    []
+  );
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState([]);
@@ -1264,6 +1295,7 @@ export default function AddCocktailScreen() {
   // OPEN AddIngredient with prefilled name; return result via params
   const openAddIngredient = useCallback(
     (initialName, localId) => {
+      cameFromIngredient.current = true;
       navigation.navigate("Ingredients", {
         screen: "Create",
         params: {
@@ -1277,6 +1309,17 @@ export default function AddCocktailScreen() {
       });
     },
     [navigation]
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (cameFromIngredient.current) {
+        cameFromIngredient.current = false;
+        return;
+      }
+      resetForm(route.params?.initialIngredient);
+      navigation.setParams({ initialIngredient: undefined });
+    }, [navigation, resetForm, route.params?.initialIngredient])
   );
 
   // Catch created ingredient returned from AddIngredient
