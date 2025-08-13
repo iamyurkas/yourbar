@@ -52,14 +52,14 @@ export default function CocktailsTabsScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
+      const state = tabRef.current?.getState();
+      const active = state?.routes?.[state?.index ?? 0]?.name;
+      if (active === "Create") {
+        const last =
+          (typeof getTab === "function" && getTab("cocktails")) || "All";
+        tabRef.current?.navigate(last);
+      }
       return () => {
-        const state = tabRef.current?.getState();
-        const active = state?.routes?.[state?.index ?? 0]?.name;
-        if (active === "Create") {
-          const last =
-            (typeof getTab === "function" && getTab("cocktails")) || "All";
-          tabRef.current?.navigate(last);
-        }
         setCreateKey((k) => k + 1);
       };
     }, [getTab])

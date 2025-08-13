@@ -53,15 +53,13 @@ export default function IngredientsTabsScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      return () => {
-        const state = tabRef.current?.getState();
-        const active = state?.routes?.[state?.index ?? 0]?.name;
-        if (active === "Create") {
-          const last =
-            (typeof getTab === "function" && getTab("ingredients")) || "All";
-          tabRef.current?.navigate(last);
-        }
-      };
+      const state = tabRef.current?.getState();
+      const active = state?.routes?.[state?.index ?? 0]?.name;
+      if (active === "Create") {
+        const last =
+          (typeof getTab === "function" && getTab("ingredients")) || "All";
+        tabRef.current?.navigate(last);
+      }
     }, [getTab])
   );
 
