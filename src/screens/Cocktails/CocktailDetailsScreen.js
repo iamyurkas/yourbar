@@ -356,8 +356,9 @@ export default function CocktailDetailsScreen() {
                   onPress={
                     ingredientId
                       ? () =>
-                          navigation.push("IngredientDetails", {
-                            id: ingredientId,
+                          navigation.navigate("Ingredients", {
+                            screen: "IngredientDetails",
+                            params: { id: ingredientId },
                           })
                       : undefined
                   }
