@@ -145,6 +145,10 @@ export default function CocktailDetailsScreen() {
     else navigation.goBack();
   }, [navigation, previousTab]);
 
+  const handleEdit = useCallback(() => {
+    navigation.navigate("EditCocktail", { id });
+  }, [navigation, id]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -163,8 +167,19 @@ export default function CocktailDetailsScreen() {
           />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleEdit}
+          style={styles.headerEditBtn}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Edit"
+        >
+          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation, handleGoBack, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
@@ -257,11 +272,14 @@ export default function CocktailDetailsScreen() {
         </Text>
 
         {glass && (
-          <Text
-            style={[styles.glass, { color: theme.colors.onSurfaceVariant }]}
-          >
-            {glass.name}
-          </Text>
+          <View style={styles.glassRow}>
+            <Image source={glass.image} style={styles.glassImage} />
+            <Text
+              style={[styles.glassText, { color: theme.colors.onSurfaceVariant }]}
+            >
+              {glass.name}
+            </Text>
+          </View>
         )}
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
@@ -321,6 +339,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   scrollContent: { paddingBottom: 24 },
   photo: { width: "100%", height: 200 },
   title: {
@@ -329,7 +348,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
   },
-  glass: { marginHorizontal: 16, marginTop: 4 },
+  glassRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 16,
+    marginTop: 4,
+  },
+  glassImage: { width: 40, height: 40, borderRadius: 8 },
+  glassText: { marginLeft: 8 },
   tagRow: {
     flexDirection: "row",
     flexWrap: "wrap",
