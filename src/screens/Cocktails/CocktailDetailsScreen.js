@@ -24,7 +24,7 @@ import {
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { getCocktailById } from "../../storage/cocktailsStorage";
+import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
@@ -149,6 +149,16 @@ export default function CocktailDetailsScreen() {
   const handleEdit = useCallback(() => {
     navigation.navigate("EditCocktail", { id });
   }, [navigation, id]);
+
+  const handleRate = useCallback(
+    async (value) => {
+      if (!cocktail) return;
+      const updated = { ...cocktail, rating: value };
+      setCocktail(updated);
+      await saveCocktail(updated);
+    },
+    [cocktail]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -276,25 +286,44 @@ export default function CocktailDetailsScreen() {
       )}
 
       <View style={styles.body}>
-        {glass && (
-          <View style={styles.glassRow}>
-            <Image
-              source={glass.image}
-              style={[
-                styles.glassImage,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            />
-            <Text
-              style={[
-                styles.glassText,
-                { color: theme.colors.onSurfaceVariant },
-              ]}
-            >
-              {glass.name}
-            </Text>
+        <View style={styles.glassRow}>
+          {glass && (
+            <>
+              <Image
+                source={glass.image}
+                style={[
+                  styles.glassImage,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.glassText,
+                  { color: theme.colors.onSurfaceVariant },
+                ]}
+              >
+                {glass.name}
+              </Text>
+            </>
+          )}
+          <View style={styles.ratingRow}>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <TouchableOpacity
+                key={value}
+                onPress={() => handleRate(value)}
+                hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+              >
+                <MaterialIcons
+                  name={
+                    value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
+                  }
+                  size={24}
+                  color={theme.colors.secondary}
+                />
+              </TouchableOpacity>
+            ))}
           </View>
-        )}
+        </View>
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
           <View style={styles.section}>
@@ -388,6 +417,7 @@ const styles = StyleSheet.create({
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8 },
+  ratingRow: { flexDirection: "row", marginLeft: 8 },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
