@@ -58,18 +58,23 @@ const ItemRow = memo(
       [theme.colors.tertiary]
     );
     const glassImage = glassId ? getGlassById(glassId)?.image : null;
+    const backgroundColor = isAllAvailable
+      ? withAlpha(theme.colors.secondary, 0.25)
+      : theme.colors.background;
     return (
       <View
         style={[
-          isAllAvailable ? styles.highlightWrapper : styles.normalWrapper,
-          { borderBottomColor: theme.colors.background },
-          isAllAvailable && {
-            backgroundColor: withAlpha(theme.colors.secondary, 0.25),
+          styles.wrapper,
+          {
+            borderBottomColor: theme.colors.background,
+            backgroundColor,
           },
         ]}
       >
-        <View
-          style={[
+        <Pressable
+          onPress={() => onPress(id)}
+          android_ripple={ripple}
+          style={({ pressed }) => [
             styles.item,
             hasBranded && {
               ...styles.brandedStripe,
@@ -80,69 +85,61 @@ const ItemRow = memo(
               ...styles.navigatingRow,
               backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
             },
+            pressed && styles.pressed,
           ]}
+          hitSlop={{ top: 4, bottom: 4 }}
         >
-          <Pressable
-            onPress={() => onPress(id)}
-            android_ripple={ripple}
-            style={({ pressed }) => [
-              styles.leftTapZone,
-              pressed && styles.pressedLeft,
-            ]}
-            hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
-          >
-            {photoUri ? (
-              <Image
-                source={{ uri: photoUri }}
-                style={[styles.image, { backgroundColor: theme.colors.background }]}
-                resizeMode="cover"
-              />
-            ) : glassImage ? (
-              <Image
-                source={glassImage}
-                style={[styles.image, { backgroundColor: theme.colors.background }]}
-                resizeMode="cover"
-              />
-            ) : (
-              <View
+          {photoUri ? (
+            <Image
+              source={{ uri: photoUri }}
+              style={[styles.image, { backgroundColor: theme.colors.background }]}
+              resizeMode="cover"
+            />
+          ) : glassImage ? (
+            <Image
+              source={glassImage}
+              style={[styles.image, { backgroundColor: theme.colors.background }]}
+              resizeMode="cover"
+            />
+          ) : (
+            <View
+              style={[
+                styles.image,
+                styles.placeholder,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            >
+              <Text
                 style={[
-                  styles.image,
-                  styles.placeholder,
-                  { backgroundColor: theme.colors.surface },
+                  styles.placeholderText,
+                  { color: theme.colors.onSurfaceVariant },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.placeholderText,
-                    { color: theme.colors.onSurfaceVariant },
-                  ]}
-                >
-                  No image
-                </Text>
+                No image
+              </Text>
+            </View>
+          )}
+          <View style={styles.info}>
+            <Text
+              numberOfLines={1}
+              style={[styles.name, { color: theme.colors.onSurface }]}
+            >
+              {name}
+            </Text>
+            {Array.isArray(tags) && tags.length > 0 && (
+              <View style={styles.tagRow}>
+                {tags.map((tag) => (
+                  <View
+                    key={tag.id}
+                    style={[styles.tag, { backgroundColor: tag.color }]}
+                  >
+                    <Text style={styles.tagText}>{tag.name}</Text>
+                  </View>
+                ))}
               </View>
             )}
-            <View style={styles.info}>
-              <Text
-                numberOfLines={1}
-                style={[styles.name, { color: theme.colors.onSurface }]}
-              >
-                {name}
-              </Text>
-              {Array.isArray(tags) && tags.length > 0 && (
-                <View style={styles.tagRow}>
-                  {tags.map((tag) => (
-                    <View
-                      key={tag.id}
-                      style={[styles.tag, { backgroundColor: tag.color }]}
-                    >
-                      <Text style={styles.tagText}>{tag.name}</Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </View>
-          </Pressable>
-        </View>
+          </View>
+        </Pressable>
       </View>
     );
   },
@@ -288,8 +285,7 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1 },
 
-  highlightWrapper: { borderBottomWidth: ROW_BORDER },
-  normalWrapper: { borderBottomWidth: ROW_BORDER },
+  wrapper: { borderBottomWidth: ROW_BORDER },
 
   item: {
     flexDirection: "row",
@@ -302,13 +298,7 @@ const styles = StyleSheet.create({
 
   navigatingRow: { opacity: 0.6 },
 
-  leftTapZone: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: 8,
-  },
-  pressedLeft: {
+  pressed: {
     opacity: 0.7,
     transform: [{ scale: Platform.OS === "ios" ? 0.98 : 0.99 }],
   },
