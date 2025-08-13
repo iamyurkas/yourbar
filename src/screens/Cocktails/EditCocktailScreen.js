@@ -1121,7 +1121,7 @@ export default function EditCocktailScreen() {
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.navigate("CocktailDetails", { id: cocktail.id });
+        navigation.goBack();
       }
       return cocktail;
     },
@@ -1730,7 +1730,7 @@ export default function EditCocktailScreen() {
 
           {/* Save */}
           <Pressable
-            onPress={handleSave}
+            onPress={() => handleSave()}
             android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
             style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
           >
