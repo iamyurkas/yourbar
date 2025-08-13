@@ -1317,9 +1317,12 @@ export default function AddCocktailScreen() {
         cameFromIngredient.current = false;
         return;
       }
-      resetForm(route.params?.initialIngredient);
-      navigation.setParams({ initialIngredient: undefined });
-    }, [navigation, resetForm, route.params?.initialIngredient])
+      const incoming = route.params?.initialIngredient;
+      resetForm(incoming);
+      if (incoming) {
+        navigation.setParams({ initialIngredient: undefined });
+      }
+    }, [navigation, resetForm])
   );
 
   // Catch created ingredient returned from AddIngredient
