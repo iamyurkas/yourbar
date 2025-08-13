@@ -92,13 +92,19 @@ const ItemRow = memo(
           {photoUri ? (
             <Image
               source={{ uri: photoUri }}
-              style={[styles.image, { backgroundColor: theme.colors.background }]}
+              style={[
+                styles.image,
+                { backgroundColor: theme.colors.background },
+              ]}
               resizeMode="cover"
             />
           ) : glassImage ? (
             <Image
               source={glassImage}
-              style={[styles.image, { backgroundColor: theme.colors.background }]}
+              style={[
+                styles.image,
+                { backgroundColor: theme.colors.background },
+              ]}
               resizeMode="cover"
             />
           ) : (
@@ -189,9 +195,7 @@ export default function AllCocktailsScreen() {
         getAllIngredients(),
       ]);
       if (cancel) return;
-      const ingMap = new Map(
-        (ingredientsList || []).map((i) => [i.id, i])
-      );
+      const ingMap = new Map((ingredientsList || []).map((i) => [i.id, i]));
       let list = Array.isArray(cocktailsList) ? cocktailsList : [];
       const q = searchDebounced.trim().toLowerCase();
       if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
@@ -220,7 +224,10 @@ export default function AllCocktailsScreen() {
   const handlePress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("CocktailDetails", { id });
+      navigation.navigate("Create", {
+        screen: "CocktailDetails",
+        params: { id },
+      });
       setTimeout(() => setNavigatingId(null), 500);
     },
     [navigation]
@@ -328,4 +335,3 @@ const styles = StyleSheet.create({
 
   brandedStripe: { borderLeftWidth: 4, paddingLeft: 4 },
 });
-

@@ -69,7 +69,10 @@ const IngredientRow = memo(function IngredientRow({
         {photoUri ? (
           <Image
             source={{ uri: photoUri }}
-            style={[styles.ingImage, { backgroundColor: theme.colors.background }]}
+            style={[
+              styles.ingImage,
+              { backgroundColor: theme.colors.background },
+            ]}
             resizeMode="cover"
           />
         ) : (
@@ -99,17 +102,23 @@ const IngredientRow = memo(function IngredientRow({
             {name}
           </Text>
           {amount ? (
-            <Text style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
+            >
               {amount} {unitName}
             </Text>
           ) : null}
           {garnish && (
-            <Text style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
+            >
               (garnish)
             </Text>
           )}
           {substituteFor && (
-            <Text style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
+            >
               substitute for {substituteFor}
             </Text>
           )}
@@ -118,9 +127,7 @@ const IngredientRow = memo(function IngredientRow({
         <MaterialIcons
           name={inBar ? "check-circle" : "radio-button-unchecked"}
           size={22}
-          color={
-            inBar ? theme.colors.primary : theme.colors.onSurfaceVariant
-          }
+          color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
         />
       </View>
     </View>
@@ -255,7 +262,9 @@ export default function CocktailDetailsScreen() {
         </Text>
 
         {glass && (
-          <Text style={[styles.glass, { color: theme.colors.onSurfaceVariant }]}>
+          <Text
+            style={[styles.glass, { color: theme.colors.onSurfaceVariant }]}
+          >
             {glass.name}
           </Text>
         )}
@@ -274,8 +283,7 @@ export default function CocktailDetailsScreen() {
         )}
 
         {cocktail.description ? (
-          <Text
-            style={[styles.sectionText, { color: theme.colors.onSurface }]}>
+          <Text style={[styles.sectionText, { color: theme.colors.onSurface }]}>
             {cocktail.description}
           </Text>
         ) : null}
@@ -303,8 +311,8 @@ export default function CocktailDetailsScreen() {
               Ingredients
             </Text>
             <View style={styles.ingList}>
-              {rows.map((r) => (
-                <IngredientRow key={r.key} {...r} />
+              {rows.map(({ key, ...props }) => (
+                <IngredientRow key={key} {...props} />
               ))}
             </View>
           </View>
@@ -320,9 +328,19 @@ const styles = StyleSheet.create({
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   scrollContent: { paddingBottom: 24 },
   photo: { width: "100%", height: 200 },
-  title: { fontSize: 24, fontWeight: "bold", marginHorizontal: 16, marginTop: 16 },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
   glass: { marginHorizontal: 16, marginTop: 4 },
-  tagRow: { flexDirection: "row", flexWrap: "wrap", marginHorizontal: 16, marginTop: 8 },
+  tagRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: 16,
+    marginTop: 8,
+  },
   tag: {
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -331,7 +349,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginHorizontal: 16, marginBottom: 4 },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 16,
+    marginBottom: 4,
+  },
   sectionText: { marginHorizontal: 16, marginTop: 8, lineHeight: 20 },
 
   ingList: { marginTop: 8 },
@@ -357,4 +380,3 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, marginTop: 2 },
   dimmed: { opacity: 0.88 },
 });
-
