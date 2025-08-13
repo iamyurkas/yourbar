@@ -46,15 +46,14 @@ function CreateIngredientStack() {
 export default function IngredientsTabsScreen() {
   const theme = useTheme();
   const tabRef = React.useRef(null);
-  const { getTab } = useTabMemory();
+  const { getTab, setTab } = useTabMemory();
 
   const initialTab =
     (typeof getTab === "function" && getTab("ingredients")) || "All";
 
   useFocusEffect(
     React.useCallback(() => {
-      const state = tabRef.current?.getState();
-      const active = state?.routes?.[state?.index ?? 0]?.name;
+      const active = tabRef.current?.getCurrentRoute?.()?.name;
       if (active === "Create") {
         const last =
           (typeof getTab === "function" && getTab("ingredients")) || "All";
@@ -81,9 +80,21 @@ export default function IngredientsTabsScreen() {
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
       })}
     >
-      <Tab.Screen name="All" component={AllIngredientsScreen} />
-      <Tab.Screen name="My" component={MyIngredientsScreen} />
-      <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
+      <Tab.Screen
+        name="All"
+        component={AllIngredientsScreen}
+        listeners={{ focus: () => setTab("ingredients", "All") }}
+      />
+      <Tab.Screen
+        name="My"
+        component={MyIngredientsScreen}
+        listeners={{ focus: () => setTab("ingredients", "My") }}
+      />
+      <Tab.Screen
+        name="Shopping"
+        component={ShoppingIngredientsScreen}
+        listeners={{ focus: () => setTab("ingredients", "Shopping") }}
+      />
       <Tab.Screen
         name="Create"
         component={CreateIngredientStack}

@@ -43,7 +43,7 @@ function CreateCocktailStack() {
 export default function CocktailsTabsScreen() {
   const theme = useTheme();
   const tabRef = React.useRef(null);
-  const { getTab } = useTabMemory();
+  const { getTab, setTab } = useTabMemory();
 
   const [createKey, setCreateKey] = React.useState(0);
 
@@ -52,8 +52,7 @@ export default function CocktailsTabsScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      const state = tabRef.current?.getState();
-      const active = state?.routes?.[state?.index ?? 0]?.name;
+      const active = tabRef.current?.getCurrentRoute?.()?.name;
       if (active === "Create") {
         const last =
           (typeof getTab === "function" && getTab("cocktails")) || "All";
@@ -83,9 +82,21 @@ export default function CocktailsTabsScreen() {
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
       })}
     >
-      <Tab.Screen name="All" component={AllCocktailsScreen} />
-      <Tab.Screen name="My" component={MyCocktailsScreen} />
-      <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
+      <Tab.Screen
+        name="All"
+        component={AllCocktailsScreen}
+        listeners={{ focus: () => setTab("cocktails", "All") }}
+      />
+      <Tab.Screen
+        name="My"
+        component={MyCocktailsScreen}
+        listeners={{ focus: () => setTab("cocktails", "My") }}
+      />
+      <Tab.Screen
+        name="Favorite"
+        component={FavoriteCocktailsScreen}
+        listeners={{ focus: () => setTab("cocktails", "Favorite") }}
+      />
       <Tab.Screen
         name="Create"
         // Через render-prop ми можемо підставити key для примусового ремоунта
