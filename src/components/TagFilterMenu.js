@@ -40,6 +40,7 @@ export default function TagFilterMenu({
           />
         </TouchableOpacity>
       }
+      anchorPosition="bottom"
       contentStyle={{
         paddingHorizontal: 4,
         paddingVertical: 4,
