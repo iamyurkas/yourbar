@@ -284,7 +284,7 @@ export default function CocktailDetailsScreen() {
             name={
               value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
             }
-            size={28}
+            size={34}
             color={theme.colors.secondary}
           />
         </TouchableOpacity>
