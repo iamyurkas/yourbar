@@ -162,6 +162,7 @@ const IngredientRow = memo(function IngredientRow({
   const [unitPlacement, setUnitPlacement] = useState("bottom");
   const [unitMenuOpen, setUnitMenuOpen] = useState(false);
   const openUnitMenuMeasured = useCallback(() => {
+    Keyboard.dismiss();
     if (!unitTriggerRef.current) {
       setUnitPlacement("bottom");
       setUnitMenuOpen(true);
