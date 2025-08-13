@@ -22,7 +22,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -1312,29 +1311,23 @@ export default function AddCocktailScreen() {
     [navigation]
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      let active = true;
-      const id = setTimeout(() => {
-        InteractionManager.runAfterInteractions(() => {
-          if (!active) return;
-          if (cameFromIngredient.current) {
-            cameFromIngredient.current = false;
-            return;
-          }
-          const incoming = route.params?.initialIngredient;
-          resetForm(incoming);
-          if (incoming) {
-            navigation.setParams({ initialIngredient: undefined });
-          }
-        });
-      }, 0);
-      return () => {
-        active = false;
-        clearTimeout(id);
-      };
-    }, [navigation, resetForm])
-  );
+  useEffect(() => {
+    if (!isFocused) return;
+    if (cameFromIngredient.current) {
+      cameFromIngredient.current = false;
+      return;
+    }
+    const incoming = route.params?.initialIngredient;
+    resetForm(incoming);
+    if (incoming) {
+      navigation.setParams({ initialIngredient: undefined });
+    }
+  }, [
+    isFocused,
+    route.params?.initialIngredient,
+    navigation,
+    resetForm,
+  ]);
 
   // Catch created ingredient returned from AddIngredient
   useFocusEffect(
