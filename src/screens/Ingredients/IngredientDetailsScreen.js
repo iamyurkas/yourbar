@@ -32,7 +32,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 
-const IMAGE_SIZE = 140;
 const THUMB = 40;
 
 /** Gray-square photo (no icon/initials), uses theme */
@@ -151,11 +150,20 @@ export default function IngredientDetailsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Edit"
         >
-          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
+          <MaterialIcons
+            name="edit"
+            size={24}
+            color={theme.colors.onSurface}
+          />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
+  }, [
+    navigation,
+    handleGoBack,
+    handleEdit,
+    theme.colors.onSurface,
+  ]);
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
@@ -306,6 +314,27 @@ export default function IngredientDetailsScreen() {
         {ingredient.name}
       </Text>
 
+      {ingredient.photoUri ? (
+        <Image
+          source={{ uri: ingredient.photoUri }}
+          style={[styles.photo, { backgroundColor: theme.colors.surface }]}
+          resizeMode="contain"
+        />
+      ) : (
+        <View
+          style={[
+            styles.photo,
+            {
+              backgroundColor: theme.colors.surface,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>No image</Text>
+        </View>
+      )}
+
       <View style={styles.iconRow}>
         <TouchableOpacity
           onPress={toggleInShoppingList}
@@ -336,27 +365,6 @@ export default function IngredientDetailsScreen() {
           />
         </TouchableOpacity>
       </View>
-
-      {ingredient.photoUri ? (
-        <Image
-          source={{ uri: ingredient.photoUri }}
-          style={[styles.image, { backgroundColor: theme.colors.surface }]}
-          resizeMode="contain"
-        />
-      ) : (
-        <View
-          style={[
-            styles.image,
-            {
-              backgroundColor: theme.colors.surface,
-              justifyContent: "center",
-              alignItems: "center",
-            },
-          ]}
-        >
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>No image</Text>
-        </View>
-      )}
 
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
         <View style={styles.section}>
@@ -473,12 +481,7 @@ const styles = StyleSheet.create({
   container: { padding: 24 }, // bg is set via theme inline
   title: { fontSize: 22, fontWeight: "bold" },
 
-  image: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
+  photo: { width: "100%", height: 200, marginTop: 12, alignSelf: "center" },
 
   section: { marginTop: 16 },
   sectionLabel: { fontWeight: "bold", marginBottom: 8 },

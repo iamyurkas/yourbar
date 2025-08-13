@@ -173,8 +173,8 @@ export default function EditIngredientScreen() {
 
   // завжди повертаємось на деталі поточного інгредієнта
   const handleGoBack = useCallback(() => {
-    navigation.navigate("IngredientDetails", { id: currentId });
-  }, [navigation, currentId]);
+    navigation.goBack();
+  }, [navigation]);
 
   // видима кнопка Back у хедері
   useLayoutEffect(() => {
@@ -198,15 +198,55 @@ export default function EditIngredientScreen() {
     });
   }, [navigation, handleGoBack, theme.colors.onSurface]);
 
-  // перехоплюємо системний back/gesture
+  const skipPromptRef = useRef(false);
+  const initialHashRef = useRef("{}");
+  const [dirty, setDirty] = useState(false);
+
+  const serialize = useCallback(() => {
+    const tagIds = [...tags].map((t) => t.id).sort();
+    return JSON.stringify({
+      name: name.trim(),
+      description,
+      photoUri,
+      baseIngredientId,
+      tags: tagIds,
+    });
+  }, [name, description, photoUri, tags, baseIngredientId]);
+
+  useEffect(() => {
+    if (ingredient) initialHashRef.current = serialize();
+  }, [ingredient, serialize]);
+
+  useEffect(() => {
+    setDirty(serialize() !== initialHashRef.current);
+  }, [serialize]);
+
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
-      if (e.data.action.type === "NAVIGATE") return;
+      if (skipPromptRef.current || !dirty) return;
       e.preventDefault();
-      handleGoBack();
+      Alert.alert("Save changes?", "Do you want to save changes?", [
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => {
+            skipPromptRef.current = true;
+            navigation.dispatch(e.data.action);
+          },
+        },
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Save",
+          onPress: async () => {
+            skipPromptRef.current = true;
+            await handleSave(true);
+            navigation.dispatch(e.data.action);
+          },
+        },
+      ]);
     });
     return unsub;
-  }, [navigation, handleGoBack]);
+  }, [navigation, dirty, handleSave]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -304,37 +344,47 @@ export default function EditIngredientScreen() {
     if (!result.canceled) setPhotoUri(result.assets[0].uri);
   }, []);
 
-  const handleSave = useCallback(async () => {
-    const trimmed = name.trim();
-    if (!trimmed) {
-      Alert.alert("Please enter a name for the ingredient.");
-      return;
-    }
-    if (!ingredient) return;
+  const handleSave = useCallback(
+    async (stay = false) => {
+      const trimmed = name.trim();
+      if (!trimmed) {
+        Alert.alert("Please enter a name for the ingredient.");
+        return;
+      }
+      if (!ingredient) return;
 
-    const updated = {
-      ...ingredient,
-      name: trimmed,
+      const updated = {
+        ...ingredient,
+        name: trimmed,
+        description,
+        photoUri,
+        tags,
+        baseIngredientId: baseIngredientId ?? null,
+      };
+      await saveIngredient(updated);
+      initialHashRef.current = serialize();
+      setDirty(false);
+      if (!stay) {
+        skipPromptRef.current = true;
+        navigation.navigate("IngredientDetails", { id: updated.id });
+      }
+      return updated;
+    },
+    [
+      ingredient,
+      name,
       description,
       photoUri,
       tags,
-      baseIngredientId: baseIngredientId ?? null,
-    };
-    await saveIngredient(updated);
-    navigation.navigate("IngredientDetails", { id: updated.id });
-  }, [
-    ingredient,
-    name,
-    description,
-    photoUri,
-    tags,
-    baseIngredientId,
-    navigation,
-  ]);
+      baseIngredientId,
+      navigation,
+      serialize,
+    ]
+  );
 
   const handleDelete = useCallback(() => {
     if (!ingredient) return;
-    Alert.alert("Delete Ingredient", "Are you sure?", [
+    Alert.alert("Delete", "Delete this ingredient?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
@@ -347,6 +397,26 @@ export default function EditIngredientScreen() {
       },
     ]);
   }, [ingredient, navigation, previousTab]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleDelete}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Delete ingredient"
+        >
+          <MaterialIcons
+            name="delete"
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, handleDelete, theme.colors.onSurface]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
@@ -617,8 +687,8 @@ export default function EditIngredientScreen() {
           onChangeText={setDescription}
           style={[
             styles.input,
+            styles.multiline,
             {
-              height: 60,
               borderColor: theme.colors.outline,
               color: theme.colors.onSurface,
               backgroundColor: theme.colors.surface,
@@ -630,21 +700,10 @@ export default function EditIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={{ color: theme.colors.onPrimary }}
-          disabled={!name.trim()}
+          android_ripple={{ color: theme.colors.onPrimaryContainer }}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Changes
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
-          onPress={handleDelete}
-          android_ripple={{ color: theme.colors.onErrorContainer }}
-        >
-          <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
-            Delete Ingredient
+            Save changes
           </Text>
         </Pressable>
       </ScrollView>
@@ -658,6 +717,8 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
   anchorInput: { justifyContent: "center", minHeight: 44 },
   anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+
+  multiline: { minHeight: 80, textAlignVertical: "top" },
 
   imageButton: {
     marginTop: 8,
