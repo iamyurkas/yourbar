@@ -22,6 +22,7 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -1313,15 +1314,25 @@ export default function AddCocktailScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (cameFromIngredient.current) {
-        cameFromIngredient.current = false;
-        return;
-      }
-      const incoming = route.params?.initialIngredient;
-      resetForm(incoming);
-      if (incoming) {
-        navigation.setParams({ initialIngredient: undefined });
-      }
+      let active = true;
+      const id = setTimeout(() => {
+        InteractionManager.runAfterInteractions(() => {
+          if (!active) return;
+          if (cameFromIngredient.current) {
+            cameFromIngredient.current = false;
+            return;
+          }
+          const incoming = route.params?.initialIngredient;
+          resetForm(incoming);
+          if (incoming) {
+            navigation.setParams({ initialIngredient: undefined });
+          }
+        });
+      }, 0);
+      return () => {
+        active = false;
+        clearTimeout(id);
+      };
     }, [navigation, resetForm])
   );
 
