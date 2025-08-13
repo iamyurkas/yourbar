@@ -397,8 +397,11 @@ export default function CocktailDetailsScreen() {
                     ingredientId
                       ? () =>
                           navigation.navigate("Ingredients", {
-                            screen: "IngredientDetails",
-                            params: { id: ingredientId },
+                            screen: "Create",
+                            params: {
+                              screen: "IngredientDetails",
+                              params: { id: ingredientId, fromCocktailId: id },
+                            },
                           })
                       : undefined
                   }
