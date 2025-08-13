@@ -29,6 +29,7 @@ import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
+import { getAllCocktails } from "../../storage/cocktailsStorage";
 
 // ---- Helpers ----
 const withAlpha = (hex, alpha) => {
@@ -52,6 +53,7 @@ const ItemRow = memo(
     name,
     photoUri,
     tags,
+    usageCount,
     inBar,
     baseIngredientId,
     onPress,
@@ -131,20 +133,34 @@ const ItemRow = memo(
               >
                 {name}
               </Text>
-              {Array.isArray(tags) && tags.length > 0 && (
-                <View style={styles.tagRow}>
-                  {tags.map((tag) => (
-                    <View
-                      key={tag.id}
-                      style={[styles.tag, { backgroundColor: tag.color }]}
-                    >
-                      <Text style={styles.tagText}>{tag.name}</Text>
-                    </View>
-                  ))}
-                </View>
-              )}
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.usage,
+                  { color: theme.colors.onSurfaceVariant },
+                ]}
+              >
+                {usageCount > 0
+                  ? `${usageCount} cocktail${usageCount === 1 ? "" : "s"}`
+                  : "\u00A0"}
+              </Text>
             </View>
           </Pressable>
+
+          {Array.isArray(tags) && tags.length > 0 && (
+            <View style={styles.tagDots}>
+              {tags.map((tag, idx) => (
+                <View
+                  key={tag.id}
+                  style={[
+                    styles.tagDot,
+                    idx === 0 && styles.firstTagDot,
+                    { backgroundColor: tag.color },
+                  ]}
+                />
+              ))}
+            </View>
+          )}
 
           <Pressable
             onPress={() => onRemove(id)}
@@ -172,7 +188,8 @@ const ItemRow = memo(
     prev.inBar === next.inBar &&
     prev.baseIngredientId === next.baseIngredientId &&
     prev.isNavigating === next.isNavigating &&
-    prev.tags === next.tags
+    prev.tags === next.tags &&
+    prev.usageCount === next.usageCount
 );
 
 export default function ShoppingIngredientsScreen() {
@@ -219,11 +236,25 @@ export default function ShoppingIngredientsScreen() {
   }, []);
 
   const loadIngredients = useCallback(async () => {
-    const data = await getAllIngredients();
+    const [data, cocktails] = await Promise.all([
+      getAllIngredients(),
+      getAllCocktails(),
+    ]);
+    const usage = {};
+    cocktails.forEach((c) => {
+      if (Array.isArray(c.ingredients)) {
+        c.ingredients.forEach((ing) => {
+          if (ing.ingredientId != null)
+            usage[ing.ingredientId] = (usage[ing.ingredientId] || 0) + 1;
+        });
+      }
+    });
+
     const filtered = data.filter((i) => i.inShoppingList === true);
     const sorted = sortIngredients(filtered).map((item) => ({
       ...item,
       searchName: item.name.toLowerCase(),
+      usageCount: usage[item.id] || 0,
     }));
     setIngredients(sorted);
   }, [sortIngredients]);
@@ -266,7 +297,7 @@ export default function ShoppingIngredientsScreen() {
       if (idx === -1) return prev;
       const next = [...prev];
       const [removed] = next.splice(idx, 1);
-      const { searchName, ...rest } = removed;
+      const { searchName, usageCount, ...rest } = removed;
       saveIngredient({ ...rest, inShoppingList: false }).catch(() => {});
       return next;
     });
@@ -291,6 +322,7 @@ export default function ShoppingIngredientsScreen() {
         name={item.name}
         photoUri={item.photoUri}
         tags={item.tags}
+        usageCount={item.usageCount}
         inBar={item.inBar === true}
         baseIngredientId={item.baseIngredientId}
         onPress={onItemPress}
@@ -395,17 +427,12 @@ const styles = StyleSheet.create({
   placeholderText: { fontSize: 10, textAlign: "center" },
 
   info: { flex: 1, paddingRight: 8 },
-  name: { fontSize: 16, fontWeight: "bold" },
+  name: { fontSize: 16 },
+  usage: { fontSize: 12, marginTop: 4 },
 
-  tagRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
-  tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-    marginRight: 6,
-    marginBottom: 4,
-  },
-  tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
+  tagDots: { flexDirection: "row", marginRight: 8 },
+  tagDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 4 },
+  firstTagDot: { marginLeft: 0 },
 
   brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 
