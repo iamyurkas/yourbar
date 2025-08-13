@@ -284,7 +284,7 @@ export default function CocktailDetailsScreen() {
             name={
               value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
             }
-            size={24}
+            size={28}
             color={theme.colors.secondary}
           />
         </TouchableOpacity>
@@ -305,33 +305,28 @@ export default function CocktailDetailsScreen() {
         <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
       )}
 
+      {ratingStars}
+
       <View style={styles.body}>
-        <View style={styles.glassRow}>
-          {glass ? (
-            <>
-              <View style={styles.glassImageWrap}>
-                {ratingStars}
-                <Image
-                  source={glass.image}
-                  style={[
-                    styles.glassImage,
-                    { backgroundColor: theme.colors.surface },
-                  ]}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.glassText,
-                  { color: theme.colors.onSurfaceVariant },
-                ]}
-              >
-                {glass.name}
-              </Text>
-            </>
-          ) : (
-            ratingStars
-          )}
-        </View>
+        {glass && (
+          <View style={styles.glassRow}>
+            <Image
+              source={glass.image}
+              style={[
+                styles.glassImage,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            />
+            <Text
+              style={[
+                styles.glassText,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
+            >
+              {glass.name}
+            </Text>
+          </View>
+        )}
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
           <View style={styles.section}>
@@ -421,12 +416,16 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginHorizontal: 24,
   },
-  body: { paddingHorizontal: 24, marginTop: 16 },
+  body: { paddingHorizontal: 24, marginTop: 0 },
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
-  glassImageWrap: { alignItems: "center" },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8 },
-  ratingRow: { flexDirection: "row", justifyContent: "center", marginBottom: 4 },
+  ratingRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 8,
+    marginBottom: 8,
+  },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
