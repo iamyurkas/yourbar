@@ -169,6 +169,7 @@ export default function AllCocktailsScreen() {
   const { setTab } = useTabMemory();
 
   const [cocktails, setCocktails] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -210,37 +211,41 @@ export default function AllCocktailsScreen() {
         getAllIngredients(),
       ]);
       if (cancel) return;
-      const ingMap = new Map((ingredientsList || []).map((i) => [i.id, i]));
-      let list = Array.isArray(cocktailsList) ? cocktailsList : [];
-      const q = searchDebounced.trim().toLowerCase();
-      if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
-      if (selectedTagIds.length > 0)
-        list = list.filter(
-          (c) =>
-            Array.isArray(c.tags) &&
-            c.tags.some((t) => selectedTagIds.includes(t.id))
-        );
-      const prepared = list.map((c) => {
-        const required = (c.ingredients || []).filter((r) => !r.optional);
-        const allAvail =
-          required.length > 0 &&
-          required.every((r) => {
-            const ing = ingMap.get(r.ingredientId);
-            return ing && ing.inBar;
-          });
-        const branded = (c.ingredients || []).some((r) => {
-          const ing = ingMap.get(r.ingredientId);
-          return ing && ing.baseIngredientId != null;
-        });
-        return { ...c, isAllAvailable: allAvail, hasBranded: branded };
-      });
-      setCocktails(prepared);
+      setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
+      setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setLoading(false);
     })();
     return () => {
       cancel = true;
     };
-  }, [isFocused, searchDebounced, selectedTagIds]);
+  }, [isFocused]);
+
+  const filtered = useMemo(() => {
+    const ingMap = new Map((ingredients || []).map((i) => [i.id, i]));
+    const q = searchDebounced.trim().toLowerCase();
+    let list = cocktails;
+    if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+    if (selectedTagIds.length > 0)
+      list = list.filter(
+        (c) =>
+          Array.isArray(c.tags) &&
+          c.tags.some((t) => selectedTagIds.includes(t.id))
+      );
+    return list.map((c) => {
+      const required = (c.ingredients || []).filter((r) => !r.optional);
+      const allAvail =
+        required.length > 0 &&
+        required.every((r) => {
+          const ing = ingMap.get(r.ingredientId);
+          return ing && ing.inBar;
+        });
+      const branded = (c.ingredients || []).some((r) => {
+        const ing = ingMap.get(r.ingredientId);
+        return ing && ing.baseIngredientId != null;
+      });
+      return { ...c, isAllAvailable: allAvail, hasBranded: branded };
+    });
+  }, [cocktails, ingredients, searchDebounced, selectedTagIds]);
 
   const handlePress = useCallback(
     (id) => {
@@ -284,7 +289,6 @@ export default function AllCocktailsScreen() {
     <View style={styles.container}>
       <HeaderWithSearch
         onMenu={() => navigation.openDrawer?.()}
-        onSearch={() => {}}
         searchValue={search}
         setSearchValue={setSearch}
         filterComponent={
@@ -296,7 +300,7 @@ export default function AllCocktailsScreen() {
         }
       />
       <FlashList
-        data={cocktails}
+        data={filtered}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         estimatedItemSize={ITEM_HEIGHT}
