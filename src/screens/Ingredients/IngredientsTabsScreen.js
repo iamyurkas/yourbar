@@ -55,7 +55,7 @@ export default function IngredientsTabsScreen() {
     React.useCallback(() => {
       return () => {
         const state = tabRef.current?.getState();
-        const active = state.routes[state.index]?.name;
+        const active = state?.routes?.[state?.index ?? 0]?.name;
         if (active === "Create") {
           const last =
             (typeof getTab === "function" && getTab("ingredients")) || "All";
