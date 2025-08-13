@@ -114,6 +114,10 @@ export default function IngredientDetailsScreen() {
     else navigation.goBack();
   }, [navigation, previousTab]);
 
+  const handleEdit = useCallback(() => {
+    navigation.navigate("EditIngredient", { id });
+  }, [navigation, id]);
+
   // Always show custom back button
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -133,8 +137,19 @@ export default function IngredientDetailsScreen() {
           />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleEdit}
+          style={styles.headerEditBtn}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Edit"
+        >
+          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation, handleGoBack, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
@@ -270,13 +285,6 @@ export default function IngredientDetailsScreen() {
       </Text>
 
       <View style={styles.iconRow}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EditIngredient", { id })}
-          style={styles.iconButton}
-        >
-          <MaterialIcons name="edit" size={24} color={theme.colors.primary} />
-        </TouchableOpacity>
-
         <TouchableOpacity
           onPress={toggleInShoppingList}
           style={styles.iconButton}
@@ -499,4 +507,5 @@ const styles = StyleSheet.create({
   iconButton: { marginLeft: 12, padding: 4 },
 
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
 });
