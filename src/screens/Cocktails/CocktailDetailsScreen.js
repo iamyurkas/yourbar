@@ -115,7 +115,7 @@ const IngredientRow = memo(function IngredientRow({
             <Text
               style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
             >
-              substitute for {substituteFor}
+              substitute for: {substituteFor}
             </Text>
           )}
         </View>
@@ -230,19 +230,38 @@ export default function CocktailDetailsScreen() {
     const list = Array.isArray(cocktail.ingredients)
       ? [...cocktail.ingredients].sort((a, b) => a.order - b.order)
       : [];
+    const allIngs = Array.from(ingMap.values());
     return list.map((r) => {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
       const inBar = ing?.inBar;
       let substitute = null;
-      if (!inBar && r.allowBaseSubstitution && ing) {
+      if (!inBar && ing) {
         const baseId = ing.baseIngredientId ?? ing.id;
-        substitute = Array.from(ingMap.values()).find((i) => {
-          if (!i.inBar) return false;
-          if (i.id === baseId) return true;
-          return i.baseIngredientId === baseId;
-        });
+
+        if (r.allowBaseSubstitution) {
+          const base = allIngs.find((i) => i.id === baseId && i.inBar);
+          if (base) substitute = base;
+        }
+
+        if (!substitute && r.allowBrandedSubstitutes) {
+          const brand = allIngs.find(
+            (i) => i.inBar && i.baseIngredientId === baseId
+          );
+          if (brand) substitute = brand;
+        }
+
+        if (!substitute && Array.isArray(r.substitutes)) {
+          for (const s of r.substitutes) {
+            const candidate = ingMap.get(s.id);
+            if (candidate?.inBar) {
+              substitute = candidate;
+              break;
+            }
+          }
+        }
       }
+
       const display = substitute || ing || {};
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
