@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View, Pressable, Text, StyleSheet } from "react-native";
 import { Menu, useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -30,21 +30,50 @@ export default function TagFilterMenu({ tags = [], selected = [], setSelected })
           />
         </TouchableOpacity>
       }
+      contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
     >
-      {tags.map((tag) => {
-        const active = selected.includes(tag.id);
-        return (
-          <Menu.Item
-            key={tag.id}
-            onPress={() => toggle(tag.id)}
-            title={tag.name}
-            style={active ? { backgroundColor: tag.color } : null}
-            titleStyle={{ color: active ? "white" : theme.colors.onSurface }}
-            leadingIcon={active ? "check" : undefined}
-          />
-        );
-      })}
+      <View style={styles.tagContainer}>
+        {tags.map((tag) => {
+          const active = selected.includes(tag.id);
+          return (
+            <Pressable
+              key={tag.id}
+              onPress={() => toggle(tag.id)}
+              android_ripple={{ color: theme.colors.tertiary }}
+              style={[
+                styles.tag,
+                active
+                  ? { backgroundColor: tag.color }
+                  : {
+                      backgroundColor: theme.colors.onSurfaceVariant,
+                      borderColor: tag.color,
+                      borderWidth: 1,
+                    },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tagText,
+                  { color: active ? "white" : theme.colors.onSurface },
+                ]}
+              >
+                {tag.name}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </Menu>
   );
 }
 
+const styles = StyleSheet.create({
+  tagContainer: { flexDirection: "row", flexWrap: "wrap", maxWidth: 220 },
+  tag: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    margin: 4,
+  },
+  tagText: { fontWeight: "bold" },
+});
