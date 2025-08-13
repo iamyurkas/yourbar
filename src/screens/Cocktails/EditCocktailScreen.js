@@ -930,6 +930,7 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
       }}
     >
       <MenuTrigger
+        onPress={Keyboard.dismiss}
         customStyles={{
           TriggerTouchableComponent: Pressable,
           triggerTouchable: {},
