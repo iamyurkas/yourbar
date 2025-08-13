@@ -15,6 +15,7 @@ export default function HeaderWithSearch({
   onFilter,
   searchValue,
   setSearchValue,
+  filterComponent,
 }) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -48,17 +49,21 @@ export default function HeaderWithSearch({
           />
         </View>
 
-        <TouchableOpacity
-          onPress={onFilter}
-          style={styles.iconBtn}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <MaterialIcons
-            name="filter-list"
-            size={28}
-            color={theme.colors.onSurface}
-          />
-        </TouchableOpacity>
+        {filterComponent ? (
+          filterComponent
+        ) : (
+          <TouchableOpacity
+            onPress={onFilter}
+            style={styles.iconBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <MaterialIcons
+              name="filter-list"
+              size={28}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );

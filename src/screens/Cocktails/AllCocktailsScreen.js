@@ -23,7 +23,7 @@ import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getGlassById } from "../../constants/glassware";
 import { useTheme } from "react-native-paper";
-import TagFilterModal from "../../components/TagFilterModal";
+import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 
 // --- helpers ---
@@ -174,7 +174,6 @@ export default function AllCocktailsScreen() {
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
-  const [tagModalVisible, setTagModalVisible] = useState(false);
   const [availableTags, setAvailableTags] = useState([]);
 
   const didSetTabRef = useRef(false);
@@ -288,7 +287,13 @@ export default function AllCocktailsScreen() {
         onSearch={() => {}}
         searchValue={search}
         setSearchValue={setSearch}
-        onFilter={() => setTagModalVisible(true)}
+        filterComponent={
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
+        }
       />
       <FlashList
         data={cocktails}
@@ -306,13 +311,6 @@ export default function AllCocktailsScreen() {
             </Text>
           </View>
         }
-      />
-      <TagFilterModal
-        visible={tagModalVisible}
-        onClose={() => setTagModalVisible(false)}
-        tags={availableTags}
-        selected={selectedTagIds}
-        setSelected={setSelectedTagIds}
       />
     </View>
   );

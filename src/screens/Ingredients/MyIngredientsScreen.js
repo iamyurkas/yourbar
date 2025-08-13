@@ -23,7 +23,7 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
-import TagFilterModal from "../../components/TagFilterModal";
+import TagFilterMenu from "../../components/TagFilterMenu";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 
@@ -179,7 +179,6 @@ export default function MyIngredientsScreen() {
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
-  const [tagModalVisible, setTagModalVisible] = useState(false);
   const [availableTags, setAvailableTags] = useState([]);
 
   const didSetTabRef = useRef(false);
@@ -306,7 +305,13 @@ export default function MyIngredientsScreen() {
         searchValue={search}
         setSearchValue={setSearch}
         onMenu={() => navigation.navigate("GeneralMenu")}
-        onFilter={() => setTagModalVisible(true)}
+        filterComponent={
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
+        }
       />
 
       <FlashList
@@ -325,13 +330,6 @@ export default function MyIngredientsScreen() {
             </Text>
           </View>
         }
-      />
-      <TagFilterModal
-        visible={tagModalVisible}
-        onClose={() => setTagModalVisible(false)}
-        tags={availableTags}
-        selected={selectedTagIds}
-        setSelected={setSelectedTagIds}
       />
     </View>
   );
