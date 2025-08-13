@@ -97,33 +97,39 @@ export default function AllCocktailsScreen() {
     return list.map((c) => {
       const required = (c.ingredients || []).filter((r) => !r.optional);
       const missing = [];
-      const allAvail =
-        required.length > 0 &&
-        required.every((r) => {
-          const ing = ingMap.get(String(r.ingredientId));
-          if (ing?.inBar) return true;
-          if (ing) {
-            const baseId = String(ing.baseIngredientId ?? ing.id);
-            if (r.allowBaseSubstitution) {
-              const base = ingMap.get(baseId);
-              if (base?.inBar) return true;
-            }
-            if (r.allowBrandedSubstitutes) {
-              const brand = ingredients.find(
-                (i) => i.inBar && String(i.baseIngredientId) === baseId
-              );
-              if (brand) return true;
+      let allAvail = required.length > 0;
+      for (const r of required) {
+        const ing = ingMap.get(String(r.ingredientId));
+        let isAvailable = false;
+        if (ing?.inBar) {
+          isAvailable = true;
+        } else if (ing) {
+          const baseId = String(ing.baseIngredientId ?? ing.id);
+          if (!isAvailable && r.allowBaseSubstitution) {
+            const base = ingMap.get(baseId);
+            if (base?.inBar) isAvailable = true;
+          }
+          if (!isAvailable && r.allowBrandedSubstitutes) {
+            const brand = ingredients.find(
+              (i) => i.inBar && String(i.baseIngredientId) === baseId
+            );
+            if (brand) isAvailable = true;
+          }
+        }
+        if (!isAvailable && Array.isArray(r.substitutes)) {
+          for (const s of r.substitutes) {
+            const candidate = ingMap.get(String(s.id));
+            if (candidate?.inBar) {
+              isAvailable = true;
+              break;
             }
           }
-          if (Array.isArray(r.substitutes)) {
-            for (const s of r.substitutes) {
-              const candidate = ingMap.get(String(s.id));
-              if (candidate?.inBar) return true;
-            }
-          }
+        }
+        if (!isAvailable) {
           if (ing?.name) missing.push(ing.name);
-          return false;
-        });
+          allAvail = false;
+        }
+      }
       const branded = (c.ingredients || []).some((r) => {
         const ing = ingMap.get(String(r.ingredientId));
         return ing && ing.baseIngredientId != null;
