@@ -418,6 +418,15 @@ export default function IngredientDetailsScreen() {
           styles.addCocktailButton,
           { backgroundColor: theme.colors.primary },
         ]}
+        onPress={() =>
+          navigation.navigate("Cocktails", {
+            screen: "Create",
+            params: {
+              screen: "AddCocktail",
+              params: { initialIngredient: ingredient },
+            },
+          })
+        }
       >
         <Text
           style={[styles.addCocktailText, { color: theme.colors.onPrimary }]}
