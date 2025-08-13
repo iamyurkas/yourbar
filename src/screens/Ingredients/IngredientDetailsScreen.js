@@ -31,6 +31,7 @@ import {
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { MaterialIcons } from "@expo/vector-icons";
+import CocktailRow from "../../components/CocktailRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 
@@ -221,10 +222,63 @@ export default function IngredientDetailsScreen() {
 
     const map = mapCocktailsByIngredient(all, cocktails);
     const byId = new Map(cocktails.map((c) => [c.id, c]));
+    const ingMap = new Map(all.map((i) => [String(i.id), i]));
     const list = (map[loaded.id] || [])
       .map((cid) => byId.get(cid))
       .filter(Boolean)
-      .sort((a, b) => collator.compare(a.name, b.name));
+      .sort((a, b) => collator.compare(a.name, b.name))
+      .map((c) => {
+        const required = (c.ingredients || []).filter((r) => !r.optional);
+        const missing = [];
+        const allAvail =
+          required.length > 0 &&
+          required.every((r) => {
+            const ing = ingMap.get(String(r.ingredientId));
+            if (ing?.inBar) return true;
+            if (ing) {
+              const baseId = String(ing.baseIngredientId ?? ing.id);
+              if (r.allowBaseSubstitution) {
+                const base = ingMap.get(baseId);
+                if (base?.inBar) return true;
+              }
+              if (r.allowBrandedSubstitutes) {
+                const brand = all.find(
+                  (i) => i.inBar && String(i.baseIngredientId) === baseId
+                );
+                if (brand) return true;
+              }
+            }
+            if (Array.isArray(r.substitutes)) {
+              for (const s of r.substitutes) {
+                const candidate = ingMap.get(String(s.id));
+                if (candidate?.inBar) return true;
+              }
+            }
+            if (ing?.name) missing.push(ing.name);
+            return false;
+          });
+        const branded = (c.ingredients || []).some((r) => {
+          const ing = ingMap.get(String(r.ingredientId));
+          return ing && ing.baseIngredientId != null;
+        });
+        const ingredientNames = (c.ingredients || [])
+          .map((r) => ingMap.get(String(r.ingredientId))?.name)
+          .filter(Boolean);
+        let ingredientLine = ingredientNames.join(", ");
+        if (!allAvail) {
+          if (missing.length > 0 && missing.length <= 2) {
+            ingredientLine = `Missing: ${missing.join(", ")}`;
+          } else if (missing.length >= 3) {
+            ingredientLine = `Missing: ${missing.length} ingredients`;
+          }
+        }
+        return {
+          ...c,
+          isAllAvailable: allAvail,
+          hasBranded: branded,
+          ingredientLine,
+        };
+      });
     setUsedCocktails(list);
   }, [id, collator]);
 
@@ -469,25 +523,21 @@ export default function IngredientDetailsScreen() {
           Used in cocktails:
         </Text>
         {usedCocktails.length > 0 ? (
-          <View
-            style={[styles.listBox, { borderColor: theme.colors.outline }]}
-          >
-            {usedCocktails.map((c, idx) => (
-              <View key={c.id}>
-                <RelationRow
-                  name={c.name}
-                  photoUri={c.photoUri}
-                  onOpen={() => goToCocktail(c.id)}
-                />
-                {idx !== usedCocktails.length - 1 && (
-                  <View
-                    style={[
-                      styles.divider,
-                      { backgroundColor: theme.colors.outlineVariant },
-                    ]}
-                  />
-                )}
-              </View>
+          <View style={{ marginHorizontal: -24 }}>
+            {usedCocktails.map((c) => (
+              <CocktailRow
+                key={c.id}
+                id={c.id}
+                name={c.name}
+                photoUri={c.photoUri}
+                glassId={c.glassId}
+                tags={c.tags}
+                ingredientLine={c.ingredientLine}
+                rating={c.rating}
+                isAllAvailable={c.isAllAvailable}
+                hasBranded={c.hasBranded}
+                onPress={goToCocktail}
+              />
             ))}
           </View>
         ) : (
