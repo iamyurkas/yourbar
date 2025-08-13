@@ -25,6 +25,7 @@ import { getGlassById } from "../../constants/glassware";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
+import { MaterialIcons } from "@expo/vector-icons";
 
 // --- helpers ---
 const withAlpha = (hex, alpha) => {
@@ -49,6 +50,8 @@ const ItemRow = memo(
     photoUri,
     glassId,
     tags,
+    ingredientLine,
+    rating,
     isAllAvailable,
     hasBranded,
     onPress,
@@ -134,19 +137,39 @@ const ItemRow = memo(
             >
               {name}
             </Text>
-            {Array.isArray(tags) && tags.length > 0 && (
-              <View style={styles.tagRow}>
-                {tags.map((tag) => (
-                  <View
-                    key={tag.id}
-                    style={[styles.tag, { backgroundColor: tag.color }]}
-                  >
-                    <Text style={styles.tagText}>{tag.name}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            <Text
+              numberOfLines={1}
+              style={[styles.ingredients, { color: theme.colors.onSurfaceVariant }]}
+            >
+              {ingredientLine || "\u00A0"}
+            </Text>
           </View>
+          {Array.isArray(tags) && tags.length > 0 && (
+            <View style={styles.tagDots}>
+              {tags.map((tag, idx) => (
+                <View
+                  key={tag.id}
+                  style={[
+                    styles.tagDot,
+                    idx === 0 && styles.firstTagDot,
+                    { backgroundColor: tag.color },
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+          {rating > 0 && (
+            <View style={styles.rating}>
+              {Array.from({ length: Math.round(rating) }).map((_, i) => (
+                <MaterialIcons
+                  key={i}
+                  name="star"
+                  size={10}
+                  color={theme.colors.secondary}
+                />
+              ))}
+            </View>
+          )}
         </Pressable>
       </View>
     );
@@ -157,6 +180,8 @@ const ItemRow = memo(
     prev.photoUri === next.photoUri &&
     prev.glassId === next.glassId &&
     prev.tags === next.tags &&
+    prev.ingredientLine === next.ingredientLine &&
+    prev.rating === next.rating &&
     prev.isAllAvailable === next.isAllAvailable &&
     prev.hasBranded === next.hasBranded &&
     prev.isNavigating === next.isNavigating
@@ -265,7 +290,16 @@ export default function AllCocktailsScreen() {
         const ing = ingMap.get(String(r.ingredientId));
         return ing && ing.baseIngredientId != null;
       });
-      return { ...c, isAllAvailable: allAvail, hasBranded: branded };
+      const ingredientNames = (c.ingredients || [])
+        .map((r) => ingMap.get(String(r.ingredientId))?.name)
+        .filter(Boolean);
+      const ingredientLine = ingredientNames.join(", ");
+      return {
+        ...c,
+        isAllAvailable: allAvail,
+        hasBranded: branded,
+        ingredientLine,
+      };
     });
   }, [cocktails, ingredients, searchDebounced, selectedTagIds]);
 
@@ -289,6 +323,8 @@ export default function AllCocktailsScreen() {
         photoUri={item.photoUri}
         glassId={item.glassId}
         tags={item.tags}
+        ingredientLine={item.ingredientLine}
+        rating={item.rating}
         isAllAvailable={item.isAllAvailable}
         hasBranded={item.hasBranded}
         onPress={handlePress}
@@ -376,17 +412,14 @@ const styles = StyleSheet.create({
   placeholderText: { fontSize: 10, textAlign: "center" },
 
   info: { flex: 1, paddingRight: 8 },
-  name: { fontSize: 16, fontWeight: "bold" },
+  name: { fontSize: 16 },
+  ingredients: { fontSize: 12, marginTop: 4 },
 
-  tagRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
-  tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-    marginRight: 6,
-    marginBottom: 4,
-  },
-  tagText: { fontSize: 10, color: "white", fontWeight: "bold" },
+  tagDots: { flexDirection: "row", alignSelf: "flex-start" },
+  tagDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 4 },
+  firstTagDot: { marginLeft: 0 },
+
+  rating: { position: "absolute", bottom: 4, right: 4, flexDirection: "row" },
 
   brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
