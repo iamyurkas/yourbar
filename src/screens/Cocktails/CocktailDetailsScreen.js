@@ -144,6 +144,7 @@ export default function CocktailDetailsScreen() {
 
   const [cocktail, setCocktail] = useState(null);
   const [ingMap, setIngMap] = useState(new Map());
+  const [ingList, setIngList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const handleGoBack = useCallback(() => {
@@ -212,6 +213,7 @@ export default function CocktailDetailsScreen() {
     ]);
     setCocktail(loadedCocktail || null);
     setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
+    setIngList(allIngredients || []);
     setLoading(false);
   }, [id]);
 
@@ -230,7 +232,7 @@ export default function CocktailDetailsScreen() {
     const list = Array.isArray(cocktail.ingredients)
       ? [...cocktail.ingredients].sort((a, b) => a.order - b.order)
       : [];
-    const allIngs = Array.from(ingMap.values());
+    const allIngs = ingList;
     return list.map((r) => {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
@@ -275,7 +277,7 @@ export default function CocktailDetailsScreen() {
         substituteFor: substitute ? originalName : null,
       };
     });
-  }, [cocktail, ingMap]);
+  }, [cocktail, ingMap, ingList]);
 
   if (loading)
     return (
