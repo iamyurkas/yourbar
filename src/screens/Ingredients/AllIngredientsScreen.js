@@ -57,7 +57,7 @@ const ItemRow = memo(
     isNavigating,
   }) {
     const theme = useTheme();
-    const isBranded = !!baseIngredientId;
+    const isBranded = baseIngredientId != null;
 
     const ripple = useMemo(
       () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
