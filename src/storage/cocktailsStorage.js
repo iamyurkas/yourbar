@@ -36,7 +36,8 @@ const sanitizeCocktail = (c) => {
     id,
     name: String(c?.name ?? "").trim(),
     photoUri: c?.photoUri ?? null,
-    glassId: String(c?.glassId || "").trim() || null,
+    // зберігаємо ідентифікатор ємності (склянки) в якій подається коктейль
+    glassId: c?.glassId ? String(c.glassId).trim() : null,
     tags: Array.isArray(c?.tags) ? c.tags : [],
     description: String(c?.description ?? ""),
     instructions: String(c?.instructions ?? ""),
