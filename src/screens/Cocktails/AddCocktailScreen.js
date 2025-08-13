@@ -134,6 +134,7 @@ const IngredientRow = memo(function IngredientRow({
   onMoveUp,
   onMoveDown,
   onOpenSubstitutePicker,
+  requestScrollIntoView, // ← буде викликатись при focus інпутів
 }) {
   const MIN_CHARS = 2;
   const theme = useTheme();
@@ -146,7 +147,9 @@ const IngredientRow = memo(function IngredientRow({
   );
 
   // refs + layout
-  const nameAnchorRef = useRef(null);
+  const nameAnchorRef = useRef(null); // для позиціювання підказок (контейнер)
+  const nameInputRef = useRef(null); // для скролу у видиму зону (сам TextInput)
+  const amountInputRef = useRef(null);
   const [nameWidth, setNameWidth] = useState(260);
 
   // --- Unit menu control (auto flip up/down) ---
@@ -163,14 +166,13 @@ const IngredientRow = memo(function IngredientRow({
       const screenH = Dimensions.get("window").height;
       const SAFE = 8;
       const spaceBelow = Math.max(0, screenH - (y + h) - SAFE);
-      const estimatedMenuH = 350; // має збігатися з maxHeight
+      const estimatedMenuH = 350;
       setUnitPlacement(spaceBelow < estimatedMenuH ? "top" : "bottom");
-      // Відкриємо після оновлення стейту в наступному кадрі
       requestAnimationFrame(() => setUnitMenuOpen(true));
     });
   }, []);
 
-  // keyboard height
+  // keyboard height (локальне — для підказок)
   const [kbHeight, setKbHeight] = useState(0);
   useEffect(() => {
     const sh = Keyboard.addListener("keyboardDidShow", (e) =>
@@ -209,7 +211,7 @@ const IngredientRow = memo(function IngredientRow({
     if (row.name !== query) setQuery(row.name || "");
   }, [row.name]);
 
-  // перерахунок placement/maxHeight/позиції
+  // перерахунок placement/maxHeight/позиції (від контейнера навколо інпута)
   const recalcPlacement = useCallback(() => {
     if (!nameAnchorRef.current) return;
     nameAnchorRef.current.measureInWindow((x, y, w, h) => {
@@ -224,8 +226,8 @@ const IngredientRow = memo(function IngredientRow({
 
       const openDown = spaceBelow >= spaceAbove;
       const maxFit = Math.min(
-        +300,
-        +Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
+        300,
+        Math.max(SUGGEST_ROW_H, openDown ? spaceBelow : spaceAbove)
       );
       const containerHeight = Math.min(needed, maxFit);
 
@@ -246,13 +248,7 @@ const IngredientRow = memo(function IngredientRow({
 
   useEffect(() => {
     if (suggestState.visible) recalcPlacement();
-  }, [
-    suggestions.length,
-    debounced,
-    kbHeight,
-    suggestState.visible,
-    recalcPlacement,
-  ]);
+  }, [suggestions.length, debounced, kbHeight, suggestState.visible, recalcPlacement]);
 
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", () => {
@@ -464,6 +460,9 @@ const IngredientRow = memo(function IngredientRow({
           onLayout={(e) => setNameWidth(e.nativeEvent.layout.width)}
         >
           <TextInput
+            ref={nameInputRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView?.(nameInputRef)}
             placeholder="Type ingredient name"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={query}
@@ -506,7 +505,7 @@ const IngredientRow = memo(function IngredientRow({
         ) : null}
       </View>
 
-      {/* Suggest dropdown (через Portal, без стрілки) */}
+      {/* Suggest dropdown */}
       {suggestState.visible ? (
         <Portal>
           <Pressable
@@ -616,6 +615,9 @@ const IngredientRow = memo(function IngredientRow({
             Amount
           </Text>
           <TextInput
+            ref={amountInputRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView?.(amountInputRef)}
             placeholder="e.g. 45"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             keyboardType="decimal-pad"
@@ -644,17 +646,17 @@ const IngredientRow = memo(function IngredientRow({
             onClose={() => setUnitMenuOpen(false)}
             renderer={Popover}
             rendererProps={{
-              placement: unitPlacement, // ← динамічно: top/bottom
+              placement: unitPlacement,
               preferredPlacement: "bottom",
               showArrow: false,
             }}
           >
             <MenuTrigger
-              disabled // вимикаємо дефолтне відкриття
+              disabled
               customStyles={{
                 TriggerTouchableComponent: Pressable,
                 triggerTouchable: {
-                  onPress: openUnitMenuMeasured, // міряємо і відкриваємо
+                  onPress: openUnitMenuMeasured,
                 },
               }}
             >
@@ -685,16 +687,14 @@ const IngredientRow = memo(function IngredientRow({
               customStyles={{
                 optionsContainer: {
                   width: 160,
-                  maxHeight: 300, // ← має відповідати estimatedMenuH
+                  maxHeight: 300,
                   backgroundColor: theme.colors.surface,
                   padding: 0,
                   borderRadius: 8,
                   overflow: "hidden",
                   ...(unitPlacement === "top"
-                    ? {
-                        transform: [{ translateY: 14 }],
-                      } // ближче до тригера, коли зверху
-                    : { marginTop: -6 }), // ближче до тригера, коли знизу
+                    ? { transform: [{ translateY: 14 }] }
+                    : { marginTop: -6 }),
                 },
               }}
             >
@@ -1040,7 +1040,10 @@ export default function AddCocktailScreen() {
   // base fields
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(() => {
+    const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
+    return custom ? [custom] : [{ id: 8, name: "custom", color: "#AFC9C3FF" }];
+  });
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
 
@@ -1312,204 +1315,293 @@ export default function AddCocktailScreen() {
     [subModal.forLocalId, closeSubstituteModal]
   );
 
+  /* ---------- Простий scroll-алгоритм (z + 16) ---------- */
+  const scrollRef = useRef(null);
+  const viewportRef = useRef(null);
+  const [viewportH, setViewportH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const [kbHeight, setKbHeight] = useState(0);
+
+  useEffect(() => {
+    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
+      setKbHeight(e?.endCoordinates?.height || 0)
+    );
+    const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
+    return () => {
+      sh.remove();
+      hd.remove();
+    };
+  }, []);
+
+  const requestScrollIntoView = useCallback(
+    (nodeRef) => {
+      if (!nodeRef?.current || !scrollRef.current) return;
+      if (contentH <= viewportH) return; // нема що скролити
+
+      const x = viewportH || Dimensions.get("window").height; // висота в’юпорта
+      const y = kbHeight; // висота клавіатури
+      const DEAD = 10; // додатковий відступ
+      const tryOnce = () => {
+        if (!nodeRef?.current) return;
+        nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
+          const inputBottom = iy + ih;
+          const visibleLimit = x - y; // межа видимої області над клавіатурою
+
+          // 3) якщо нижній край під клавіатурою — скролимо
+          if (inputBottom - DEAD > visibleLimit || y == 0) {
+            const z = inputBottom - visibleLimit; // 4)
+            const delta = z + DEAD; // 5)
+            const maxY = Math.max(0, contentH - viewportH);
+            // cкролимо лише вниз: забороняємо зменшення y
+            const targetY = Math.min(scrollY + delta, maxY) + 100; // бажана позиція
+            if (targetY > scrollY) {
+              scrollRef.current.scrollTo({ y: targetY, animated: true });
+            }
+          }
+        });
+      };
+
+      // одразу + повтор після відкриття клавіатури
+      tryOnce(120);
+      setTimeout(tryOnce, 80);
+    },
+    [viewportH, kbHeight, contentH, scrollY]
+  );
+
+  // refs для верхніх полів
+  const screenNameRef = useRef(null);
+  const descRef = useRef(null);
+  const instrRef = useRef(null);
+
   return (
     <>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        onScrollBeginDrag={() => Keyboard.dismiss()}
-        keyboardShouldPersistTaps="handled"
-        style={{ backgroundColor: theme.colors.background }}
+      <View
+        ref={viewportRef}
+        collapsable={false}
+        style={{ flex: 1 }}
+        onLayout={(e) => setViewportH(e.nativeEvent.layout.height)}
       >
-        {/* Name */}
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Name
-        </Text>
-        <TextInput
-          placeholder="e.g. Margarita"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={name}
-          onChangeText={setName}
-          style={[
-            styles.input,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
+        <ScrollView
+          ref={scrollRef}
+          onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
+          scrollEventThrottle={16}
+          contentContainerStyle={[
+            styles.container,
+            { paddingBottom: 60 + kbHeight },
           ]}
-        />
+          onContentSizeChange={(_, h) => setContentH(h)}
+          scrollIndicatorInsets={{ bottom: kbHeight }}
+          keyboardShouldPersistTaps="handled"
+          style={{ backgroundColor: theme.colors.background }}
+        >
+          {/* Name */}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Name
+          </Text>
+          <TextInput
+            ref={screenNameRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView(screenNameRef)}
+            placeholder="e.g. Margarita"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={name}
+            onChangeText={setName}
+            style={[
+              styles.input,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+          />
 
-        {/* Glass (left) + Photo (right) */}
-        <View style={styles.mediaRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-              Glass
-            </Text>
-            <GlassPopover
-              selectedGlass={selectedGlass}
-              onSelect={(g) => setGlassId(g.id)}
-            />
+          {/* Glass (left) + Photo (right) */}
+          <View style={styles.mediaRow}>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[styles.label, { color: theme.colors.onBackground }]}
+              >
+                Glass
+              </Text>
+              <GlassPopover
+                selectedGlass={selectedGlass}
+                onSelect={(g) => setGlassId(g.id)}
+              />
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[styles.label, { color: theme.colors.onBackground }]}
+              >
+                Photo
+              </Text>
+              <Pressable
+                onPress={pickImage}
+                android_ripple={{
+                  color: withAlpha(theme.colors.tertiary, 0.2),
+                }}
+                style={[
+                  styles.mediaSquare,
+                  {
+                    borderColor: theme.colors.outline,
+                    backgroundColor: theme.colors.surface,
+                  },
+                ]}
+              >
+                {photoUri ? (
+                  <Image source={{ uri: photoUri }} style={styles.mediaImg} />
+                ) : (
+                  <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                    Tap to select image
+                  </Text>
+                )}
+              </Pressable>
+            </View>
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-              Photo
-            </Text>
-            <Pressable
-              onPress={pickImage}
-              android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-              style={[
-                styles.mediaSquare,
-                {
-                  borderColor: theme.colors.outline,
-                  backgroundColor: theme.colors.surface,
-                },
-              ]}
+          {/* Tags */}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Tags
+          </Text>
+          <View style={styles.tagContainer}>
+            {tags.map((t) => (
+              <TagPill
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                color={t.color}
+                onToggle={toggleTagById}
+              />
+            ))}
+          </View>
+
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Add Tag
+          </Text>
+          <View style={styles.tagContainer}>
+            {BUILTIN_COCKTAIL_TAGS.filter(
+              (t) => !tags.some((x) => x.id === t.id)
+            ).map((t) => (
+              <TagPill
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                color={t.color}
+                onToggle={toggleTagById}
+              />
+            ))}
+          </View>
+
+          {/* Description */}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Description
+          </Text>
+          <TextInput
+            ref={descRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView(descRef)}
+            placeholder="Optional description"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={description}
+            onChangeText={setDescription}
+            style={[
+              styles.input,
+              styles.multiline,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+            multiline
+          />
+
+          {/* Instructions */}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Instructions
+          </Text>
+          <TextInput
+            ref={instrRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView(instrRef)}
+            placeholder="1. Grab some ice..."
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={instructions}
+            onChangeText={setInstructions}
+            style={[
+              styles.input,
+              styles.multiline,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+            multiline
+          />
+
+          {/* Ingredients list */}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+            Ingredients
+          </Text>
+
+          {ings.map((row, idx) => (
+            <Animated.View
+              key={row.localId}
+              layout={LinearTransition.springify().damping(18).stiffness(220)}
+              entering={FadeInDown.duration(180)}
+              exiting={FadeOutUp.duration(140)}
             >
-              {photoUri ? (
-                <Image source={{ uri: photoUri }} style={styles.mediaImg} />
-              ) : (
-                <Text style={{ color: theme.colors.onSurfaceVariant }}>
-                  Tap to select image
-                </Text>
-              )}
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Tags */}
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Tags
-        </Text>
-        <View style={styles.tagContainer}>
-          {tags.map((t) => (
-            <TagPill
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              color={t.color}
-              onToggle={toggleTagById}
-            />
+              <IngredientRow
+                index={idx}
+                row={row}
+                allIngredients={allIngredients}
+                onChange={(patch) => updateRow(row.localId, patch)}
+                onRemove={() => removeRow(row.localId)}
+                onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
+                canRemove={ings.length > 1}
+                canMoveUp={ings.length > 1 && idx > 0}
+                canMoveDown={ings.length > 1 && idx < ings.length - 1}
+                onMoveUp={() => moveIngredient(idx, idx - 1)}
+                onMoveDown={() => moveIngredient(idx, idx + 1)}
+                onOpenSubstitutePicker={() => openSubstituteModal(row.localId)}
+                requestScrollIntoView={requestScrollIntoView}
+              />
+            </Animated.View>
           ))}
-        </View>
 
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Add Tag
-        </Text>
-        <View style={styles.tagContainer}>
-          {BUILTIN_COCKTAIL_TAGS.filter(
-            (t) => !tags.some((x) => x.id === t.id)
-          ).map((t) => (
-            <TagPill
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              color={t.color}
-              onToggle={toggleTagById}
-            />
-          ))}
-        </View>
-
-        {/* Description */}
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Description
-        </Text>
-        <TextInput
-          placeholder="Optional description"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={description}
-          onChangeText={setDescription}
-          style={[
-            styles.input,
-            styles.multiline,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-          multiline
-        />
-
-        {/* Instructions */}
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Instructions
-        </Text>
-        <TextInput
-          placeholder="1. Grab some ice..."
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={instructions}
-          onChangeText={setInstructions}
-          style={[
-            styles.input,
-            styles.multiline,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-          multiline
-        />
-
-        {/* Ingredients list */}
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Ingredients
-        </Text>
-
-        {ings.map((row, idx) => (
-          <Animated.View
-            key={row.localId}
-            layout={LinearTransition.springify().damping(18).stiffness(220)}
-            entering={FadeInDown.duration(180)}
-            exiting={FadeOutUp.duration(140)}
+          {/* Add ingredient button */}
+          <Pressable
+            onPress={addRow}
+            android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
+            style={[
+              styles.addIngBtn,
+              {
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
           >
-            <IngredientRow
-              index={idx}
-              row={row}
-              allIngredients={allIngredients}
-              onChange={(patch) => updateRow(row.localId, patch)}
-              onRemove={() => removeRow(row.localId)}
-              onAddNewIngredient={(nm) => openAddIngredient(nm, row.localId)}
-              canRemove={ings.length > 1}
-              canMoveUp={ings.length > 1 && idx > 0}
-              canMoveDown={ings.length > 1 && idx < ings.length - 1}
-              onMoveUp={() => moveIngredient(idx, idx - 1)}
-              onMoveDown={() => moveIngredient(idx, idx + 1)}
-              onOpenSubstitutePicker={() => openSubstituteModal(row.localId)}
-            />
-          </Animated.View>
-        ))}
+            <MaterialIcons name="add" size={20} color={theme.colors.primary} />
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+              Add ingredient
+            </Text>
+          </Pressable>
 
-        {/* Add ingredient button */}
-        <Pressable
-          onPress={addRow}
-          android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-          style={[
-            styles.addIngBtn,
-            {
-              borderColor: theme.colors.outline,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        >
-          <MaterialIcons name="add" size={20} color={theme.colors.primary} />
-          <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
-            Add ingredient
-          </Text>
-        </Pressable>
-
-        {/* Save */}
-        <Pressable
-          onPress={handleSave}
-          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-          style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
-            Save cocktail
-          </Text>
-        </Pressable>
-      </ScrollView>
+          {/* Save */}
+          <Pressable
+            onPress={handleSave}
+            android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
+            style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
+          >
+            <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
+              Save cocktail
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </View>
 
       {/* Substitute Picker Modal */}
       <Portal>
@@ -1629,7 +1721,7 @@ export default function AddCocktailScreen() {
 const IMAGE_SIZE = 150;
 
 const styles = StyleSheet.create({
-  container: { padding: 24, paddingBottom: 40 },
+  container: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40 },
   label: { fontWeight: "bold", marginTop: 16 },
 
   // special for Ingredient + [+]
