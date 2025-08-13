@@ -1184,7 +1184,10 @@ export default function EditCocktailScreen() {
     let mounted = true;
     (async () => {
       const data = await getCocktailById(cocktailId);
-      if (!mounted || !data) return;
+      if (!mounted || !data) {
+        setLoading(false);
+        return;
+      }
       setName(data.name || "");
       setPhotoUri(data.photoUri || null);
       setTags(Array.isArray(data.tags) ? data.tags : []);
@@ -1193,27 +1196,34 @@ export default function EditCocktailScreen() {
       setGlassId(data.glassId || "cocktail_glass");
       ratingRef.current = data.rating || 0;
       createdAtRef.current = data.createdAt || Date.now();
-      setIngs(
-        Array.isArray(data.ingredients)
-          ? data.ingredients.map((r, idx) => ({
-              localId: Date.now() + idx,
-              name: r.name || "",
-              selectedId: r.ingredientId ?? null,
-              selectedItem: null,
-              quantity: r.amount || r.quantity || "",
-              unitId: r.unitId || UNIT_ID.ML,
-              garnish: !!r.garnish,
-              optional: !!r.optional,
-              allowBaseSubstitute: !!(
-                r.allowBaseSubstitution || r.allowBaseSubstitute
-              ),
-              allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-              substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
-            }))
-          : []
-      );
+      const initialIngs = Array.isArray(data.ingredients)
+        ? data.ingredients.map((r, idx) => ({
+            localId: Date.now() + idx,
+            name: r.name || "",
+            selectedId: r.ingredientId ?? null,
+            selectedItem: null,
+            quantity: r.amount || r.quantity || "",
+            unitId: r.unitId || UNIT_ID.ML,
+            garnish: !!r.garnish,
+            optional: !!r.optional,
+            allowBaseSubstitute: !!(
+              r.allowBaseSubstitution || r.allowBaseSubstitute
+            ),
+            allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+            substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
+          }))
+        : [];
+      setIngs(initialIngs);
       requestAnimationFrame(() => {
-        initialHashRef.current = serialize();
+        initialHashRef.current = JSON.stringify({
+          name: data.name || "",
+          photoUri: data.photoUri || null,
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          description: data.description || "",
+          instructions: data.instructions || "",
+          glassId: data.glassId || "cocktail_glass",
+          ings: initialIngs,
+        });
         setDirty(false);
         setLoading(false);
       });
@@ -1221,7 +1231,7 @@ export default function EditCocktailScreen() {
     return () => {
       mounted = false;
     };
-  }, [cocktailId, serialize]);
+  }, [cocktailId]);
 
   useEffect(() => {
     if (loading) return;
