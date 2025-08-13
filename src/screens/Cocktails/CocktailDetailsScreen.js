@@ -486,6 +486,7 @@ const styles = StyleSheet.create({
   ingImage: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
+    aspectRatio: 1,
     borderRadius: 8,
     marginRight: 12,
     overflow: "hidden",

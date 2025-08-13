@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
   image: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
+    aspectRatio: 1,
     borderRadius: 8,
     marginRight: 12,
     overflow: "hidden",
