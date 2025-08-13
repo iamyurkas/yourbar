@@ -101,13 +101,6 @@ const IngredientRow = memo(function IngredientRow({
           >
             {name}
           </Text>
-          {amount ? (
-            <Text
-              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
-            >
-              {amount} {unitName}
-            </Text>
-          ) : null}
           {garnish && (
             <Text
               style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
@@ -124,11 +117,13 @@ const IngredientRow = memo(function IngredientRow({
           )}
         </View>
 
-        <MaterialIcons
-          name={inBar ? "check-circle" : "radio-button-unchecked"}
-          size={22}
-          color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
-        />
+        {amount ? (
+          <Text
+            style={[styles.amountText, { color: theme.colors.onSurface }]}
+          >
+            {amount} {unitName}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
@@ -378,5 +373,6 @@ const styles = StyleSheet.create({
   ingInfo: { flex: 1, paddingRight: 8 },
   name: { fontSize: 16, fontWeight: "bold" },
   meta: { fontSize: 12, marginTop: 2 },
+  amountText: { fontSize: 14, fontWeight: "bold", marginLeft: 8 },
   dimmed: { opacity: 0.88 },
 });
