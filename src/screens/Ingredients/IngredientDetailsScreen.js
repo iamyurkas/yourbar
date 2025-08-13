@@ -94,7 +94,7 @@ const RelationRow = memo(function RelationRow({
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
-  const { id } = useRoute().params;
+  const { id, fromCocktailId } = useRoute().params;
   const theme = useTheme();
 
   const [ingredient, setIngredient] = useState(null);
@@ -110,9 +110,14 @@ export default function IngredientDetailsScreen() {
   const previousTab = getTab("ingredients");
 
   const handleGoBack = useCallback(() => {
-    if (previousTab) navigation.navigate(previousTab);
+    if (fromCocktailId)
+      navigation.navigate("Cocktails", {
+        screen: "CocktailDetails",
+        params: { id: fromCocktailId },
+      });
+    else if (previousTab) navigation.navigate(previousTab);
     else navigation.goBack();
-  }, [navigation, previousTab]);
+  }, [navigation, previousTab, fromCocktailId]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditIngredient", { id });

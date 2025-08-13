@@ -368,7 +368,7 @@ export default function CocktailDetailsScreen() {
                             screen: "Create",
                             params: {
                               screen: "IngredientDetails",
-                              params: { id: ingredientId },
+                              params: { id: ingredientId, fromCocktailId: id },
                             },
                           })
                       : undefined
