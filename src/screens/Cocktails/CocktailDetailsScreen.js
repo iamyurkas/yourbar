@@ -371,8 +371,8 @@ const styles = StyleSheet.create({
   placeholder: { justifyContent: "center", alignItems: "center" },
   placeholderText: { fontSize: 10, textAlign: "center" },
   ingInfo: { flex: 1, paddingRight: 8 },
-  name: { fontSize: 16, fontWeight: "bold" },
+  name: { fontSize: 16 },
   meta: { fontSize: 12, marginTop: 2 },
-  amountText: { fontSize: 14, fontWeight: "bold", marginLeft: 8 },
+  amountText: { fontSize: 14, marginLeft: 8 },
   dimmed: { opacity: 0.88 },
 });
