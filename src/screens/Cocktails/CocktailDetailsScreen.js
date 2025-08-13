@@ -24,7 +24,7 @@ import {
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { getCocktailById } from "../../storage/cocktailsStorage";
+import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
@@ -152,6 +152,16 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("EditCocktail", { id });
   }, [navigation, id]);
 
+  const handleRate = useCallback(
+    async (value) => {
+      if (!cocktail) return;
+      const updated = { ...cocktail, rating: value };
+      setCocktail(updated);
+      await saveCocktail(updated);
+    },
+    [cocktail]
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -264,6 +274,26 @@ export default function CocktailDetailsScreen() {
 
   const glass = cocktail.glassId ? getGlassById(cocktail.glassId) : null;
 
+  const ratingStars = (
+    <View style={styles.ratingRow}>
+      {[1, 2, 3, 4, 5].map((value) => (
+        <TouchableOpacity
+          key={value}
+          onPress={() => handleRate(value)}
+          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+        >
+          <MaterialIcons
+            name={
+              value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
+            }
+            size={34}
+            color={theme.colors.secondary}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -282,6 +312,8 @@ export default function CocktailDetailsScreen() {
           resizeMode="contain"
         />
       ) : null}
+
+      {ratingStars}
 
       <View style={styles.body}>
         {glass && (
@@ -392,10 +424,16 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginHorizontal: 24,
   },
-  body: { paddingHorizontal: 24, marginTop: 16 },
+  body: { paddingHorizontal: 24, marginTop: 0 },
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8 },
+  ratingRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 8,
+    marginBottom: 8,
+  },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
