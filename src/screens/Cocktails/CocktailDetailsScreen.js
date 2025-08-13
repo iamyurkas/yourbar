@@ -306,7 +306,11 @@ export default function CocktailDetailsScreen() {
       </Text>
 
       {cocktail.photoUri ? (
-        <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
+        <Image
+          source={{ uri: cocktail.photoUri }}
+          style={styles.photo}
+          resizeMode="contain"
+        />
       ) : glass ? (
         <Image source={glass.image} style={styles.photo} resizeMode="contain" />
       ) : null}
