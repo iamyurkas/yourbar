@@ -5,6 +5,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 
+import { useTabMemory } from "../../context/TabMemoryContext";
+
 import AllCocktailsScreen from "./AllCocktailsScreen";
 import CocktailDetailsScreen from "./CocktailDetailsScreen";
 import EditCocktailScreen from "./EditCocktailScreen";
@@ -40,18 +42,33 @@ function CreateCocktailStack() {
 
 export default function CocktailsTabsScreen() {
   const theme = useTheme();
-  // ключ, який примусово перемонтовує стек "Create"
+  const tabRef = React.useRef(null);
+  const { getTab } = useTabMemory();
+
   const [createKey, setCreateKey] = React.useState(0);
 
-  // Коли ВСЯ вкладка "Cocktails" втрачає фокус (перейшли на Shaker/Ingredients),
-  // збільшуємо ключ — при поверненні "Create" буде чистим.
+  const initialTab =
+    (typeof getTab === "function" && getTab("cocktails")) || "All";
+
   useFocusEffect(
     React.useCallback(() => {
-      return () => setCreateKey((k) => k + 1);
-    }, [])
+      return () => {
+        const state = tabRef.current?.getState();
+        const active = state.routes[state.index]?.name;
+        if (active === "Create") {
+          const last =
+            (typeof getTab === "function" && getTab("cocktails")) || "All";
+          tabRef.current?.navigate(last);
+        }
+        setCreateKey((k) => k + 1);
+      };
+    }, [getTab])
   );
+
   return (
     <Tab.Navigator
+      ref={tabRef}
+      initialRouteName={initialTab}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }) => {

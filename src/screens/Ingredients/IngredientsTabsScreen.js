@@ -1,8 +1,11 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+
+import { useTabMemory } from "../../context/TabMemoryContext";
 
 import AllIngredientsScreen from "./AllIngredientsScreen";
 
@@ -42,8 +45,30 @@ function CreateIngredientStack() {
 
 export default function IngredientsTabsScreen() {
   const theme = useTheme();
+  const tabRef = React.useRef(null);
+  const { getTab } = useTabMemory();
+
+  const initialTab =
+    (typeof getTab === "function" && getTab("ingredients")) || "All";
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        const state = tabRef.current?.getState();
+        const active = state.routes[state.index]?.name;
+        if (active === "Create") {
+          const last =
+            (typeof getTab === "function" && getTab("ingredients")) || "All";
+          tabRef.current?.navigate(last);
+        }
+      };
+    }, [getTab])
+  );
+
   return (
     <Tab.Navigator
+      ref={tabRef}
+      initialRouteName={initialTab}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
