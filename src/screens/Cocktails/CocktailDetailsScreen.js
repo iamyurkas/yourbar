@@ -122,7 +122,10 @@ const IngredientRow = memo(function IngredientRow({
 
         {amount ? (
           <Text
-            style={[styles.amountText, { color: theme.colors.onSurfaceVariant }]}
+            style={[
+              styles.amountText,
+              { color: theme.colors.onSurfaceVariant },
+            ]}
           >
             {amount} {unitName}
           </Text>
@@ -283,9 +286,7 @@ export default function CocktailDetailsScreen() {
           hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
         >
           <MaterialIcons
-            name={
-              value <= (cocktail?.rating ?? 0) ? "star" : "star-border"
-            }
+            name={value <= (cocktail?.rating ?? 0) ? "star" : "star-border"}
             size={34}
             color={theme.colors.secondary}
           />
@@ -306,11 +307,7 @@ export default function CocktailDetailsScreen() {
       {cocktail.photoUri ? (
         <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
       ) : glass ? (
-        <Image
-          source={glass.image}
-          style={styles.photo}
-          resizeMode="contain"
-        />
+        <Image source={glass.image} style={styles.photo} resizeMode="contain" />
       ) : null}
 
       {ratingStars}
@@ -359,7 +356,10 @@ export default function CocktailDetailsScreen() {
         {cocktail.description ? (
           <View style={styles.section}>
             <Text
-              style={[styles.sectionText, { color: theme.colors.onSurface }]}
+              style={[
+                styles.sectionText,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
             >
               {cocktail.description}
             </Text>
