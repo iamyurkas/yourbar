@@ -28,6 +28,8 @@ import {
   getAllIngredients,
   saveIngredient,
 } from "../../storage/ingredientsStorage";
+import { getAllCocktails } from "../../storage/cocktailsStorage";
+import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
@@ -101,6 +103,7 @@ export default function IngredientDetailsScreen() {
   const [ingredient, setIngredient] = useState(null);
   const [brandedChildren, setBrandedChildren] = useState([]);
   const [baseIngredient, setBaseIngredient] = useState(null);
+  const [usedCocktails, setUsedCocktails] = useState([]);
 
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
@@ -191,15 +194,17 @@ export default function IngredientDetailsScreen() {
   );
 
   const load = useCallback(async () => {
-    const [loaded, all] = await Promise.all([
+    const [loaded, all, cocktails] = await Promise.all([
       getIngredientById(id),
       getAllIngredients(),
+      getAllCocktails(),
     ]);
     setIngredient(loaded || null);
 
     if (!loaded) {
       setBrandedChildren([]);
       setBaseIngredient(null);
+      setUsedCocktails([]);
       return;
     }
 
@@ -213,6 +218,14 @@ export default function IngredientDetailsScreen() {
         ? all.find((i) => i.id === loaded.baseIngredientId)
         : null;
     setBaseIngredient(base || null);
+
+    const map = mapCocktailsByIngredient(all, cocktails);
+    const byId = new Map(cocktails.map((c) => [c.id, c]));
+    const list = (map[loaded.id] || [])
+      .map((cid) => byId.get(cid))
+      .filter(Boolean)
+      .sort((a, b) => collator.compare(a.name, b.name));
+    setUsedCocktails(list);
   }, [id, collator]);
 
   useFocusEffect(
@@ -286,6 +299,16 @@ export default function IngredientDetailsScreen() {
   const goToIngredient = useCallback(
     (goId) => {
       navigation.push("IngredientDetails", { id: goId });
+    },
+    [navigation]
+  );
+
+  const goToCocktail = useCallback(
+    (goId) => {
+      navigation.navigate("Cocktails", {
+        screen: "CocktailDetails",
+        params: { id: goId },
+      });
     },
     [navigation]
   );
@@ -445,11 +468,38 @@ export default function IngredientDetailsScreen() {
         <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>
           Used in cocktails:
         </Text>
-        <Text
-          style={{ fontStyle: "italic", color: theme.colors.onSurfaceVariant }}
-        >
-          (coming soon)
-        </Text>
+        {usedCocktails.length > 0 ? (
+          <View
+            style={[styles.listBox, { borderColor: theme.colors.outline }]}
+          >
+            {usedCocktails.map((c, idx) => (
+              <View key={c.id}>
+                <RelationRow
+                  name={c.name}
+                  photoUri={c.photoUri}
+                  onOpen={() => goToCocktail(c.id)}
+                />
+                {idx !== usedCocktails.length - 1 && (
+                  <View
+                    style={[
+                      styles.divider,
+                      { backgroundColor: theme.colors.outlineVariant },
+                    ]}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text
+            style={{
+              fontStyle: "italic",
+              color: theme.colors.onSurfaceVariant,
+            }}
+          >
+            No cocktails yet
+          </Text>
+        )}
       </View>
 
       <TouchableOpacity
