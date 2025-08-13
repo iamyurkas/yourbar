@@ -23,6 +23,8 @@ import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getGlassById } from "../../constants/glassware";
 import { useTheme } from "react-native-paper";
+import TagFilterMenu from "../../components/TagFilterMenu";
+import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 
 // --- helpers ---
 const withAlpha = (hex, alpha) => {
@@ -171,6 +173,8 @@ export default function AllCocktailsScreen() {
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
 
   const didSetTabRef = useRef(false);
   useEffect(() => {
@@ -179,6 +183,17 @@ export default function AllCocktailsScreen() {
       didSetTabRef.current = true;
     }
   }, [setTab]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const all = await getAllCocktailTags();
+      if (!cancelled) setAvailableTags(all);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const h = setTimeout(() => setSearchDebounced(search), 300);
@@ -199,6 +214,12 @@ export default function AllCocktailsScreen() {
       let list = Array.isArray(cocktailsList) ? cocktailsList : [];
       const q = searchDebounced.trim().toLowerCase();
       if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+      if (selectedTagIds.length > 0)
+        list = list.filter(
+          (c) =>
+            Array.isArray(c.tags) &&
+            c.tags.some((t) => selectedTagIds.includes(t.id))
+        );
       const prepared = list.map((c) => {
         const required = (c.ingredients || []).filter((r) => !r.optional);
         const allAvail =
@@ -219,7 +240,7 @@ export default function AllCocktailsScreen() {
     return () => {
       cancel = true;
     };
-  }, [isFocused, searchDebounced]);
+  }, [isFocused, searchDebounced, selectedTagIds]);
 
   const handlePress = useCallback(
     (id) => {
@@ -266,6 +287,13 @@ export default function AllCocktailsScreen() {
         onSearch={() => {}}
         searchValue={search}
         setSearchValue={setSearch}
+        filterComponent={
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
+        }
       />
       <FlashList
         data={cocktails}

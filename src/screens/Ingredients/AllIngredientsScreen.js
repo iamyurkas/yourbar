@@ -26,6 +26,9 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+import TagFilterMenu from "../../components/TagFilterMenu";
+import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
+import { getAllTags } from "../../storage/ingredientTagsStorage";
 
 // ---- Helpers ----
 const withAlpha = (hex, alpha) => {
@@ -196,6 +199,8 @@ export default function AllIngredientsScreen() {
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
 
   const didSetTabRef = useRef(false);
   useEffect(() => {
@@ -204,6 +209,21 @@ export default function AllIngredientsScreen() {
       didSetTabRef.current = true;
     }
   }, [setTab]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const custom = await getAllTags();
+      if (!cancelled)
+        setAvailableTags([
+          ...BUILTIN_INGREDIENT_TAGS,
+          ...(custom || []),
+        ]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const indexMapRef = useRef(new Map());
 
@@ -301,9 +321,15 @@ export default function AllIngredientsScreen() {
 
   const filtered = useMemo(() => {
     const q = deferredSearch.trim().toLowerCase();
-    if (!q) return ingredients;
-    return ingredients.filter((i) => i.searchName.includes(q));
-  }, [ingredients, deferredSearch]);
+    let data = ingredients;
+    if (q) data = data.filter((i) => i.searchName.includes(q));
+    if (selectedTagIds.length > 0)
+      data = data.filter((i) =>
+        Array.isArray(i.tags) &&
+        i.tags.some((t) => selectedTagIds.includes(t.id))
+      );
+    return data;
+  }, [ingredients, deferredSearch, selectedTagIds]);
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -364,7 +390,13 @@ export default function AllIngredientsScreen() {
         searchValue={search}
         setSearchValue={setSearch}
         onMenu={() => navigation.navigate("GeneralMenu")}
-        onFilter={() => console.log("Open filter")}
+        filterComponent={
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
+        }
       />
 
       <FlashList
