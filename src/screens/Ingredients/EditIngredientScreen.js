@@ -202,17 +202,16 @@ export default function EditIngredientScreen() {
   const initialHashRef = useRef("{}");
   const [dirty, setDirty] = useState(false);
 
-  const serialize = useCallback(
-    () =>
-      JSON.stringify({
-        name: name.trim(),
-        description,
-        photoUri,
-        tags,
-        baseIngredientId,
-      }),
-    [name, description, photoUri, tags, baseIngredientId]
-  );
+  const serialize = useCallback(() => {
+    const tagIds = [...tags].map((t) => t.id).sort();
+    return JSON.stringify({
+      name: name.trim(),
+      description,
+      photoUri,
+      baseIngredientId,
+      tags: tagIds,
+    });
+  }, [name, description, photoUri, tags, baseIngredientId]);
 
   useEffect(() => {
     if (ingredient) initialHashRef.current = serialize();
