@@ -179,6 +179,7 @@ export default function AddIngredientScreen() {
     if (!isFocused) return;
 
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       if (fromCocktailFlow) {
         navigation.navigate("Cocktails", { screen: returnTo });

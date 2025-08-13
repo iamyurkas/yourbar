@@ -159,11 +159,16 @@ export default function IngredientDetailsScreen() {
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
+      if (
+        e.data.action.type === "NAVIGATE" ||
+        (!fromCocktailId && !previousTab)
+      )
+        return;
       e.preventDefault();
       handleGoBack();
     });
     return unsub;
-  }, [navigation, handleGoBack]);
+  }, [navigation, handleGoBack, fromCocktailId, previousTab]);
 
   useFocusEffect(
     useCallback(() => {

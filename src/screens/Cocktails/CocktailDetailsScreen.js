@@ -199,11 +199,12 @@ export default function CocktailDetailsScreen() {
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "NAVIGATE" || !previousTab) return;
       e.preventDefault();
-      handleGoBack();
+      navigation.navigate(previousTab);
     });
     return unsub;
-  }, [navigation, handleGoBack]);
+  }, [navigation, previousTab]);
 
   const load = useCallback(async () => {
     setLoading(true);

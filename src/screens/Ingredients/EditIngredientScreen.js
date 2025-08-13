@@ -201,6 +201,7 @@ export default function EditIngredientScreen() {
   // перехоплюємо системний back/gesture
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       handleGoBack();
     });
