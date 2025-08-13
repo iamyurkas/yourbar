@@ -3,11 +3,11 @@ export const BUILTIN_INGREDIENT_TAGS = [
   { id: 2, name: "soft alcohol", color: "#FFA94D" },
   { id: 3, name: "beverage", color: "#FFD43B" },
   { id: 4, name: "syrup", color: "#8AADCFFF" },
-  { id: 5, name: "juice", color: "#c6daffff" },
+  { id: 5, name: "juice", color: "#4d82e4ff" },
   { id: 6, name: "fruit", color: "#69DB7C" },
   { id: 7, name: "herb", color: "#38D9A9" },
-  { id: 8, name: "spice", color: "#000000ff" },
-  { id: 9, name: "dairy", color: "#757575ff" },
+  { id: 8, name: "spice", color: "#834601ff" },
+  { id: 9, name: "dairy", color: "#999999ff" },
   { id: 10, name: "other", color: "#AFC9C3FF" },
 ];
 
