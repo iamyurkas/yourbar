@@ -249,12 +249,15 @@ export default function CocktailDetailsScreen() {
     );
 
   const glass = cocktail.glassId ? getGlassById(cocktail.glassId) : null;
+  const imageSource = cocktail.photoUri
+    ? { uri: cocktail.photoUri }
+    : glass?.image || null;
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {cocktail.photoUri && (
-          <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
+        {imageSource && (
+          <Image source={imageSource} style={styles.photo} />
         )}
 
         <Text style={[styles.title, { color: theme.colors.onSurface }]}>

@@ -57,7 +57,11 @@ const ItemRow = memo(
       () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
       [theme.colors.tertiary]
     );
-    const glassImage = glassId ? getGlassById(glassId)?.image : null;
+    const imageSource = photoUri
+      ? { uri: photoUri }
+      : glassId
+      ? getGlassById(glassId)?.image
+      : null;
     const backgroundColor = isAllAvailable
       ? withAlpha(theme.colors.secondary, 0.25)
       : theme.colors.background;
@@ -89,18 +93,9 @@ const ItemRow = memo(
           ]}
           hitSlop={{ top: 4, bottom: 4 }}
         >
-          {photoUri ? (
+          {imageSource ? (
             <Image
-              source={{ uri: photoUri }}
-              style={[
-                styles.image,
-                { backgroundColor: theme.colors.background },
-              ]}
-              resizeMode="cover"
-            />
-          ) : glassImage ? (
-            <Image
-              source={glassImage}
+              source={imageSource}
               style={[
                 styles.image,
                 { backgroundColor: theme.colors.background },
