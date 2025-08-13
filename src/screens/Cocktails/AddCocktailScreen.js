@@ -1884,10 +1884,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mediaImg: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    aspectRatio: 1,
-    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
