@@ -10,7 +10,7 @@ const glassImages = {
   coupe: require("../../assets/glassware/coupe.jpg"),
   cup: require("../../assets/glassware/cup.jpg"),
   goblet: require("../../assets/glassware/goblet.jpg"),
-  highball_glass: require("../../assets/glassware/hiball.jpg"),
+  highball_glass: require("../../assets/glassware/highball.jpg"),
   hurricane_glass: require("../../assets/glassware/hurricane.jpg"),
   irish_coffee_glass: require("../../assets/glassware/irish.jpg"),
   margarita_glass: require("../../assets/glassware/margarita.jpg"),
