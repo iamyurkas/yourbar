@@ -195,6 +195,23 @@ export default function EditIngredientScreen() {
     navigation.goBack();
   }, [navigation]);
 
+  const handleDelete = useCallback(() => {
+    if (!ingredient) return;
+    Alert.alert("Delete Ingredient", "Are you sure?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          skipPromptRef.current = true; // не питати про збереження
+          await deleteIngredient(ingredient.id);
+          if (previousTab) navigation.navigate(previousTab);
+          else navigation.goBack();
+        },
+      },
+    ]);
+  }, [ingredient, navigation, previousTab]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -213,8 +230,18 @@ export default function EditIngredientScreen() {
           />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <Pressable
+          onPress={handleDelete}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel="Delete ingredient"
+        >
+          <MaterialIcons name="delete" size={24} color={theme.colors.onSurface} />
+        </Pressable>
+      ),
     });
-  }, [navigation, handleBackPress, theme.colors.onSurface]);
+  }, [navigation, handleBackPress, theme.colors.onSurface, handleDelete]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -365,23 +392,6 @@ export default function EditIngredientScreen() {
       serialize,
     ]
   );
-
-  const handleDelete = useCallback(() => {
-    if (!ingredient) return;
-    Alert.alert("Delete Ingredient", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          skipPromptRef.current = true; // не питати про збереження
-          await deleteIngredient(ingredient.id);
-          if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
-        },
-      },
-    ]);
-  }, [ingredient, navigation, previousTab]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
@@ -708,15 +718,6 @@ export default function EditIngredientScreen() {
           </Text>
         </Pressable>
 
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.error }]}
-          onPress={handleDelete}
-          android_ripple={{ color: theme.colors.onErrorContainer }}
-        >
-          <Text style={{ color: theme.colors.onError, fontWeight: "bold" }}>
-            Delete Ingredient
-          </Text>
-        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
