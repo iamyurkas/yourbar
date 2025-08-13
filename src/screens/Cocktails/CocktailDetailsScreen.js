@@ -69,7 +69,7 @@ const IngredientRow = memo(function IngredientRow({
       ]}
     >
       <View style={[styles.ingItem, !inBar && styles.dimmed]}>
-        {photoUri ? (
+        {photoUri && (
           <Image
             source={{ uri: photoUri }}
             style={[
@@ -78,23 +78,6 @@ const IngredientRow = memo(function IngredientRow({
             ]}
             resizeMode="cover"
           />
-        ) : (
-          <View
-            style={[
-              styles.ingImage,
-              styles.placeholder,
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            <Text
-              style={[
-                styles.placeholderText,
-                { color: theme.colors.onSurfaceVariant },
-              ]}
-            >
-              No image
-            </Text>
-          </View>
         )}
 
         <View style={styles.ingInfo}>
@@ -400,8 +383,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
     overflow: "hidden",
   },
-  placeholder: { justifyContent: "center", alignItems: "center" },
-  placeholderText: { fontSize: 10, textAlign: "center" },
   ingInfo: { flex: 1, paddingRight: 8 },
   name: { fontSize: 16 },
   meta: { fontSize: 12, marginTop: 2 },
