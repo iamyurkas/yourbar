@@ -1082,6 +1082,7 @@ export default function AddCocktailScreen() {
     if (!isFocused) return;
 
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
