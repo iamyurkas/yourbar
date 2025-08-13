@@ -52,6 +52,7 @@ const IngredientRow = memo(function IngredientRow({
   inBar,
   garnish,
   substituteFor,
+  onPress,
 }) {
   const theme = useTheme();
   const backgroundColor = inBar
@@ -59,7 +60,9 @@ const IngredientRow = memo(function IngredientRow({
     : theme.colors.background;
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
       style={[
         styles.ingWrapper,
         { borderBottomColor: theme.colors.background, backgroundColor },
@@ -125,7 +128,7 @@ const IngredientRow = memo(function IngredientRow({
           </Text>
         ) : null}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 });
 
@@ -231,6 +234,7 @@ export default function CocktailDetailsScreen() {
       const display = substitute || ing || {};
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
+        ingredientId: display.id || null,
         name: display.name || r.name,
         photoUri: display.photoUri || null,
         amount: r.amount,
@@ -265,15 +269,15 @@ export default function CocktailDetailsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={{ paddingBottom: 24 }}
     >
+      <Text style={[styles.title, { color: theme.colors.onBackground }]}> 
+        {cocktail.name}
+      </Text>
+
       {cocktail.photoUri && (
         <Image source={{ uri: cocktail.photoUri }} style={styles.photo} />
       )}
 
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.onBackground }]}>
-          {cocktail.name}
-        </Text>
-
+      <View style={styles.body}>
         {glass && (
           <View style={styles.glassRow}>
             <Image
@@ -333,23 +337,27 @@ export default function CocktailDetailsScreen() {
           </View>
         ) : null}
 
-          {rows.length > 0 && (
-            <View style={styles.section}>
-              <Text
-                style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
-              >
-                Ingredients:
-              </Text>
-              <View style={styles.ingList}>
-                {rows.map(({ key, ...props }) => (
-                  <IngredientRow key={key} {...props} />
-                ))}
-              </View>
+        {rows.length > 0 && (
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
+            >
+              Ingredients:
+            </Text>
+            <View style={[styles.ingList, { marginHorizontal: -24 }]}> 
+              {rows.map(({ key, ingredientId, ...props }) => (
+                <IngredientRow
+                  key={key}
+                  {...props}
+                  onPress={ingredientId ? () => navigation.push("IngredientDetails", { id: ingredientId }) : undefined}
+                />
+              ))}
             </View>
-          )}
-        </View>
-      </ScrollView>
-    );
+          </View>
+        )}
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -357,9 +365,9 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
-  photo: { width: "100%", height: 200 },
-  content: { padding: 24 },
-  title: { fontSize: 22, fontWeight: "bold", marginTop: 16 },
+  photo: { width: "100%", height: 200, marginTop: 12 },
+  title: { fontSize: 22, fontWeight: "bold", marginTop: 24, marginHorizontal: 24 },
+  body: { paddingHorizontal: 24, marginTop: 16 },
   glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8 },
