@@ -17,6 +17,8 @@ const safeParse = (raw) => {
 const now = () => Date.now();
 const genId = () => now(); // сумісно з твоїми екранами (Date.now())
 
+const sortByName = (a, b) => a.name.localeCompare(b.name);
+
 const sanitizeIngredient = (r, idx) => ({
   order: Number(r?.order ?? idx + 1),
   ingredientId: r?.ingredientId ?? null, // може бути null для фрітекасту
@@ -59,11 +61,12 @@ const sanitizeCocktail = (c) => {
 // --- low-level IO ---
 async function readAll() {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
-  return safeParse(raw);
+  return safeParse(raw).sort(sortByName);
 }
 async function writeAll(list) {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  return list;
+  const sorted = [...list].sort(sortByName);
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
+  return sorted;
 }
 
 // --- API ---
