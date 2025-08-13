@@ -1,4 +1,4 @@
-export function calculateIngredientUsage(ingredients, cocktails) {
+export function mapCocktailsByIngredient(ingredients, cocktails) {
   const byId = new Map(ingredients.map((i) => [i.id, i]));
   const byBase = new Map();
   ingredients.forEach((i) => {
@@ -54,7 +54,17 @@ export function calculateIngredientUsage(ingredients, cocktails) {
   const result = {};
   ingredients.forEach((i) => {
     const set = usageMap.get(i.id);
-    result[i.id] = set ? set.size : 0;
+    result[i.id] = set ? Array.from(set) : [];
+  });
+  return result;
+}
+
+export function calculateIngredientUsage(ingredients, cocktails) {
+  const map = mapCocktailsByIngredient(ingredients, cocktails);
+  const result = {};
+  ingredients.forEach((i) => {
+    const arr = map[i.id];
+    result[i.id] = Array.isArray(arr) ? arr.length : 0;
   });
   return result;
 }
