@@ -203,7 +203,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         <Dialog
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
-          style={{ backgroundColor: theme.colors.surface }}
+          style={{ backgroundColor: theme.colors.surface, marginTop: 50 }}
         >
           <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
           <Dialog.Content>
@@ -322,6 +322,6 @@ const styles = StyleSheet.create({
   previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
-  dialogWrapper: { flex: 1, justifyContent: "flex-start", paddingTop: 40 },
+  dialogWrapper: { flex: 1, justifyContent: "flex-start" },
 });
 
