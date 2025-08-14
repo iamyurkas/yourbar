@@ -85,6 +85,10 @@ export default function AllCocktailsScreen() {
     const ingMap = new Map(
       (ingredients || []).map((i) => [String(i.id), i])
     );
+    const findBrand = (baseId) =>
+      ingredients.find(
+        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
+      );
     const q = searchDebounced.trim().toLowerCase();
     let list = cocktails;
     if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
@@ -97,36 +101,38 @@ export default function AllCocktailsScreen() {
     return list.map((c) => {
       const required = (c.ingredients || []).filter((r) => !r.optional);
       const missing = [];
+      const ingredientNames = [];
       let allAvail = required.length > 0;
       for (const r of required) {
         const ing = ingMap.get(String(r.ingredientId));
-        let isAvailable = false;
+        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+        let used = null;
         if (ing?.inBar) {
-          isAvailable = true;
-        } else if (ing) {
-          const baseId = String(ing.baseIngredientId ?? ing.id);
-          if (!isAvailable && r.allowBaseSubstitution) {
+          used = ing;
+        } else {
+          if (r.allowBaseSubstitution) {
             const base = ingMap.get(baseId);
-            if (base?.inBar) isAvailable = true;
+            if (base?.inBar) used = base;
           }
-          if (!isAvailable && r.allowBrandedSubstitutes) {
-            const brand = ingredients.find(
-              (i) => i.inBar && String(i.baseIngredientId) === baseId
-            );
-            if (brand) isAvailable = true;
+          if (!used && r.allowBrandedSubstitutes) {
+            const brand = findBrand(baseId);
+            if (brand) used = brand;
           }
-        }
-        if (!isAvailable && Array.isArray(r.substitutes)) {
-          for (const s of r.substitutes) {
-            const candidate = ingMap.get(String(s.id));
-            if (candidate?.inBar) {
-              isAvailable = true;
-              break;
+          if (!used && Array.isArray(r.substitutes)) {
+            for (const s of r.substitutes) {
+              const candidate = ingMap.get(String(s.id));
+              if (candidate?.inBar) {
+                used = candidate;
+                break;
+              }
             }
           }
         }
-        if (!isAvailable) {
-          if (ing?.name) missing.push(ing.name);
+        if (used) {
+          ingredientNames.push(used.name);
+        } else {
+          const missingName = ing?.name || r.name || "";
+          if (missingName) missing.push(missingName);
           allAvail = false;
         }
       }
@@ -134,15 +140,12 @@ export default function AllCocktailsScreen() {
         const ing = ingMap.get(String(r.ingredientId));
         return ing && ing.baseIngredientId != null;
       });
-      const ingredientNames = (c.ingredients || [])
-        .map((r) => ingMap.get(String(r.ingredientId))?.name)
-        .filter(Boolean);
       let ingredientLine = ingredientNames.join(", ");
       if (!allAvail) {
         if (missing.length > 0 && missing.length <= 2) {
           ingredientLine = `Missing: ${missing.join(", ")}`;
-        } else if (missing.length >= 3) {
-          ingredientLine = `Missing: ${missing.length} ingredients`;
+        } else if (missing.length >= 3 || missing.length === 0) {
+          ingredientLine = `Missing: ${missing.length || required.length} ingredients`;
         }
       }
       return {
