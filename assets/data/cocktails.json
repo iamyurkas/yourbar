@@ -6521,6 +6521,12 @@
         "unit": 11
       },
       {
+        "ingredient": "Chocolate",
+        "quantity": 1,
+        "unit": 18,
+        "garnish": true
+      },
+      {
         "ingredient": "Coffee Beans",
         "quantity": 3,
         "unit": 1,
@@ -6535,7 +6541,7 @@
     "instructions": [
       "Shake vodka, coffee liqueur, espresso, and chocolate syrup with ice.",
       "Strain into a chilled cocktail glass.",
-      "Garnish with coffee beans."
+      "Garnish with chocolate shavings or coffee beans."
     ]
   },
   {
@@ -7032,6 +7038,12 @@
         "ingredient": "Lemon",
         "quantity": 1,
         "unit": 26,
+        "garnish": true
+      },
+      {
+        "ingredient": "Cocoa Powder",
+        "quantity": 2,
+        "unit": 8,
         "garnish": true
       },
       {
