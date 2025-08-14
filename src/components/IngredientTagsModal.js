@@ -5,8 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
+  Keyboard,
 } from "react-native";
 import {
   Text,
@@ -46,6 +45,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLOR_PALETTE[0]);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
     if (!visible) return;
@@ -73,6 +73,17 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
       openAdd();
     }
   }, [visible, autoAdd]);
+
+  useEffect(() => {
+    const show = Keyboard.addListener("keyboardDidShow", (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   const openEdit = (tag) => {
     setEditingId(tag.id);
@@ -206,10 +217,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         />
       </Modal>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.dialogWrapper}
-      >
+      <View style={[styles.dialogWrapper, { paddingBottom: keyboardHeight }]}> 
         <Dialog
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
@@ -289,7 +297,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           </Button>
         </Dialog.Actions>
         </Dialog>
-      </KeyboardAvoidingView>
+      </View>
     </Portal>
   );
 }
