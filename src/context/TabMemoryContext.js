@@ -6,7 +6,10 @@ export const TabMemoryProvider = ({ children }) => {
   const [activeTabs, setActiveTabs] = useState({});
 
   const setTab = (groupKey, tabKey) => {
-    setActiveTabs((prev) => ({ ...prev, [groupKey]: tabKey }));
+    setActiveTabs((prev) => {
+      if (prev[groupKey] === tabKey) return prev;
+      return { ...prev, [groupKey]: tabKey };
+    });
   };
 
   const getTab = (groupKey) => {
