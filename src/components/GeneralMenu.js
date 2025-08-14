@@ -12,19 +12,23 @@ import {
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientIcon from "../../assets/lemon.svg";
+
+import IngredientTagsModal from "./IngredientTagsModal";
+
 import { useNavigation } from "@react-navigation/native";
 import { getUseMetric, setUseMetric as saveUseMetric } from "../storage/settingsStorage";
+
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 
 export default function GeneralMenu({ visible, onClose }) {
-  const navigation = useNavigation();
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
 
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [useMetric, setUseMetric] = useState(true);
   const [keepAwake, setKeepAwake] = useState(false);
+  const [tagsVisible, setTagsVisible] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -41,6 +45,9 @@ export default function GeneralMenu({ visible, onClose }) {
       }).start();
     }
   }, [visible, slideAnim]);
+
+
+  const openTagsModal = () => {
 
   useEffect(() => {
     (async () => {
@@ -60,22 +67,26 @@ export default function GeneralMenu({ visible, onClose }) {
   };
 
   const navigateToIngredientTags = () => {
+
     onClose?.();
-    navigation.navigate("EditCustomTags");
+    setTagsVisible(true);
   };
 
+  const closeTagsModal = () => setTagsVisible(false);
+
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Animated.View
-          style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
-          onStartShouldSetResponder={() => true}
-        >
+    <>
+      <Modal
+        transparent
+        visible={visible}
+        animationType="none"
+        onRequestClose={onClose}
+      >
+        <Pressable style={styles.overlay} onPress={onClose}>
+          <Animated.View
+            style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
+            onStartShouldSetResponder={() => true}
+          >
           <Text style={styles.title}>Settings</Text>
 
           <View style={styles.itemRow}>
@@ -113,7 +124,7 @@ export default function GeneralMenu({ visible, onClose }) {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.linkRow} onPress={navigateToIngredientTags}>
+          <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
             <IngredientIcon
               width={22}
               height={22}
@@ -152,7 +163,9 @@ export default function GeneralMenu({ visible, onClose }) {
           </TouchableOpacity>
         </Animated.View>
       </Pressable>
-    </Modal>
+      </Modal>
+      <IngredientTagsModal visible={tagsVisible} onClose={closeTagsModal} />
+    </>
   );
 }
 

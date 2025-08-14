@@ -41,6 +41,7 @@ import {
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import IngredientTagsModal from "../../components/IngredientTagsModal";
 
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
@@ -121,6 +122,24 @@ export default function AddIngredientScreen() {
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
+  const [tagsModalVisible, setTagsModalVisible] = useState(false);
+  const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
+
+  const loadAvailableTags = useCallback(async () => {
+    const custom = await getAllTags();
+    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
+  }, []);
+
+  const closeTagsModal = () => {
+    setTagsModalVisible(false);
+    setTagsModalAutoAdd(false);
+    loadAvailableTags();
+  };
+
+  const openAddTagModal = () => {
+    setTagsModalAutoAdd(true);
+    setTagsModalVisible(true);
+  };
 
   // base list
   const [baseOnlySorted, setBaseOnlySorted] = useState([]);
@@ -219,17 +238,8 @@ export default function AddIngredientScreen() {
 
   useEffect(() => {
     if (!isFocused) return;
-    let cancelled = false;
-    (async () => {
-      const custom = await getAllTags();
-      if (!cancelled) {
-        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [isFocused]);
+    loadAvailableTags();
+  }, [isFocused, loadAvailableTags]);
 
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
@@ -444,11 +454,37 @@ export default function AddIngredientScreen() {
                 onToggle={toggleTagById}
               />
             ))}
+          <Pressable
+            onPress={openAddTagModal}
+            style={[
+              styles.addTagButton,
+              {
+                borderColor: theme.colors.primary,
+                backgroundColor: theme.colors.background,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.addTagButtonText,
+                { color: theme.colors.primary },
+              ]}
+            >
+              +Add
+            </Text>
+          </Pressable>
         </View>
 
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Base Ingredient
-        </Text>
+        <Pressable
+          onPress={() => {
+            setTagsModalAutoAdd(false);
+            setTagsModalVisible(true);
+          }}
+        >
+          <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
+        </Pressable>
+
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>Base Ingredient</Text>
 
         <View
           ref={anchorRef}
@@ -622,6 +658,11 @@ export default function AddIngredientScreen() {
           </Text>
         </Pressable>
       </ScrollView>
+      <IngredientTagsModal
+        visible={tagsModalVisible}
+        onClose={closeTagsModal}
+        autoAdd={tagsModalAutoAdd}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -656,6 +697,17 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: { color: "white", fontWeight: "bold" },
+
+  addTagButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    margin: 4,
+    borderWidth: 1,
+  },
+  addTagButtonText: { fontWeight: "500" },
+
+  manageTagsLink: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {
