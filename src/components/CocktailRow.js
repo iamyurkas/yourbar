@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     paddingVertical: ROW_VERTICAL,
     paddingHorizontal: 12,
     position: "relative",
+    height: COCKTAIL_ROW_HEIGHT - ROW_BORDER,
   },
   dimmed: { opacity: 0.88 },
   navigatingRow: { opacity: 0.6 },
