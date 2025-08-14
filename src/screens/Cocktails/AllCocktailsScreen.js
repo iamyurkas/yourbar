@@ -114,7 +114,8 @@ export default function AllCocktailsScreen() {
             const base = ingMap.get(baseId);
             if (base?.inBar) used = base;
           }
-          if (!used && r.allowBrandedSubstitutes) {
+          const isBaseIngredient = ing?.baseIngredientId == null;
+          if (!used && (r.allowBrandedSubstitutes || isBaseIngredient)) {
             const brand = findBrand(baseId);
             if (brand) used = brand;
           }

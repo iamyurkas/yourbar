@@ -254,7 +254,8 @@ export default function CocktailDetailsScreen() {
           if (base) substitute = base;
         }
 
-        if (!substitute && r.allowBrandedSubstitutes) {
+        const isBaseIngredient = ing.baseIngredientId == null;
+        if (!substitute && (r.allowBrandedSubstitutes || isBaseIngredient)) {
           const brand = allIngs.find(
             (i) => i.inBar && i.baseIngredientId === baseId
           );
