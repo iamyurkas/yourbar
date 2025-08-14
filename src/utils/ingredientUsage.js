@@ -36,10 +36,11 @@ export function mapCocktailsByIngredient(ingredients, cocktails) {
           if (item.id !== baseId) add(item.id, c.id);
         });
       } else {
-        // branded ingredient used
-        if (r.allowBaseSubstitution || r.allowBrandedSubstitutes) {
+        // branded ingredient used: base ingredient always counts
+        add(baseId, c.id);
+        if (r.allowBrandedSubstitutes) {
           group.forEach((item) => {
-            if (item.id !== ing.id) add(item.id, c.id);
+            if (item.id !== ing.id && item.id !== baseId) add(item.id, c.id);
           });
         }
       }
