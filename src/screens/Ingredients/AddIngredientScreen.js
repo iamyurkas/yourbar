@@ -123,6 +123,7 @@ export default function AddIngredientScreen() {
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
+  const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
 
   const loadAvailableTags = useCallback(async () => {
     const custom = await getAllTags();
@@ -131,7 +132,13 @@ export default function AddIngredientScreen() {
 
   const closeTagsModal = () => {
     setTagsModalVisible(false);
+    setTagsModalAutoAdd(false);
     loadAvailableTags();
+  };
+
+  const openAddTagModal = () => {
+    setTagsModalAutoAdd(true);
+    setTagsModalVisible(true);
   };
 
   // base list
@@ -447,9 +454,33 @@ export default function AddIngredientScreen() {
                 onToggle={toggleTagById}
               />
             ))}
+          <Pressable
+            onPress={openAddTagModal}
+            style={[
+              styles.addTagButton,
+              {
+                borderColor: theme.colors.primary,
+                backgroundColor: theme.colors.background,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.addTagButtonText,
+                { color: theme.colors.primary },
+              ]}
+            >
+              +Add
+            </Text>
+          </Pressable>
         </View>
 
-        <Pressable onPress={() => setTagsModalVisible(true)}>
+        <Pressable
+          onPress={() => {
+            setTagsModalAutoAdd(false);
+            setTagsModalVisible(true);
+          }}
+        >
           <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
         </Pressable>
 
@@ -627,7 +658,11 @@ export default function AddIngredientScreen() {
           </Text>
         </Pressable>
       </ScrollView>
-      <IngredientTagsModal visible={tagsModalVisible} onClose={closeTagsModal} />
+      <IngredientTagsModal
+        visible={tagsModalVisible}
+        onClose={closeTagsModal}
+        autoAdd={tagsModalAutoAdd}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -662,6 +697,15 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: { color: "white", fontWeight: "bold" },
+
+  addTagButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    margin: 4,
+    borderWidth: 1,
+  },
+  addTagButtonText: { fontWeight: "500" },
 
   manageTagsLink: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
 

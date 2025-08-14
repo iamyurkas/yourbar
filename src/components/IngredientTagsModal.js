@@ -29,7 +29,7 @@ const COLOR_PALETTE = [
   "#20C997",
 ];
 
-export default function IngredientTagsModal({ visible, onClose }) {
+export default function IngredientTagsModal({ visible, onClose, autoAdd = false }) {
   const theme = useTheme();
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +59,12 @@ export default function IngredientTagsModal({ visible, onClose }) {
     resetDialog();
     setDialogVisible(true);
   };
+
+  useEffect(() => {
+    if (visible && autoAdd) {
+      openAdd();
+    }
+  }, [visible, autoAdd]);
 
   const openEdit = (tag) => {
     setEditingId(tag.id);
