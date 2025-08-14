@@ -15,9 +15,7 @@ import IngredientIcon from "../../assets/lemon.svg";
 
 import IngredientTagsModal from "./IngredientTagsModal";
 
-import { useNavigation } from "@react-navigation/native";
 import { getUseMetric, setUseMetric as saveUseMetric } from "../storage/settingsStorage";
-
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -46,14 +44,16 @@ export default function GeneralMenu({ visible, onClose }) {
     }
   }, [visible, slideAnim]);
 
-
   const openTagsModal = () => {
+    onClose?.();
+    setTagsVisible(true);
+  };
 
   useEffect(() => {
     (async () => {
       try {
         const stored = await getUseMetric();
-        setUseMetric(stored);
+        setUseMetric(!!stored);
       } catch {}
     })();
   }, []);
@@ -64,12 +64,6 @@ export default function GeneralMenu({ visible, onClose }) {
       saveUseMetric(next);
       return next;
     });
-  };
-
-  const navigateToIngredientTags = () => {
-
-    onClose?.();
-    setTagsVisible(true);
   };
 
   const closeTagsModal = () => setTagsVisible(false);
@@ -87,82 +81,82 @@ export default function GeneralMenu({ visible, onClose }) {
             style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
             onStartShouldSetResponder={() => true}
           >
-          <Text style={styles.title}>Settings</Text>
+            <Text style={styles.title}>Settings</Text>
 
-          <View style={styles.itemRow}>
-            <Checkbox
-              status={ignoreGarnish ? "checked" : "unchecked"}
-              onPress={() => setIgnoreGarnish((v) => !v)}
-            />
-            <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Ignore garnishes</Text>
-              <Text style={styles.itemSub}>All garnishes are optional</Text>
+            <View style={styles.itemRow}>
+              <Checkbox
+                status={ignoreGarnish ? "checked" : "unchecked"}
+                onPress={() => setIgnoreGarnish((v) => !v)}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Ignore garnishes</Text>
+                <Text style={styles.itemSub}>All garnishes are optional</Text>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.itemRow}>
-            <Checkbox
-              status={useMetric ? "checked" : "unchecked"}
-              onPress={toggleUseMetric}
-            />
-            <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Use metric system</Text>
-              <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
+            <View style={styles.itemRow}>
+              <Checkbox
+                status={useMetric ? "checked" : "unchecked"}
+                onPress={toggleUseMetric}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Use metric system</Text>
+                <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.itemRow}>
-            <Checkbox
-              status={keepAwake ? "checked" : "unchecked"}
-              onPress={() => setKeepAwake((v) => !v)}
-            />
-            <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Keep screen awake</Text>
-              <Text style={styles.itemSub}>
-                Prevent the phone from sleeping while viewing cocktail details
-              </Text>
+            <View style={styles.itemRow}>
+              <Checkbox
+                status={keepAwake ? "checked" : "unchecked"}
+                onPress={() => setKeepAwake((v) => !v)}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Keep screen awake</Text>
+                <Text style={styles.itemSub}>
+                  Prevent the phone from sleeping while viewing cocktail details
+                </Text>
+              </View>
             </View>
-          </View>
 
-          <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
-            <IngredientIcon
-              width={22}
-              height={22}
-              fill="#4DABF7"
-              style={styles.linkIcon}
-            />
-            <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Ingredient tags</Text>
-              <Text style={styles.itemSub}>Create, edit or remove ingredient tags</Text>
-            </View>
-            <MaterialIcons
-              name="chevron-right"
-              size={24}
-              color="#999"
-              style={styles.chevron}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
+              <IngredientIcon
+                width={22}
+                height={22}
+                fill="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Ingredient tags</Text>
+                <Text style={styles.itemSub}>Create, edit or remove ingredient tags</Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
-            <MaterialIcons
-              name="local-bar"
-              size={22}
-              color="#4DABF7"
-              style={styles.linkIcon}
-            />
-            <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Cocktail tags</Text>
-              <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
-            </View>
-            <MaterialIcons
-              name="chevron-right"
-              size={24}
-              color="#999"
-              style={styles.chevron}
-            />
-          </TouchableOpacity>
-        </Animated.View>
-      </Pressable>
+            <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
+              <MaterialIcons
+                name="local-bar"
+                size={22}
+                color="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Cocktail tags</Text>
+                <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        </Pressable>
       </Modal>
       <IngredientTagsModal visible={tagsVisible} onClose={closeTagsModal} />
     </>
@@ -222,4 +216,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
