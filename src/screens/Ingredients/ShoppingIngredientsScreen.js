@@ -108,7 +108,7 @@ const ItemRow = memo(
                   styles.image,
                   { backgroundColor: theme.colors.background },
                 ]}
-                resizeMode="cover"
+                resizeMode="contain"
               />
             ) : (
               <View

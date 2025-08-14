@@ -587,6 +587,7 @@ const IngredientRow = memo(function IngredientRow({
                           marginRight: 10,
                           backgroundColor: theme.colors.background,
                         }}
+                        resizeMode="contain"
                       />
                     ) : (
                       <View
@@ -1550,7 +1551,11 @@ export default function AddCocktailScreen() {
                 ]}
               >
                 {photoUri ? (
-                  <Image source={{ uri: photoUri }} style={styles.mediaImg} />
+                  <Image
+                    source={{ uri: photoUri }}
+                    style={styles.mediaImg}
+                    resizeMode="contain"
+                  />
                 ) : (
                   <Text
                     style={{
@@ -1886,7 +1891,6 @@ const styles = StyleSheet.create({
   mediaImg: {
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },

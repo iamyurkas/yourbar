@@ -77,7 +77,7 @@ const IngredientRow = memo(function IngredientRow({
               styles.ingImage,
               { backgroundColor: theme.colors.background },
             ]}
-            resizeMode="cover"
+            resizeMode="contain"
           />
         ) : (
           <View

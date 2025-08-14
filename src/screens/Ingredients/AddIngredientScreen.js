@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-start",
   },
-  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, aspectRatio: 1, resizeMode: "cover" },
+  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, aspectRatio: 1, resizeMode: "contain" },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
   tag: {
@@ -672,6 +672,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 8,
     backgroundColor: "#fff",
+    resizeMode: "contain",
   },
   menuImgPlaceholder: { backgroundColor: "#EAEAEA" },
 
