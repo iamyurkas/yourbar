@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
@@ -38,13 +37,9 @@ export default function MyIngredientsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
 
-  const didSetTabRef = useRef(false);
   useEffect(() => {
-    if (!didSetTabRef.current) {
-      setTab("ingredients", "My");
-      didSetTabRef.current = true;
-    }
-  }, [setTab]);
+    if (isFocused) setTab("ingredients", "My");
+  }, [isFocused, setTab]);
 
   useEffect(() => {
     let cancelled = false;
