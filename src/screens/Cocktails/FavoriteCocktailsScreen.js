@@ -34,13 +34,9 @@ export default function FavoriteCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
 
-  const didSetTabRef = useRef(false);
   useEffect(() => {
-    if (!didSetTabRef.current) {
-      setTab("cocktails", "Favorite");
-      didSetTabRef.current = true;
-    }
-  }, [setTab]);
+    if (isFocused) setTab("cocktails", "Favorite");
+  }, [isFocused, setTab]);
 
   useEffect(() => {
     let cancelled = false;

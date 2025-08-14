@@ -34,13 +34,9 @@ export default function MyCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
 
-  const didSetTabRef = useRef(false);
   useEffect(() => {
-    if (!didSetTabRef.current) {
-      setTab("cocktails", "My");
-      didSetTabRef.current = true;
-    }
-  }, [setTab]);
+    if (isFocused) setTab("cocktails", "My");
+  }, [isFocused, setTab]);
 
   useEffect(() => {
     let cancelled = false;
