@@ -1,44 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert, Modal } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
 import {
-  Provider as PaperProvider,
   Text,
   TextInput,
   Button,
   IconButton,
   Portal,
+  Modal,
   Dialog,
   Divider,
   Chip,
-  MD3LightTheme as BaseTheme,
+  useTheme,
 } from "react-native-paper";
 import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
-
-// Theme setup
-const theme = {
-  ...BaseTheme,
-  version: 3,
-  colors: {
-    ...BaseTheme.colors,
-    primary: "#4DABF7",
-    background: "#FFFFFF",
-    surface: "#ecececff",
-    outline: "#E5EAF0",
-    outlineVariant: "#E9EEF4",
-    error: "#FF6B6B",
-    errorContainer: "#FFE3E6",
-    onError: "#FFFFFF",
-    onErrorContainer: "#7A1C1C",
-    onPrimary: "#FFFFFF",
-    onBackground: "#000000",
-    onSurface: "#000000",
-    secondary: "#74C0FC",
-    tertiary: "#A5D8FF",
-    disabled: "#CED4DA",
-    placeholder: "#A1A1A1",
-    backdrop: "rgba(0,0,0,0.4)",
-  },
-};
 
 const COLOR_PALETTE = [
   "#FF6B6B",
@@ -56,6 +30,7 @@ const COLOR_PALETTE = [
 ];
 
 export default function IngredientTagsModal({ visible, onClose }) {
+  const theme = useTheme();
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -149,12 +124,17 @@ export default function IngredientTagsModal({ visible, onClose }) {
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.row}>
+    <View style={[styles.row, { borderBottomColor: theme.colors.outline }]}>
       <View style={styles.left}>
-        <View style={[styles.swatch, { backgroundColor: item.color || "#ccc" }]} />
+        <View
+          style={[
+            styles.swatch,
+            { backgroundColor: item.color || "#ccc", borderColor: theme.colors.outlineVariant },
+          ]}
+        />
         <View style={styles.tagTextBox}>
-          <Text style={styles.tagName}>{item.name}</Text>
-          <Text style={styles.tagColorCode}>{item.color}</Text>
+          <Text style={[styles.tagName, { color: theme.colors.onSurface }]}>{item.name}</Text>
+          <Text style={[styles.tagColorCode, { color: theme.colors.onSurfaceVariant }]}>{item.color}</Text>
         </View>
       </View>
       <View style={styles.right}>
@@ -165,107 +145,147 @@ export default function IngredientTagsModal({ visible, onClose }) {
   );
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <PaperProvider theme={theme}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Custom Tags</Text>
-            <IconButton icon="close" onPress={onClose} accessibilityLabel="Close" />
-          </View>
-          <Text style={styles.subtitle}>
-            Create, edit, or remove your own ingredient tags.
-          </Text>
-
-          <Button mode="contained" onPress={openAdd} style={styles.addBtn} icon="plus">
-            Add new tag
-          </Button>
-
-          <Divider />
-
-          <FlatList
-            data={tags}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={renderItem}
-            ListEmptyComponent={
-              !loading && (
-                <View style={styles.emptyBox}>
-                  <Text style={styles.emptyText}>
-                    You don’t have any custom tags yet.
-                  </Text>
-                </View>
-              )
-            }
-            contentContainerStyle={{ paddingBottom: 24 }}
-          />
+    <Portal>
+      <Modal
+        visible={visible}
+        onDismiss={onClose}
+        contentContainerStyle={[
+          styles.container,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.outline,
+          },
+        ]}
+      >
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
+          <IconButton icon="close" onPress={onClose} accessibilityLabel="Close" />
         </View>
+        <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}> 
+          Create, edit, or remove your own ingredient tags.
+        </Text>
 
-        <Portal>
-          <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)} style={{ backgroundColor: theme.colors.surface }}>
-            <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
-            <Dialog.Content>
-              <TextInput
-                label="Name"
-                mode="outlined"
-                value={name}
-                onChangeText={setName}
-                error={!!nameError}
-                style={{ marginBottom: 8 }}
-                theme={{ colors: { error: theme.colors.error, errorContainer: theme.colors.errorContainer } }}
-              />
-              {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+        <Button
+          mode="contained"
+          onPress={openAdd}
+          style={styles.addBtn}
+          icon="plus"
+        >
+          Add new tag
+        </Button>
 
-              <Text style={styles.sectionLabel}>Color</Text>
-              <View style={styles.palette}>
-                {COLOR_PALETTE.map((c) => {
-                  const selected = c.toLowerCase() === (color || "").toLowerCase();
-                  return (
-                    <TouchableOpacity
-                      key={c}
-                      style={[styles.colorDot, { backgroundColor: c }, selected && styles.colorDotSelected]}
-                      onPress={() => setColor(c)}
-                      accessibilityLabel={`Pick color ${c}`}
-                    />
-                  );
-                })}
+        <Divider />
+
+        <FlatList
+          data={tags}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={renderItem}
+          ListEmptyComponent={
+            !loading && (
+              <View style={styles.emptyBox}>
+                <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>You don't have any custom tags yet.</Text>
               </View>
+            )
+          }
+          contentContainerStyle={{ paddingBottom: 24 }}
+          style={{ maxHeight: 400 }}
+        />
+      </Modal>
 
-              <TextInput
-                label="HEX (#RRGGBB or #RRGGBBAA)"
-                mode="outlined"
-                value={color}
-                onChangeText={setColor}
-                error={!isValidHex}
-                theme={{ colors: { error: theme.colors.error, errorContainer: theme.colors.errorContainer } }}
-              />
-              {!isValidHex ? (
-                <Text style={styles.errorText}>Enter a valid hex color</Text>
-              ) : null}
+      <Dialog
+        visible={dialogVisible}
+        onDismiss={() => setDialogVisible(false)}
+        style={{ backgroundColor: theme.colors.surface }}
+      >
+        <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="Name"
+            mode="outlined"
+            value={name}
+            onChangeText={setName}
+            error={!!nameError}
+            style={{ marginBottom: 8 }}
+            theme={{
+              colors: {
+                error: theme.colors.error,
+                errorContainer: theme.colors.errorContainer,
+              },
+            }}
+          />
+          {nameError ? (
+            <Text style={[styles.errorText, { color: theme.colors.error }]}>{nameError}</Text>
+          ) : null}
 
-              <View style={styles.previewBox}>
-                <Text style={{ marginBottom: 8 }}>Preview</Text>
-                <Chip selected style={{ backgroundColor: color || "#ccc" }} textStyle={{ color: "#fff", fontWeight: "700" }}>
-                  {name || "Tag name"}
-                </Chip>
-              </View>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-              <Button onPress={onSave} disabled={!canSave}>
-                Save
-              </Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      </PaperProvider>
-    </Modal>
+          <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Color</Text>
+          <View style={styles.palette}>
+            {COLOR_PALETTE.map((c) => {
+              const selected = c.toLowerCase() === (color || "").toLowerCase();
+              return (
+                <TouchableOpacity
+                  key={c}
+                  style={[
+                    styles.colorDot,
+                    { backgroundColor: c },
+                    selected && { borderColor: theme.colors.onSurface },
+                  ]}
+                  onPress={() => setColor(c)}
+                  accessibilityLabel={`Pick color ${c}`}
+                />
+              );
+            })}
+          </View>
+
+          <TextInput
+            label="HEX (#RRGGBB or #RRGGBBAA)"
+            mode="outlined"
+            value={color}
+            onChangeText={setColor}
+            error={!isValidHex}
+            theme={{
+              colors: {
+                error: theme.colors.error,
+                errorContainer: theme.colors.errorContainer,
+              },
+            }}
+          />
+          {!isValidHex ? (
+            <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
+          ) : null}
+
+          <View style={styles.previewBox}>
+            <Text style={{ marginBottom: 8, color: theme.colors.onSurface }}>Preview</Text>
+            <Chip
+              selected
+              style={{ backgroundColor: color || "#ccc" }}
+              textStyle={{ color: "#fff", fontWeight: "700" }}
+            >
+              {name || "Tag name"}
+            </Chip>
+          </View>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+          <Button onPress={onSave} disabled={!canSave}>
+            Save
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
+  container: {
+    marginHorizontal: 24,
+    marginVertical: 48,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+  },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
-  subtitle: { color: "#666", marginBottom: 12 },
+  subtitle: { marginBottom: 12 },
   addBtn: { alignSelf: "flex-start", marginBottom: 8 },
   row: {
     flexDirection: "row",
@@ -273,7 +293,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#eee",
   },
   left: { flexDirection: "row", alignItems: "center", flex: 1 },
   right: { flexDirection: "row", alignItems: "center" },
@@ -283,18 +302,16 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(0,0,0,0.1)",
   },
   tagTextBox: { flexDirection: "column" },
-  tagName: { fontSize: 16, fontWeight: "600", color: "#111" },
-  tagColorCode: { fontSize: 12, color: "#6c757d" },
-  errorText: { color: "#FF6B6B", marginTop: -4, marginBottom: 6 },
+  tagName: { fontSize: 16, fontWeight: "600" },
+  tagColorCode: { fontSize: 12 },
+  errorText: { marginTop: -4, marginBottom: 6 },
   sectionLabel: { fontWeight: "600", marginBottom: 6, marginTop: 4 },
   palette: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 8 },
   colorDot: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: "transparent" },
-  colorDotSelected: { borderColor: "#333" },
   previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
-  emptyText: { color: "#666" },
+  emptyText: {},
 });
 
