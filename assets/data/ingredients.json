@@ -210,7 +210,7 @@
     "description": "Chamomile cordial is a sweet, floral syrup made from chamomile flowers. It has a soothing aroma and mild honey-like taste, making it a calming addition to cocktails. Pairs well with gin, vodka, and citrus juices."
   },
   {
-    "name": "Chartreuse green",
+    "name": "Chartreuse Green",
     "tags": [1],
     "image": "",
     "description": "Green Chartreuse is a French herbal liqueur made by Carthusian monks, with an ABV of 55%. It contains over 130 botanicals, giving it a complex, sweet, and herbal flavor. Often used sparingly in cocktails due to its potency."
@@ -660,6 +660,12 @@
     "description": "Lime juice is a key ingredient in many cocktails, providing sharp acidity and bright citrus flavor. Essential in drinks like Margaritas, Daiquiris, and Mojitos."
   },
   {
+    "name": "Lemon Juice",
+    "tags": [5],
+    "image": "",
+    "description": "Lemon juice is a key ingredient in many cocktails, providing sharp acidity and bright citrus flavor."
+  },
+  {
     "name": "Lime",
     "tags": [6],
     "image": "",
@@ -672,10 +678,10 @@
     "description": "Limoncello is a sweet Italian lemon liqueur with 25–30% ABV. It has a bright, zesty flavor from lemon peels macerated in alcohol. Often served chilled as a digestif or used in citrus-forward cocktails."
   },
   {
-    "name": "Malibu Coconut Rum",
+    "name": "Coconut Rum",
     "tags": [1],
     "image": "",
-    "description": "Malibu is a coconut-flavored rum liqueur with 21% ABV. It has a sweet, tropical taste perfect for summer cocktails. Commonly mixed with pineapple juice, cola, or citrus."
+    "description": "Coconut-flavored rum is a liqueur with 21% ABV. It has a sweet, tropical taste perfect for summer cocktails. Commonly mixed with pineapple juice, cola, or citrus."
   },
   {
     "name": "Maple Syrup",
@@ -996,7 +1002,7 @@
     "description": "Sugar sweetens and balances cocktails. It can be added directly or dissolved into syrups for easier mixing."
   },
   {
-    "name": "Sugar Syrup",
+    "name": "Simple Syrup",
     "tags": [4],
     "image": "",
     "description": "Sugar syrup, or simple syrup, is sugar dissolved in water. It blends easily into cocktails and is a bar staple."
