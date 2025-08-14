@@ -256,37 +256,40 @@ export default function AllIngredientsScreen() {
   }, []);
 
   const loadIngredients = useCallback(async () => {
-    const [data, cocktails] = await Promise.all([
-      getAllIngredients(),
-      getAllCocktails(),
-    ]);
-
-    const usageMap = mapCocktailsByIngredient(data, cocktails);
-    const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
-
-    const sorted = sortIngredients(data).map((item) => {
-      const ids = usageMap[item.id] || [];
-      const usageCount = ids.length;
-      const singleCocktailName = usageCount === 1 ? cocktailMap.get(ids[0]) : null;
-      return {
-        ...item,
-        searchName: item.name.toLowerCase(),
-        usageCount,
-        singleCocktailName,
-      };
-    });
+    const data = await getAllIngredients();
+    const sorted = sortIngredients(data).map((item) => ({
+      ...item,
+      searchName: item.name.toLowerCase(),
+      usageCount: 0,
+      singleCocktailName: null,
+    }));
     setIngredients(sorted);
     const idxMap = new Map();
     for (let i = 0; i < sorted.length; i++) idxMap.set(sorted[i].id, i);
     indexMapRef.current = idxMap;
+    return sorted;
   }, [sortIngredients]);
 
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
+      const base = await loadIngredients();
       if (cancelled) return;
-      await loadIngredients();
-      if (!cancelled) setLoading(false);
+      setLoading(false);
+      const cocktails = await getAllCocktails();
+      if (cancelled) return;
+      const usageMap = mapCocktailsByIngredient(base, cocktails);
+      const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
+      if (cancelled) return;
+      setIngredients((prev) =>
+        prev.map((item) => {
+          const ids = usageMap[item.id] || [];
+          const usageCount = ids.length;
+          const singleCocktailName =
+            usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+          return { ...item, usageCount, singleCocktailName };
+        })
+      );
     };
     if (isFocused) run();
     return () => {
