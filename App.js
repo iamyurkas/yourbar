@@ -20,7 +20,7 @@ import { AppTheme } from "./src/theme";
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 
-import { importIngredients } from "./scripts/importIngredients";
+import { importCocktailsAndIngredients } from "./scripts/importCocktailsAndIngredients";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
@@ -56,7 +56,7 @@ function Tabs() {
 
 export default function App() {
   useEffect(() => {
-    importIngredients();
+    importCocktailsAndIngredients();
   }, []);
 
   return (
