@@ -78,7 +78,7 @@ export default function GeneralMenu({ visible, onClose }) {
             />
             <View style={styles.itemText}>
               <Text style={styles.itemTitle}>Use metric system</Text>
-              <Text style={styles.itemSub}>Uncheck to use U.S. units by default</Text>
+              <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
             </View>
           </View>
 
@@ -103,7 +103,7 @@ export default function GeneralMenu({ visible, onClose }) {
               style={styles.linkIcon}
             />
             <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Custom ingredient tags</Text>
+              <Text style={styles.itemTitle}>Ingredient tags</Text>
               <Text style={styles.itemSub}>Create, edit or remove ingredient tags</Text>
             </View>
             <MaterialIcons
@@ -122,7 +122,7 @@ export default function GeneralMenu({ visible, onClose }) {
               style={styles.linkIcon}
             />
             <View style={styles.itemText}>
-              <Text style={styles.itemTitle}>Custom cocktail tags</Text>
+              <Text style={styles.itemTitle}>Cocktail tags</Text>
               <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
             </View>
             <MaterialIcons
