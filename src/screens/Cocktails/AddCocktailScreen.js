@@ -1322,12 +1322,7 @@ export default function AddCocktailScreen() {
     if (incoming) {
       navigation.setParams({ initialIngredient: undefined });
     }
-  }, [
-    isFocused,
-    route.params?.initialIngredient,
-    navigation,
-    resetForm,
-  ]);
+  }, [isFocused, navigation, resetForm]);
 
   // Catch created ingredient returned from AddIngredient
   useFocusEffect(
