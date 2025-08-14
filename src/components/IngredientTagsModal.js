@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  Keyboard,
-} from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
 import {
   Text,
   TextInput,
@@ -45,7 +38,6 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLOR_PALETTE[0]);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
     if (!visible) return;
@@ -74,16 +66,6 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
     }
   }, [visible, autoAdd]);
 
-  useEffect(() => {
-    const show = Keyboard.addListener("keyboardDidShow", (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const hide = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
 
   const openEdit = (tag) => {
     setEditingId(tag.id);
@@ -217,7 +199,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         />
       </Modal>
 
-      <View style={[styles.dialogWrapper, { paddingBottom: keyboardHeight }]}> 
+      <View style={styles.dialogWrapper}>
         <Dialog
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
@@ -340,6 +322,6 @@ const styles = StyleSheet.create({
   previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
-  dialogWrapper: { flex: 1, justifyContent: "center" },
+  dialogWrapper: { flex: 1, justifyContent: "flex-start", paddingTop: 40 },
 });
 
