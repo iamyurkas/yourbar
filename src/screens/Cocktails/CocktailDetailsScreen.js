@@ -28,6 +28,7 @@ import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
+import { formatAmount, toMetric, toImperial } from "../../utils/units";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -154,6 +155,7 @@ export default function CocktailDetailsScreen() {
   const [ingMap, setIngMap] = useState(new Map());
   const [ingList, setIngList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showImperial, setShowImperial] = useState(false);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -274,20 +276,30 @@ export default function CocktailDetailsScreen() {
       }
 
       const display = substitute || ing || {};
+      let amount = r.amount;
+      let unitName = getUnitById(r.unitId)?.name || "";
+      if (amount != null) {
+        if (showImperial) {
+          ({ amount, unit: unitName } = toImperial(amount, unitName));
+        } else {
+          ({ amount, unit: unitName } = toMetric(amount, unitName));
+        }
+        amount = formatAmount(amount, showImperial);
+      }
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
         ingredientId: display.id || null,
         name: display.name || r.name,
         photoUri: display.photoUri || null,
-        amount: r.amount,
-        unitName: getUnitById(r.unitId)?.name || "",
+        amount,
+        unitName,
         inBar: substitute ? substitute.inBar : inBar,
         garnish: !!r.garnish,
         optional: !!r.optional,
         substituteFor: substitute ? originalName : null,
       };
     });
-  }, [cocktail, ingMap, ingList]);
+  }, [cocktail, ingMap, ingList, showImperial]);
 
   if (loading)
     return (
@@ -345,6 +357,17 @@ export default function CocktailDetailsScreen() {
       ) : null}
 
       {ratingStars}
+
+      <TouchableOpacity
+        onPress={() => setShowImperial((v) => !v)}
+        style={[styles.toggleBtn, { borderColor: theme.colors.primary }]}
+        accessibilityRole="button"
+        accessibilityLabel={showImperial ? "Show in metric" : "Show in imperial"}
+      >
+        <Text style={{ color: theme.colors.primary }}>
+          {showImperial ? "Show in metric" : "Show in imperial"}
+        </Text>
+      </TouchableOpacity>
 
       <View style={styles.body}>
         {glass && (
@@ -470,6 +493,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 8,
     marginBottom: 8,
+  },
+  toggleBtn: {
+    alignSelf: "center",
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderRadius: 4,
   },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
