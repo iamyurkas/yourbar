@@ -156,6 +156,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
       <Modal
         visible={visible}
         onDismiss={onClose}
+        style={{ justifyContent: "flex-start" }}
         contentContainerStyle={[
           styles.container,
           {
@@ -287,7 +288,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
-    marginVertical: 48,
+    marginTop: 48,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
