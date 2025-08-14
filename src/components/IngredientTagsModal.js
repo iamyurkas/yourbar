@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import {
   Text,
   TextInput,
@@ -198,16 +206,20 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         />
       </Modal>
 
-      <Dialog
-        visible={dialogVisible}
-        onDismiss={() => setDialogVisible(false)}
-        style={{ backgroundColor: theme.colors.surface }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.dialogWrapper}
       >
-        <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="Name"
-            mode="outlined"
+        <Dialog
+          visible={dialogVisible}
+          onDismiss={() => setDialogVisible(false)}
+          style={{ backgroundColor: theme.colors.surface }}
+        >
+          <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              label="Name"
+              mode="outlined"
             value={name}
             onChangeText={setName}
             error={!!nameError}
@@ -276,7 +288,8 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
             Save
           </Button>
         </Dialog.Actions>
-      </Dialog>
+        </Dialog>
+      </KeyboardAvoidingView>
     </Portal>
   );
 }
@@ -319,5 +332,6 @@ const styles = StyleSheet.create({
   previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
+  dialogWrapper: { flex: 1, justifyContent: "center" },
 });
 
