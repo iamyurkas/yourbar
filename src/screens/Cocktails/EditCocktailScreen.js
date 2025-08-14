@@ -50,7 +50,7 @@ import {
   deleteCocktail,
 } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
-import { UNIT_ID, getUnitById } from "../../constants/measureUnits";
+import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 /* ---------- helpers ---------- */
@@ -685,7 +685,7 @@ const IngredientRow = memo(function IngredientRow({
                 ]}
               >
                 <Text style={{ color: theme.colors.onSurface }}>
-                  {selectedUnit?.name || "ml"}
+                  {formatUnit(selectedUnit, row.quantity) || "ml"}
                 </Text>
                 <MaterialIcons
                   name="arrow-drop-down"
@@ -741,7 +741,7 @@ const IngredientRow = memo(function IngredientRow({
                             fontWeight: row.unitId === item.id ? "700" : "400",
                           }}
                         >
-                          {item.name}
+                          {formatUnit(item, row.quantity)}
                         </Text>
                         {row.unitId === item.id ? (
                           <MaterialIcons
@@ -754,6 +754,7 @@ const IngredientRow = memo(function IngredientRow({
                     </MenuOption>
                   </View>
                 )}
+                extraData={row.quantity}
                 keyboardShouldPersistTaps="handled"
                 getItemLayout={(_, i) => ({
                   length: 48,
