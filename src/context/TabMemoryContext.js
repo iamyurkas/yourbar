@@ -1,23 +1,29 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 
 const TabMemoryContext = createContext();
 
 export const TabMemoryProvider = ({ children }) => {
-  const [activeTabs, setActiveTabs] = useState({});
+  const activeTabsRef = useRef({});
 
-  const setTab = (groupKey, tabKey) => {
-    setActiveTabs((prev) => {
-      if (prev[groupKey] === tabKey) return prev;
-      return { ...prev, [groupKey]: tabKey };
-    });
-  };
+  const setTab = useCallback((groupKey, tabKey) => {
+    if (activeTabsRef.current[groupKey] === tabKey) return;
+    activeTabsRef.current[groupKey] = tabKey;
+  }, []);
 
-  const getTab = (groupKey) => {
-    return activeTabs[groupKey] || null;
-  };
+  const getTab = useCallback((groupKey) => {
+    return activeTabsRef.current[groupKey] || null;
+  }, []);
+
+  const value = useMemo(() => ({ setTab, getTab }), [setTab, getTab]);
 
   return (
-    <TabMemoryContext.Provider value={{ setTab, getTab }}>
+    <TabMemoryContext.Provider value={value}>
       {children}
     </TabMemoryContext.Provider>
   );
