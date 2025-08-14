@@ -84,6 +84,12 @@
     "description": "Baileys Irish Cream is a creamy liqueur made from Irish whiskey, cream, and cocoa, with an ABV of about 17%. It has a rich, velvety texture and a sweet, chocolatey taste. Often enjoyed over ice, in coffee, or as part of dessert cocktails."
   },
   {
+    "name": "Irish Cream Liqueur",
+    "tags": [2],
+    "image": "",
+    "description": "Irish Cream is a creamy liqueur made from Irish whiskey, cream, and cocoa, with an ABV of about 17%. It has a rich, velvety texture and a sweet, chocolatey taste. Often enjoyed over ice, in coffee, or as part of dessert cocktails."
+  },
+  {
     "name": "Banana",
     "tags": [6],
     "image": "",
@@ -216,7 +222,7 @@
     "description": "Green Chartreuse is a French herbal liqueur made by Carthusian monks, with an ABV of 55%. It contains over 130 botanicals, giving it a complex, sweet, and herbal flavor. Often used sparingly in cocktails due to its potency."
   },
   {
-    "name": "Chartreuse yellow",
+    "name": "Chartreuse Yellow",
     "tags": [1],
     "image": "",
     "description": "Yellow Chartreuse is a milder, sweeter version of the herbal liqueur, with an ABV of around 40%. It has a softer herbal profile with honey and saffron notes. Works well in cocktails that require a gentler herbal character."
@@ -876,7 +882,7 @@
     "description": "Pineapple juice is sweet, tangy, and tropical. It blends perfectly with rum, coconut, and citrus. Common in tiki drinks and summer punches."
   },
   {
-    "name": "Pink grapefruit soda",
+    "name": "Grapefruit Soda",
     "tags": [3],
     "image": "",
     "description": "Pink grapefruit soda is a sweet-tart, sparkling citrus drink. It pairs beautifully with tequila in a Paloma. Adds both flavor and fizz."
@@ -1005,7 +1011,13 @@
     "name": "Simple Syrup",
     "tags": [4],
     "image": "",
-    "description": "Sugar syrup, or simple syrup, is sugar dissolved in water. It blends easily into cocktails and is a bar staple."
+    "description": "Sugar syrup, or simple syrup, is sugar dissolved in water 1:1. It blends easily into cocktails and is a bar staple."
+  },
+    {
+    "name": "Rich Simple Syrup",
+    "tags": [4],
+    "image": "",
+    "description": "Rich Sugar syrup, or rich simple syrup, is sugar dissolved in water 2:1. It blends easily into cocktails and is a bar staple."
   },
   {
     "name": "Suze",
@@ -1066,6 +1078,12 @@
     "tags": [2],
     "image": "",
     "description": "Triple sec is an orange liqueur with 15–40% ABV. It is crisp, citrusy, and used in Margaritas and Sidecars."
+  },
+  {
+    "name": "Orange Liqueur",
+    "tags": [2],
+    "image": "",
+    "description": "Orange liqueur with 15–40% ABV. It is crisp, citrusy, and used in Margaritas and Sidecars."
   },
   {
     "name": "Vanilla Extract",

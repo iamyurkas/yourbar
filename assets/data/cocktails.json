@@ -699,7 +699,7 @@
         "unit": 11
       },
       {
-        "ingredient": "Pink grapefruit soda",
+        "ingredient": "Grapefruit Soda",
         "quantity": 120,
         "unit": 11
       },
@@ -7386,5 +7386,1019 @@
       "Top with 7-Up and gently stir.",
       "Garnish with a lemon wedge."
     ]
-  }
+  },
+  {
+    "name": "Adonis",
+    "glassware": "cocktail_glass",
+    "tags": [1, 4],
+    "description": "A classic sherry-and-vermouth aperitif—low-alcohol, smooth and aromatic. Equal parts dry sherry and sweet vermouth, brightened with orange bitters and garnished with an orange twist.",
+    "ingredients": [
+      {
+        "ingredient": "Dry Sherry",
+        "quantity": 45,
+        "unit": 11
+      },
+      { "ingredient": "Sweet Vermouth", "quantity": 45, "unit": 11 },
+      { "ingredient": "Orange Bitters", "quantity": 2, "unit": 6 },
+      {
+        "ingredient": "Orange",
+        "quantity": 1,
+        "unit": 26,
+        "garnish": true
+      }
+    ],
+    "instructions": [
+      "Select and pre-chill a cocktail glass.",
+      "Add dry sherry, sweet vermouth, and bitters to a mixing glass filled with ice.",
+      "Stir until well chilled.",
+      "Strain into the chilled glass.",
+      "Express orange peel oils over the drink and discard, or garnish with the twist."
+    ]
+  },
+  {
+    "name": "B-52",
+    "glassware": "shooter",
+    "tags": [6, 2],
+    "description": "A visually striking layered shot composed of coffee liqueur, Irish cream, and orange liqueur. Sweet, creamy, and rich with coffee and citrus notes—best built slowly for distinct layers.",
+    "ingredients": [
+      {
+        "ingredient": "Coffee Liqueur",
+        "quantity": 20,
+        "unit": 11
+      },
+      {
+        "ingredient": "Baileys",
+        "quantity": 20,
+        "unit": 11
+      },
+      {
+        "ingredient": "Triple Sec",
+        "quantity": 20,
+        "unit": 11
+      }
+    ],
+    "instructions": [
+      "Select a chilled shooter (shot) glass.",
+      "Pour coffee liqueur into the bottom.",
+      "Slowly layer the Irish cream over the back of a bar spoon.",
+      "Then layer the Triple Sec (or Grand Marnier) on top using the spoon.",
+      "Serve—optionally ignite the top layer for a dramatic flaming B-52 (exercise caution)."
+    ]
+  },
+  {
+    "name": "B-55",
+    "glassware": "shooter",
+    "tags": [6, 2],
+    "description": "A bold layered shot—coffee liqueur, Irish cream, and absinthe—delivering rich coffee, creamy sweetness, and a warming anise finish.",
+    "ingredients": [
+      {
+        "ingredient": "Coffee Liqueur",
+        "quantity": 10,
+        "unit": 11
+      },
+      {
+        "ingredient": "Baileys",
+        "quantity": 10,
+        "unit": 11
+      },
+      { "ingredient": "Absinthe", "quantity": 10, "unit": 11 }
+    ],
+    "instructions": [
+      "Select a chilled shooter glass.",
+      "Carefully layer the coffee liqueur into the glass.",
+      "Using the back of a spoon, gently layer the Irish cream over the coffee liqueur.",
+      "Finally, layer the absinthe on top using the spoon.",
+      "Serve immediately to appreciate the distinct layers."
+    ]
+  },
+  {
+    "name": "Baby Guinness",
+    "glassware": "shooter",
+    "tags": [6, 4],
+    "description": "A playful layered shooter that mimics a mini-pint of stout: coffee liqueur base topped with a creamy Irish cream 'head', sweet and smooth.",
+    "ingredients": [
+      {
+        "ingredient": "Coffee Liqueur",
+        "quantity": 30,
+        "unit": 11
+      },
+      {
+        "ingredient": "Baileys",
+        "quantity": 10,
+        "unit": 11
+      }
+    ],
+    "instructions": [
+      "Select a chilled shooter glass.",
+      "Pour coffee liqueur into the glass to fill roughly three-quarters.",
+      "Slowly layer chilled Irish cream over the back of a spoon so it floats on top, resembling a stout’s head.",
+      "Serve immediately and enjoy the visual fun."
+    ]
+  },
+  {
+    "name": "Adonis",
+    "glassware": "cocktail_glass",
+    "tags": [1, 4],
+    "description": "A graceful, low-alcohol aperitivo blending fino sherry and sweet vermouth, with a few dashes of orange bitters for aromatic depth. Smooth, nutty, and elegant.",
+    "ingredients": [
+      { "ingredient": "Dry Sherry", "quantity": 45, "unit": 11 },
+      { "ingredient": "Sweet Vermouth", "quantity": 45, "unit": 11 },
+      { "ingredient": "Orange Bitters", "quantity": 2, "unit": 6 },
+      {
+        "ingredient": "Orange",
+        "quantity": 1,
+        "unit": 26,
+        "garnish": true
+      }
+    ],
+    "instructions": [
+      "Select and pre-chill a cocktail glass (e.g., coupe).",
+      "Add sherry, sweet vermouth and orange bitters into a mixing glass filled with ice.",
+      "Stir until well chilled and properly diluted.",
+      "Strain into the chilled glass.",
+      "Express orange peel oils over the drink and garnish with the twist."
+    ]
+  },
+  {
+    "name": "Bamboo",
+    "glassware": "cocktail_glass",
+    "tags": [1, 4],
+    "description": "A refined dry-style aperitivo of equal parts dry sherry and dry vermouth, lifted with both orange and Angostura bitters. Crisp, herbal, and balanced—light but far from bland.",
+    "ingredients": [
+      {
+        "ingredient": "Dry Sherry",
+        "quantity": 4.5,
+        "unit": 3
+      },
+      { "ingredient": "Dry Vermouth", "quantity": 4.5, "unit": 3 },
+      { "ingredient": "Angostura Bitters", "quantity": 1, "unit": 6 },
+      { "ingredient": "Orange Bitters", "quantity": 1, "unit": 6 },
+      {
+        "ingredient": "Lemon",
+        "quantity": 1,
+        "unit": 26,
+        "garnish": true
+      }
+    ],
+    "instructions": [
+      "Select and pre-chill a cocktail glass (e.g., coupe or Nick & Nora).",
+      "Add dry sherry, dry vermouth, Angostura bitters and orange bitters to a mixing glass with ice.",
+      "Stir until well chilled and slightly diluted.",
+      "Strain into the chilled glass.",
+      "Express a lemon peel over the drink and garnish with the twist (or optional olive)."
+    ]
+  },
+  {
+    "name": "Banana Calling",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A tropical-inspired twist on the classic 'London Calling', mixing gin and sherry with banana liqueur for a fruity, slightly nutty and balanced cocktail.",
+    "ingredients": [
+      { "ingredient": "Gin", "quantity": 45, "unit": 11 },
+      { "ingredient": "Dry Sherry", "quantity": 15, "unit": 11 },
+      { "ingredient": "Banana Liqueur", "quantity": 15, "unit": 11 },
+      {
+        "ingredient": "Lemon Juice",
+        "quantity": 20,
+        "unit": 11
+      },
+      { "ingredient": "Simple Syrup", "quantity": 10, "unit": 11 },
+      { "ingredient": "Orange Bitters", "quantity": 2, "unit": 6 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 14, "garnish": true }
+    ],
+    "instructions": [
+      "Select and chill a cocktail glass.",
+      "Add all liquid ingredients to a shaker filled with ice.",
+      "Shake well until the mixture is thoroughly chilled.",
+      "Double strain into the chilled cocktail glass.",
+      "Garnish with a lemon peel."
+    ]
+  },
+  {
+    "name": "Banana Colada",
+    "glassware": "hurricane_glass",
+    "tags": [3, 5],
+    "description": "A creamy, tropical blend of rum, banana, coconut cream and pineapple juice—rich and indulgent, perfect for warm weather.",
+    "ingredients": [
+      { "ingredient": "Light Rum", "quantity": 45, "unit": 11 },
+      { "ingredient": "Banana Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coconut Cream", "quantity": 60, "unit": 11 },
+      { "ingredient": "Pineapple Juice", "quantity": 90, "unit": 11 },
+      { "ingredient": "Banana", "quantity": 1, "unit": 1, "optional": true },
+      { "ingredient": "Pineapple", "quantity": 1, "unit": 27, "garnish": true },
+      { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients except garnishes to a blender with a scoop of crushed ice.",
+      "Blend until smooth.",
+      "Pour into a chilled hurricane glass.",
+      "Garnish with a pineapple wedge and cherry."
+    ]
+  },
+  {
+    "name": "Banana Flash",
+    "glassware": "hurricane_glass",
+    "tags": [3, 5],
+    "description": "A lively tropical mix of banana and coconut flavours balanced with pineapple juice and a touch of citrus, served long over ice.",
+    "ingredients": [
+      { "ingredient": "Light Rum", "quantity": 30, "unit": 11 },
+      { "ingredient": "Banana Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coconut Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Pineapple Juice", "quantity": 60, "unit": 11 },
+      { "ingredient": "Orange Juice", "quantity": 30, "unit": 11 },
+      {
+        "ingredient": "Lemon Juice",
+        "quantity": 10,
+        "unit": 11
+      },
+      { "ingredient": "Pineapple", "quantity": 1, "unit": 27, "garnish": true },
+      { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a shaker with ice and add all liquid ingredients.",
+      "Shake well until chilled.",
+      "Strain into a hurricane glass filled with fresh ice.",
+      "Garnish with a pineapple wedge and cherry."
+    ]
+  },
+  {
+    "name": "Banshee",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A creamy, dessert-style cocktail combining banana and chocolate liqueurs with fresh cream for a smooth, sweet treat.",
+    "ingredients": [
+      { "ingredient": "Banana Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "White Crème de Cacao", "quantity": 30, "unit": 11 },
+      { "ingredient": "Fresh Cream", "quantity": 30, "unit": 11 },
+      { "ingredient": "Banana", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake until well chilled and creamy.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a banana slice."
+    ]
+  },
+  {
+    "name": "Barbarella",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A vibrant, fruity mix of apricot brandy, orange juice, and grenadine with a tropical sweetness and a soft citrus tang.",
+    "ingredients": [
+      { "ingredient": "Apricot Brandy", "quantity": 30, "unit": 11 },
+      { "ingredient": "Orange Juice", "quantity": 60, "unit": 11 },
+      { "ingredient": "Grenadine", "quantity": 15, "unit": 11 },
+      { "ingredient": "Orange", "quantity": 1, "unit": 27, "garnish": true },
+      { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker filled with ice.",
+      "Shake well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with an orange wedge and cherry."
+    ]
+  },
+  {
+    "name": "Bentley",
+    "glassware": "cocktail_glass",
+    "tags": [2],
+    "description": "A rich, aromatic blend of apple brandy and Dubonnet Rouge with complex herbal and fruity notes, stirred and served straight up.",
+    "ingredients": [
+      { "ingredient": "Calvados", "quantity": 45, "unit": 11 },
+      { "ingredient": "Dubonnet Rouge", "quantity": 45, "unit": 11 },
+      { "ingredient": "Orange", "quantity": 1, "unit": 14, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a mixing glass with ice.",
+      "Add apple brandy and Dubonnet Rouge.",
+      "Stir well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with an orange peel."
+    ]
+  },
+  {
+    "name": "Black Russian",
+    "glassware": "rocks_glass",
+    "tags": [1, 2],
+    "description": "A simple, strong blend of vodka and coffee liqueur, smooth and bittersweet with a rich coffee aroma.",
+    "ingredients": [
+      { "ingredient": "Vodka", "quantity": 50, "unit": 11 },
+      {
+        "ingredient": "Coffee Liqueur",
+        "quantity": 20,
+        "unit": 11
+      }
+    ],
+    "instructions": [
+      "Fill a rocks glass with ice cubes.",
+      "Pour vodka and coffee liqueur over the ice.",
+      "Stir gently to mix.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Blow Job",
+    "glassware": "shooter",
+    "tags": [6, 4],
+    "description": "A fun, creamy layered shooter of coffee liqueur and Irish cream, topped with whipped cream for a sweet finish.",
+    "ingredients": [
+      { "ingredient": "Coffee Liqueur", "quantity": 20, "unit": 11 },
+      { "ingredient": "Irish Cream Liqueur", "quantity": 20, "unit": 11 },
+      {
+        "ingredient": "Whipped Cream",
+        "quantity": 1,
+        "unit": 1,
+        "garnish": true
+      }
+    ],
+    "instructions": [
+      "Pour coffee liqueur into a shooter glass.",
+      "Carefully layer Irish cream over the back of a spoon.",
+      "Top with whipped cream.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Blue Kamikaze",
+    "glassware": "shooter",
+    "tags": [6, 2],
+    "description": "A vibrant blue shooter combining vodka, blue curaçao, and lime juice for a citrusy, sweet-tart kick.",
+    "ingredients": [
+      { "ingredient": "Vodka", "quantity": 30, "unit": 11 },
+      { "ingredient": "Blue Curaçao", "quantity": 30, "unit": 11 },
+      {
+        "ingredient": "Lime Juice",
+        "quantity": 10,
+        "unit": 11
+      }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake well until chilled.",
+      "Strain into a shooter glass.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Blue Ocean",
+    "glassware": "hurricane_glass",
+    "tags": [3, 5],
+    "description": "A refreshing tropical cocktail blending rum, blue curaçao, and pineapple juice with a hint of coconut.",
+    "ingredients": [
+      { "ingredient": "Light Rum", "quantity": 45, "unit": 11 },
+      { "ingredient": "Blue Curaçao", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coconut Cream", "quantity": 30, "unit": 11 },
+      { "ingredient": "Pineapple Juice", "quantity": 90, "unit": 11 },
+      { "ingredient": "Pineapple", "quantity": 1, "unit": 27, "garnish": true },
+      { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients except garnishes to a shaker with ice.",
+      "Shake well until chilled.",
+      "Strain into a hurricane glass filled with ice.",
+      "Garnish with a pineapple wedge and cherry."
+    ]
+  },
+  {
+    "name": "Blueberry Tea",
+    "glassware": "irish_coffee_glass",
+    "tags": [3, 5],
+    "description": "A warm, aromatic blend of Grand Marnier, Amaretto, and hot black tea, with a fruity and nutty profile.",
+    "ingredients": [
+      { "ingredient": "Grand Marnier", "quantity": 30, "unit": 11 },
+      { "ingredient": "Amaretto", "quantity": 30, "unit": 11 },
+      { "ingredient": "Hot Black Tea", "quantity": 120, "unit": 11 },
+      { "ingredient": "Orange", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Pour Grand Marnier and Amaretto into a warm Irish coffee glass.",
+      "Top with hot black tea.",
+      "Stir gently.",
+      "Garnish with an orange wedge."
+    ]
+  },
+  {
+    "name": "BMW",
+    "glassware": "shooter",
+    "tags": [6, 4],
+    "description": "A layered shooter made with equal parts Baileys, Malibu, and whisky, offering creamy, coconut, and oaky notes.",
+    "ingredients": [
+      { "ingredient": "Baileys Irish Cream", "quantity": 20, "unit": 11 },
+      { "ingredient": "Malibu Coconut Rum", "quantity": 20, "unit": 11 },
+      { "ingredient": "Whisky", "quantity": 20, "unit": 11 }
+    ],
+    "instructions": [
+      "Pour Baileys into a shooter glass.",
+      "Layer Malibu over the back of a spoon.",
+      "Layer whisky on top.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Bolo Cocktail",
+    "glassware": "cocktail_glass",
+    "tags": [2],
+    "description": "A sophisticated mix of gin, dry vermouth, and apricot brandy, creating a balanced fruity yet crisp profile.",
+    "ingredients": [
+      { "ingredient": "Gin", "quantity": 40, "unit": 11 },
+      { "ingredient": "Dry Vermouth", "quantity": 20, "unit": 11 },
+      { "ingredient": "Apricot Brandy", "quantity": 20, "unit": 11 },
+      { "ingredient": "Orange", "quantity": 1, "unit": 14, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a mixing glass with ice.",
+      "Add gin, dry vermouth, and apricot brandy.",
+      "Stir well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with an orange peel."
+    ]
+  },
+  {
+    "name": "Boyarskiy",
+    "glassware": "shooter",
+    "tags": [6, 2],
+    "description": "A layered shooter of grenadine, vodka, and Tabasco sauce, delivering a sweet, fiery, and potent kick.",
+    "ingredients": [
+      { "ingredient": "Grenadine", "quantity": 20, "unit": 11 },
+      { "ingredient": "Vodka", "quantity": 20, "unit": 11 },
+      { "ingredient": "Tabasco Sauce", "quantity": 3, "unit": 7 }
+    ],
+    "instructions": [
+      "Pour grenadine into a shooter glass.",
+      "Gently layer vodka over the back of a spoon.",
+      "Top with Tabasco sauce.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Brain Tumor",
+    "glassware": "shooter",
+    "tags": [6, 4],
+    "description": "A visually striking layered shooter made with peach schnapps, Irish cream, and grenadine, creating a 'brain-like' effect.",
+    "ingredients": [
+      { "ingredient": "Peach Schnapps", "quantity": 20, "unit": 11 },
+      { "ingredient": "Irish Cream Liqueur", "quantity": 20, "unit": 11 },
+      { "ingredient": "Grenadine", "quantity": 5, "unit": 11 }
+    ],
+    "instructions": [
+      "Pour peach schnapps into a shooter glass.",
+      "Slowly layer Irish cream over the back of a spoon so it forms clumps.",
+      "Drop grenadine through the cream to create the visual effect.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Brandy Daisy",
+    "glassware": "cocktail_glass",
+    "tags": [2],
+    "description": "A refreshing classic mixing brandy with lemon juice, orange liqueur, and grenadine for a balanced sweet-tart profile.",
+    "ingredients": [
+      { "ingredient": "Brandy", "quantity": 45, "unit": 11 },
+      { "ingredient": "Lemon Juice", "quantity": 20, "unit": 11 },
+      {
+        "ingredient": "Orange Liqueur",
+        "quantity": 15,
+        "unit": 11
+      },
+      { "ingredient": "Grenadine", "quantity": 10, "unit": 11 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a lemon wedge."
+    ]
+  },
+  {
+    "name": "Brandy Eggnog",
+    "glassware": "cup",
+    "tags": [3, 5],
+    "description": "A rich, creamy holiday classic blending brandy with milk, cream, sugar, and egg, topped with warming spices.",
+    "ingredients": [
+      { "ingredient": "Brandy", "quantity": 60, "unit": 11 },
+      { "ingredient": "Milk", "quantity": 120, "unit": 11 },
+      { "ingredient": "Cream", "quantity": 60, "unit": 11 },
+      { "ingredient": "Egg", "quantity": 1, "unit": 1 },
+      { "ingredient": "Sugar", "quantity": 2, "unit": 24 },
+      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+    ],
+    "instructions": [
+      "In a shaker, combine brandy, milk, cream, egg, and sugar.",
+      "Shake vigorously without ice to emulsify.",
+      "Add ice and shake again until well chilled.",
+      "Strain into a cup.",
+      "Garnish with a sprinkle of nutmeg."
+    ]
+  },
+  {
+    "name": "Brandy Separator",
+    "glassware": "rocks_glass",
+    "tags": [2],
+    "description": "A smooth, layered drink of brandy and coffee liqueur, served over ice for a rich, warming sipper.",
+    "ingredients": [
+      { "ingredient": "Brandy", "quantity": 45, "unit": 11 },
+      { "ingredient": "Coffee Liqueur", "quantity": 30, "unit": 11 }
+    ],
+    "instructions": [
+      "Fill a rocks glass with ice.",
+      "Pour brandy over the ice.",
+      "Carefully layer coffee liqueur over the back of a spoon so it settles beneath the brandy.",
+      "Serve without stirring."
+    ]
+  },
+  {
+    "name": "Buck",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A refreshing family of highball drinks combining a base spirit with citrus juice and ginger ale, light and effervescent.",
+    "ingredients": [
+      {
+        "ingredient": "Whiskey",
+        "quantity": 45,
+        "unit": 11
+      },
+      { "ingredient": "Lemon Juice", "quantity": 15, "unit": 11 },
+      { "ingredient": "Ginger Ale", "quantity": 120, "unit": 11 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add the base spirit and lemon juice.",
+      "Top with ginger ale.",
+      "Stir gently.",
+      "Garnish with a lemon wedge."
+    ]
+  },
+  {
+    "name": "Buck's Fizz",
+    "glassware": "champagne_flute",
+    "tags": [1, 3],
+    "description": "A classic sparkling brunch cocktail mixing champagne with orange juice for a light, citrusy refreshment.",
+    "ingredients": [
+      { "ingredient": "Champagne", "quantity": 75, "unit": 11 },
+      { "ingredient": "Orange Juice", "quantity": 75, "unit": 11 },
+      { "ingredient": "Orange", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Pour chilled orange juice into a champagne flute.",
+      "Top with chilled champagne.",
+      "Garnish with an orange wedge."
+    ]
+  },
+  {
+    "name": "Bull Shot",
+    "glassware": "highball_glass",
+    "tags": [2, 5],
+    "description": "A savory, robust drink blending vodka with beef bouillon, Worcestershire sauce, and spices, served over ice.",
+    "ingredients": [
+      { "ingredient": "Vodka", "quantity": 45, "unit": 11 },
+      { "ingredient": "Beef Bouillon", "quantity": 120, "unit": 11 },
+      { "ingredient": "Worcestershire Sauce", "quantity": 1, "unit": 23 },
+      { "ingredient": "Tabasco Sauce", "quantity": 2, "unit": 6 },
+      {
+        "ingredient": "Black Pepper",
+        "quantity": 1,
+        "unit": 15,
+        "garnish": true
+      }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add vodka, beef bouillon, Worcestershire sauce, and Tabasco sauce.",
+      "Stir well to mix.",
+      "Garnish with freshly ground black pepper."
+    ]
+  },
+  {
+    "name": "Bullfrog",
+    "glassware": "hurricane_glass",
+    "tags": [2, 5],
+    "description": "A potent, citrusy cocktail mixing multiple spirits with lemon-lime soda for a dangerously smooth drink.",
+    "ingredients": [
+      { "ingredient": "Vodka", "quantity": 30, "unit": 11 },
+      { "ingredient": "Gin", "quantity": 30, "unit": 11 },
+      { "ingredient": "Rum", "quantity": 30, "unit": 11 },
+      { "ingredient": "Tequila", "quantity": 30, "unit": 11 },
+      { "ingredient": "Blue Curaçao", "quantity": 30, "unit": 11 },
+      { "ingredient": "Lemon-Lime Soda", "quantity": 120, "unit": 11 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a hurricane glass with ice.",
+      "Add all spirits to the glass.",
+      "Top with lemon-lime soda.",
+      "Stir gently.",
+      "Garnish with a lemon wedge."
+    ]
+  },
+  {
+    "name": "Bushwacker",
+    "glassware": "hurricane_glass",
+    "tags": [3, 5],
+    "description": "A decadent, frozen tropical cocktail with rum, coffee liqueur, coconut cream, and chocolate liqueur, blended with ice for a boozy milkshake-like treat.",
+    "ingredients": [
+      { "ingredient": "Dark Rum", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coffee Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coconut Cream", "quantity": 60, "unit": 11 },
+      { "ingredient": "Dark Crème de Cacao", "quantity": 30, "unit": 11 },
+      { "ingredient": "Milk", "quantity": 60, "unit": 11 },
+      { "ingredient": "Ice", "quantity": 1, "unit": 17 },
+      { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients except cherry to a blender with ice.",
+      "Blend until smooth.",
+      "Pour into a hurricane glass.",
+      "Garnish with a cherry."
+    ]
+  },
+  {
+    "name": "Butter Cream",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A smooth and sweet dessert cocktail mixing butterscotch schnapps, Irish cream, and cream for a silky treat.",
+    "ingredients": [
+      { "ingredient": "Butterscotch Schnapps", "quantity": 30, "unit": 11 },
+      { "ingredient": "Irish Cream Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Fresh Cream", "quantity": 30, "unit": 11 },
+      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake until well chilled and creamy.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a sprinkle of nutmeg."
+    ]
+  },
+  {
+    "name": "Buttery Nipple",
+    "glassware": "shooter",
+    "tags": [6, 4],
+    "description": "A sweet, layered shooter of butterscotch schnapps and Irish cream, with a rich, buttery flavor.",
+    "ingredients": [
+      { "ingredient": "Butterscotch Schnapps", "quantity": 20, "unit": 11 },
+      { "ingredient": "Irish Cream Liqueur", "quantity": 20, "unit": 11 }
+    ],
+    "instructions": [
+      "Pour butterscotch schnapps into a shooter glass.",
+      "Carefully layer Irish cream over the back of a spoon.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "California Root Beer",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A cocktail that mimics the flavor of root beer by combining coffee liqueur, Galliano, and cola over ice.",
+    "ingredients": [
+      { "ingredient": "Coffee Liqueur", "quantity": 30, "unit": 11 },
+      { "ingredient": "Galliano", "quantity": 30, "unit": 11 },
+      { "ingredient": "Cola", "quantity": 120, "unit": 11 },
+      { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add coffee liqueur and Galliano.",
+      "Top with cola.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+    "name": "Canary Flip",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A rich, creamy cocktail made with sherry, egg yolk, and sugar, offering a smooth texture and nutty-sweet flavor.",
+    "ingredients": [
+      { "ingredient": "Egg Liqueur", "quantity": 60, "unit": 11 },
+      { "ingredient": "White Wine", "quantity": 60, "unit": 11 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 9 },
+      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+    ],
+    "instructions": [
+      "Add sherry, egg yolk, and sugar to a shaker without ice.",
+      "Shake vigorously until frothy.",
+      "Add ice and shake again until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a sprinkle of nutmeg."
+    ]
+  },
+  {
+    "name": "Cantaritos",
+    "glassware": "cup",
+    "tags": [3, 5],
+    "description": "A refreshing Mexican cocktail with tequila, citrus juices, and grapefruit soda, traditionally served in a clay cup.",
+    "ingredients": [
+      { "ingredient": "Tequila Blanco", "quantity": 60, "unit": 11 },
+      { "ingredient": "Orange Juice", "quantity": 30, "unit": 11 },
+      { "ingredient": "Lemon Juice", "quantity": 30, "unit": 11 },
+      { "ingredient": "Lime Juice", "quantity": 30, "unit": 11 },
+      { "ingredient": "Grapefruit Soda", "quantity": 120, "unit": 11 },
+      { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true },
+      { "ingredient": "Salt", "quantity": 1, "unit": 15, "optional": true }
+    ],
+    "instructions": [
+      "Fill a clay cup or highball glass with ice.",
+      "Add tequila, orange juice, lemon juice, and lime juice.",
+      "Top with grapefruit soda.",
+      "Stir gently.",
+      "Garnish with a lime wedge; optionally rim the cup with salt."
+    ]
+  },
+  {
+    "name": "Cape Cod",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A simple, refreshing mix of vodka and cranberry juice, garnished with lime for a tart finish.",
+    "ingredients": [
+      { "ingredient": "Vodka", "quantity": 45, "unit": 11 },
+      { "ingredient": "Cranberry Juice", "quantity": 120, "unit": 11 },
+      { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add vodka and top with cranberry juice.",
+      "Stir gently.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+    "name": "Car Crash",
+    "glassware": "shooter",
+    "tags": [6, 2],
+    "description": "A layered shooter combining peppermint schnapps and coffee liqueur for a bold, minty-sweet kick.",
+    "ingredients": [
+      { "ingredient": "Peppermint Schnapps", "quantity": 20, "unit": 11 },
+      { "ingredient": "Coffee Liqueur", "quantity": 20, "unit": 11 }
+    ],
+    "instructions": [
+      "Pour peppermint schnapps into a shooter glass.",
+      "Carefully layer coffee liqueur over the back of a spoon.",
+      "Serve immediately."
+    ]
+  },
+  {
+    "name": "Caribou Lou",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A tropical party drink made with rum, pineapple juice, and coconut rum, smooth and sweet.",
+    "ingredients": [
+      { "ingredient": "Overproof Rum", "quantity": 30, "unit": 11 },
+      { "ingredient": "Coconut Rum", "quantity": 30, "unit": 11 },
+      { "ingredient": "Pineapple Juice", "quantity": 150, "unit": 11 }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add 151 proof rum and coconut rum.",
+      "Top with pineapple juice.",
+      "Stir gently and serve."
+    ]
+  },
+  {
+    "name": "Champs Elysees",
+    "glassware": "cocktail_glass",
+    "tags": [2],
+    "description": "A sophisticated blend of cognac, green Chartreuse, lemon juice, and bitters for a herbal, citrusy classic.",
+    "ingredients": [
+      { "ingredient": "Cognac", "quantity": 45, "unit": 11 },
+      { "ingredient": "Chartreuse Green", "quantity": 15, "unit": 11 },
+      { "ingredient": "Lemon Juice", "quantity": 15, "unit": 11 },
+      { "ingredient": "Simple Syrup", "quantity": 5, "unit": 11 },
+      { "ingredient": "Angostura Bitters", "quantity": 1, "unit": 6 },
+      { "ingredient": "Lemon", "quantity": 1, "unit": 14, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a lemon peel."
+    ]
+  },
+  {
+    "name": "Charlie Chaplin",
+    "glassware": "cocktail_glass",
+    "tags": [3],
+    "description": "A classic Prohibition-era cocktail combining sloe gin, apricot brandy, and lime juice for a balanced fruity and tart flavor.",
+    "ingredients": [
+      { "ingredient": "Sloe Gin", "quantity": 30, "unit": 11 },
+      { "ingredient": "Apricot Brandy", "quantity": 30, "unit": 11 },
+      { "ingredient": "Lime Juice", "quantity": 30, "unit": 11 },
+      { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true }
+    ],
+    "instructions": [
+      "Add all ingredients to a shaker with ice.",
+      "Shake well until chilled.",
+      "Strain into a chilled cocktail glass.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+  "name": "Cherry Hooker",
+  "glassware": "shooter",
+  "tags": [6, 4],
+  "description": "A sweet layered shooter with grenadine, coffee liqueur, and Irish cream for a cherry, coffee, and cream taste.",
+  "ingredients": [
+    { "ingredient": "Grenadine", "quantity": 10, "unit": 11 },
+    { "ingredient": "Coffee Liqueur", "quantity": 20, "unit": 11 },
+    { "ingredient": "Irish Cream Liqueur", "quantity": 10, "unit": 11 },
+    { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+  ],
+  "instructions": [
+    "Pour grenadine into a shooter glass.",
+    "Layer coffee liqueur over the back of a spoon.",
+    "Layer Irish cream on top.",
+    "Garnish with a cherry."
+  ]
+},
+{
+  "name": "Chilcano de Pisco",
+  "glassware": "highball_glass",
+  "tags": [3, 5],
+  "description": "A refreshing Peruvian cocktail made with pisco, ginger ale, lime juice, and bitters, light and citrusy with a spicy ginger note.",
+  "ingredients": [
+    { "ingredient": "Pisco", "quantity": 60, "unit": 11 },
+    { "ingredient": "Lime Juice", "quantity": 15, "unit": 11 },
+    { "ingredient": "Ginger Ale", "quantity": 120, "unit": 11 },
+    { "ingredient": "Angostura Bitters", "quantity": 1, "unit": 6 },
+    { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true }
+  ],
+  "instructions": [
+    "Fill a highball glass with ice.",
+    "Add pisco and lime juice.",
+    "Top with ginger ale and add bitters.",
+    "Stir gently.",
+    "Garnish with a lime wedge."
+  ]
+},
+{
+  "name": "Chupacabra",
+  "glassware": "rocks_glass",
+  "tags": [2],
+  "description": "A bold, spicy cocktail combining tequila, Tabasco sauce, and lime juice for a fiery kick.",
+  "ingredients": [
+    { "ingredient": "Tequila Blanco", "quantity": 45, "unit": 11 },
+    { "ingredient": "Lime Juice", "quantity": 15, "unit": 11 },
+    { "ingredient": "Tabasco Sauce", "quantity": 3, "unit": 7 },
+    { "ingredient": "Lime", "quantity": 1, "unit": 27, "garnish": true }
+  ],
+  "instructions": [
+    "Fill a rocks glass with ice.",
+    "Add tequila and lime juice.",
+    "Top with Tabasco sauce.",
+    "Stir briefly.",
+    "Garnish with a lime wedge."
+  ]
+},
+{
+  "name": "Clover Club",
+  "glassware": "cocktail_glass",
+  "tags": [1, 3],
+  "description": "A pre-Prohibition classic made with gin, lemon juice, raspberry syrup, and egg white for a silky, fruity, and tart cocktail.",
+  "ingredients": [
+    { "ingredient": "Gin", "quantity": 45, "unit": 11 },
+    { "ingredient": "Lemon Juice", "quantity": 15, "unit": 11 },
+    { "ingredient": "Raspberry Syrup", "quantity": 15, "unit": 11 },
+    { "ingredient": "Egg", "quantity": 1, "unit": 1 }
+  ],
+  "instructions": [
+    "Add all ingredients to a shaker without ice and dry shake to emulsify.",
+    "Add ice and shake again until well chilled.",
+    "Strain into a chilled cocktail glass.",
+    "Serve without garnish or with a small raspberry."
+  ]
+},
+{
+  "name": "Creamsicle",
+  "glassware": "highball_glass",
+  "tags": [3, 5],
+  "description": "A creamy, sweet drink combining orange juice, vanilla vodka, triple sec, and cream for a nostalgic dessert flavor.",
+  "ingredients": [
+    { "ingredient": "Vanilla Vodka", "quantity": 45, "unit": 11 },
+    { "ingredient": "Triple Sec", "quantity": 15, "unit": 11 },
+    { "ingredient": "Orange Juice", "quantity": 90, "unit": 11 },
+    { "ingredient": "Fresh Cream", "quantity": 30, "unit": 11 },
+    { "ingredient": "Orange", "quantity": 1, "unit": 27, "garnish": true }
+  ],
+  "instructions": [
+    "Fill a highball glass with ice.",
+    "Add vodka, triple sec, and orange juice.",
+    "Top with cream and stir gently.",
+    "Garnish with an orange wedge."
+  ]
+},
+{
+  "name": "Creme Anglaise",
+  "glassware": "cocktail_glass",
+  "tags": [3],
+  "description": "A dessert-style cocktail with vanilla vodka, white crème de cacao, and cream, evoking the flavor of the classic custard sauce.",
+  "ingredients": [
+    { "ingredient": "Vodka Vanilla", "quantity": 30, "unit": 11 },
+    { "ingredient": "Creme de Cacao White", "quantity": 30, "unit": 11 },
+    { "ingredient": "Cream", "quantity": 30, "unit": 11 },
+    { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+  ],
+  "instructions": [
+    "Add all ingredients to a shaker with ice.",
+    "Shake well until chilled and creamy.",
+    "Strain into a chilled cocktail glass.",
+    "Garnish with a sprinkle of nutmeg."
+  ]
+},
+{
+  "name": "Culto A La Vida",
+  "glassware": "hurricane_glass",
+  "tags": [3, 5],
+  "description": "A tropical, fruity blend of rum, apricot brandy, banana liqueur, pineapple juice, and grenadine for a vibrant, colorful drink.",
+  "ingredients": [
+    { "ingredient": "White Rum", "quantity": 45, "unit": 11 },
+    { "ingredient": "Apricot Brandy", "quantity": 15, "unit": 11 },
+    { "ingredient": "Banana Liqueur", "quantity": 15, "unit": 11 },
+    { "ingredient": "Pineapple Juice", "quantity": 90, "unit": 11 },
+    { "ingredient": "Grenadine", "quantity": 10, "unit": 11 },
+    { "ingredient": "Pineapple", "quantity": 1, "unit": 27, "garnish": true },
+    { "ingredient": "Cherry", "quantity": 1, "unit": 1, "garnish": true }
+  ],
+  "instructions": [
+    "Fill a shaker with ice and add all liquid ingredients.",
+    "Shake well until chilled.",
+    "Strain into a hurricane glass filled with ice.",
+    "Garnish with a pineapple wedge and cherry."
+  ]
+},
+{
+  "name": "Dan Sabo's Whiskey Sour",
+  "glassware": "rocks_glass",
+  "tags": [3],
+  "description": "A modern twist on the classic whiskey sour, featuring bourbon, lemon juice, simple syrup, and red wine float for added depth.",
+  "ingredients": [
+    { "ingredient": "Bourbon", "quantity": 60, "unit": 11 },
+    { "ingredient": "Lemon Juice", "quantity": 30, "unit": 11 },
+    { "ingredient": "Simple Syrup", "quantity": 15, "unit": 11 },
+    { "ingredient": "Red Wine", "quantity": 15, "unit": 11 },
+    { "ingredient": "Lemon", "quantity": 1, "unit": 27, "garnish": true }
+  ],
+  "instructions": [
+    "Add bourbon, lemon juice, and simple syrup to a shaker with ice.",
+    "Shake well until chilled.",
+    "Strain into a rocks glass filled with ice.",
+    "Gently float red wine on top using the back of a spoon.",
+    "Garnish with a lemon wedge."
+  ]
+},
+{
+  "name": "Dandy",
+  "glassware": "cocktail_glass",
+  "tags": [2],
+  "description": "A refined mix of rye whiskey, sweet vermouth, orange curaçao, and bitters, offering a rich, slightly sweet profile.",
+  "ingredients": [
+    { "ingredient": "Rye Whiskey", "quantity": 45, "unit": 11 },
+    { "ingredient": "Sweet Vermouth", "quantity": 30, "unit": 11 },
+    { "ingredient": "Orange Curaçao", "quantity": 15, "unit": 11 },
+    { "ingredient": "Angostura Bitters", "quantity": 1, "unit": 6 },
+    { "ingredient": "Orange", "quantity": 1, "unit": 14, "garnish": true }
+  ],
+  "instructions": [
+    "Fill a mixing glass with ice.",
+    "Add rye whiskey, sweet vermouth, orange curaçao, and bitters.",
+    "Stir until well chilled.",
+    "Strain into a chilled cocktail glass.",
+    "Garnish with an orange peel."
+  ]
+},
+{
+  "name": "Delta Sunset",
+  "glassware": "cocktail_glass",
+  "tags": [3, 5],
+  "description": "A colorful drink combining Cointreau, Triple Sec, and Lemon Juice for a sweet citrus refreshment.",
+  "ingredients": [
+    { "ingredient": "Cointreau", "quantity": 60, "unit": 11 },
+    { "ingredient": "Triple Sec", "quantity": 60, "unit": 11 },
+    { "ingredient": "Lemon Juice", "quantity": 60, "unit": 11 },
+    { "ingredient": "Orange", "quantity": 1, "unit": 27, "garnish": true }
+  ],
+  "instructions": [
+    "Stir ingredients in a cocktail shaker with ice. Strain into a cocktail glass over ice."
+  ]
+},
+{
+  "name": "Derby",
+  "glassware": "cocktail_glass",
+  "tags": [1, 2],
+  "description": "An official IBA cocktail combining bourbon, sweet vermouth, orange curaçao, and lime juice with bitters for a balanced, aromatic profile.",
+  "ingredients": [
+    { "ingredient": "Gin", "quantity": 60, "unit": 11 },
+    { "ingredient": "Peach Bitters", "quantity": 2, "unit": 6 },
+    { "ingredient": "Mint", "quantity": 5, "unit": 10 },
+    { "ingredient": "Rich Simple Syrup", "quantity": 2.5, "unit": 11 },
+    { "ingredient": "Mint", "quantity": 1, "unit": 10, "garnish": true }
+  ],
+  "instructions": [
+    "Lightly muddle mint (just to bruise) in base of stirring glass.",
+    "Add other ingredients, and stir with ice.",
+    "Fine strain into a chilled cocktail glass.",
+    "Garnish with a mint leave."
+  ]
+}
+
+
 ]
