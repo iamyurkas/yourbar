@@ -1245,7 +1245,7 @@
         "unit": 11
       },
       {
-        "ingredient": "Chartreuse green",
+        "ingredient": "Chartreuse Green",
         "quantity": 22.5,
         "unit": 11
       },
@@ -2145,7 +2145,7 @@
         "unit": 11
       },
       {
-        "ingredient": "Chartreuse green",
+        "ingredient": "Chartreuse Green",
         "quantity": 15,
         "unit": 11
       },
@@ -5571,7 +5571,7 @@
         "unit": 11
       },
       {
-        "ingredient": "Tonicr",
+        "ingredient": "Tonic",
         "quantity": 1,
         "unit": 20
       },
@@ -5639,7 +5639,7 @@
         "unit": 11
       },
       {
-        "ingredient": "Orange Slice",
+        "ingredient": "Orange",
         "quantity": 1,
         "unit": 19,
         "garnish": true
@@ -6809,9 +6809,9 @@
         "optional": true
       },
       {
-        "ingredient": "Lemon Twist",
+        "ingredient": "Lemon",
         "quantity": 1,
-        "unit": 1,
+        "unit": 26,
         "garnish": true
       },
       {
@@ -7297,7 +7297,7 @@
         "unit": 6
       },
       {
-        "ingredient": "Orange Peel",
+        "ingredient": "Orange",
         "quantity": 1,
         "unit": 14,
         "garnish": true
