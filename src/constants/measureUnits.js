@@ -70,3 +70,16 @@ export const searchUnits = (q) => {
   if (!s) return MEASURE_UNITS;
   return MEASURE_UNITS.filter((u) => u.name.toLowerCase().includes(s));
 };
+
+// Return singular or plural unit name based on quantity
+export const formatUnit = (unit, quantity) => {
+  // unit can be an object from MEASURE_UNITS or a string name
+  const u =
+    typeof unit === "string"
+      ? MEASURE_UNITS.find((m) => m.name === unit || m.plural === unit)
+      : unit;
+  if (!u) return typeof unit === "string" ? unit : "";
+  const q = Number(quantity);
+  if (!Number.isFinite(q) || q === 1) return u.name;
+  return u.plural || u.name;
+};

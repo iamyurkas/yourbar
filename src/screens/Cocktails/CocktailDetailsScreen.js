@@ -26,7 +26,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
-import { getUnitById } from "../../constants/measureUnits";
+import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
 import { formatAmount, toMetric, toImperial } from "../../utils/units";
 
@@ -284,7 +284,10 @@ export default function CocktailDetailsScreen() {
         } else {
           ({ amount, unit: unitName } = toMetric(amount, unitName));
         }
+        unitName = formatUnit(unitName, amount);
         amount = formatAmount(amount, showImperial);
+      } else {
+        unitName = formatUnit(unitName, amount);
       }
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
