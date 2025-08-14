@@ -1,31 +1,33 @@
 const FRACTIONS = [
-  { value: 1/8, symbol: "⅛" },
-  { value: 1/6, symbol: "⅙" },
-  { value: 1/5, symbol: "⅕" },
-  { value: 1/4, symbol: "¼" },
-  { value: 1/3, symbol: "⅓" },
-  { value: 3/8, symbol: "⅜" },
-  { value: 2/5, symbol: "⅖" },
-  { value: 1/2, symbol: "½" },
-  { value: 3/5, symbol: "⅗" },
-  { value: 5/8, symbol: "⅝" },
-  { value: 2/3, symbol: "⅔" },
-  { value: 3/4, symbol: "¾" },
-  { value: 4/5, symbol: "⅘" },
-  { value: 5/6, symbol: "⅚" },
-  { value: 7/8, symbol: "⅞" },
+  { value: 1 / 8, symbol: "⅛" },
+  { value: 1 / 6, symbol: "⅙" },
+  { value: 1 / 5, symbol: "⅕" },
+  { value: 1 / 4, symbol: "¼" },
+  { value: 1 / 3, symbol: "⅓" },
+  { value: 3 / 8, symbol: "⅜" },
+  { value: 2 / 5, symbol: "⅖" },
+  { value: 1 / 2, symbol: "½" },
+  { value: 3 / 5, symbol: "⅗" },
+  { value: 5 / 8, symbol: "⅝" },
+  { value: 2 / 3, symbol: "⅔" },
+  { value: 3 / 4, symbol: "¾" },
+  { value: 4 / 5, symbol: "⅘" },
+  { value: 5 / 6, symbol: "⅚" },
+  { value: 7 / 8, symbol: "⅞" },
 ];
 
-export function formatAmount(amount) {
+export function formatAmount(amount, useFractions = false) {
   if (amount == null) return "";
-  const whole = Math.trunc(amount);
-  const fraction = amount - whole;
-  const match = FRACTIONS.find((f) => Math.abs(f.value - fraction) < 0.02);
-  if (match) {
-    return `${whole ? whole + " " : ""}${match.symbol}`.trim();
-  }
-  if (fraction === 0) return `${whole}`;
   const rounded = Math.round(amount * 100) / 100;
+  if (useFractions) {
+    const whole = Math.trunc(rounded);
+    const fraction = rounded - whole;
+    const match = FRACTIONS.find((f) => Math.abs(f.value - fraction) < 0.02);
+    if (match) {
+      return `${whole ? whole + " " : ""}${match.symbol}`.trim();
+    }
+    if (fraction === 0) return `${whole}`;
+  }
   return `${rounded}`.replace(/\.0+$/, "");
 }
 

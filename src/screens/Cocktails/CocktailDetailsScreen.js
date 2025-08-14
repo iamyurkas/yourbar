@@ -284,7 +284,7 @@ export default function CocktailDetailsScreen() {
         } else {
           ({ amount, unit: unitName } = toMetric(amount, unitName));
         }
-        amount = formatAmount(amount);
+        amount = formatAmount(amount, showImperial);
       }
       return {
         key: `${r.order}-${r.ingredientId ?? "free"}`,
@@ -360,7 +360,7 @@ export default function CocktailDetailsScreen() {
 
       <TouchableOpacity
         onPress={() => setShowImperial((v) => !v)}
-        style={styles.toggleBtn}
+        style={[styles.toggleBtn, { borderColor: theme.colors.primary }]}
         accessibilityRole="button"
         accessibilityLabel={showImperial ? "Show in metric" : "Show in imperial"}
       >
@@ -494,7 +494,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8,
   },
-  toggleBtn: { alignSelf: "center", marginBottom: 8 },
+  toggleBtn: {
+    alignSelf: "center",
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderRadius: 4,
+  },
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
     paddingHorizontal: 10,
