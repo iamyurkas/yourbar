@@ -11,10 +11,11 @@ import {
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import IngredientIcon from "../../assets/lemon.svg";
 import { useNavigation } from "@react-navigation/native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const MENU_WIDTH = SCREEN_WIDTH * 0.9;
+const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 
 export default function GeneralMenu({ visible, onClose }) {
   const navigation = useNavigation();
@@ -77,9 +78,7 @@ export default function GeneralMenu({ visible, onClose }) {
             />
             <View style={styles.itemText}>
               <Text style={styles.itemTitle}>Use metric system</Text>
-              <Text style={styles.itemSub}>
-                If unchecked, U.S. customary units will be used
-              </Text>
+              <Text style={styles.itemSub}>Uncheck to use U.S. units by default</Text>
             </View>
           </View>
 
@@ -91,16 +90,16 @@ export default function GeneralMenu({ visible, onClose }) {
             <View style={styles.itemText}>
               <Text style={styles.itemTitle}>Keep screen awake</Text>
               <Text style={styles.itemSub}>
-                Prevent the phone from sleeping while viewing details
+                Prevent the phone from sleeping while viewing cocktail details
               </Text>
             </View>
           </View>
 
           <TouchableOpacity style={styles.linkRow} onPress={navigateToIngredientTags}>
-            <MaterialIcons
-              name="label"
-              size={22}
-              color="#4DABF7"
+            <IngredientIcon
+              width={22}
+              height={22}
+              fill="#4DABF7"
               style={styles.linkIcon}
             />
             <View style={styles.itemText}>
