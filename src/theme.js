@@ -14,6 +14,7 @@ export const AppTheme = {
     surface: "#F8F9FA",
     outline: "#E5EAF0",
     outlineVariant: "#E9EEF4",
+    surfaceVariant: "#EAF3F9",
 
     error: "#FF6B6B",
     errorContainer: "#FFE3E6",
