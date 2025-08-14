@@ -1,214 +1,28 @@
 import React, {
-  useEffect,
-  useState,
   useCallback,
-  useRef,
+  useEffect,
   useMemo,
-  memo,
-  useDeferredValue,
+  useRef,
+  useState,
 } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useTheme } from "react-native-paper";
+import HeaderWithSearch from "../../components/HeaderWithSearch";
+import TagFilterMenu from "../../components/TagFilterMenu";
+import IngredientRow, {
+  INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
+} from "../../components/IngredientRow";
+import { useTabMemory } from "../../context/TabMemoryContext";
 import {
   getAllIngredients,
   saveIngredient,
 } from "../../storage/ingredientsStorage";
-import HeaderWithSearch from "../../components/HeaderWithSearch";
-import { useTabMemory } from "../../context/TabMemoryContext";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "react-native-paper";
-import TagFilterMenu from "../../components/TagFilterMenu";
-import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
+import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
-
-// ---- Helpers ----
-const withAlpha = (hex, alpha) => {
-  if (!hex || hex[0] !== "#" || hex.length !== 7) return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return `${hex}${a}`;
-};
-
-// ---- Константи для лісту ----
-const IMAGE_SIZE = 50;
-const ROW_VERTICAL = 8;
-const ROW_BORDER = 1;
-const ITEM_HEIGHT = ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
-
-// ---- Рядок списку ----
-const ItemRow = memo(
-  function ItemRow({
-    id,
-    name,
-    photoUri,
-    tags,
-    usageCount,
-    singleCocktailName,
-    inBar,
-    inShoppingList,
-    baseIngredientId,
-    onPress,
-    onToggleInBar,
-    isNavigating,
-  }) {
-    const theme = useTheme();
-    const isBranded = baseIngredientId != null;
-
-    const ripple = useMemo(
-      () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
-      [theme.colors.tertiary]
-    );
-
-    return (
-      <View
-        style={[
-          inBar ? styles.highlightWrapper : styles.normalWrapper,
-          { borderBottomColor: theme.colors.background },
-          inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
-        ]}
-      >
-        <View
-          style={[
-            styles.item,
-            isBranded && {
-              ...styles.brandedStripe,
-              borderLeftColor: theme.colors.primary,
-            },
-            !inBar && styles.dimmed,
-            isNavigating && {
-              ...styles.navigatingRow,
-              backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
-            },
-          ]}
-        >
-          {inShoppingList && (
-            <MaterialIcons
-              name="shopping-cart"
-              size={16}
-              color={theme.colors.primary}
-              style={styles.cartIcon}
-            />
-          )}
-
-          <Pressable
-            onPress={() => onPress(id)}
-            android_ripple={ripple}
-            style={({ pressed }) => [
-              styles.leftTapZone,
-              pressed && styles.pressedLeft,
-            ]}
-            hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
-          >
-            {photoUri ? (
-              <Image
-                source={{ uri: photoUri }}
-                style={[
-                  styles.image,
-                  { backgroundColor: theme.colors.background },
-                ]}
-                resizeMode="contain"
-              />
-            ) : (
-              <View
-                style={[
-                  styles.image,
-                  styles.placeholder,
-                  { backgroundColor: theme.colors.surface },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.placeholderText,
-                    { color: theme.colors.onSurfaceVariant },
-                  ]}
-                >
-                  No image
-                </Text>
-              </View>
-            )}
-            <View style={styles.info}>
-              <Text
-                numberOfLines={1}
-                style={[styles.name, { color: theme.colors.onSurface }]}
-              >
-                {name}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.usage,
-                  { color: theme.colors.onSurfaceVariant },
-                ]}
-              >
-                {usageCount > 0
-                  ? usageCount === 1
-                    ? singleCocktailName || "1 cocktail"
-                    : `${usageCount} cocktails`
-                  : "\u00A0"}
-              </Text>
-            </View>
-          </Pressable>
-
-          {Array.isArray(tags) && tags.length > 0 && (
-            <View style={styles.tagDots}>
-              {tags.map((tag, idx) => (
-                <View
-                  key={tag.id}
-                  style={[
-                    styles.tagDot,
-                    idx === 0 && styles.firstTagDot,
-                    { backgroundColor: tag.color },
-                  ]}
-                />
-              ))}
-            </View>
-          )}
-
-          <Pressable
-            onPress={() => onToggleInBar(id)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            android_ripple={{ ...ripple, borderless: true }}
-            style={({ pressed }) => [
-              styles.checkButton,
-              pressed && styles.pressedCheck,
-            ]}
-          >
-            <MaterialIcons
-              name={inBar ? "check-circle" : "radio-button-unchecked"}
-              size={22}
-              color={
-                inBar ? theme.colors.primary : theme.colors.onSurfaceVariant
-              }
-            />
-          </Pressable>
-        </View>
-      </View>
-    );
-  },
-  (prev, next) =>
-    prev.id === next.id &&
-    prev.name === next.name &&
-    prev.photoUri === next.photoUri &&
-    prev.inBar === next.inBar &&
-    prev.inShoppingList === next.inShoppingList &&
-    prev.baseIngredientId === next.baseIngredientId &&
-    prev.isNavigating === next.isNavigating &&
-    prev.tags === next.tags &&
-    prev.usageCount === next.usageCount &&
-    prev.singleCocktailName === next.singleCocktailName
-);
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -237,123 +51,81 @@ export default function AllIngredientsScreen() {
     (async () => {
       const custom = await getAllTags();
       if (!cancelled)
-        setAvailableTags([
-          ...BUILTIN_INGREDIENT_TAGS,
-          ...(custom || []),
-        ]);
+        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
     })();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const indexMapRef = useRef(new Map());
-
-  const sortIngredients = useCallback((data) => {
-    return [...data].sort((a, b) =>
+  const loadData = useCallback(async () => {
+    const [base, cocktails] = await Promise.all([
+      getAllIngredients(),
+      getAllCocktails(),
+    ]);
+    const sorted = [...base].sort((a, b) =>
       a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
     );
+    const usageMap = mapCocktailsByIngredient(sorted, cocktails);
+    const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
+    return sorted.map((item) => {
+      const ids = usageMap[item.id] || [];
+      const usageCount = ids.length;
+      const singleCocktailName =
+        usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+      return {
+        ...item,
+        searchName: item.name.toLowerCase(),
+        usageCount,
+        singleCocktailName,
+      };
+    });
   }, []);
 
-  const loadIngredients = useCallback(async () => {
-    const data = await getAllIngredients();
-    return sortIngredients(data).map((item) => ({
-      ...item,
-      searchName: item.name.toLowerCase(),
-    }));
-  }, [sortIngredients]);
-
   useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      const [base, cocktails] = await Promise.all([
-        loadIngredients(),
-        getAllCocktails(),
-      ]);
-      if (cancelled) return;
-      const usageMap = mapCocktailsByIngredient(base, cocktails);
-      const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
-      const enriched = base.map((item) => {
-        const ids = usageMap[item.id] || [];
-        const usageCount = ids.length;
-        const singleCocktailName =
-          usageCount === 1 ? cocktailMap.get(ids[0]) : null;
-        return { ...item, usageCount, singleCocktailName };
-      });
-      setIngredients((prev) => {
-        const prevMap = new Map(prev.map((i) => [i.id, i]));
-        const result = enriched.map((item) => {
-          const prevItem = prevMap.get(item.id);
-          if (
-            prevItem &&
-            prevItem.usageCount === item.usageCount &&
-            prevItem.singleCocktailName === item.singleCocktailName
-          ) {
-            return prevItem;
-          }
-          return item;
-        });
-        const idxMap = new Map();
-        for (let i = 0; i < result.length; i++) idxMap.set(result[i].id, i);
-        indexMapRef.current = idxMap;
-        return result;
-      });
+    let cancel = false;
+    if (!isFocused) return;
+    (async () => {
+      const data = await loadData();
+      if (cancel) return;
+      setIngredients(data);
       setLoading(false);
-    };
-    if (isFocused) run();
+    })();
     return () => {
-      cancelled = true;
+      cancel = true;
     };
-  }, [isFocused, loadIngredients]);
+  }, [isFocused, loadData]);
 
   useEffect(() => {
-    const id = setTimeout(() => setSearchDebounced(search), 300);
-    return () => clearTimeout(id);
+    const h = setTimeout(() => setSearchDebounced(search), 300);
+    return () => clearTimeout(h);
   }, [search]);
 
-  const deferredSearch = useDeferredValue(searchDebounced);
+  const filtered = useMemo(() => {
+    const q = searchDebounced.trim().toLowerCase();
+    let data = ingredients;
+    if (q) data = data.filter((i) => i.searchName.includes(q));
+    if (selectedTagIds.length > 0)
+      data = data.filter(
+        (i) =>
+          Array.isArray(i.tags) &&
+          i.tags.some((t) => selectedTagIds.includes(t.id))
+      );
+    return data;
+  }, [ingredients, searchDebounced, selectedTagIds]);
 
-  // batch saves
-  const pendingSaveRef = useRef(new Map());
-  const flushTimerRef = useRef(null);
-
-  const flushSaves = useCallback(() => {
-    const pending = pendingSaveRef.current;
-    pendingSaveRef.current = new Map();
-    flushTimerRef.current = null;
-    if (pending.size === 0) return;
-
-    pending.forEach((inBar, id) => {
-      const idx = indexMapRef.current.get(id);
-      if (idx == null) return;
-      const current = ingredients[idx];
-      if (!current) return;
-      const { searchName, usageCount, singleCocktailName, ...rest } = current;
-      saveIngredient({ ...rest, inBar }).catch(() => {});
+  const toggleInBar = useCallback((id) => {
+    setIngredients((prev) => {
+      const idx = prev.findIndex((i) => i.id === id);
+      if (idx === -1) return prev;
+      const next = [...prev];
+      const item = next[idx];
+      const inBar = !item.inBar;
+      next[idx] = { ...item, inBar };
+      saveIngredient({ ...item, inBar }).catch(() => {});
+      return next;
     });
-  }, [ingredients]);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) return;
-    flushTimerRef.current = setTimeout(flushSaves, 200);
-  }, [flushSaves]);
-
-  const toggleInBar = useCallback(
-    (id) => {
-      setIngredients((prev) => {
-        const idx = indexMapRef.current.get(id);
-        if (idx === undefined || !prev[idx]) return prev;
-        const next = [...prev];
-        const item = next[idx];
-        const nextInBar = !item?.inBar;
-        next[idx] = { ...item, inBar: nextInBar };
-        pendingSaveRef.current.set(id, nextInBar);
-        scheduleFlush();
-        return next;
-      });
-    },
-    [scheduleFlush]
-  );
+  }, []);
 
   const onItemPress = useCallback(
     (id) => {
@@ -367,29 +139,17 @@ export default function AllIngredientsScreen() {
     [navigation]
   );
 
-  const filtered = useMemo(() => {
-    const q = deferredSearch.trim().toLowerCase();
-    let data = ingredients;
-    if (q) data = data.filter((i) => i.searchName.includes(q));
-    if (selectedTagIds.length > 0)
-      data = data.filter((i) =>
-        Array.isArray(i.tags) &&
-        i.tags.some((t) => selectedTagIds.includes(t.id))
-      );
-    return data;
-  }, [ingredients, deferredSearch, selectedTagIds]);
-
   const renderItem = useCallback(
     ({ item }) => (
-      <ItemRow
+      <IngredientRow
         id={item.id}
         name={item.name}
         photoUri={item.photoUri}
         tags={item.tags}
         usageCount={item.usageCount}
         singleCocktailName={item.singleCocktailName}
-        inBar={item.inBar === true}
-        inShoppingList={item.inShoppingList === true}
+        inBar={item.inBar}
+        inShoppingList={item.inShoppingList}
         baseIngredientId={item.baseIngredientId}
         onPress={onItemPress}
         onToggleInBar={toggleInBar}
@@ -399,27 +159,7 @@ export default function AllIngredientsScreen() {
     [onItemPress, toggleInBar, navigatingId]
   );
 
-  const keyExtractor = useCallback(
-    (item, i) => String(item?.id ?? `${item?.name ?? "item"}-${i}`),
-    []
-  );
-
-  useEffect(() => {
-    return () => {
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-      flushTimerRef.current = null;
-      const pending = pendingSaveRef.current;
-      pendingSaveRef.current = new Map();
-      pending.forEach((inBar, id) => {
-        const idx = indexMapRef.current.get(id);
-        if (idx == null) return;
-        const current = ingredients[idx];
-        if (!current) return;
-        const { searchName, ...rest } = current;
-        saveIngredient({ ...rest, inBar }).catch(() => {});
-      });
-    };
-  }, [ingredients]);
+  const keyExtractor = useCallback((item) => String(item.id), []);
 
   if (loading) {
     return (
@@ -433,9 +173,7 @@ export default function AllIngredientsScreen() {
   }
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -447,7 +185,6 @@ export default function AllIngredientsScreen() {
           />
         }
       />
-
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}
@@ -472,59 +209,4 @@ export default function AllIngredientsScreen() {
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1 },
-
-  highlightWrapper: { borderBottomWidth: ROW_BORDER },
-  normalWrapper: { borderBottomWidth: ROW_BORDER },
-
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: ROW_VERTICAL,
-    paddingHorizontal: 12,
-    position: "relative",
-    height: ITEM_HEIGHT - ROW_BORDER,
-  },
-  dimmed: { opacity: 0.88 },
-
-  navigatingRow: { opacity: 0.6 },
-
-  leftTapZone: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: 8,
-  },
-  pressedLeft: {
-    opacity: 0.7,
-    transform: [{ scale: Platform.OS === "ios" ? 0.98 : 0.99 }],
-  },
-
-  image: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    aspectRatio: 1,
-    borderRadius: 8,
-    marginRight: 12,
-    overflow: "hidden",
-  },
-  placeholder: { justifyContent: "center", alignItems: "center" },
-  placeholderText: { fontSize: 10, textAlign: "center" },
-
-  info: { flex: 1, paddingRight: 8 },
-  name: { fontSize: 16 },
-  usage: { fontSize: 12, marginTop: 4 },
-
-  tagDots: {
-    flexDirection: "row",
-    marginRight: 8,
-    alignSelf: "flex-start",
-  },
-  tagDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 4 },
-  firstTagDot: { marginLeft: 0 },
-
-  cartIcon: { position: "absolute", bottom: 4, right: 60, zIndex: 1 },
-  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
-
-  checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
-  pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },
 });
