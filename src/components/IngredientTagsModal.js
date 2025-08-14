@@ -29,6 +29,8 @@ const COLOR_PALETTE = [
   "#20C997",
 ];
 
+const TOP_OFFSET = 48;
+
 export default function IngredientTagsModal({ visible, onClose, autoAdd = false }) {
   const theme = useTheme();
   const [tags, setTags] = useState([]);
@@ -204,7 +206,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         <Dialog
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
-          style={{ backgroundColor: theme.colors.surface, marginTop: 50 }}
+          style={[styles.dialog, { backgroundColor: theme.colors.surface }]}
         >
           <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
           <Dialog.Content>
@@ -288,7 +290,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
-    marginTop: 48,
+    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
@@ -324,5 +326,6 @@ const styles = StyleSheet.create({
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
   dialogWrapper: { flex: 1, justifyContent: "flex-start" },
+  dialog: { marginTop: TOP_OFFSET },
 });
 
