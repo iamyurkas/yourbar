@@ -257,39 +257,48 @@ export default function AllIngredientsScreen() {
 
   const loadIngredients = useCallback(async () => {
     const data = await getAllIngredients();
-    const sorted = sortIngredients(data).map((item) => ({
+    return sortIngredients(data).map((item) => ({
       ...item,
       searchName: item.name.toLowerCase(),
-      usageCount: 0,
-      singleCocktailName: null,
     }));
-    setIngredients(sorted);
-    const idxMap = new Map();
-    for (let i = 0; i < sorted.length; i++) idxMap.set(sorted[i].id, i);
-    indexMapRef.current = idxMap;
-    return sorted;
   }, [sortIngredients]);
 
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      const base = await loadIngredients();
-      if (cancelled) return;
-      setLoading(false);
-      const cocktails = await getAllCocktails();
+      const [base, cocktails] = await Promise.all([
+        loadIngredients(),
+        getAllCocktails(),
+      ]);
       if (cancelled) return;
       const usageMap = mapCocktailsByIngredient(base, cocktails);
       const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
-      if (cancelled) return;
-      setIngredients((prev) =>
-        prev.map((item) => {
-          const ids = usageMap[item.id] || [];
-          const usageCount = ids.length;
-          const singleCocktailName =
-            usageCount === 1 ? cocktailMap.get(ids[0]) : null;
-          return { ...item, usageCount, singleCocktailName };
-        })
-      );
+      const enriched = base.map((item) => {
+        const ids = usageMap[item.id] || [];
+        const usageCount = ids.length;
+        const singleCocktailName =
+          usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+        return { ...item, usageCount, singleCocktailName };
+      });
+      setIngredients((prev) => {
+        const prevMap = new Map(prev.map((i) => [i.id, i]));
+        const result = enriched.map((item) => {
+          const prevItem = prevMap.get(item.id);
+          if (
+            prevItem &&
+            prevItem.usageCount === item.usageCount &&
+            prevItem.singleCocktailName === item.singleCocktailName
+          ) {
+            return prevItem;
+          }
+          return item;
+        });
+        const idxMap = new Map();
+        for (let i = 0; i < result.length; i++) idxMap.set(result[i].id, i);
+        indexMapRef.current = idxMap;
+        return result;
+      });
+      setLoading(false);
     };
     if (isFocused) run();
     return () => {
