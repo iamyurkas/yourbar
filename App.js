@@ -13,7 +13,6 @@ import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
 import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScreen";
 
-import GeneralMenuScreen from "./src/screens/GeneralMenuScreen";
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
 import { AppTheme } from "./src/theme";
 
@@ -70,11 +69,6 @@ export default function App() {
                   name="Tabs"
                   component={Tabs}
                   options={{ headerShown: false }}
-                />
-                <RootStack.Screen
-                  name="GeneralMenu"
-                  component={GeneralMenuScreen}
-                  options={{ title: "Menu" }}
                 />
                 <RootStack.Screen
                   name="EditCustomTags"

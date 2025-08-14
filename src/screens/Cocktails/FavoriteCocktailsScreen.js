@@ -201,7 +201,6 @@ export default function FavoriteCocktailsScreen() {
   return (
     <View style={styles.container}>
       <HeaderWithSearch
-        onMenu={() => navigation.openDrawer?.()}
         searchValue={search}
         setSearchValue={setSearch}
         filterComponent={

@@ -439,7 +439,6 @@ export default function AllIngredientsScreen() {
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        onMenu={() => navigation.navigate("GeneralMenu")}
         filterComponent={
           <TagFilterMenu
             tags={availableTags}

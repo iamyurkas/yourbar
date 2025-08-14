@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   TextInput,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+import GeneralMenu from "./GeneralMenu";
 
 export default function HeaderWithSearch({
   onMenu,
@@ -19,12 +20,21 @@ export default function HeaderWithSearch({
 }) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const handleMenuPress = () => {
+    if (onMenu) {
+      onMenu();
+    } else {
+      setMenuVisible(true);
+    }
+  };
 
   return (
     <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={onMenu}
+          onPress={handleMenuPress}
           style={styles.iconBtn}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
@@ -78,6 +88,7 @@ export default function HeaderWithSearch({
           </TouchableOpacity>
         )}
       </View>
+      <GeneralMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
     </SafeAreaView>
   );
 }
