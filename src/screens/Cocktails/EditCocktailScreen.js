@@ -292,28 +292,31 @@ const IngredientRow = memo(function IngredientRow({
   const showAddNewBtn =
     !row.selectedId && query.trim().length > 1 && !hasExactMatch;
 
+  // currently selected ingredient (fallback to list by id)
+  const selected = useMemo(
+    () =>
+      row.selectedItem ||
+      allIngredients.find((i) => i.id === row.selectedId) ||
+      null,
+    [row.selectedItem, row.selectedId, allIngredients]
+  );
+
   // базовий інгредієнт для підказки
   const baseIngredientName = useMemo(() => {
-    const baseId = row.selectedItem?.baseIngredientId;
+    const baseId = selected?.baseIngredientId;
     if (!baseId) return null;
     return allIngredients.find((i) => i.id === baseId)?.name || null;
-  }, [row.selectedItem?.baseIngredientId, allIngredients]);
+  }, [selected?.baseIngredientId, allIngredients]);
 
   // інші брендовані інгредієнти того ж базового (крім вибраного)
   const brandedSiblings = useMemo(() => {
-    const baseId = row.selectedItem?.baseIngredientId;
+    const baseId = selected?.baseIngredientId;
     if (!baseId) return [];
     return allIngredients
-      .filter(
-        (i) => i.baseIngredientId === baseId && i.id !== row.selectedItem?.id
-      )
+      .filter((i) => i.baseIngredientId === baseId && i.id !== selected?.id)
       .map((i) => i.name)
       .filter(Boolean);
-  }, [
-    row.selectedItem?.baseIngredientId,
-    row.selectedItem?.id,
-    allIngredients,
-  ]);
+  }, [selected?.baseIngredientId, selected?.id, allIngredients]);
 
   const handleDismissSuggest = useCallback(() => {
     setSuggestState((s) => ({ ...s, visible: false }));
@@ -772,7 +775,7 @@ const IngredientRow = memo(function IngredientRow({
           onChange({ optional: !row.optional })
         )}
 
-        {row.selectedItem?.baseIngredientId ? (
+        {selected?.baseIngredientId ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {checkbox(row.allowBaseSubstitute, "Allow base substitute", () =>
               onChange({ allowBaseSubstitute: !row.allowBaseSubstitute })
@@ -802,7 +805,7 @@ const IngredientRow = memo(function IngredientRow({
           </View>
         ) : null}
 
-        {row.selectedItem?.baseIngredientId ? (
+        {selected?.baseIngredientId ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {checkbox(
               row.allowBrandedSubstitutes,
