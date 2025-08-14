@@ -199,7 +199,7 @@ export default function FavoriteCocktailsScreen() {
     );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
