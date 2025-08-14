@@ -475,6 +475,16 @@ export default function IngredientDetailsScreen() {
         </View>
       )}
 
+      {ingredient.description ? (
+        <View style={styles.section}>
+          <Text
+            style={[styles.sectionText, { color: theme.colors.onSurfaceVariant }]}
+          >
+            {ingredient.description}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.section}>
         {isBase ? (
           <>
@@ -603,6 +613,7 @@ const styles = StyleSheet.create({
 
   section: { marginTop: 16 },
   sectionLabel: { fontWeight: "bold", marginBottom: 8 },
+  sectionText: { lineHeight: 20 },
 
   tagRow: { flexDirection: "row", flexWrap: "wrap" },
   tag: {
