@@ -402,7 +402,7 @@ export default function IngredientDetailsScreen() {
         <Image
           source={{ uri: ingredient.photoUri }}
           style={styles.photo}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       ) : (
         <View
@@ -591,6 +591,7 @@ const styles = StyleSheet.create({
   photo: {
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
+    aspectRatio: 1,
     marginTop: 12,
     alignSelf: "center",
   },
