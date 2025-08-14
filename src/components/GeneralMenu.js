@@ -13,6 +13,7 @@ import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientIcon from "../../assets/lemon.svg";
 import { useNavigation } from "@react-navigation/native";
+import { getUseMetric, setUseMetric as saveUseMetric } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -40,6 +41,23 @@ export default function GeneralMenu({ visible, onClose }) {
       }).start();
     }
   }, [visible, slideAnim]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stored = await getUseMetric();
+        setUseMetric(stored);
+      } catch {}
+    })();
+  }, []);
+
+  const toggleUseMetric = () => {
+    setUseMetric((v) => {
+      const next = !v;
+      saveUseMetric(next);
+      return next;
+    });
+  };
 
   const navigateToIngredientTags = () => {
     onClose?.();
@@ -74,7 +92,7 @@ export default function GeneralMenu({ visible, onClose }) {
           <View style={styles.itemRow}>
             <Checkbox
               status={useMetric ? "checked" : "unchecked"}
-              onPress={() => setUseMetric((v) => !v)}
+              onPress={toggleUseMetric}
             />
             <View style={styles.itemText}>
               <Text style={styles.itemTitle}>Use metric system</Text>
