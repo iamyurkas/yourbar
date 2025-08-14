@@ -34,13 +34,18 @@ import {
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton } from "@react-navigation/elements";
 
-import { getAllTags } from "../../storage/ingredientTagsStorage";
+import {
+  getAllTags,
+  getUserTags,
+  saveUserTags,
+} from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   addIngredient,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import TagModal from "../../components/TagModal";
 
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
@@ -121,6 +126,7 @@ export default function AddIngredientScreen() {
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
+  const [tagModalVisible, setTagModalVisible] = useState(false);
 
   // base list
   const [baseOnlySorted, setBaseOnlySorted] = useState([]);
@@ -280,6 +286,17 @@ export default function AddIngredientScreen() {
     },
     [availableTags]
   );
+
+  const handleSaveNewTag = async ({ name, color }) => {
+    const userTags = await getUserTags();
+    const existingIds = [...BUILTIN_INGREDIENT_TAGS, ...userTags].map((t) => t.id);
+    const newId = Math.max(...existingIds) + 1;
+    const newTag = { id: newId, name, color };
+    const updated = [...userTags, newTag];
+    await saveUserTags(updated);
+    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...updated]);
+    setTags((prev) => [...prev, newTag]);
+  };
 
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -444,6 +461,15 @@ export default function AddIngredientScreen() {
                 onToggle={toggleTagById}
               />
             ))}
+          <Pressable
+            onPress={() => setTagModalVisible(true)}
+            android_ripple={RIPPLE}
+            style={[styles.tag, { backgroundColor: theme.colors.primary }]}
+          >
+            <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>+
+              New Tag
+            </Text>
+          </Pressable>
         </View>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
@@ -611,19 +637,24 @@ export default function AddIngredientScreen() {
           multiline
         />
 
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
-          onPress={handleSave}
-          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
-          disabled={!name.trim()}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Ingredient
-          </Text>
-        </Pressable>
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
+      <Pressable
+        style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+        onPress={handleSave}
+        android_ripple={{ color: "rgba(255,255,255,0.15)" }}
+        disabled={!name.trim()}
+      >
+        <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
+          Save Ingredient
+        </Text>
+      </Pressable>
+    </ScrollView>
+    <TagModal
+      visible={tagModalVisible}
+      onDismiss={() => setTagModalVisible(false)}
+      onSave={handleSaveNewTag}
+    />
+  </KeyboardAvoidingView>
+);
 }
 
 const styles = StyleSheet.create({
