@@ -1,1462 +1,1130 @@
 [
   {
     "name": "7-Up",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "7-Up is a soft drink mixer used in cocktails."
+    "description": "7-Up is a clear, lemon-lime flavored carbonated soft drink that adds a refreshing citrus note to cocktails. It contains no caffeine and offers a crisp, slightly sweet taste that pairs well with both spirits and non-alcoholic mixers. Often used in highballs and summer punches, it lightens and brightens the overall flavor profile of a drink."
   },
   {
     "name": "Absinthe",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Absinthe is a distilled spirit used in cocktails."
+    "description": "Absinthe is a highly aromatic distilled spirit traditionally made with wormwood, anise, and fennel. It typically ranges from 45% to 74% ABV, making it one of the stronger spirits used in cocktails. Known for its distinctive herbal flavor and green hue, it adds depth and complexity to classic drinks such as the Sazerac or Death in the Afternoon."
   },
   {
     "name": "Agave Nectar",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Agave Nectar is a flavored syrup used in cocktails."
+    "description": "Agave nectar is a natural sweetener made from the sap of the agave plant. It has a mild, honey-like flavor and dissolves easily in cold liquids, making it ideal for cocktails. Often used in place of simple syrup, it pairs especially well with tequila and mezcal-based drinks."
   },
   {
     "name": "Almond Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Almond Syrup is a flavored syrup used in cocktails."
+    "description": "Almond syrup, often known as orgeat, is a sweet, nutty syrup made from almonds, sugar, and orange flower water. It adds a creamy, aromatic quality to tropical and tiki cocktails. Its subtle nuttiness balances citrus and rum, making it essential in drinks like the Mai Tai."
   },
   {
     "name": "Amaretto",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Amaretto is a sweet liqueur used in cocktails."
+    "description": "Amaretto is an Italian liqueur with a sweet almond-like flavor, though it is often made from apricot kernels. It typically has an ABV of around 21–28%, offering a smooth and nutty character. Amaretto works well in both dessert-style cocktails and as a subtle flavoring in coffee drinks."
   },
   {
     "name": "Amaro Nonino",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Amaro Nonino is a sweet liqueur used in cocktails."
+    "description": "Amaro Nonino is a bittersweet Italian herbal liqueur with an ABV of about 35%. Made with a blend of herbs, spices, and roots, it has a complex, slightly citrusy flavor. It is often enjoyed neat as a digestif or mixed into cocktails like the Paper Plane."
   },
   {
     "name": "Angostura Bitters",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Angostura Bitters is a spice or bitters used in cocktails."
+    "description": "Angostura bitters is a concentrated herbal seasoning made from a secret blend of botanicals. With an ABV of about 44.7%, it is used in small dashes to add depth and complexity to cocktails. It is an essential component of classics like the Old Fashioned and Manhattan."
   },
   {
     "name": "Aperol",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Aperol is a sweet liqueur used in cocktails."
+    "description": "Aperol is a bright orange Italian aperitif with a low ABV of around 11%. It has a slightly bitter, citrus-forward flavor with hints of rhubarb and herbs. Most famous in the Aperol Spritz, it brings a refreshing balance to summer cocktails."
   },
   {
     "name": "Apple",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Apple is a fresh fruit used in cocktails."
+    "description": "Apples add a crisp, sweet-tart element to cocktails. They can be muddled, juiced, or used as garnishes for both warm and cold drinks. Different varieties bring unique flavor notes, from the sharpness of Granny Smith to the sweetness of Fuji."
   },
   {
     "name": "Apple Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Apple Juice is a fresh juice used in cocktails."
+    "description": "Apple juice is a sweet and refreshing non-alcoholic mixer made by pressing fresh apples. It pairs well with whiskey, rum, and spiced spirits in both warm and cold cocktails. Cloudy apple juice offers a richer, more robust flavor, while clear varieties are lighter and crisper."
   },
   {
     "name": "Apple Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Apple Liqueur is a sweet liqueur used in cocktails."
+    "description": "Apple liqueur is a sweet, fruit-flavored spirit with an ABV typically ranging from 15% to 30%. It captures the fresh, crisp taste of apples and is often used to add a fruity note to cocktails. Popular in autumn-themed drinks, it also works well in dessert-style concoctions."
   },
   {
     "name": "Apple Schnapps",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Apple Schnapps is a sweet liqueur used in cocktails."
+    "description": "Apple schnapps is a sweet, vibrant apple-flavored liqueur with an ABV around 15–20%. It delivers a bold fruitiness and is often used in fun, colorful cocktails or shooters. It pairs particularly well with citrus juices and other fruit liqueurs."
   },
   {
     "name": "Apricot Brandy",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Apricot Brandy is a sweet liqueur used in cocktails."
+    "description": "Apricot brandy is a fruit-based liqueur or spirit made by infusing brandy with apricots, typically containing 25–30% ABV. It has a rich, sweet, and slightly tangy flavor. It is excellent in classic cocktails like the Paradise and as a flavoring in desserts."
   },
   {
     "name": "Baileys",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Baileys is a sweet liqueur used in cocktails."
+    "description": "Baileys Irish Cream is a creamy liqueur made from Irish whiskey, cream, and cocoa, with an ABV of about 17%. It has a rich, velvety texture and a sweet, chocolatey taste. Often enjoyed over ice, in coffee, or as part of dessert cocktails."
   },
   {
     "name": "Banana",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Banana is a fresh fruit used in cocktails."
+    "description": "Bananas bring a creamy sweetness to cocktails, whether blended, muddled, or used as a garnish. They pair beautifully with tropical flavors such as coconut, pineapple, and rum. Frozen bananas can add texture to smoothie-style drinks."
   },
   {
     "name": "Banana Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Banana Liqueur is a sweet liqueur used in cocktails."
+    "description": "Banana liqueur is a sweet, tropical spirit with an ABV typically around 20–25%. It delivers a ripe banana flavor that pairs well with rum, chocolate, and cream-based cocktails. Popular in tiki drinks, it adds a rich fruitiness to tropical blends."
   },
   {
     "name": "Basil",
-    "tags": [
-      7
-    ],
+    "tags": [7],
     "image": "",
-    "description": "Basil is an herb or vegetable used in cocktails."
+    "description": "Basil is a fragrant herb with a sweet, slightly peppery flavor. It adds a fresh and aromatic note to both alcoholic and non-alcoholic cocktails. Common in summer drinks, it pairs especially well with gin, vodka, and citrus juices."
   },
   {
     "name": "Beef Bouillon",
     "tags": [],
     "image": "",
-    "description": "Beef Bouillon is an ingredient used in cocktails."
+    "description": "Beef bouillon is a savory broth made by simmering beef with vegetables and seasonings. In cocktails, it is primarily used in savory drinks like the Bloody Bull, adding depth and umami richness. It can also enhance the complexity of creative culinary-style cocktails."
   },
   {
     "name": "Beer",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Beer is a sweet liqueur used in cocktails."
+    "description": "Beer is a fermented grain beverage with an ABV usually ranging from 4% to 8%, though stronger craft varieties can be higher. Its flavors vary widely from light and crisp to dark and malty. Beer can be enjoyed on its own or used in beer cocktails like shandies and micheladas."
   },
   {
     "name": "Benedictine",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Benedictine is a sweet liqueur used in cocktails."
+    "description": "Benedictine is a French herbal liqueur with an ABV of about 40%. It features a complex blend of 27 herbs and spices, resulting in a rich, sweet, and slightly spiced flavor. Often used in classic cocktails like the Singapore Sling or enjoyed neat as a digestif."
   },
   {
     "name": "Black Pepper",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Black Pepper is a spice or bitters used in cocktails."
+    "description": "Black pepper adds a sharp, pungent spice that enhances savory cocktails. Freshly ground pepper is often used as a garnish or stirred into drinks for an aromatic kick. It pairs particularly well with tomato-based cocktails like the Bloody Mary."
   },
   {
     "name": "Black Tea",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Black Tea is a soft drink mixer used in cocktails."
+    "description": "Black tea is a strong, full-bodied tea with a rich, tannic flavor. It can be used as a base for tea cocktails or as an infused mixer with spirits. Its bold taste pairs well with whiskey, rum, and fruit liqueurs."
   },
   {
     "name": "Blackberry",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Blackberry is a fresh fruit used in cocktails."
+    "description": "Blackberries offer a deep, sweet-tart berry flavor with a vibrant purple hue. They can be muddled, juiced, or used as a garnish in cocktails. Their rich taste pairs wonderfully with gin, rum, and sparkling wines."
   },
   {
     "name": "Blackberry Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Blackberry Liqueur is a sweet liqueur used in cocktails."
+    "description": "Blackberry liqueur, often known as crème de mûre, has an ABV around 15–20%. It delivers an intense berry sweetness with a hint of tartness. It is a key ingredient in cocktails like the Bramble and pairs well with citrus and herbal flavors."
   },
   {
     "name": "Blue Curaçao",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Blue Curaçao is a sweet liqueur used in cocktails."
+    "description": "Blue Curaçao is a vibrantly colored orange-flavored liqueur with an ABV of about 20–25%. It is made from the dried peels of the Laraha citrus fruit and dyed bright blue. Often used for its striking appearance in tropical cocktails."
   },
   {
     "name": "Bourbon",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Bourbon is a distilled spirit used in cocktails."
+    "description": "Bourbon is an American whiskey with an ABV of around 40–50%, made primarily from corn. It has a rich, sweet flavor with notes of caramel, vanilla, and oak. A staple in classic cocktails like the Old Fashioned and Mint Julep."
   },
   {
     "name": "Brandy",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Brandy is a distilled spirit used in cocktails."
+    "description": "Brandy is a spirit distilled from wine or fermented fruit juice, usually with an ABV of 35–60%. It has a smooth, warming character with fruity and oaky notes. Often enjoyed neat, in sidecars, or as a base for dessert-style cocktails."
   },
   {
     "name": "Butter",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Butter is a dairy ingredient used in cocktails."
+    "description": "Butter adds a rich, creamy texture to hot cocktails and dessert drinks. It melts into warm spirits like rum or whiskey, giving a luxurious mouthfeel. It is an essential component of the classic Hot Buttered Rum."
   },
   {
     "name": "Butterscotch Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Butterscotch Liqueur is a sweet liqueur used in cocktails."
+    "description": "Butterscotch liqueur is a sweet, caramel-flavored spirit with an ABV typically around 15–20%. It offers notes of brown sugar and butter, making it ideal for dessert cocktails. Often paired with cream or coffee for a rich treat."
   },
   {
     "name": "Cachaça",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Cachaça is a distilled spirit used in cocktails."
+    "description": "Cachaça is a Brazilian spirit distilled from fresh sugarcane juice, with an ABV usually around 38–48%. It has a grassy, slightly sweet flavor profile. Best known as the base spirit in the Caipirinha, Brazil’s national cocktail."
   },
   {
     "name": "Calvados",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Calvados is a distilled spirit used in cocktails."
+    "description": "Calvados is an apple brandy from the Normandy region of France, with an ABV typically between 40% and 45%. It has a complex flavor profile combining baked apple, spice, and oak notes. Calvados is often enjoyed neat or used in cocktails that highlight its rich fruit character."
   },
   {
     "name": "Campari",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Campari is a sweet liqueur used in cocktails."
+    "description": "Campari is a bright red Italian bitter liqueur with an ABV of about 20–28%. Known for its distinct bitter-orange and herbal taste, it is a key ingredient in the Negroni and Americano. It adds depth, color, and complexity to cocktails."
   },
   {
     "name": "Caramel syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Caramel syrup is a flavored syrup used in cocktails."
+    "description": "Caramel syrup is a sweet, rich liquid made by caramelizing sugar and mixing it with water. It adds a toasty, buttery sweetness to cocktails, coffee drinks, and desserts. Perfect for enhancing creamy and dessert-style cocktails."
   },
   {
     "name": "Celery",
-    "tags": [
-      7
-    ],
+    "tags": [7],
     "image": "",
-    "description": "Celery is an herb or vegetable used in cocktails."
+    "description": "Celery provides a fresh, crisp, and slightly peppery flavor to cocktails. It is commonly used as a garnish for Bloody Marys and other savory drinks. Celery juice or muddled stalks can also add a refreshing vegetal note."
   },
   {
     "name": "Chamomile Cordial",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Chamomile Cordial is a soft drink mixer used in cocktails."
+    "description": "Chamomile cordial is a sweet, floral syrup made from chamomile flowers. It has a soothing aroma and mild honey-like taste, making it a calming addition to cocktails. Pairs well with gin, vodka, and citrus juices."
   },
   {
     "name": "Chartreuse green",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Chartreuse green is a distilled spirit used in cocktails."
+    "description": "Green Chartreuse is a French herbal liqueur made by Carthusian monks, with an ABV of 55%. It contains over 130 botanicals, giving it a complex, sweet, and herbal flavor. Often used sparingly in cocktails due to its potency."
   },
   {
     "name": "Chartreuse yellow",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Chartreuse yellow is a distilled spirit used in cocktails."
+    "description": "Yellow Chartreuse is a milder, sweeter version of the herbal liqueur, with an ABV of around 40%. It has a softer herbal profile with honey and saffron notes. Works well in cocktails that require a gentler herbal character."
   },
   {
     "name": "Cherry Brandy",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Cherry Brandy is a sweet liqueur used in cocktails."
+    "description": "Cherry brandy is a fruit liqueur or spirit with an ABV of 25–40%, offering a rich, sweet cherry flavor. It can be sipped neat or used in both classic and modern cocktails. Complements chocolate, almond, and citrus flavors beautifully."
   },
   {
     "name": "Cherry Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Cherry Liqueur is a sweet liqueur used in cocktails."
+    "description": "Cherry liqueur is a sweet, fruity spirit with an ABV of 15–30%, highlighting the taste of ripe cherries. It adds vibrant color and flavor to cocktails. Often found in drinks like the Singapore Sling."
   },
   {
     "name": "Chili",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Chili is a spice or bitters used in cocktails."
+    "description": "Fresh chili peppers add heat and spice to cocktails, enhancing complexity and balance. They can be muddled, infused, or used as garnishes. Popular in spicy margaritas and Bloody Mary variations."
   },
   {
     "name": "Chili Powder",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Chili Powder is a spice or bitters used in cocktails."
+    "description": "Chili powder provides a warm, smoky heat that enhances savory and adventurous cocktails. It is often used as a glass rim seasoning or mixed into syrups. Works well in tequila and mezcal-based drinks."
   },
   {
     "name": "Chocolate",
     "tags": [],
     "image": "",
-    "description": "Chocolate is an ingredient used in cocktails."
+    "description": "Chocolate brings rich, sweet, and slightly bitter notes to cocktails. It can be used in solid, shaved, or melted form for drinks and garnishes. A natural partner for cream liqueurs and coffee-based cocktails."
   },
   {
     "name": "Chocolate Bitter",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Chocolate Bitter is a spice or bitters used in cocktails."
+    "description": "Chocolate bitters are aromatic bitters with cocoa and spice flavors, typically around 40–45% ABV. They add depth to whiskey, rum, and tequila cocktails. A small dash can transform a dessert cocktail or Old Fashioned."
   },
   {
     "name": "Chocolate Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Chocolate Syrup is a flavored syrup used in cocktails."
+    "description": "Chocolate syrup is a sweet, thick sauce made from cocoa and sugar. It adds a rich chocolate flavor to cocktails, milkshakes, and coffee drinks. Often used in dessert cocktails for both flavor and presentation."
   },
   {
     "name": "Cinnamon sticks",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Cinnamon sticks is a spice or bitters used in cocktails."
+    "description": "Cinnamon sticks provide a warm, sweet spice when infused or used as a garnish. They release flavor gradually, making them ideal for hot cocktails. They also serve as decorative stirrers in seasonal drinks."
   },
   {
     "name": "Clove",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Clove is a spice or bitters used in cocktails."
+    "description": "Cloves are highly aromatic spice buds with a warm, sweet, and slightly bitter flavor. They are often infused into syrups or spirits for holiday cocktails. A little goes a long way in both hot and cold drinks."
   },
   {
     "name": "Cocoa Powder",
     "tags": [],
     "image": "",
-    "description": "Cocoa Powder is an ingredient used in cocktails."
+    "description": "Cocoa powder provides deep chocolate flavor without sweetness. It can be used for rimming glasses, dusting garnishes, or mixing into hot cocktails. Adds a bitter, rich note to creamy drinks."
   },
   {
     "name": "Coconut Cream",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Coconut Cream is a dairy ingredient used in cocktails."
+    "description": "Coconut cream is a thick, rich product made from coconut flesh. It lends a smooth texture and tropical sweetness to cocktails like the Piña Colada. Perfect for creamy, dessert-like tropical drinks."
   },
   {
     "name": "Coconut Milk",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Coconut Milk is a dairy ingredient used in cocktails."
+    "description": "Coconut milk is a lighter, more liquid form of coconut extract. It adds a delicate tropical flavor to cocktails without excessive sweetness. Ideal for dairy-free creamy cocktails."
   },
   {
     "name": "Coconut Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Coconut Syrup is a flavored syrup used in cocktails."
+    "description": "Coconut syrup is a sweet, flavored syrup that captures the taste of fresh coconut. It is perfect for tiki and tropical drinks, adding both flavor and aroma. Works well with rum, pineapple, and citrus."
   },
   {
     "name": "Coffee",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Coffee is a soft drink mixer used in cocktails."
+    "description": "Coffee adds rich, roasted flavors to cocktails, from espresso martinis to Irish coffee. Its bitterness balances sweet liqueurs and syrups. Freshly brewed coffee works best for bold flavor."
   },
   {
     "name": "Coffee Beans",
     "tags": [],
     "image": "",
-    "description": "Coffee Beans is an ingredient used in cocktails."
+    "description": "Coffee beans are used to infuse spirits or garnish coffee-flavored cocktails. They release aroma without adding sweetness. A single bean is often floated on drinks for decoration."
   },
   {
     "name": "Coffee Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Coffee Liqueur is a sweet liqueur used in cocktails."
+    "description": "Coffee liqueur is a sweet spirit combining coffee extract with sugar and a neutral base, usually 20–26% ABV. It delivers rich coffee flavor with a smooth, sweet finish. Common in espresso martinis."
   },
   {
     "name": "Cognac",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Cognac is a distilled spirit used in cocktails."
+    "description": "Cognac is a French brandy from the Cognac region, typically 40% ABV. It offers deep, fruity, and oaky flavors from barrel aging. Used in classics like the Sidecar and Vieux Carré."
   },
   {
     "name": "Cointreau",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Cointreau is a sweet liqueur used in cocktails."
+    "description": "Cointreau is a triple sec orange liqueur from France with an ABV of 40%. It has a bright, clean citrus flavor that works in margaritas, cosmopolitans, and sidecars. Its balance of sweetness and bitterness makes it versatile."
   },
   {
     "name": "Cola",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Cola is a soft drink mixer used in cocktails."
+    "description": "Cola is a sweet, carbonated beverage with caramel, vanilla, and spice notes. It pairs well with rum, whiskey, and other dark spirits. Adds sweetness, color, and effervescence to cocktails."
   },
   {
     "name": "Cranberry Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Cranberry Juice is a fresh juice used in cocktails."
+    "description": "Cranberry juice has a tart, refreshing flavor that adds brightness to cocktails. It pairs especially well with vodka, gin, and citrus liqueurs. Often used in cosmopolitans and holiday punches."
   },
   {
     "name": "Cream",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Cream is a dairy ingredient used in cocktails."
+    "description": "Cream adds rich texture and dairy sweetness to cocktails. It blends well with coffee, chocolate, and fruit liqueurs. Essential for dessert drinks like the Brandy Alexander."
   },
   {
     "name": "Cream of Coconut",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Cream of Coconut is a dairy ingredient used in cocktails."
+    "description": "Cream of coconut is sweetened coconut cream, thicker and richer than coconut milk. It is essential in tropical drinks like the Piña Colada. Adds sweetness and tropical aroma."
   },
   {
     "name": "Creme de Cacao Brown",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme de Cacao Brown is a sweet liqueur used in cocktails."
+    "description": "Brown crème de cacao is a chocolate liqueur with an ABV of 20–25%. It offers deep cocoa flavor with a hint of vanilla. Works in dessert cocktails and creamy drinks."
   },
   {
     "name": "Creme de Cacao White",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme de Cacao White is a sweet liqueur used in cocktails."
+    "description": "White crème de cacao is a clear chocolate liqueur with similar flavor to the brown version but a lighter color. ABV ranges from 20–25%. Ideal for cocktails where color clarity is important."
   },
   {
     "name": "Creme de Cassis",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme de Cassis is a sweet liqueur used in cocktails."
+    "description": "Crème de cassis is a sweet blackcurrant liqueur with an ABV of 15–20%. It offers a rich berry flavor and deep red color. Key in the Kir Royale and El Diablo cocktails."
   },
   {
     "name": "Creme de Menthe Green",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme de Menthe Green is a sweet liqueur used in cocktails."
+    "description": "Green crème de menthe is a mint liqueur with an ABV of 25%. It has a sweet, cooling flavor and a vibrant green color. Common in dessert cocktails and holiday drinks."
   },
   {
     "name": "Creme de Menthe White",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme de Menthe White is a sweet liqueur used in cocktails."
+    "description": "White crème de menthe is a clear mint liqueur with an ABV of around 25%. It delivers the same fresh mint taste without coloring the drink. Often used in creamy mint cocktails."
   },
   {
     "name": "Creme De Violette",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Creme De Violette is a sweet liqueur used in cocktails."
+    "description": "Crème de violette is a floral liqueur with an ABV of about 16–20%, made from violet flowers. It has a delicate sweetness and soft purple hue. Key in the classic Aviation cocktail."
   },
   {
     "name": "Cucumber",
-    "tags": [
-      7
-    ],
+    "tags": [7],
     "image": "",
-    "description": "Cucumber is an herb or vegetable used in cocktails."
+    "description": "Cucumber adds a crisp, cool freshness to cocktails. It can be muddled, juiced, or used as a garnish. Works well with gin, vodka, and herbal liqueurs."
   },
   {
     "name": "Cynar",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Cynar is a sweet liqueur used in cocktails."
+    "description": "Cynar is an Italian bitter liqueur made from artichokes and herbs, with an ABV of 16.5%. It has an earthy, slightly sweet-bitter taste. Often used in aperitif cocktails or enjoyed with soda."
   },
   {
     "name": "Dark Rum",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Dark Rum is a distilled spirit used in cocktails."
+    "description": "Dark rum is a full-bodied spirit with an ABV around 37–40%, aged longer for deeper molasses and spice flavors. It adds richness to tropical and dessert cocktails. A staple in tiki drinks and hot cocktails."
   },
   {
     "name": "Double cream",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Double cream is a dairy ingredient used in cocktails."
+    "description": "Double cream is a rich dairy product with a high fat content, giving cocktails a luxurious texture. It blends smoothly into liqueurs and spirits, creating a velvety mouthfeel. Ideal for dessert-style drinks and creamy holiday cocktails."
   },
   {
     "name": "Drambuie",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Drambuie is a sweet liqueur used in cocktails."
+    "description": "Drambuie is a Scottish liqueur with an ABV of 40%, made from Scotch whisky, honey, herbs, and spices. It has a sweet, warming character with herbal complexity. Traditionally enjoyed neat or in cocktails like the Rusty Nail."
   },
   {
     "name": "Dry Sherry",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Dry Sherry is a distilled spirit used in cocktails."
+    "description": "Dry sherry is a fortified wine from Spain, typically 15–20% ABV. It offers nutty, saline, and sometimes lightly fruity notes. Used in both aperitif-style drinks and savory cocktails."
   },
   {
     "name": "Dry Vermouth",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Dry Vermouth is a distilled spirit used in cocktails."
+    "description": "Dry vermouth is an aromatized fortified wine with around 16–18% ABV. It has a crisp, herbal profile that complements gin and vodka in martinis. Also used to add dryness and complexity to many classic cocktails."
   },
   {
     "name": "Dubonnet",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Dubonnet is a distilled spirit used in cocktails."
+    "description": "Dubonnet is a French aperitif wine with an ABV of about 14–19%. It combines fortified wine, herbs, and spices with a hint of quinine. Famously enjoyed by Queen Elizabeth II in a gin and Dubonnet cocktail."
   },
   {
     "name": "Egg",
     "tags": [],
     "image": "",
-    "description": "Egg is an ingredient used in cocktails."
+    "description": "Eggs add richness, froth, and texture to cocktails. Egg whites create a silky foam, while egg yolks add creaminess. Common in classic drinks like the Whiskey Sour and Flip."
   },
   {
     "name": "Egg Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Egg Liqueur is a sweet liqueur used in cocktails."
+    "description": "Egg liqueur, such as Advocaat, has an ABV of around 14–20%. It is thick, creamy, and sweet with notes of vanilla and custard. Often sipped neat or used in dessert cocktails."
   },
   {
     "name": "Elderflower Cordial",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Elderflower Cordial is a soft drink mixer used in cocktails."
+    "description": "Elderflower cordial is a sweet, floral syrup made from elderflower blossoms. It adds a fragrant, delicate note to cocktails. Pairs well with gin, sparkling wine, and citrus."
   },
   {
     "name": "Falernum",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Falernum is a flavored syrup used in cocktails."
+    "description": "Falernum is a Caribbean syrup or low-ABV liqueur (0–11%) flavored with lime, almond, ginger, and spices. It adds tropical sweetness and spice to tiki drinks. Essential in cocktails like the Mai Tai and Corn 'n' Oil."
   },
   {
     "name": "Fernet",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Fernet is a distilled spirit used in cocktails."
+    "description": "Fernet is a type of Italian amaro with an ABV of 39–45%. It is intensely bitter and herbal, with notes of mint, myrrh, and saffron. Often taken as a shot or used sparingly in cocktails for depth."
   },
   {
     "name": "Frangelico",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Frangelico is a sweet liqueur used in cocktails."
+    "description": "Frangelico is an Italian hazelnut liqueur with an ABV of 20%. It has a sweet, nutty flavor with hints of vanilla and cocoa. Popular in dessert cocktails and coffee drinks."
   },
   {
     "name": "Galliano",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Galliano is a sweet liqueur used in cocktails."
+    "description": "Galliano is a bright yellow Italian liqueur with an ABV of 30%. It features herbal, vanilla, and anise flavors. Famous for its use in the Harvey Wallbanger cocktail."
   },
   {
     "name": "Gin",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Gin is a distilled spirit used in cocktails."
+    "description": "Gin is a juniper-forward distilled spirit with an ABV usually around 40–47%. It features botanical flavors from herbs, spices, and citrus peel. Essential in classics like the Martini and Negroni."
   },
   {
     "name": "Ginger",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Ginger is a spice or bitters used in cocktails."
+    "description": "Ginger adds a spicy, warming kick to cocktails. It can be used fresh, juiced, or infused into syrups. Complements tropical, citrus, and whiskey-based drinks."
   },
   {
     "name": "Ginger Ale",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Ginger Ale is a soft drink mixer used in cocktails."
+    "description": "Ginger ale is a sweet, lightly spiced carbonated drink. It adds gentle ginger flavor and effervescence to cocktails. Pairs well with whiskey, rum, and vodka."
   },
   {
     "name": "Ginger Beer",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Ginger Beer is a soft drink mixer used in cocktails."
+    "description": "Ginger beer is a stronger, spicier, less sweet ginger soda. It is a key mixer in drinks like the Moscow Mule and Dark 'n' Stormy. Adds bold ginger heat to cocktails."
   },
   {
     "name": "Goldschläger",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Goldschläger is a distilled spirit used in cocktails."
+    "description": "Goldschläger is a Swiss cinnamon schnapps with 43.5% ABV, containing floating flakes of edible gold. It has a sweet, spicy cinnamon taste. Often used in shots or dessert cocktails."
   },
   {
     "name": "Gran Classico",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Gran Classico is a sweet liqueur used in cocktails."
+    "description": "Gran Classico is a Swiss-Italian bitter liqueur with an ABV of about 28%. It has a complex herbal and citrus flavor. Often used as a substitute for Campari in cocktails."
   },
   {
     "name": "Grand Marnier",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Grand Marnier is a sweet liqueur used in cocktails."
+    "description": "Grand Marnier is a French orange liqueur with 40% ABV, made by blending cognac and orange essence. It has a rich, smooth citrus flavor. Used in Margaritas, Sidecars, and dessert drinks."
   },
   {
     "name": "Grapefruit",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Grapefruit is a fresh fruit used in cocktails."
+    "description": "Grapefruit adds a tangy, slightly bitter citrus flavor to cocktails. It can be juiced, sliced, or used as a garnish. Works well in Palomas, Greyhounds, and gin drinks."
   },
   {
     "name": "Grapefruit Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Grapefruit Juice is a fresh juice used in cocktails."
+    "description": "Grapefruit juice brings a tart, slightly bitter citrus note. It pairs beautifully with tequila, vodka, and gin. Often used in brunch and summer cocktails."
   },
   {
     "name": "Grappa",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Grappa is a distilled spirit used in cocktails."
+    "description": "Grappa is an Italian pomace brandy with an ABV of 35–60%. It has a strong, dry, and sometimes floral profile. Traditionally sipped neat after meals."
   },
   {
     "name": "Grated Cinnamon",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Grated Cinnamon is a spice or bitters used in cocktails."
+    "description": "Grated cinnamon offers warm, sweet spice for rimming glasses or garnishing cocktails. It pairs well with rum, whiskey, and cream-based drinks. A festive addition to holiday cocktails."
   },
   {
     "name": "Grated Nutmeg",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Grated Nutmeg is a spice or bitters used in cocktails."
+    "description": "Freshly grated nutmeg provides a warm, nutty aroma. A little goes a long way in eggnogs, flips, and hot toddies. Best grated fresh for maximum flavor."
   },
   {
     "name": "Grenadine",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Grenadine is a flavored syrup used in cocktails."
+    "description": "Grenadine is a sweet, deep red syrup made from pomegranate juice and sugar. It adds color and fruity sweetness to cocktails. A staple in drinks like the Tequila Sunrise."
   },
   {
     "name": "Hennessy",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Hennessy is a distilled spirit used in cocktails."
+    "description": "Hennessy is a world-famous cognac brand with an ABV of 40%. It offers rich notes of fruit, vanilla, and oak from barrel aging. Enjoyed neat, on the rocks, or in classic cocktails."
   },
   {
     "name": "Honey",
     "tags": [],
     "image": "",
-    "description": "Honey is an ingredient used in cocktails."
+    "description": "Honey adds natural sweetness and floral depth to cocktails. It can be thinned into syrup for easy mixing. Pairs especially well with whiskey, rum, and gin."
   },
   {
     "name": "Honey Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Honey Syrup is a flavored syrup used in cocktails."
+    "description": "Honey syrup is made by blending honey with water, making it easier to mix into cocktails. It retains honey’s floral flavor while being pourable. Used in drinks like the Gold Rush."
   },
   {
     "name": "Honeydew melon",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Honeydew melon is a fresh fruit used in cocktails."
+    "description": "Honeydew melon has a sweet, refreshing flavor and pale green flesh. It can be juiced, blended, or used as garnish. Works well in tropical and summer cocktails."
   },
   {
     "name": "Hpnotiq",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Hpnotiq is a sweet liqueur used in cocktails."
+    "description": "Hpnotiq is a blue liqueur with 17% ABV, blending tropical fruit juices, vodka, and cognac. It has a sweet, fruity flavor with a vibrant turquoise color. Often used in colorful party cocktails."
   },
   {
     "name": "Ice",
     "tags": [],
     "image": "",
-    "description": "Ice is an ingredient used in cocktails."
+    "description": "Ice chills and dilutes cocktails, balancing flavors. The size and shape of ice can affect drink texture and dilution rate. Clear ice is preferred for presentation."
   },
   {
     "name": "Ice Cream",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Ice Cream is a dairy ingredient used in cocktails."
+    "description": "Ice cream adds richness, sweetness, and creaminess to cocktails. It blends with spirits to create indulgent dessert drinks. Popular in spiked milkshakes and floats."
   },
   {
     "name": "Irish Stout",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Irish Stout is a sweet liqueur used in cocktails."
+    "description": "Irish stout is a dark beer with an ABV of 4–6%, known for its roasted malt flavor. It has creamy texture and chocolate-coffee notes. Commonly used in beer cocktails and pairings."
   },
   {
     "name": "Jack Daniels",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Jack Daniels is a distilled spirit used in cocktails."
+    "description": "Jack Daniel’s is a Tennessee whiskey with 40% ABV, charcoal-mellowed for smoothness. It has notes of vanilla, caramel, and toasted oak. Enjoyed neat, on ice, or in whiskey cocktails."
   },
   {
     "name": "Jägermeister",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Jägermeister is a distilled spirit used in cocktails."
+    "description": "Jägermeister is a German herbal liqueur with 35% ABV, made from 56 botanicals. It has a complex, bittersweet taste with licorice and spice notes. Popular as a shot or in cocktails."
   },
   {
     "name": "Kahlua",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Kahlua is a sweet liqueur used in cocktails."
+    "description": "Kahlúa is a Mexican coffee liqueur with 20% ABV, made with rum, sugar, and coffee. It has a sweet, rich coffee flavor. Essential in espresso martinis."
   },
   {
     "name": "Kirsch",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Kirsch is a distilled spirit used in cocktails."
+    "description": "Kirsch, or kirschwasser, is a clear cherry brandy with 37–43% ABV. It is dry and aromatic, made from distilled cherries. Used in cocktails, desserts, and fondue recipes."
   },
   {
     "name": "Laphroaig",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Laphroaig is a distilled spirit used in cocktails."
+    "description": "Laphroaig is a peaty Scotch whisky with 40–48% ABV. Known for its intense smoky, medicinal flavor. Best sipped neat, but also adds depth to whisky cocktails."
   },
   {
     "name": "Lemon",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Lemon is a fresh fruit used in cocktails."
+    "description": "Lemon adds bright acidity and citrus aroma to cocktails. It can be juiced, zested, or used as a garnish. Essential in sours, collins, and many classic drinks."
   },
   {
     "name": "Lemonade",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Lemonade is a soft drink mixer used in cocktails."
+    "description": "Lemonade is a sweet-tart lemon drink, still or sparkling. It adds refreshing citrus flavor to cocktails. Great with vodka, gin, and fruit liqueurs."
   },
   {
     "name": "Lillet Blanc",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Lillet Blanc is a distilled spirit used in cocktails."
+    "description": "Lillet Blanc is a French aromatized wine with 17% ABV. It has a lightly sweet, floral, and citrus profile. Served chilled or in cocktails like the Vesper."
+  },
+  {
+    "name": "Lime Juice",
+    "tags": [5],
+    "image": "",
+    "description": "Lime juice is a key ingredient in many cocktails, providing sharp acidity and bright citrus flavor. Essential in drinks like Margaritas, Daiquiris, and Mojitos."
   },
   {
     "name": "Lime",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Lime is a fresh fruit used in cocktails."
+    "description": "Lime brings sharp acidity and vibrant citrus aroma to cocktails. Fresh juice is essential for drinks like the Margarita, Daiquiri, and Mojito. Lime wedges, wheels, and zest are also popular garnishes."
   },
   {
     "name": "Limoncello",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Limoncello is a sweet liqueur used in cocktails."
+    "description": "Limoncello is a sweet Italian lemon liqueur with 25–30% ABV. It has a bright, zesty flavor from lemon peels macerated in alcohol. Often served chilled as a digestif or used in citrus-forward cocktails."
   },
   {
     "name": "Malibu Coconut Rum",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Malibu Coconut Rum is a distilled spirit used in cocktails."
+    "description": "Malibu is a coconut-flavored rum liqueur with 21% ABV. It has a sweet, tropical taste perfect for summer cocktails. Commonly mixed with pineapple juice, cola, or citrus."
   },
   {
     "name": "Maple Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Maple Syrup is a flavored syrup used in cocktails."
+    "description": "Maple syrup adds rich, earthy sweetness with caramel notes. It pairs beautifully with whiskey and rum cocktails. Best used in autumn and winter drinks."
   },
   {
     "name": "Maraschino Cherry",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Maraschino Cherry is a fresh fruit used in cocktails."
+    "description": "Maraschino cherries are sweet, preserved cocktail garnishes with a bold red color. They add a pop of flavor and decoration. A classic garnish for Manhattans and Old Fashioneds."
   },
   {
     "name": "Maraschino Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Maraschino Liqueur is a sweet liqueur used in cocktails."
+    "description": "Maraschino liqueur is a clear cherry spirit with 24–32% ABV. It has a delicate, nutty, and floral cherry flavor. Essential in the Aviation and Last Word cocktails."
   },
   {
     "name": "Mezcal",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Mezcal is a distilled spirit used in cocktails."
+    "description": "Mezcal is a smoky Mexican agave spirit with 40–55% ABV. It is traditionally roasted in earthen pits, giving it deep smoky character. Enjoyed neat or in cocktails like the Mezcal Negroni."
   },
   {
     "name": "Midori",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Midori is a sweet liqueur used in cocktails."
+    "description": "Midori is a bright green Japanese melon liqueur with 20% ABV. It has a sweet, fruity flavor and striking color. Often used in colorful tropical cocktails."
   },
   {
     "name": "Milk",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Milk is a dairy ingredient used in cocktails."
+    "description": "Milk adds creamy texture and mild sweetness to cocktails. It can be used fresh or in clarified milk punches. Works well with coffee, chocolate, and fruit liqueurs."
   },
   {
     "name": "Mint",
-    "tags": [
-      7
-    ],
+    "tags": [7],
     "image": "",
-    "description": "Mint is an herb or vegetable used in cocktails."
+    "description": "Mint adds a fresh, cooling aroma and flavor to cocktails. It is commonly muddled in Mojitos and juleps. Fresh sprigs make aromatic garnishes."
   },
   {
     "name": "Old Tom Gin",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Old Tom Gin is a distilled spirit used in cocktails."
+    "description": "Old Tom gin is a sweeter style of gin with 40–45% ABV. It has a softer juniper profile and slight sweetness. Ideal for classic cocktails like the Tom Collins."
   },
   {
     "name": "Olive",
     "tags": [],
     "image": "",
-    "description": "Olive is an ingredient used in cocktails."
+    "description": "Olives are savory garnishes that add a briny, salty note. Most famous in Martinis, they also work in Bloody Mary variations. Can be stuffed with herbs, cheese, or peppers."
   },
   {
     "name": "Olive Juice",
     "tags": [],
     "image": "",
-    "description": "Olive Juice is an ingredient used in cocktails."
+    "description": "Olive juice, or brine, adds salty, savory flavor to cocktails. Key in Dirty Martinis, it balances strong spirits with umami richness. Best used in moderation."
   },
   {
     "name": "Onion",
     "tags": [],
     "image": "",
-    "description": "Onion is an ingredient used in cocktails."
+    "description": "Pearl onions are sometimes used as savory cocktail garnishes. The Gibson cocktail famously uses pickled onions. Adds a sharp, tangy bite."
   },
   {
     "name": "Orange",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Orange is a fresh fruit used in cocktails."
+    "description": "Oranges bring sweet citrus flavor and bright aroma to cocktails. Juice, zest, and slices are all used. Popular in mimosas, spritzes, and Old Fashioneds."
   },
   {
     "name": "Orange Bitters",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Orange Bitters is a spice or bitters used in cocktails."
+    "description": "Orange bitters are concentrated flavoring agents with 40–45% ABV. They add citrus and spice complexity to cocktails. Essential in many gin and whiskey classics."
   },
   {
     "name": "Orange Curaçao",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Orange Curaçao is a sweet liqueur used in cocktails."
+    "description": "Orange Curaçao is a citrus liqueur with 20–40% ABV, often brandy-based. It has sweet, bitter-orange notes. Common in tropical and classic cocktails."
   },
   {
     "name": "Orange Flower Water",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Orange Flower Water is a soft drink mixer used in cocktails."
+    "description": "Orange flower water is a fragrant distillation of orange blossoms. It adds delicate floral notes to cocktails. Used sparingly to avoid overpowering other flavors."
   },
   {
     "name": "Orange Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Orange Juice is a fresh juice used in cocktails."
+    "description": "Orange juice is sweet and tangy with bright citrus flavor. It’s a staple in brunch cocktails like the Mimosa and Screwdriver. Freshly squeezed is best."
   },
   {
     "name": "Orange Marmalade",
     "tags": [],
     "image": "",
-    "description": "Orange Marmalade is an ingredient used in cocktails."
+    "description": "Orange marmalade is a sweet, tangy preserve with citrus peel pieces. It can be mixed into cocktails for flavor and texture. Works well in gin and whiskey drinks."
   },
   {
     "name": "Overproof Rum",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Overproof Rum is a distilled spirit used in cocktails."
+    "description": "Overproof rum has an ABV of 57% or higher, offering intense flavor and strength. It is used for floats, flaming drinks, and tiki cocktails. Best handled with care."
   },
   {
     "name": "Papaya Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Papaya Juice is a fresh juice used in cocktails."
+    "description": "Papaya juice is sweet, tropical, and slightly musky. It pairs well with rum, tequila, and tropical liqueurs. Adds smooth texture to exotic cocktails."
   },
   {
     "name": "Passion fruit",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Passion fruit is a fresh fruit used in cocktails."
+    "description": "Passion fruit has a tangy, aromatic tropical flavor. The pulp can be scooped directly into cocktails. Popular in tiki drinks and modern fruity creations."
   },
   {
     "name": "Passion Fruit Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Passion Fruit Juice is a fresh juice used in cocktails."
+    "description": "Passion fruit juice is bright, tart, and aromatic. It enhances both tropical and sparkling cocktails. Best when fresh for maximum fragrance."
   },
   {
     "name": "Passion fruit liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Passion fruit liqueur is a sweet liqueur used in cocktails."
+    "description": "Passion fruit liqueur is a sweet tropical spirit with 15–20% ABV. It has exotic, tangy fruit notes. Works in fruity martinis and tiki blends."
   },
   {
     "name": "Peach",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Peach is a fresh fruit used in cocktails."
+    "description": "Peaches bring soft, juicy sweetness to cocktails. They can be muddled, juiced, or pureed. Perfect in Bellinis and sangrias."
   },
   {
     "name": "Peach Bitters",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Peach Bitters is a spice or bitters used in cocktails."
+    "description": "Peach bitters have 40–45% ABV and add subtle stone fruit flavor. Used in small amounts for aroma and complexity. Pairs well with whiskey and rum."
   },
   {
     "name": "Peach Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Peach Liqueur is a sweet liqueur used in cocktails."
+    "description": "Peach liqueur is a sweet, fragrant spirit with 15–25% ABV. It delivers ripe peach flavor to cocktails. Works beautifully in summer spritzes and punches."
   },
   {
     "name": "Peach Puree",
     "tags": [],
     "image": "",
-    "description": "Peach Puree is an ingredient used in cocktails."
+    "description": "Peach puree is smooth, sweet, and aromatic. It blends easily into both alcoholic and non-alcoholic drinks. Essential in a classic Bellini."
   },
   {
     "name": "Peach Schnapps",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Peach Schnapps is a sweet liqueur used in cocktails."
+    "description": "Peach schnapps is a sweet, fruity liqueur with 15–20% ABV. It offers bold peach flavor in cocktails and shooters. Popular in the Fuzzy Navel and Sex on the Beach."
   },
   {
     "name": "Pedro Ximenez",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Pedro Ximenez is a distilled spirit used in cocktails."
+    "description": "Pedro Ximénez is a sweet Spanish sherry with 15–17% ABV. It has rich raisin, fig, and caramel notes. Often sipped neat or used in dessert cocktails."
   },
   {
     "name": "Peychaud's Bitters",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Peychaud's Bitters is a spice or bitters used in cocktails."
+    "description": "Peychaud’s bitters have 35–45% ABV and a floral, anise-like aroma. Essential in the Sazerac cocktail. Adds depth and complexity to many drinks."
   },
   {
     "name": "Pimm's No. 1",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Pimm's No. 1 is a sweet liqueur used in cocktails."
+    "description": "Pimm’s No. 1 is a British fruit cup liqueur with 25% ABV, based on gin and flavored with herbs and fruit. Known for the Pimm’s Cup cocktail. Refreshing and lightly spiced."
   },
   {
     "name": "Pineapple",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Pineapple is a fresh fruit used in cocktails."
+    "description": "Pineapple adds tropical sweetness and acidity. Fresh chunks, juice, or wedges are used in many cocktails. Core ingredient in Piña Coladas and Mai Tais."
   },
   {
     "name": "Pineapple Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Pineapple Juice is a fresh juice used in cocktails."
+    "description": "Pineapple juice is sweet, tangy, and tropical. It blends perfectly with rum, coconut, and citrus. Common in tiki drinks and summer punches."
   },
   {
     "name": "Pink grapefruit soda",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Pink grapefruit soda is a soft drink mixer used in cocktails."
+    "description": "Pink grapefruit soda is a sweet-tart, sparkling citrus drink. It pairs beautifully with tequila in a Paloma. Adds both flavor and fizz."
   },
   {
     "name": "Pisco",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Pisco is a distilled spirit used in cocktails."
+    "description": "Pisco is a South American grape brandy with 38–48% ABV. It has floral, fruity notes and a smooth body. Famous in the Pisco Sour and Chilcano."
   },
   {
     "name": "Pomegranate Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Pomegranate Juice is a fresh juice used in cocktails."
+    "description": "Pomegranate juice is tart, deep red, and rich in antioxidants. Adds vibrant color and tangy flavor to cocktails. Popular in modern martinis and spritzers."
   },
   {
     "name": "Prosecco",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Prosecco is a sweet liqueur used in cocktails."
+    "description": "Prosecco is an Italian sparkling wine with 11–12% ABV. Light, fruity, and refreshing, it’s used in Bellinis and Aperol Spritz. Best served chilled."
   },
   {
     "name": "Punt e Mes",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Punt e Mes is a distilled spirit used in cocktails."
+    "description": "Punt e Mes is an Italian vermouth with 16% ABV and a bittersweet, herbal profile. The name means ‘point and a half’ in reference to its balance of sweetness and bitterness. Ideal in Negronis."
   },
   {
     "name": "Raspberry",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Raspberry is a fresh fruit used in cocktails."
+    "description": "Raspberries are sweet-tart berries with bright color and aroma. Used fresh, muddled, or as puree. Great in gin, vodka, and champagne cocktails."
   },
   {
     "name": "Salt",
     "tags": [],
     "image": "",
-    "description": "Salt is an ingredient used in cocktails."
+    "description": "Salt enhances flavors and balances sweetness or bitterness. Often used on glass rims for margaritas and palomas. A pinch can intensify cocktail depth."
   },
   {
     "name": "Sambuca",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Sambuca is a distilled spirit used in cocktails."
+    "description": "Sambuca is an Italian anise-flavored liqueur with 38–42% ABV. It has a sweet, licorice-like taste and is often served with coffee beans as a garnish. Enjoyed neat, on the rocks, or in cocktails."
   },
   {
     "name": "Scotch Whisky",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Scotch Whisky is a distilled spirit used in cocktails."
+    "description": "Scotch whisky is a malt or grain whisky from Scotland, usually 40–46% ABV. It can be smoky, peaty, or smooth depending on its region. Enjoyed neat, with water, or in classic cocktails."
   },
   {
     "name": "Silverskin Onion",
     "tags": [],
     "image": "",
-    "description": "Silverskin Onion is an ingredient used in cocktails."
+    "description": "Silverskin onions are small, pickled onions used as a garnish. Most famously featured in the Gibson cocktail. They add a tangy, savory note."
   },
   {
     "name": "Sloe Gin",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Sloe Gin is a distilled spirit used in cocktails."
+    "description": "Sloe gin is a sweet, red liqueur with 15–30% ABV, made by infusing gin with sloe berries. It has a tart berry flavor and is often used in spritzes and fruit-forward cocktails."
   },
   {
     "name": "Soda",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Soda is a soft drink mixer used in cocktails."
+    "description": "Soda water is a carbonated beverage used to add fizz and lighten cocktails. It has a neutral flavor, making it versatile in spritzes and highballs."
   },
   {
     "name": "Sour Mix",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Sour Mix is a soft drink mixer used in cocktails."
+    "description": "Sour mix is a blend of lemon and lime juice with sugar, used to balance cocktails. It’s essential for drinks like Whiskey Sours and Margaritas."
   },
   {
     "name": "Southern Comfort",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Southern Comfort is a distilled spirit used in cocktails."
+    "description": "Southern Comfort is a whiskey-flavored liqueur with 35–40% ABV. It has notes of fruit, spice, and caramel. Commonly mixed with cola or citrus."
   },
   {
     "name": "Sparkling Wine",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Sparkling Wine is a sweet liqueur used in cocktails."
+    "description": "Sparkling wine is wine with natural carbonation, typically 10–13% ABV. It adds effervescence and brightness to cocktails like the Mimosa and French 75."
   },
   {
     "name": "Spiced Rum",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Spiced Rum is a distilled spirit used in cocktails."
+    "description": "Spiced rum is a flavored rum with 35–40% ABV, infused with spices like vanilla, cinnamon, and clove. It adds warmth and complexity to tropical and dessert cocktails."
   },
   {
     "name": "St. Germain",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "St. Germain is a sweet liqueur used in cocktails."
+    "description": "St-Germain is a French elderflower liqueur with 20% ABV. It has a floral, slightly sweet flavor that pairs beautifully with champagne and gin."
   },
   {
     "name": "Strawberry",
-    "tags": [
-      6
-    ],
+    "tags": [6],
     "image": "",
-    "description": "Strawberry is a fresh fruit used in cocktails."
+    "description": "Strawberries bring sweet, juicy flavor and vibrant color to cocktails. They can be muddled, pureed, or used as a garnish."
   },
   {
     "name": "Strawberry Liqueur",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Strawberry Liqueur is a sweet liqueur used in cocktails."
+    "description": "Strawberry liqueur has 15–25% ABV and delivers ripe berry sweetness. Used in dessert cocktails, spritzes, and fruity martinis."
   },
   {
     "name": "Strawberry Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Strawberry Syrup is a flavored syrup used in cocktails."
+    "description": "Strawberry syrup is a sweet, fruity liquid that enhances cocktails with berry flavor. Ideal for summer drinks and lemonades."
   },
   {
     "name": "Sugar",
     "tags": [],
     "image": "",
-    "description": "Sugar is an ingredient used in cocktails."
+    "description": "Sugar sweetens and balances cocktails. It can be added directly or dissolved into syrups for easier mixing."
   },
   {
     "name": "Sugar Syrup",
-    "tags": [
-      4
-    ],
+    "tags": [4],
     "image": "",
-    "description": "Sugar Syrup is a flavored syrup used in cocktails."
+    "description": "Sugar syrup, or simple syrup, is sugar dissolved in water. It blends easily into cocktails and is a bar staple."
   },
   {
     "name": "Suze",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Suze is a distilled spirit used in cocktails."
+    "description": "Suze is a French bitter aperitif with 15–20% ABV, made from gentian root. It has a distinctive earthy bitterness."
   },
   {
     "name": "Sweet Vermouth",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Sweet Vermouth is a distilled spirit used in cocktails."
+    "description": "Sweet vermouth is a fortified, aromatized wine with 15–18% ABV. It has rich, herbal sweetness and is key in Manhattans and Negronis."
   },
   {
     "name": "Tabasco",
-    "tags": [
-      8
-    ],
+    "tags": [8],
     "image": "",
-    "description": "Tabasco is a spice or bitters used in cocktails."
+    "description": "Tabasco is a hot pepper sauce that adds spice and acidity to cocktails. It’s essential in Bloody Marys."
   },
   {
     "name": "Tawny Port",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Tawny Port is a distilled spirit used in cocktails."
+    "description": "Tawny Port is a sweet fortified wine from Portugal, 19–21% ABV. It has nutty, caramel flavors from barrel aging."
   },
   {
     "name": "Tequila Blanco",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Tequila Blanco is a distilled spirit used in cocktails."
+    "description": "Tequila Blanco is an unaged Mexican agave spirit with 38–40% ABV. It has fresh, grassy, and peppery notes."
   },
   {
     "name": "Tequila Gold",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Tequila Gold is a distilled spirit used in cocktails."
+    "description": "Tequila Gold is a blended or lightly aged tequila with 38–40% ABV. It has a smoother, slightly caramel flavor."
   },
   {
     "name": "Tomato Juice",
-    "tags": [
-      5
-    ],
+    "tags": [5],
     "image": "",
-    "description": "Tomato Juice is a fresh juice used in cocktails."
+    "description": "Tomato juice adds savory, umami-rich flavor to cocktails. Essential in the Bloody Mary."
   },
   {
     "name": "Tonic",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Tonic is a soft drink mixer used in cocktails."
+    "description": "Tonic water is a carbonated beverage flavored with quinine, adding a bitter note. Famous in the Gin & Tonic."
   },
   {
     "name": "Triple Sec",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "Triple Sec is a sweet liqueur used in cocktails."
+    "description": "Triple sec is an orange liqueur with 15–40% ABV. It is crisp, citrusy, and used in Margaritas and Sidecars."
   },
   {
     "name": "Vanilla Extract",
     "tags": [],
     "image": "",
-    "description": "Vanilla Extract is an ingredient used in cocktails."
+    "description": "Vanilla extract is a concentrated flavoring made from vanilla beans. Adds warmth and sweetness to cocktails."
   },
   {
     "name": "Vanilla Pods",
     "tags": [],
     "image": "",
-    "description": "Vanilla Pods is an ingredient used in cocktails."
+    "description": "Vanilla pods contain seeds with intense vanilla flavor. Used to infuse syrups, creams, and spirits."
   },
   {
     "name": "Vodka",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Vodka is a distilled spirit used in cocktails."
+    "description": "Vodka is a neutral spirit with 35–50% ABV. It is versatile and works in countless cocktails."
   },
   {
     "name": "Vodka Citron",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Vodka Citron is a distilled spirit used in cocktails."
+    "description": "Vodka Citron is lemon-flavored vodka with 35–40% ABV. Adds bright citrus notes to cocktails."
   },
   {
     "name": "Vodka Vanilla",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Vodka Vanilla is a distilled spirit used in cocktails."
+    "description": "Vodka Vanilla is a vanilla-flavored vodka with 35–40% ABV. Great in dessert and coffee cocktails."
   },
   {
     "name": "Water",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "image": "",
-    "description": "Water is a soft drink mixer used in cocktails."
+    "description": "Water is essential for dilution and balance in cocktails. Can be added directly or via melted ice."
   },
   {
     "name": "Whipped cream",
-    "tags": [
-      9
-    ],
+    "tags": [9],
     "image": "",
-    "description": "Whipped cream is a dairy ingredient used in cocktails."
+    "description": "Whipped cream adds light sweetness and texture. Used as a garnish for dessert drinks and hot cocktails."
   },
   {
     "name": "White Rum",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "White Rum is a distilled spirit used in cocktails."
+    "description": "White rum is a light, clean spirit with 37–40% ABV. Common in Mojitos, Daiquiris, and Piña Coladas."
   },
   {
     "name": "White Wine",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "image": "",
-    "description": "White Wine is a sweet liqueur used in cocktails."
+    "description": "White wine is made from fermented white grapes, typically 9–13% ABV. Used in spritzers and sangrias."
   },
   {
     "name": "Worcestershire Sauce",
     "tags": [],
     "image": "",
-    "description": "Worcestershire Sauce is an ingredient used in cocktails."
+    "description": "Worcestershire sauce adds savory, tangy, and umami notes. Often used in Bloody Mary variations."
   },
   {
     "name": "Zubrowka",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Zubrowka is a distilled spirit used in cocktails."
+    "description": "Żubrówka is a Polish bison grass vodka with 37–40% ABV. It has a unique herbal, vanilla-like aroma."
   },
   {
     "name": "Whiskey",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "image": "",
-    "description": "Whiskey is a distilled spirit used in cocktails."
+    "description": "Whiskey is a distilled grain spirit with 40–50% ABV. It can be smoky, sweet, or spicy depending on style."
   }
 ]
