@@ -1126,5 +1126,11 @@
     "tags": [1],
     "image": "",
     "description": "Whiskey is a distilled grain spirit with 40–50% ABV. It can be smoky, sweet, or spicy depending on style."
+  },
+  {
+    "name": "Seagram's 7 Crown whiskey",
+    "tags": [1],
+    "image": "",
+    "description": "Seagram's Seven Crown, also called Seagram's Seven, or simply Seven Crown, is an American blended whiskey produced by Diageo under the Seagram's name."
   }
 ]

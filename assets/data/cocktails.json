@@ -4722,7 +4722,7 @@
     "description": "A timeless, two-ingredient highball: smooth, sweet blended whiskey meets bright, effervescent lemon-lime soda. Ice-cold and effortlessly refreshing.",
     "ingredients": [
       { "ingredient": "Seagram's 7 Crown whiskey", "quantity": 45, "unit": 11 },
-      { "ingredient": "7 Up", "quantity": 120, "unit": 11 }
+      { "ingredient": "7-Up", "quantity": 120, "unit": 11 }
     ],
     "instructions": [
       "Fill a Highball glass with ice.",
