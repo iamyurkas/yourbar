@@ -46,6 +46,7 @@ const PhotoThumb = memo(function PhotoThumb({ uri }) {
       <Image
         source={{ uri }}
         style={[styles.thumb, { backgroundColor: theme.colors.surface }]}
+        resizeMode="contain"
       />
     );
   }
