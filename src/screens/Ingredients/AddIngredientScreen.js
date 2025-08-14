@@ -41,6 +41,7 @@ import {
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import IngredientTagsModal from "../../components/IngredientTagsModal";
 
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
@@ -121,6 +122,17 @@ export default function AddIngredientScreen() {
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
+  const [tagsModalVisible, setTagsModalVisible] = useState(false);
+
+  const loadAvailableTags = useCallback(async () => {
+    const custom = await getAllTags();
+    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
+  }, []);
+
+  const closeTagsModal = () => {
+    setTagsModalVisible(false);
+    loadAvailableTags();
+  };
 
   // base list
   const [baseOnlySorted, setBaseOnlySorted] = useState([]);
@@ -219,17 +231,8 @@ export default function AddIngredientScreen() {
 
   useEffect(() => {
     if (!isFocused) return;
-    let cancelled = false;
-    (async () => {
-      const custom = await getAllTags();
-      if (!cancelled) {
-        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [isFocused]);
+    loadAvailableTags();
+  }, [isFocused, loadAvailableTags]);
 
   const loadBases = useCallback(async () => {
     if (basesLoaded || loadingBases) return;
@@ -446,9 +449,11 @@ export default function AddIngredientScreen() {
             ))}
         </View>
 
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Base Ingredient
-        </Text>
+        <Pressable onPress={() => setTagsModalVisible(true)}>
+          <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
+        </Pressable>
+
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}>Base Ingredient</Text>
 
         <View
           ref={anchorRef}
@@ -622,6 +627,7 @@ export default function AddIngredientScreen() {
           </Text>
         </Pressable>
       </ScrollView>
+      <IngredientTagsModal visible={tagsModalVisible} onClose={closeTagsModal} />
     </KeyboardAvoidingView>
   );
 }
@@ -656,6 +662,8 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: { color: "white", fontWeight: "bold" },
+
+  manageTagsLink: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {

@@ -43,6 +43,7 @@ import {
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
+import IngredientTagsModal from "../../components/IngredientTagsModal";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -134,6 +135,17 @@ export default function EditIngredientScreen() {
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]); // builtin + custom
+  const [tagsModalVisible, setTagsModalVisible] = useState(false);
+
+  const loadAvailableTags = useCallback(async () => {
+    const custom = await getAllTags();
+    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
+  }, []);
+
+  const closeTagsModal = () => {
+    setTagsModalVisible(false);
+    loadAvailableTags();
+  };
 
   // base list (lazy) — кешуємо nameLower для швидкого фільтру
   const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
@@ -250,13 +262,11 @@ export default function EditIngredientScreen() {
 
     (async () => {
       try {
-        const [customTags, data] = await Promise.all([
-          getAllTags(),
+        const [, data] = await Promise.all([
+          loadAvailableTags(),
           getIngredientById(currentId),
         ]);
         if (cancelled || !isMountedRef.current) return;
-
-        setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(customTags || [])]);
 
         if (data) {
           setIngredient(data);
@@ -284,7 +294,7 @@ export default function EditIngredientScreen() {
     return () => {
       cancelled = true;
     };
-  }, [isFocused, currentId]);
+  }, [isFocused, currentId, loadAvailableTags]);
 
   // lazy-load bases (exclude current ingredient)
   const loadBases = useCallback(async () => {
@@ -538,6 +548,10 @@ export default function EditIngredientScreen() {
             ))}
         </View>
 
+        <Pressable onPress={() => setTagsModalVisible(true)}>
+          <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
+        </Pressable>
+
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Base Ingredient:
         </Text>
@@ -719,6 +733,7 @@ export default function EditIngredientScreen() {
         </Pressable>
 
       </ScrollView>
+      <IngredientTagsModal visible={tagsModalVisible} onClose={closeTagsModal} />
     </KeyboardAvoidingView>
   );
 }
@@ -753,6 +768,7 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: { fontWeight: "bold" },
+  manageTagsLink: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
 
   menuSearchBox: { paddingHorizontal: 12, paddingVertical: 8 },
   menuSearchInput: {
