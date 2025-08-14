@@ -362,7 +362,9 @@ export default function CocktailDetailsScreen() {
         onPress={() => setShowImperial((v) => !v)}
         style={[styles.toggleBtn, { borderColor: theme.colors.primary }]}
         accessibilityRole="button"
-        accessibilityLabel={showImperial ? "Show in metric" : "Show in imperial"}
+        accessibilityLabel={
+          showImperial ? "Show in metric" : "Show in imperial"
+        }
       >
         <Text style={{ color: theme.colors.primary }}>
           {showImperial ? "Show in metric" : "Show in imperial"}
@@ -392,11 +394,6 @@ export default function CocktailDetailsScreen() {
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
           <View style={styles.section}>
-            <Text
-              style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
-            >
-              Tags:
-            </Text>
             <View style={styles.tagRow}>
               {cocktail.tags.map((tag) => (
                 <View

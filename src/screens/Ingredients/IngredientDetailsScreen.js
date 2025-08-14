@@ -156,20 +156,11 @@ export default function IngredientDetailsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Edit"
         >
-          <MaterialIcons
-            name="edit"
-            size={24}
-            color={theme.colors.onSurface}
-          />
+          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
         </TouchableOpacity>
       ),
     });
-  }, [
-    navigation,
-    handleGoBack,
-    handleEdit,
-    theme.colors.onSurface,
-  ]);
+  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
@@ -225,9 +216,7 @@ export default function IngredientDetailsScreen() {
     const byId = new Map(cocktails.map((c) => [c.id, c]));
     const ingMap = new Map(all.map((i) => [String(i.id), i]));
     const findBrand = (baseId) =>
-      all.find(
-        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
-      );
+      all.find((i) => i.inBar && String(i.baseIngredientId) === String(baseId));
     const list = (map[loaded.id] || [])
       .map((cid) => byId.get(cid))
       .filter(Boolean)
@@ -280,7 +269,9 @@ export default function IngredientDetailsScreen() {
           if (missing.length > 0 && missing.length <= 2) {
             ingredientLine = `Missing: ${missing.join(", ")}`;
           } else if (missing.length >= 3 || missing.length === 0) {
-            ingredientLine = `Missing: ${missing.length || required.length} ingredients`;
+            ingredientLine = `Missing: ${
+              missing.length || required.length
+            } ingredients`;
           }
         }
         return {
@@ -457,11 +448,6 @@ export default function IngredientDetailsScreen() {
 
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
         <View style={styles.section}>
-          <Text
-            style={[styles.sectionLabel, { color: theme.colors.onSurface }]}
-          >
-            Tags:
-          </Text>
           <View style={styles.tagRow}>
             {ingredient.tags.map((tag) => (
               <View
@@ -478,7 +464,10 @@ export default function IngredientDetailsScreen() {
       {ingredient.description ? (
         <View style={styles.section}>
           <Text
-            style={[styles.sectionText, { color: theme.colors.onSurfaceVariant }]}
+            style={[
+              styles.sectionText,
+              { color: theme.colors.onSurfaceVariant },
+            ]}
           >
             {ingredient.description}
           </Text>
