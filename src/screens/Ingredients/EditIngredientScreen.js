@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-start",
   },
-  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, aspectRatio: 1, resizeMode: "cover" },
+  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, aspectRatio: 1, resizeMode: "contain" },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
   tag: {
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
   },
   menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
   menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
-  menuImg: { width: 40, height: 40, aspectRatio: 1, borderRadius: 8 },
+  menuImg: { width: 40, height: 40, aspectRatio: 1, borderRadius: 8, resizeMode: "contain" },
 
   saveButton: {
     marginTop: 24,
