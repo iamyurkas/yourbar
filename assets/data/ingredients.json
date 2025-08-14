@@ -1014,6 +1014,12 @@
     "description": "Sweet vermouth is a fortified, aromatized wine with 15–18% ABV. It has rich, herbal sweetness and is key in Manhattans and Negronis."
   },
   {
+    "name": "Sweet Red Vermouth",
+    "tags": [1],
+    "image": "",
+    "description": "Sweet vermouth is a fortified, aromatized wine with 15–18% ABV. It has rich, herbal sweetness and is key in Manhattans and Negronis."
+  },
+  {
     "name": "Tabasco",
     "tags": [8],
     "image": "",
