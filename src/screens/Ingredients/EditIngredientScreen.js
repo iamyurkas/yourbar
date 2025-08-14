@@ -697,8 +697,8 @@ export default function EditIngredientScreen() {
           onChangeText={setDescription}
           style={[
             styles.input,
+            styles.multiline,
             {
-              height: 60,
               borderColor: theme.colors.outline,
               color: theme.colors.onSurface,
               backgroundColor: theme.colors.surface,
@@ -727,6 +727,7 @@ const styles = StyleSheet.create({
   container: { padding: 24 },
   label: { fontWeight: "bold", marginTop: 16 },
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
+  multiline: { minHeight: 80, textAlignVertical: "top" },
   anchorInput: { justifyContent: "center", minHeight: 44 },
   anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
 
