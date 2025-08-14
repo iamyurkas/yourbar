@@ -29,6 +29,7 @@ import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
 import { formatAmount, toMetric, toImperial } from "../../utils/units";
+import { getUseMetric } from "../../storage/settingsStorage";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -217,13 +218,15 @@ export default function CocktailDetailsScreen() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [loadedCocktail, allIngredients] = await Promise.all([
+    const [loadedCocktail, allIngredients, useMetric] = await Promise.all([
       getCocktailById(id),
       getAllIngredients(),
+      getUseMetric(),
     ]);
     setCocktail(loadedCocktail || null);
     setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
     setIngList(allIngredients || []);
+    setShowImperial(!useMetric);
     setLoading(false);
   }, [id]);
 
