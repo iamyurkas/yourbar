@@ -978,41 +978,7 @@
       "Serve without garnish."
     ]
   },
-  {
-    "name": "Penicillin",
-    "glassware": "rocks_glass",
-    "tags": [3],
-    "description": "Smoky Scotch meets zesty lemon, honey, and spicy ginger in this modern favorite. It’s soothing yet vivid, with a pleasant warmth. Ideal for cooler nights.",
-    "ingredients": [
-      {
-        "ingredient": "Scotch Whisky",
-        "quantity": 60,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lemon",
-        "quantity": 25,
-        "unit": 11
-      },
-      {
-        "ingredient": "Honey Syrup",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Ginger",
-        "quantity": 3,
-        "unit": 1,
-        "optional": true
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Rocks glass.",
-      "Shake whisky, lemon juice, and honey syrup with ice.",
-      "Strain over fresh ice.",
-      "Optional: add a thin slice of ginger as garnish."
-    ]
-  },
+
   {
     "name": "Mint Julep",
     "glassware": "rocks_glass",
@@ -1523,56 +1489,6 @@
       "Muddle mint leaves gently with lime juice and syrup in a shaker.",
       "Add rum, bitters, and ice, then shake and strain into the glass.",
       "Top with sparkling wine and garnish with a mint sprig."
-    ]
-  },
-  {
-    "name": "Old Cuban",
-    "glassware": "coupe",
-    "tags": [1, 5],
-    "description": "A modern classic blending aged rum, mint, citrus, and sparkling wine. Rich and aromatic, where mint and bitters complement a refined rum base. Effervescent, elegant, and celebratory.",
-    "ingredients": [
-      {
-        "ingredient": "Dark Rum",
-        "quantity": 45,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lime",
-        "quantity": 22.5,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sugar Syrup",
-        "quantity": 30,
-        "unit": 11
-      },
-      {
-        "ingredient": "Angostura Bitters",
-        "quantity": 2,
-        "unit": 6
-      },
-      {
-        "ingredient": "Mint",
-        "quantity": 6,
-        "unit": 1
-      },
-      {
-        "ingredient": "Prosecco",
-        "quantity": 60,
-        "unit": 11
-      },
-      {
-        "ingredient": "Mint",
-        "quantity": 1,
-        "unit": 21,
-        "garnish": true
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Coupe glass.",
-      "Muddle mint leaves gently with lime juice and syrup in a shaker.",
-      "Add rum, bitters, and ice, then shake and strain into the glass.",
-      "Top with prosecco and garnish with a mint sprig."
     ]
   },
   {
@@ -2400,46 +2316,7 @@
       "No garnish required."
     ]
   },
-  {
-    "name": "Clover Club",
-    "glassware": "cocktail_glass",
-    "tags": [1],
-    "description": "A beautiful gin sour with raspberry, lemon, and a satin-smooth egg white foam. Fruity and velvety with delicate floral tang. A pre-Prohibition classic revived.",
-    "ingredients": [
-      {
-        "ingredient": "Gin",
-        "quantity": 45,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lemon",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sugar Syrup",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Raspberry",
-        "quantity": 5,
-        "unit": 1,
-        "optional": true
-      },
-      {
-        "ingredient": "Egg",
-        "quantity": 1,
-        "unit": 1
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Cocktail glass.",
-      "Dry shake all ingredients (without ice) to emulsify.",
-      "Add ice and shake again crystalline.",
-      "Fine strain into the glass."
-    ]
-  },
+
   {
     "name": "Derby",
     "glassware": "rocks_glass",
@@ -2658,86 +2535,6 @@
       "Shake crème de cacao and cream with ice until chilled.",
       "Strain into the glass.",
       "No garnish required."
-    ]
-  },
-  {
-    "name": "Mai Tai (Classic)",
-    "glassware": "rocks_glass",
-    "tags": [1, 3],
-    "description": "A tiki icon blending light and dark rum, lime, orgeat, and orange liqueur. Layered, nutty, and tart with tropical complexity. A rum bar cornerstone.",
-    "ingredients": [
-      {
-        "ingredient": "White Rum",
-        "quantity": 30,
-        "unit": 11
-      },
-      {
-        "ingredient": "Dark Rum",
-        "quantity": 30,
-        "unit": 11
-      },
-      {
-        "ingredient": "Orange Curaçao",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Almond Syrup",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lime",
-        "quantity": 25,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lime",
-        "quantity": 1,
-        "unit": 27,
-        "garnish": true
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Rocks glass.",
-      "Shake all ingredients with ice.",
-      "Strain over crushed ice.",
-      "Garnish with a lime wedge."
-    ]
-  },
-  {
-    "name": "Mint Julep",
-    "glassware": "rocks_glass",
-    "tags": [1, 3],
-    "description": "The Southern cocktail of bourbon, mint, sugar, and crushed ice—frosty and aromatic. Refreshing, minty, and warming with mint’s cooling lift. Ideal on hot afternoons.",
-    "ingredients": [
-      {
-        "ingredient": "Mint",
-        "quantity": 8,
-        "unit": 1
-      },
-      {
-        "ingredient": "Sugar Syrup",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Bourbon",
-        "quantity": 60,
-        "unit": 11
-      },
-      {
-        "ingredient": "Mint",
-        "quantity": 1,
-        "unit": 21,
-        "garnish": true
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Rocks glass.",
-      "Gently muddle mint with syrup in the glass.",
-      "Fill with crushed ice and add bourbon, stirring to frost the glass.",
-      "Top with more crushed ice and garnish with a mint sprig."
     ]
   },
   {
@@ -3190,30 +2987,7 @@
       "Float cream gently on top."
     ]
   },
-  {
-    "name": "Bellini",
-    "glassware": "champagne_flute",
-    "tags": [1, 5],
-    "description": "A delicately sweet spritz of peach purée and sparkling wine. Light, fruity, and blush-pink in color. Perfect for breakfast or celebratory toasts.",
-    "ingredients": [
-      {
-        "ingredient": "Peach Puree",
-        "quantity": 50,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sparkling Wine",
-        "quantity": 50,
-        "unit": 11
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Champagne Flute.",
-      "Pour peach purée into the glass.",
-      "Top with sparkling wine and stir gently.",
-      "No garnish required."
-    ]
-  },
+
   {
     "name": "Tom Collins",
     "glassware": "collins_glass",
@@ -4685,45 +4459,7 @@
       "No garnish required."
     ]
   },
-  {
-    "name": "Russian Spring Punch",
-    "glassware": "wine_glass",
-    "tags": [1, 5, 3],
-    "description": "A festive, sparkling punch of vodka, lemon, sugar, and crème de cassis topped with bubbles. Fruity and bright with a lively mousse. Designed for celebrations and warm weather.",
-    "ingredients": [
-      {
-        "ingredient": "Vodka",
-        "quantity": 25,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lemon",
-        "quantity": 20,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sugar Syrup",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Creme de Cassis",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sparkling Wine",
-        "quantity": 60,
-        "unit": 11
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Wine glass.",
-      "Shake vodka, lemon, and syrup with ice and strain over fresh ice.",
-      "Add crème de cassis.",
-      "Top with sparkling wine and give a gentle stir."
-    ]
-  },
+
   {
     "name": "Pimm's Cup",
     "glassware": "highball_glass",
@@ -4933,43 +4669,94 @@
     ]
   },
   {
-    "name": "Corpse Reviver #2",
-    "glassware": "cocktail_glass",
-    "tags": [1, 3],
-    "description": "A classic restorative cocktail blending gin, Cointreau, Lillet Blanc, and a touch of absinthe. Bright, herbal, and citrusy with a hint of anise. A sophisticated pick-me-up.",
+    "name": "End of the Road",
+    "glassware": "coupe",
+    "tags": [3, 4],
+    "description": "An intense, deeply smoky-herbal blend where peaty Scotch meets bitter orange and verdant botanicals. Stirring yields a cool, pale-ruby sip—smoke up front, herbaceous warmth and Campari’s bittersweet cadence in the finish.",
     "ingredients": [
       {
-        "ingredient": "Gin",
+        "ingredient": "Laphroaig 10-Year Islay Scotch",
         "quantity": 30,
         "unit": 11
       },
+      { "ingredient": "Campari", "quantity": 30, "unit": 11 },
+      { "ingredient": "Green Chartreuse", "quantity": 30, "unit": 11 }
+    ],
+    "instructions": [
+      "Select and pre-chill a coupe glass.",
+      "Add equal parts Laphroaig 10-Year Scotch, Campari, and Green Chartreuse into a mixing glass filled with ice.",
+      "Stir gently until thoroughly chilled.",
+      "Strain into the chilled coupette.",
+      "No garnish—let the smoky, bitter-herbal shine speak for itself."
+    ]
+  },
+  {
+    "name": "Corpse Reviver No. 1",
+    "glassware": "coupe",
+    "tags": [3, 4],
+    "description": "A potent, aromatic revival of cognac, apple brandy (Calvados), and sweet vermouth. The rich base spirits offer warming depth, softened by the herbal sweetness of vermouth; a touch of orange bitters or an expressed citrus twist adds a bright zing.",
+    "ingredients": [
+      { "ingredient": "Cognac", "quantity": 45, "unit": 16 },
+      { "ingredient": "Calvados", "quantity": 22.5, "unit": 16 },
+      { "ingredient": "Sweet Vermouth", "quantity": 22.5, "unit": 16 },
       {
-        "ingredient": "Cointreau",
-        "quantity": 30,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lillet Blanc",
-        "quantity": 30,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lemon",
-        "quantity": 10,
-        "unit": 11
-      },
-      {
-        "ingredient": "Absinthe",
+        "ingredient": "Orange Bitters",
         "quantity": 1,
-        "unit": 2,
+        "unit": 6,
+        "optional": true
+      },
+      { "ingredient": "Orange Twist", "garnish": true, "optional": true }
+    ],
+    "instructions": [
+      "Select and pre-chill a coupe glass.",
+      "Add cognac, apple brandy (Calvados), sweet vermouth, and optional orange bitters into a mixing glass filled with ice.",
+      "Stir until well-chilled and properly diluted (about 15–20 seconds).",
+      "Strain into the chilled coupe glass.",
+      "Express an orange twist over the drink and optionally use as garnish."
+    ]
+  },
+  {
+    "name": "7 & 7",
+    "glassware": "highball_glass",
+    "tags": [5, 4],
+    "description": "A timeless, two-ingredient highball: smooth, sweet blended whiskey meets bright, effervescent lemon-lime soda. Ice-cold and effortlessly refreshing.",
+    "ingredients": [
+      { "ingredient": "Seagram's 7 Crown whiskey", "quantity": 45, "unit": 11 },
+      { "ingredient": "7 Up", "quantity": 120, "unit": 11 }
+    ],
+    "instructions": [
+      "Fill a Highball glass with ice.",
+      "Pour in Seagram's 7 Crown whiskey.",
+      "Top with 7 Up to taste.",
+      "Stir gently.",
+      "Enjoy immediately."
+    ]
+  },
+  {
+    "name": "Szarlotka",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A crisp, lightly sweet cocktail that evokes the essence of Polish apple pie. Bison-grass vodka brings its herbal-sweet notes; apple juice adds juiciness; a cinnamon accent gives a gentle warmth.",
+    "ingredients": [
+      {
+        "ingredient": "Żubrówka",
+        "quantity": 30,
+        "unit": 11
+      },
+      { "ingredient": "Apple juice", "quantity": 60, "unit": 11 },
+      {
+        "ingredient": "Gratted Cinnamon",
+        "quantity": 1,
+        "unit": 6,
         "optional": true
       }
     ],
     "instructions": [
-      "Select and pre-chill a Cocktail glass.",
-      "Shake all ingredients with ice until well-chilled.",
-      "Fine strain into the chilled glass.",
-      "Optional lemon twist garnish."
+      "Select a Highball glass and fill it with ice.",
+      "Combine żubrówka and apple juice over the ice.",
+      "Optionally sprinkle a dash of ground cinnamon (or place a cinnamon stick) for aroma and flavor.",
+      "Stir gently to chill and blend.",
+      "Garnish with a cinnamon stick or a fresh apple slice, if desired."
     ]
   }
 ]
