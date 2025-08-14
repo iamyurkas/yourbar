@@ -2,10 +2,7 @@
   {
     "name": "Old Fashioned",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A minimalist whiskey classic that highlights spirit, bitters, and sweetness in perfect balance. The drink is stirred over ice for clarity and texture, then finished with a citrus oil perfume. It’s boozy, silky, and timeless.",
     "ingredients": [
       {
@@ -41,10 +38,7 @@
   {
     "name": "Negroni",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "Equal parts gin, bitter, and vermouth make this the archetype of balanced aperitivo cocktails. It’s herbal, citrusy, and firmly bitter with a lush texture from stirring. Best served over a large cube with a bright citrus aroma.",
     "ingredients": [
       {
@@ -80,9 +74,7 @@
   {
     "name": "Boulevardier",
     "glassware": "rocks_glass",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "description": "A whiskey-forward cousin of the Negroni that trades gin for bourbon. Rich oak and vanilla notes soften the bitter edges while keeping the aperitivo character. Deep, warming, and ideal for cooler evenings.",
     "ingredients": [
       {
@@ -118,10 +110,7 @@
   {
     "name": "Martini (Dry)",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A crisp, aromatically dry mix of gin and dry vermouth. Stirring yields a crystal-clear cocktail with a silky feel. A lemon twist adds brightness; an olive gives a savory edge.",
     "ingredients": [
       {
@@ -158,10 +147,7 @@
   {
     "name": "Margarita (Classic)",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "Bright and citrusy with tequila at the core, balanced by orange liqueur and lime. Salt heightens the flavors and adds contrast. Served up for a bracing, zesty finish.",
     "ingredients": [
       {
@@ -203,9 +189,7 @@
   {
     "name": "Tommy’s Margarita",
     "glassware": "rocks_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A modern classic that swaps orange liqueur for agave nectar. The result is a pure agave-forward profile with bright lime. Served on the rocks for a refreshing sip.",
     "ingredients": [
       {
@@ -246,10 +230,7 @@
   {
     "name": "Daiquiri (Classic)",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A taut three-ingredient sour that showcases rum, lime, and sugar in razor-sharp balance. Shaken and served up, it’s zesty and crystalline. Perfect when you want refreshing precision.",
     "ingredients": [
       {
@@ -284,11 +265,7 @@
   {
     "name": "Mojito",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A Cuban highball of mint, lime, sugar, and rum lengthened with soda. It’s cooling, aromatic, and lightly effervescent. Built for warm weather and easy sipping.",
     "ingredients": [
       {
@@ -340,11 +317,7 @@
   {
     "name": "Aperol Spritz",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "Bubbly, bittersweet, and low in alcohol, this is the icon of Italian aperitivo. Aperol’s orange-herbal profile is lifted by prosecco and a splash of soda. It’s bright, refreshing, and perfect before dinner.",
     "ingredients": [
       {
@@ -379,11 +352,7 @@
   {
     "name": "Americano",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A lighter sibling of the Negroni that swaps gin for soda. Bitter and aromatic with a lively fizz. Ideal as an afternoon aperitif.",
     "ingredients": [
       {
@@ -418,9 +387,7 @@
   {
     "name": "Cosmopolitan",
     "glassware": "cocktail_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "Crisp and tart with flashes of orange and cranberry, this 1990s icon remains a crowd-pleaser. Vodka Citron adds zesty lift. Served up for a sleek, refreshing finish.",
     "ingredients": [
       {
@@ -465,10 +432,7 @@
   {
     "name": "Whiskey Sour",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A silky balance of whiskey, lemon, and sugar with optional egg white for foam. Bright and tangy with a plush texture. Timeless and satisfying.",
     "ingredients": [
       {
@@ -515,10 +479,7 @@
   {
     "name": "Manhattan",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "Spirit-forward and aromatic, the Manhattan marries whiskey with sweet vermouth and bitters. Stirred for clarity and velvet texture. A cherry garnish underscores its rich, classic profile.",
     "ingredients": [
       {
@@ -553,10 +514,7 @@
   {
     "name": "Sidecar",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "Cognac’s warmth meets bright citrus and orange liqueur in this elegant sour. Crisp edges and a gently sweet core make it highly drinkable. A sugared rim is optional for extra sparkle.",
     "ingredients": [
       {
@@ -597,10 +555,7 @@
   {
     "name": "Sazerac",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "An intense, aromatic New Orleans classic built without ice in the glass. Cognac (or rye) is seasoned with sugar and Peychaud’s bitters, and a whisper of absinthe. Powerful, perfumed, and dry.",
     "ingredients": [
       {
@@ -642,9 +597,7 @@
   {
     "name": "Paper Plane",
     "glassware": "cocktail_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A modern equal-parts sour that’s citrusy, bittersweet, and impeccably balanced. Bourbon anchors Aperol and amaro against sharp lemon. Zippy and highly sessionable.",
     "ingredients": [
       {
@@ -683,11 +636,7 @@
   {
     "name": "French 75",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A sparkling gin sour topped with chilled bubbles. It’s brisk, lemony, and festive with a fine mousse. Dangerously refreshing.",
     "ingredients": [
       {
@@ -732,10 +681,7 @@
   {
     "name": "Paloma",
     "glassware": "highball_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "Mexico’s bubbly grapefruit highball—tart, salty, and wildly refreshing. Tequila and lime are stretched with pink grapefruit soda. A salted rim snaps all the flavors into focus.",
     "ingredients": [
       {
@@ -777,10 +723,7 @@
   {
     "name": "Dark 'n' Stormy",
     "glassware": "highball_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "Spicy ginger beer meets rich dark rum for a stormy, refreshing highball. Lime adds brightness and snap. Simple and deeply satisfying.",
     "ingredients": [
       {
@@ -810,10 +753,7 @@
   {
     "name": "Moscow Mule",
     "glassware": "copper_mug",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "A zingy combo of vodka, lime, and fiery ginger beer. Built over ice in a frosty copper mug for snap and chill. Zesty, lively, and endlessly drinkable.",
     "ingredients": [
       {
@@ -848,10 +788,7 @@
   {
     "name": "Piña Colada",
     "glassware": "hurricane_glass",
-    "tags": [
-      5,
-      4
-    ],
+    "tags": [5, 4],
     "description": "Creamy coconut, sweet pineapple, and rum in a lush tropical blend. Blended or shaken, it’s velvety and vacation-ready. A sunny classic for beach weather.",
     "ingredients": [
       {
@@ -891,9 +828,7 @@
   {
     "name": "Mai Tai",
     "glassware": "rocks_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A rum lover’s showcase—bright lime and orange over a nutty almond backbone. Rich, tart, and layered with tropical depth. A cornerstone of tiki culture.",
     "ingredients": [
       {
@@ -943,9 +878,7 @@
   {
     "name": "Jungle Bird",
     "glassware": "rocks_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A modern tiki classic balancing dark rum richness with Campari’s bitter snap. Pineapple gives tropical plushness while lime keeps it sharp. Bitter-sweet and addictive.",
     "ingredients": [
       {
@@ -989,10 +922,7 @@
   {
     "name": "Rum Punch",
     "glassware": "collins_glass",
-    "tags": [
-      5,
-      4
-    ],
+    "tags": [5, 4],
     "description": "A fruit-forward party classic built on rum, citrus, and tropical juices. Grenadine ties color and sweetness together. Easygoing and perfect for batches.",
     "ingredients": [
       {
@@ -1042,9 +972,7 @@
   {
     "name": "Espresso Martini",
     "glassware": "cocktail_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A modern classic that delivers rich espresso foam over a smooth, bittersweet core. Vodka provides structure; coffee liqueur rounds the edges. It’s dessert and pick‑me‑up in one.",
     "ingredients": [
       {
@@ -1084,10 +1012,7 @@
   {
     "name": "White Russian",
     "glassware": "rocks_glass",
-    "tags": [
-      4,
-      3
-    ],
+    "tags": [4, 3],
     "description": "Creamy and comforting—coffee liqueur and vodka capped with rich cream. Built over ice for a soft, rounded sip. A dessert-like classic with gentle sweetness.",
     "ingredients": [
       {
@@ -1116,9 +1041,7 @@
   {
     "name": "Penicillin",
     "glassware": "rocks_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "Smoky Scotch meets zesty lemon, honey, and spicy ginger in this modern favorite. It’s soothing yet vivid, with a pleasant warmth. Ideal for cooler nights.",
     "ingredients": [
       {
@@ -1158,9 +1081,7 @@
   {
     "name": "Mint Julep",
     "glassware": "rocks_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A Southern classic where mint, sugar, and bourbon meet crushed ice. Frosty, fragrant, and dangerously sippable. Simple ingredients, refined ritual.",
     "ingredients": [
       {
@@ -1195,10 +1116,7 @@
   {
     "name": "Pisco Sour",
     "glassware": "coupe",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "Foamy and citrus-bright, this South American classic spotlights pisco’s floral character. A touch of sugar softens the edges, while bitters perfume the foam. Elegant and refreshing.",
     "ingredients": [
       {
@@ -1244,9 +1162,7 @@
   {
     "name": "Aviation",
     "glassware": "cocktail_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A floral gin sour with maraschino and violette for a delicate, perfumed lift. Pastel and aromatic with a brisk lemon core. A vintage beauty revived.",
     "ingredients": [
       {
@@ -1286,9 +1202,7 @@
   {
     "name": "Last Word",
     "glassware": "nick_and_nora",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "A punchy equal‑parts blend of gin, green Chartreuse, maraschino, and lime. Sweet, sour, and herbaceous in perfect tension. Snappy and unforgettable.",
     "ingredients": [
       {
@@ -1327,9 +1241,7 @@
   {
     "name": "Vesper",
     "glassware": "cocktail_glass",
-    "tags": [
-      2
-    ],
+    "tags": [2],
     "description": "A strong, ultra-dry Martini variation that blends gin, vodka, and aromatized wine. Stirred ice-cold for a razor-sharp profile. Clean, bracing, and unapologetically boozy.",
     "ingredients": [
       {
@@ -1364,10 +1276,7 @@
   {
     "name": "Aperitivo Sbagliato",
     "glassware": "wine_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "A ‘mistaken’ Negroni where sparkling wine replaces gin. Bitter-sweet, bubbly, and low in alcohol. A crowd‑friendly spritz for any occasion.",
     "ingredients": [
       {
@@ -1402,10 +1311,7 @@
   {
     "name": "Bloody Mary",
     "glassware": "highball_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "Savory, spicy, and endlessly customizable, this brunch staple balances tomato, spice, and citrus. Vodka provides backbone while seasonings add complexity. Celery gives crunch and aroma.",
     "ingredients": [
       {
@@ -1460,10 +1366,7 @@
   {
     "name": "Sloe Gin Fizz",
     "glassware": "collins_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "A fruity, effervescent cooler starring sloe gin’s tart berry notes. Lemon and soda keep it light and zippy. Easygoing and refreshing.",
     "ingredients": [
       {
@@ -1502,10 +1405,7 @@
   {
     "name": "Cuba Libre",
     "glassware": "highball_glass",
-    "tags": [
-      5,
-      3
-    ],
+    "tags": [5, 3],
     "description": "Often mistaken for a simple rum and cola, the Cuba Libre gains character from fresh lime juice, adding brightness and balance. Rum, cola, and lime form a refreshingly crisp highball. It’s casual, effervescent, and a classic summer sipper.",
     "ingredients": [
       {
@@ -1541,11 +1441,7 @@
   {
     "name": "Bellini",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A soft, fruity Italian spritz made with peach purée and sparkling wine. It’s light, elegant, and celebratory with a blush-pink hue. Perfect for brunch or a festive toast.",
     "ingredients": [
       {
@@ -1569,10 +1465,7 @@
   {
     "name": "Caipirinha",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "Brazil’s national cocktail built with lime, sugar, and cachaça. Freshly muddled lime and sugar release oils and balancing sweetness. Serve over crushed ice for a rustic, invigorating highball.",
     "ingredients": [
       {
@@ -1601,10 +1494,7 @@
   {
     "name": "Gin Fizz",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A bubbly, bright cocktail combining gin, lemon, sugar, and soda. Light and refreshing, with softly effervescent mouthfeel. A classic highball known for its lift and charm.",
     "ingredients": [
       {
@@ -1643,10 +1533,7 @@
   {
     "name": "Casino",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "An early 1900s gem of equal parts gin and maraschino complemented by lemon and bitters. Bright, floral, and sophisticated with a touch of sweetness. A delicate yet resolved pre-dinner cocktail.",
     "ingredients": [
       {
@@ -1686,10 +1573,7 @@
   {
     "name": "Old Cuban",
     "glassware": "coupe",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A modern classic blending aged rum, mint, citrus, and sparkling wine. Rich and aromatic, where mint and bitters complement a refined rum base. Effervescent, elegant, and celebratory.",
     "ingredients": [
       {
@@ -1744,10 +1628,7 @@
   {
     "name": "Old Cuban",
     "glassware": "coupe",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A modern classic blending aged rum, mint, citrus, and sparkling wine. Rich and aromatic, where mint and bitters complement a refined rum base. Effervescent, elegant, and celebratory.",
     "ingredients": [
       {
@@ -1802,10 +1683,7 @@
   {
     "name": "Vieux Carré",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A complex, spirit-forward New Orleans classic blending rye, cognac, vermouth, and Benedictine. Deeply herbal and smooth, with layered bitterness from Peychaud’s. Luxurious and richly aromatic.",
     "ingredients": [
       {
@@ -1857,10 +1735,7 @@
   {
     "name": "Penicillin",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A bold, smoky whisky sour with a soothing ginger-honey backbone and a Scotch float. Warm and restorative with gentle heat. Modern comfort in a glass.",
     "ingredients": [
       {
@@ -1905,10 +1780,7 @@
   {
     "name": "Long Island Iced Tea",
     "glassware": "highball_glass",
-    "tags": [
-      2,
-      5
-    ],
+    "tags": [2, 5],
     "description": "A potent highball combining five spirits balanced with sweet and citrus, topped with cola for color. Despite its name, there's no tea—just a deceptive amber hue. Clever, boozy, and dangerously smooth.",
     "ingredients": [
       {
@@ -1969,9 +1841,7 @@
   {
     "name": "Alexander",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A creamy, chocolate-infused brandy cocktail with velvety texture and indulgent flavor. Equal parts cognac (or brandy), crème de cacao, and cream create a luxurious sipper. Smooth, rich, and dessert-like.",
     "ingredients": [
       {
@@ -2005,9 +1875,7 @@
   {
     "name": "Angel Face",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A potent and fragrant mix of gin, apricot brandy, and calvados (apple brandy). Its fruit-forward nature is lifted by apple notes and a sharp gin backbone. Elegant, strong, and subtly fruity.",
     "ingredients": [
       {
@@ -2041,9 +1909,7 @@
   {
     "name": "Between the Sheets",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A sharp, citrusy blend of cognac, rum, triple sec, and lemon juice. Smooth yet zesty, it balances rich and tangy notes with a warming spirit frame. Perfect for aperitif or after-dinner sipping.",
     "ingredients": [
       {
@@ -2082,9 +1948,7 @@
   {
     "name": "Clover Club",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A pre-Prohibition gin-based sour with raspberry, lemon, and egg white. Velvety, fruity, and vibrant; a classic before-dinner cocktail. Light-pink and elegant with frothy texture.",
     "ingredients": [
       {
@@ -2130,9 +1994,7 @@
   {
     "name": "John Collins",
     "glassware": "collins_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A refreshing long gin highball with lemon, sugar, and soda water. Lighter and more delicate than a Tom Collins. Bright, easy, and endlessly drinkable.",
     "ingredients": [
       {
@@ -2172,9 +2034,7 @@
   {
     "name": "Ramos Gin Fizz",
     "glassware": "collins_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A creamy, lavender-scented gin fizz with egg white and heavy cream. Fluffy and frothy, with citrus, floral, and velvety layers. A brunch staple renowned for its luxurious mouthfeel.",
     "ingredients": [
       {
@@ -2223,9 +2083,7 @@
   {
     "name": "Monkey Gland",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A playful name for a bold combo of gin, orange juice, grenadine, and absinthe. Fruity, spicy, and herbal with a luminous pink hue. A memorable pre-dinner concoction.",
     "ingredients": [
       {
@@ -2265,9 +2123,7 @@
   {
     "name": "Porto Flip",
     "glassware": "wine_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A rich, velvety nightcap from brandy, tawny port, and egg yolk. Deep, warm, and indulgent with silky texture. Perfect for post-dinner sipping.",
     "ingredients": [
       {
@@ -2301,9 +2157,7 @@
   {
     "name": "Tipperary",
     "glassware": "cocktail_glass",
-    "tags": [
-      3
-    ],
+    "tags": [3],
     "description": "An Irish whiskey cocktail brightened by sweet vermouth and green Chartreuse. Herbal, smooth and subtly sweet with citrus bitters. A sophisticated sip with layered complexity.",
     "ingredients": [
       {
@@ -2343,10 +2197,7 @@
   {
     "name": "Sex on the Beach",
     "glassware": "highball_glass",
-    "tags": [
-      2,
-      5
-    ],
+    "tags": [2, 5],
     "description": "A fun, fruity highball combining vodka, peach schnapps, and orange-cranberry juices. Bright, sweet, and very approachable—made for summer parties. Cheers to easy sipping!",
     "ingredients": [
       {
@@ -2386,9 +2237,7 @@
   {
     "name": "Martinez",
     "glassware": "coupe",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "The elegant forerunner to the Martini, combining gin, sweet vermouth, maraschino, and bitters. Softly sweet, botanical, and aromatic with balanced bite. A refined classic.",
     "ingredients": [
       {
@@ -2422,9 +2271,7 @@
   {
     "name": "Remember the Maine",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A potent rye and cherry-forward classic with a splash of absinthe. Bold, herbal, and brightened by vermouth and cherry notes. A storied and distinguished mixing glass prototype.",
     "ingredients": [
       {
@@ -2459,10 +2306,7 @@
   {
     "name": "Singapore Sling",
     "glassware": "highball_glass",
-    "tags": [
-      2,
-      5
-    ],
+    "tags": [2, 5],
     "description": "A gin-based tropical highball with cherry and herbal complexity from Benedictine. Fruity, effervescent, and suitable for poolside lounging. Iconic and indulgent.",
     "ingredients": [
       {
@@ -2518,10 +2362,7 @@
   {
     "name": "Bramble",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A refreshing and fruity gin cocktail with blackberry liqueur drizzled over the top. Citrus and sweetness balance the berry’s depth. Elegant, modern, and perfect for summer evenings.",
     "ingredients": [
       {
@@ -2561,9 +2402,7 @@
   {
     "name": "Blood and Sand",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A unique Scotch-based cocktail harmonizing orange, cherry liqueur, and sweet vermouth. Complex, fruity, and silky with rich Scotch flavors. A smooth classic with dramatic name.",
     "ingredients": [
       {
@@ -2602,11 +2441,7 @@
   {
     "name": "Campari Spritz",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A vibrant spritz that showcases Campari with prosecco and soda. Bitter, fizzy, and refreshing with a beautiful coral hue. Perfect aperitivo for hot afternoons.",
     "ingredients": [
       {
@@ -2641,10 +2476,7 @@
   {
     "name": "Caipiroska",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A vodka-based twist on the Caipirinha, swapping cachaça for vodka. Fresh lime and sugar pulled into the spirit with crushed ice. Clean, zesty, and simple.",
     "ingredients": [
       {
@@ -2673,10 +2505,7 @@
   {
     "name": "Caipiríssima",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A Cuban spin on the Caipirinha using Cuban rum instead of cachaça. Lime and sugar deliver freshness, while rum adds depth and sugariness. Crushed ice makes it refreshingly cold.",
     "ingredients": [
       {
@@ -2705,10 +2534,7 @@
   {
     "name": "Champagne Cocktail",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A simple, elegant cocktail that adds bitters and sugar to sparkling wine. Sweet, aromatic, and effervescent, with just a whisper of bitters’ complexity. Perfect for celebrations.",
     "ingredients": [
       {
@@ -2737,9 +2563,7 @@
   {
     "name": "Clover Club",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A beautiful gin sour with raspberry, lemon, and a satin-smooth egg white foam. Fruity and velvety with delicate floral tang. A pre-Prohibition classic revived.",
     "ingredients": [
       {
@@ -2784,9 +2608,7 @@
   {
     "name": "Derby",
     "glassware": "rocks_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A delicate gin cocktail balanced with dry vermouth and herbal complexity from mint. Crisp, refreshing, and aromatic with modern elegance. Great aperitif when you want something light.",
     "ingredients": [
       {
@@ -2816,9 +2638,7 @@
   {
     "name": "Dry Rob Roy",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A Scotch whisky variation of the Rob Roy with dry vermouth. Dry, smoky, and refined, with a whisky-first profile. Sorbed direct and perfect for sophisticated sipping.",
     "ingredients": [
       {
@@ -2848,9 +2668,7 @@
   {
     "name": "French Martini",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A vibrant and fruity martini featuring raspberry liqueur and pineapple. Shaken for tropical aroma and tart-sweet balance. Bright, stylish, and modern.",
     "ingredients": [
       {
@@ -2884,10 +2702,7 @@
   {
     "name": "Godfather",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A bold and simple duo of Scotch and amaretto. Sweet, nutty, and smoky in equal measure. Effortlessly smooth and contemplative.",
     "ingredients": [
       {
@@ -2911,10 +2726,7 @@
   {
     "name": "Godmother",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A smooth blend of vodka and amaretto, mellow and slightly sweet. Lighter than the Godfather but just as elegant. Easy to sip and fancy enough for cocktails.",
     "ingredients": [
       {
@@ -2938,10 +2750,7 @@
   {
     "name": "Harvey Wallbanger",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A sunny highball mixing vodka, orange juice, and Galliano’s vanilla-herbal sweetness. Bright and easygoing with liquorice-vanilla finish. Retro, fun, and approachable.",
     "ingredients": [
       {
@@ -2970,10 +2779,7 @@
   {
     "name": "Horse’s Neck",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A refreshing long drink with brandy (or whiskey), ginger ale, and a spiral of lemon. Crisp, lightly sweet, and aromatic. Named for the long lemon twist spiraling down the glass.",
     "ingredients": [
       {
@@ -3003,9 +2809,7 @@
   {
     "name": "Lady Godiva",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "An indulgent blend of dark crème de cacao and cream for a chocolatey dessert cocktail. Silky, rich, and decadently sweet. Perfect for evenings with dessert in a glass.",
     "ingredients": [
       {
@@ -3034,10 +2838,7 @@
   {
     "name": "Mai Tai (Classic)",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A tiki icon blending light and dark rum, lime, orgeat, and orange liqueur. Layered, nutty, and tart with tropical complexity. A rum bar cornerstone.",
     "ingredients": [
       {
@@ -3087,10 +2888,7 @@
   {
     "name": "Mint Julep",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "The Southern cocktail of bourbon, mint, sugar, and crushed ice—frosty and aromatic. Refreshing, minty, and warming with mint’s cooling lift. Ideal on hot afternoons.",
     "ingredients": [
       {
@@ -3125,10 +2923,7 @@
   {
     "name": "Negroni Sbagliato",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A lighter, bubbly version of the Negroni, substituting sparkling wine for gin. Bitter-sweet, refreshing, and delicate. Perfect for late afternoons or aperitivos.",
     "ingredients": [
       {
@@ -3163,10 +2958,7 @@
   {
     "name": "Planter’s Punch",
     "glassware": "hurricane_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A Jamaican rum punch with orange and lime juices, sugar, and bitters. Fruity, boozy, and vibrant—a punch bowl classic in single-serve form. Handy, tropical, and fun.",
     "ingredients": [
       {
@@ -3216,9 +3008,7 @@
   {
     "name": "Pegu Club",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A gin cocktail with orange bitters, lime, and curaçao—balanced, citrusy, and dry. Served up with smooth elegance. A favorite from Colonial-era Burma bars.",
     "ingredients": [
       {
@@ -3257,10 +3047,7 @@
   {
     "name": "Pink Lady",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A frothy and pink gin cocktail with apple brandy, lemon, and egg white. Elegant, silky, and delightfully rosy. A vintage feminine favorite.",
     "ingredients": [
       {
@@ -3299,10 +3086,7 @@
   {
     "name": "Porto Tonic",
     "glassware": "highball_glass",
-    "tags": [
-      3,
-      5
-    ],
+    "tags": [3, 5],
     "description": "A refreshing highball blending tawny port with tonic water. Sweet, slightly bitter, and effervescent—light, lower-alcohol sipping. Garnished with citrus for brightness.",
     "ingredients": [
       {
@@ -3332,9 +3116,7 @@
   {
     "name": "Rose",
     "glassware": "cocktail_glass",
-    "tags": [
-      1
-    ],
+    "tags": [1],
     "description": "A delicate mix of gin, vermouth, kirsch, and strawberry liqueur. Floral, aromatic, and sophisticated with subtle fruit notes. Named for its elegant pink hue.",
     "ingredients": [
       {
@@ -3368,10 +3150,7 @@
   {
     "name": "Rusty Nail",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A rich blend of Scotch whisky and Drambuie (honey-herbal liqueur). Smooth, warming, and subtly sweet with smoky depth. Ideal for slow sipping.",
     "ingredients": [
       {
@@ -3395,10 +3174,7 @@
   {
     "name": "Screwdriver",
     "glassware": "highball_glass",
-    "tags": [
-      3,
-      5
-    ],
+    "tags": [3, 5],
     "description": "The simple and iconic vodka-orange juice mix—the screwdriver. Bright, fruity, and effortless. A brunch and day-drinking staple.",
     "ingredients": [
       {
@@ -3428,10 +3204,7 @@
   {
     "name": "Sea Breeze",
     "glassware": "highball_glass",
-    "tags": [
-      3,
-      5
-    ],
+    "tags": [3, 5],
     "description": "A crisp, refreshing combination of vodka, cranberry, and grapefruit juice. Tart, slightly bitter, and hydrating. A light, healthy-feeling palate cleanser.",
     "ingredients": [
       {
@@ -3466,11 +3239,7 @@
   {
     "name": "Kir Royale",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A luxurious and simple mix of crème de cassis and sparkling wine. Sweet, fruity, and elegant with deep berry color. A celebratory classic.",
     "ingredients": [
       {
@@ -3494,10 +3263,7 @@
   {
     "name": "Vesper Martini",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A powerful, dry martini variant that blends gin, vodka, and Lillet Blanc. Crisp, strong, and elegant. Bond’s signature cocktail with a citrus twist.",
     "ingredients": [
       {
@@ -3537,11 +3303,7 @@
   {
     "name": "Zombie",
     "glassware": "hurricane_glass",
-    "tags": [
-      1,
-      2,
-      5
-    ],
+    "tags": [1, 2, 5],
     "description": "A legendary tiki cocktail of multiple rums, fruit juices, and passionfruit liqueurs. Bold, boozy, and layered with tropical flavors and spice. Sipped slowly and served with flair.",
     "ingredients": [
       {
@@ -3602,10 +3364,7 @@
   {
     "name": "Irish Coffee",
     "glassware": "irish_coffee_glass",
-    "tags": [
-      1,
-      4
-    ],
+    "tags": [1, 4],
     "description": "A comforting mix of hot coffee, Irish whiskey, sugar, and cream. Warm, rich, and creamy with spirit lift; perfect for chilly mornings. A cafe classic with cozy appeal.",
     "ingredients": [
       {
@@ -3639,10 +3398,7 @@
   {
     "name": "Bellini",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A delicately sweet spritz of peach purée and sparkling wine. Light, fruity, and blush-pink in color. Perfect for breakfast or celebratory toasts.",
     "ingredients": [
       {
@@ -3666,10 +3422,7 @@
   {
     "name": "Tom Collins",
     "glassware": "collins_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A classic gin highball with lemon and soda water. Bright, citrusy, and refreshing—effervescent every time. A timeless long drink.",
     "ingredients": [
       {
@@ -3709,10 +3462,7 @@
   {
     "name": "Gin Tonic",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5
-    ],
+    "tags": [1, 5],
     "description": "A crisp, aromatic highball of gin and tonic water. Botanic gin and bitterness of tonic make it a simple, refreshing classic. Garnished with citrus or herbs for zest.",
     "ingredients": [
       {
@@ -3742,10 +3492,7 @@
   {
     "name": "Black Russian",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A minimalist mix of vodka and coffee liqueur that drinks darker and richer than it looks. The sweetness of the liqueur softens the spirit’s edges without hiding it. Stirred over ice, it’s silky and quietly decadent.",
     "ingredients": [
       {
@@ -3769,10 +3516,7 @@
   {
     "name": "Vodka Martini",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "Crystal-clear and razor-dry, the vodka martini showcases cold purity over botanicals. A whisper of dry vermouth adds aroma and structure. Garnish choice nudges it savory or bright.",
     "ingredients": [
       {
@@ -3802,10 +3546,7 @@
   {
     "name": "Gibson",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A dry gin martini distinguished by its savory garnish. Crisp botanicals meet gentle vermouth aromatics. The pickled onion lends a subtle briny snap.",
     "ingredients": [
       {
@@ -3835,11 +3576,7 @@
   {
     "name": "El Diablo",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A tequila highball built on a tart, dark-berry backbone from crème de cassis. Lime brightens while ginger beer lifts with spice and fizz. It’s vivid, refreshing, and just a little wicked.",
     "ingredients": [
       {
@@ -3879,11 +3616,7 @@
   {
     "name": "Tequila Sunrise",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "Sunny layers of orange and red create the namesake sunrise effect. Tequila provides backbone while grenadine adds color and pomegranate sweetness. A retro crowd-pleaser that remains effortlessly drinkable.",
     "ingredients": [
       {
@@ -3918,11 +3651,7 @@
   {
     "name": "Mimosa",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A brunch cornerstone marrying fresh orange juice with sparkling wine. Light bubbles and citrus perfume keep it crisp and celebratory. Effortless to make, delightful to drink.",
     "ingredients": [
       {
@@ -3946,11 +3675,7 @@
   {
     "name": "Kir",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A simple French aperitif of crème de cassis lengthened with chilled white wine. Sweet berry notes meet crisp acidity for effortless balance. Elegant and low in alcohol.",
     "ingredients": [
       {
@@ -3974,11 +3699,7 @@
   {
     "name": "Black Velvet",
     "glassware": "champagne_flute",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A dramatic two-layered mix of stout and sparkling wine. Creamy malt meets crisp bubbles for a silky, bittersweet blend. Lush, festive, and surprisingly balanced.",
     "ingredients": [
       {
@@ -4002,10 +3723,7 @@
   {
     "name": "French Connection",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A slow-sipping duo of cognac and amaretto. Nutty sweetness wraps around warm, oak-driven depth. Best over a large cube for measured dilution.",
     "ingredients": [
       {
@@ -4029,10 +3747,7 @@
   {
     "name": "B-52",
     "glassware": "shooter",
-    "tags": [
-      1,
-      6
-    ],
+    "tags": [1, 6],
     "description": "A layered shooter showcasing coffee, cream, and orange notes. Precise pours form neat stripes in the glass. Sweet, creamy, and a party favorite.",
     "ingredients": [
       {
@@ -4061,10 +3776,7 @@
   {
     "name": "Brandy Crusta",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A 19th‑century New Orleans classic with a sugared rim and citrus perfume. Cognac, curaçao, lemon, and bitters deliver bright intensity. It’s elegant, zesty, and theatrically garnished.",
     "ingredients": [
       {
@@ -4115,10 +3827,7 @@
   {
     "name": "White Lady",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A refined gin sour sweetened with triple sec. Silky and bright with a clean citrus finish. Optional egg white adds a luxurious foam.",
     "ingredients": [
       {
@@ -4158,10 +3867,7 @@
   {
     "name": "Corpse Reviver No. 2",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "An equal-parts classic with gin, lemon, Cointreau, and Lillet, kissed by absinthe. Zesty, floral, and perfectly balanced. Designed as a bracing pick‑me‑up.",
     "ingredients": [
       {
@@ -4206,10 +3912,7 @@
   {
     "name": "Mary Pickford",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A Prohibition-era charmer of light rum, pineapple, grenadine, and maraschino. Lush and lightly sweet with a delicate cherry note. Pretty in color and polished on the palate.",
     "ingredients": [
       {
@@ -4248,10 +3951,7 @@
   {
     "name": "Hemingway Special",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A tart, aromatic daiquiri variant with grapefruit and maraschino. Dry, zippy, and citrus-driven with rum’s clean snap. A writer’s favorite that rewards precise balance.",
     "ingredients": [
       {
@@ -4290,10 +3990,7 @@
   {
     "name": "Gimlet",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A taut, lime-forward classic that pairs gin’s botanicals with bright citrus. Smooth, focused, and endlessly refreshing. Served up for a clean, brisk finish.",
     "ingredients": [
       {
@@ -4327,10 +4024,7 @@
   {
     "name": "Southside",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "Mint and gin meet lemon and sugar for a herbaceous sour with a cooling finish. It’s crisp, aromatic, and neatly polished. A crowd-pleaser that bridges classic and garden-fresh.",
     "ingredients": [
       {
@@ -4369,10 +4063,7 @@
   {
     "name": "Bee's Knees",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A Prohibition-era sour where honey softens gin’s botanicals. Bright lemon and floral sweetness land in perfect balance. Simple, elegant, and quietly luxurious.",
     "ingredients": [
       {
@@ -4406,10 +4097,7 @@
   {
     "name": "Stinger",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "Brandy and white crème de menthe combine for a minty nightcap. Cooling sweetness relaxes cognac’s edges into a smooth, after-dinner sip. Best served very cold.",
     "ingredients": [
       {
@@ -4438,10 +4126,7 @@
   {
     "name": "Grasshopper",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      4
-    ],
+    "tags": [1, 4],
     "description": "A mint-chocolate dessert cocktail that’s creamy yet light on its feet. Crème de menthe and crème de cacao knit together with cream. Sweet, nostalgic, and decadently smooth.",
     "ingredients": [
       {
@@ -4475,10 +4160,7 @@
   {
     "name": "Golden Dream",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      4
-    ],
+    "tags": [1, 4],
     "description": "A silky ‘70s classic blending Galliano, triple sec, orange, and cream. Citrus perfumes a plush, vanilla-tinged body. Dessert-like but surprisingly lifted.",
     "ingredients": [
       {
@@ -4517,11 +4199,7 @@
   {
     "name": "Blue Lagoon",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "Electric-blue and citrusy, this crowd-pleaser mixes vodka and curaçao with lemonade. Sweet-tart and sparkling, it drinks easy and looks festive. A party in a glass.",
     "ingredients": [
       {
@@ -4556,10 +4234,7 @@
   {
     "name": "Rob Roy",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "The Scotch whisky take on a Manhattan, richer and lightly smoky. Sweet vermouth rounds the edges while bitters add structure. Stirred and spirit-forward, it’s urbane and timeless.",
     "ingredients": [
       {
@@ -4594,11 +4269,7 @@
   {
     "name": "Barracuda",
     "glassware": "hurricane_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A tropical sparkler marrying rum, Galliano, pineapple, and lime, topped with prosecco. Vanilla-herbal depth meets juicy fruit and bubbles. Vibrant, aromatic, and party-ready.",
     "ingredients": [
       {
@@ -4642,10 +4313,7 @@
   {
     "name": "El Presidente",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A Cuban classic of white rum, dry vermouth, orange curaçao, and a blush of grenadine. Refined, lightly sweet, and aromatic with citrus. An elegant aperitivo-style rum cocktail.",
     "ingredients": [
       {
@@ -4679,11 +4347,7 @@
   {
     "name": "Vampiro",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A savory-spicy Mexican highball with tequila, tomato, citrus, and heat. Worcestershire, salt, and hot sauce season it like a cocktail-meets-michelada. Bold, bracing, and thirst-quenching.",
     "ingredients": [
       {
@@ -4732,10 +4396,7 @@
   {
     "name": "Rabo de Galo",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A Brazilian classic marrying cachaça with bitter-sweet vermouth. Earthy cane notes meet herbal aromatics for a compact, aperitif-style sip. Simple, sturdy, and satisfying.",
     "ingredients": [
       {
@@ -4759,11 +4420,7 @@
   {
     "name": "Canchanchara",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "An old Cuban refresher of rum, lime, honey, and water. Light, rustic, and gently sweet with bright citrus. Built over ice for effortless sipping.",
     "ingredients": [
       {
@@ -4797,10 +4454,7 @@
   {
     "name": "Tuxedo",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A martini-era classic layering gin with dry vermouth, maraschino, and a touch of absinthe. Dry, aromatic, and faintly floral-anise. Polished and precise.",
     "ingredients": [
       {
@@ -4835,10 +4489,7 @@
   {
     "name": "Bamboo",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A low-alcohol aperitif of dry sherry and dry vermouth with bitters. Nutty, saline notes meet crisp herbs for a refined sip. Ideal before dinner or as a sessionable cocktail.",
     "ingredients": [
       {
@@ -4872,10 +4523,7 @@
   {
     "name": "Adonis",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "Sherry and sweet vermouth in an elegant, low-proof duo. Aromatic, lightly sweet, and herbaceous. A classic aperitif with theater roots.",
     "ingredients": [
       {
@@ -4904,11 +4552,7 @@
   {
     "name": "Hugo",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A floral Alpine spritz built with elderflower cordial, prosecco, and soda. Mint and lime add garden freshness and zip. Light, aromatic, and made for warm evenings.",
     "ingredients": [
       {
@@ -4949,10 +4593,7 @@
   {
     "name": "Apple Martini",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A crisp, modern martini riff emphasizing green-apple tang. Vodka keeps it clean while apple liqueur adds fruit and color. Zesty, bright, and unmistakably contemporary.",
     "ingredients": [
       {
@@ -4986,10 +4627,7 @@
   {
     "name": "Gin Basil Smash",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A herbaceous modern classic where fresh basil, lemon, and gin collide. The result is vividly green, aromatic, and crisp. Short, bright, and incredibly refreshing.",
     "ingredients": [
       {
@@ -5023,10 +4661,7 @@
   {
     "name": "Amaretto Sour",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      4
-    ],
+    "tags": [1, 4],
     "description": "Sweet almond liqueur balanced by lemon, optionally enriched with egg white. Soft, creamy, and dessert-like yet bright. A gateway sour beloved by many.",
     "ingredients": [
       {
@@ -5066,10 +4701,7 @@
   {
     "name": "Hanky Panky",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "Gin and sweet vermouth given a sly, bitter kick by Fernet. Herbal, complex, and warmly spiced. A Savoy classic with lasting charm.",
     "ingredients": [
       {
@@ -5098,10 +4730,7 @@
   {
     "name": "Toronto",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A whiskey old-fashioned cousin sweetened lightly and seasoned with Fernet. Bitter-minty aromatics frame a dry, spirit-forward core. Serious, sleek, and bracing.",
     "ingredients": [
       {
@@ -5135,10 +4764,7 @@
   {
     "name": "Bobby Burns",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A Scotch-and-vermouth classic sweetened with Benedictine. Rich, herbal, and warmly spiced with a long finish. A contemplative sipper for evening hours.",
     "ingredients": [
       {
@@ -5167,10 +4793,7 @@
   {
     "name": "Paradise",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A fruit-forward gin classic with apricot brandy and orange juice. Rounded sweetness supports bright citrus and botanicals. Balanced and sunny.",
     "ingredients": [
       {
@@ -5204,10 +4827,7 @@
   {
     "name": "Bronx",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A Martini cousin softened with sweet-and-dry vermouth and freshly pressed orange. Botanical, lightly sweet, and citrus-bright. An early 20th‑century staple.",
     "ingredients": [
       {
@@ -5246,10 +4866,7 @@
   {
     "name": "Scofflaw",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A tart, rye-era cocktail of whiskey, dry vermouth, lemon, and grenadine with orange bitters. Brisk and lightly spiced with a ruby glow. Sharp, snappy, and satisfying.",
     "ingredients": [
       {
@@ -5293,11 +4910,7 @@
   {
     "name": "Hurricane",
     "glassware": "hurricane_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A New Orleans tiki icon with rum and passion fruit at its core. Sweet-tart, tropical, and big-flavored, it’s built for celebration. Best served tall over crushed ice.",
     "ingredients": [
       {
@@ -5341,10 +4954,7 @@
   {
     "name": "Golden Cadillac",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      4
-    ],
+    "tags": [1, 4],
     "description": "Creamy and vanilla-chocolate scented with Galliano’s herbal whisper. Dessert-like yet balanced when served very cold. A retro after-dinner favorite.",
     "ingredients": [
       {
@@ -5378,11 +4988,7 @@
   {
     "name": "Russian Spring Punch",
     "glassware": "wine_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A festive, sparkling punch of vodka, lemon, sugar, and crème de cassis topped with bubbles. Fruity and bright with a lively mousse. Designed for celebrations and warm weather.",
     "ingredients": [
       {
@@ -5426,11 +5032,7 @@
   {
     "name": "Pimm's Cup",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "Summer in a glass: Pimm’s, citrus, and fizz with fresh garnishes. Lightly spiced and herbal with a refreshing finish. Built long for easy garden sipping.",
     "ingredients": [
       {
@@ -5472,11 +5074,7 @@
   {
     "name": "Suffering Bastard",
     "glassware": "highball_glass",
-    "tags": [
-      1,
-      5,
-      3
-    ],
+    "tags": [1, 5, 3],
     "description": "A WWII‑era hangover helper combining gin, brandy (or whiskey), lime, bitters, and ginger beer. Zesty, spicy, and surprisingly balanced. Built tall for maximum refreshment.",
     "ingredients": [
       {
@@ -5515,10 +5113,7 @@
   {
     "name": "Yellow Bird",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A sunny Caribbean sour of rum, Galliano, triple sec, and lime. Vanilla-herbal sweetness threads through bright citrus. Tropical, lively, and fragrant.",
     "ingredients": [
       {
@@ -5557,10 +5152,7 @@
   {
     "name": "Old Pal",
     "glassware": "rocks_glass",
-    "tags": [
-      1,
-      2
-    ],
+    "tags": [1, 2],
     "description": "A dry, bracing cousin of the Negroni using dry vermouth and whiskey. Bitter, herbal, and ultra-refreshing served over a big cube. Lean and sophisticated.",
     "ingredients": [
       {
@@ -5595,10 +5187,7 @@
   {
     "name": "Bacardi Cocktail",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A classic rum sour colored and flavored with grenadine. Bright lime keeps it taut while pomegranate adds a rosy, fruity edge. Clean, zesty, and historically iconic.",
     "ingredients": [
       {
@@ -5632,10 +5221,7 @@
   {
     "name": "Kamikaze",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A vodka-driven sour balancing triple sec and fresh lime. Sharp, clean, and straightforward. Often served up or as a miniature shooter.",
     "ingredients": [
       {
@@ -5669,10 +5255,7 @@
   {
     "name": "Corpse Reviver #2",
     "glassware": "cocktail_glass",
-    "tags": [
-      1,
-      3
-    ],
+    "tags": [1, 3],
     "description": "A classic restorative cocktail blending gin, Cointreau, Lillet Blanc, and a touch of absinthe. Bright, herbal, and citrusy with a hint of anise. A sophisticated pick-me-up.",
     "ingredients": [
       {
@@ -5712,6 +5295,33 @@
       "Shake all ingredients with ice until well-chilled.",
       "Fine strain into the chilled glass.",
       "Optional lemon twist garnish."
+    ]
+  },
+  {
+    "name": "Szarlotka",
+    "glassware": "highball_glass",
+    "tags": [3, 5],
+    "description": "A crisp, lightly sweet cocktail that evokes the essence of Polish apple pie. Bison-grass vodka brings its herbal-sweet notes; apple juice adds juiciness; a cinnamon accent gives a gentle warmth.",
+    "ingredients": [
+      {
+        "ingredient": "Żubrówka",
+        "quantity": 30,
+        "unit": 11
+      },
+      { "ingredient": "Apple juice", "quantity": 60, "unit": 11 },
+      { "ingredient": "Ground Cinnamon", "unit": 6, "optional": true },
+      {
+        "ingredient": "Ice",
+        "quantity": 90,
+        "unit": 8
+      }
+    ],
+    "instructions": [
+      "Select a Highball glass and fill it with ice.",
+      "Combine żubrówka and apple juice over the ice.",
+      "Optionally sprinkle a dash of ground cinnamon (or place a cinnamon stick) for aroma and flavor.",
+      "Stir gently to chill and blend.",
+      "Garnish with a cinnamon stick or a fresh apple slice, if desired."
     ]
   }
 ]
