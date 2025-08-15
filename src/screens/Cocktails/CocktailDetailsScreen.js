@@ -33,7 +33,10 @@ import {
   getUseMetric,
   getIgnoreGarnish,
   addIgnoreGarnishListener,
+  getKeepAwake,
+  addKeepAwakeListener,
 } from "../../storage/settingsStorage";
+import { activateKeepAwakeAsync, deactivateKeepAwakeAsync } from "expo-keep-awake";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -163,6 +166,7 @@ export default function CocktailDetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [keepAwake, setKeepAwake] = useState(false);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -247,6 +251,30 @@ export default function CocktailDetailsScreen() {
       })();
     }, [load])
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        try {
+          const enabled = await getKeepAwake();
+          setKeepAwake(!!enabled);
+        } catch {}
+      })();
+      const sub = addKeepAwakeListener(setKeepAwake);
+      return () => {
+        sub.remove();
+        deactivateKeepAwakeAsync();
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    if (keepAwake) {
+      activateKeepAwakeAsync();
+    } else {
+      deactivateKeepAwakeAsync();
+    }
+  }, [keepAwake]);
 
   useEffect(() => {
     const sub = addIgnoreGarnishListener(setIgnoreGarnish);

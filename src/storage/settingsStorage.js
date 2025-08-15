@@ -3,8 +3,10 @@ import { DeviceEventEmitter } from "react-native";
 
 const USE_METRIC_KEY = "useMetric";
 const IGNORE_GARNISH_KEY = "ignoreGarnish";
+const KEEP_AWAKE_KEY = "keepAwake";
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
+export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
 
 export async function getUseMetric() {
   try {
@@ -41,4 +43,25 @@ export async function setIgnoreGarnish(value) {
 
 export function addIgnoreGarnishListener(listener) {
   return DeviceEventEmitter.addListener(IGNORE_GARNISH_EVENT, listener);
+}
+
+export async function getKeepAwake() {
+  try {
+    const value = await AsyncStorage.getItem(KEEP_AWAKE_KEY);
+    if (value === null) return false;
+    return value === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setKeepAwake(value) {
+  try {
+    await AsyncStorage.setItem(KEEP_AWAKE_KEY, value ? "true" : "false");
+  } catch {}
+  DeviceEventEmitter.emit(KEEP_AWAKE_EVENT, value);
+}
+
+export function addKeepAwakeListener(listener) {
+  return DeviceEventEmitter.addListener(KEEP_AWAKE_EVENT, listener);
 }
