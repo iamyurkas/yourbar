@@ -236,7 +236,9 @@ export default function FavoriteCocktailsScreen() {
         setSearchValue={setSearch}
         filterComponent={
           <View style={{ flexDirection: "row" }}>
-            <SortMenu order={sortOrder} onChange={setSortOrder} />
+            {minRating < 5 && (
+              <SortMenu order={sortOrder} onChange={setSortOrder} />
+            )}
             <TagFilterMenu
               tags={availableTags}
               selected={selectedTagIds}
