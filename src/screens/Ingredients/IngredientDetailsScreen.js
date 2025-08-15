@@ -34,6 +34,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
+import {
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
+} from "../../storage/settingsStorage";
 
 const PHOTO_SIZE = 200;
 const THUMB = 40;
@@ -187,10 +191,11 @@ export default function IngredientDetailsScreen() {
   );
 
   const load = useCallback(async () => {
-    const [loaded, all, cocktails] = await Promise.all([
+    const [loaded, all, cocktails, ig] = await Promise.all([
       getIngredientById(id),
       getAllIngredients(),
       getAllCocktails(),
+      getIgnoreGarnish(),
     ]);
     setIngredient(loaded || null);
 
@@ -222,7 +227,9 @@ export default function IngredientDetailsScreen() {
       .filter(Boolean)
       .sort((a, b) => collator.compare(a.name, b.name))
       .map((c) => {
-        const required = (c.ingredients || []).filter((r) => !r.optional);
+        const required = (c.ingredients || []).filter(
+          (r) => !r.optional && !(ig && r.garnish)
+        );
         const missing = [];
         const ingredientNames = [];
         let allAvail = required.length > 0;
@@ -297,6 +304,11 @@ export default function IngredientDetailsScreen() {
       };
     }, [load])
   );
+
+  useEffect(() => {
+    const sub = addIgnoreGarnishListener(() => load());
+    return () => sub.remove();
+  }, [load]);
 
   const toggleInBar = useCallback(() => {
     setIngredient((prev) => {

@@ -12,6 +12,10 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
+import {
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
+} from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
@@ -33,6 +37,7 @@ export default function MyCocktailsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "My");
@@ -60,20 +65,24 @@ export default function MyCocktailsScreen() {
     if (!isFocused) return;
     (async () => {
       if (firstLoad.current) setLoading(true);
-      const [cocktailsList, ingredientsList] = await Promise.all([
+      const [cocktailsList, ingredientsList, ig] = await Promise.all([
         getAllCocktails(),
         getAllIngredients(),
+        getIgnoreGarnish(),
       ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
       setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
+      setIgnoreGarnish(!!ig);
       if (firstLoad.current) {
         setLoading(false);
         firstLoad.current = false;
       }
     })();
+    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
     return () => {
       cancel = true;
+      sub.remove();
     };
   }, [isFocused]);
 
@@ -95,7 +104,9 @@ export default function MyCocktailsScreen() {
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
     return list.map((c) => {
-      const required = (c.ingredients || []).filter((r) => !r.optional);
+      const required = (c.ingredients || []).filter(
+        (r) => !r.optional && !(ignoreGarnish && r.garnish)
+      );
       const missing = [];
       const ingredientNames = [];
       let allAvail = required.length > 0;
@@ -152,7 +163,7 @@ export default function MyCocktailsScreen() {
         ingredientLine,
       };
     });
-  }, [cocktails, ingredients, searchDebounced, selectedTagIds]);
+  }, [cocktails, ingredients, searchDebounced, selectedTagIds, ignoreGarnish]);
 
   const available = useMemo(
     () => processed.filter((c) => c.isAllAvailable),

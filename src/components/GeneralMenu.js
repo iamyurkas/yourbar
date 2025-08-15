@@ -15,7 +15,12 @@ import IngredientIcon from "../../assets/lemon.svg";
 
 import IngredientTagsModal from "./IngredientTagsModal";
 
-import { getUseMetric, setUseMetric as saveUseMetric } from "../storage/settingsStorage";
+import {
+  getUseMetric,
+  setUseMetric as saveUseMetric,
+  getIgnoreGarnish,
+  setIgnoreGarnish as saveIgnoreGarnish,
+} from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -56,12 +61,26 @@ export default function GeneralMenu({ visible, onClose }) {
         setUseMetric(!!stored);
       } catch {}
     })();
+    (async () => {
+      try {
+        const stored = await getIgnoreGarnish();
+        setIgnoreGarnish(!!stored);
+      } catch {}
+    })();
   }, []);
 
   const toggleUseMetric = () => {
     setUseMetric((v) => {
       const next = !v;
       saveUseMetric(next);
+      return next;
+    });
+  };
+
+  const toggleIgnoreGarnish = () => {
+    setIgnoreGarnish((v) => {
+      const next = !v;
+      saveIgnoreGarnish(next);
       return next;
     });
   };
@@ -86,7 +105,7 @@ export default function GeneralMenu({ visible, onClose }) {
             <View style={styles.itemRow}>
               <Checkbox
                 status={ignoreGarnish ? "checked" : "unchecked"}
-                onPress={() => setIgnoreGarnish((v) => !v)}
+                onPress={toggleIgnoreGarnish}
               />
               <View style={styles.itemText}>
                 <Text style={styles.itemTitle}>Ignore garnishes</Text>
