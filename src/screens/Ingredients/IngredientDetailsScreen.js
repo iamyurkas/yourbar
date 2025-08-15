@@ -39,6 +39,7 @@ import {
   addIgnoreGarnishListener,
 } from "../../storage/settingsStorage";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const PHOTO_SIZE = 200;
 const THUMB = 40;
@@ -112,6 +113,8 @@ export default function IngredientDetailsScreen() {
   const [brandedChildren, setBrandedChildren] = useState([]);
   const [baseIngredient, setBaseIngredient] = useState(null);
   const [usedCocktails, setUsedCocktails] = useState([]);
+  const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
+  const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
 
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
@@ -340,44 +343,11 @@ export default function IngredientDetailsScreen() {
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
-    Alert.alert("Unlink", "Remove link to base ingredient?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Unlink",
-        style: "destructive",
-          onPress: async () => {
-            const updated = { ...ingredient, baseIngredientId: null };
-            await saveIngredient(updated);
-            setIngredient(updated);
-            setIngredients((list) =>
-              list.map((i) => (i.id === updated.id ? updated : i))
-            );
-            setBaseIngredient(null);
-          },
-      },
-    ]);
+    setUnlinkBaseVisible(true);
   }, [ingredient]);
 
   const unlinkChild = useCallback((child) => {
-    Alert.alert(
-      "Unlink",
-      `Remove link for "${child.name}" from this base ingredient?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Unlink",
-          style: "destructive",
-          onPress: async () => {
-            const updatedChild = { ...child, baseIngredientId: null };
-            await saveIngredient(updatedChild);
-            setIngredients((list) =>
-              list.map((i) => (i.id === updatedChild.id ? updatedChild : i))
-            );
-            setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
-          },
-        },
-      ]
-    );
+    setUnlinkChildTarget(child);
   }, []);
 
   const goToIngredient = useCallback(
@@ -412,12 +382,13 @@ export default function IngredientDetailsScreen() {
   const isBranded = ingredient.baseIngredientId != null;
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { backgroundColor: theme.colors.background },
-      ]}
-    >
+    <>
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
       <Text style={[styles.title, { color: theme.colors.onBackground }]}>
         {ingredient.name}
       </Text>
@@ -611,7 +582,48 @@ export default function IngredientDetailsScreen() {
           + Add Cocktail
         </Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+      <ConfirmationDialog
+        visible={unlinkBaseVisible}
+        title="Unlink"
+        message="Remove link to base ingredient?"
+        confirmLabel="Unlink"
+        onCancel={() => setUnlinkBaseVisible(false)}
+        onConfirm={async () => {
+          if (!ingredient) return;
+          const updated = { ...ingredient, baseIngredientId: null };
+          await saveIngredient(updated);
+          setIngredient(updated);
+          setIngredients((list) =>
+            list.map((i) => (i.id === updated.id ? updated : i))
+          );
+          setBaseIngredient(null);
+          setUnlinkBaseVisible(false);
+        }}
+      />
+      <ConfirmationDialog
+        visible={!!unlinkChildTarget}
+        title="Unlink"
+        message={
+          unlinkChildTarget
+            ? `Remove link for "${unlinkChildTarget.name}" from this base ingredient?`
+            : ""
+        }
+        confirmLabel="Unlink"
+        onCancel={() => setUnlinkChildTarget(null)}
+        onConfirm={async () => {
+          const child = unlinkChildTarget;
+          if (!child) return;
+          const updatedChild = { ...child, baseIngredientId: null };
+          await saveIngredient(updatedChild);
+          setIngredients((list) =>
+            list.map((i) => (i.id === updatedChild.id ? updatedChild : i))
+          );
+          setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
+          setUnlinkChildTarget(null);
+        }}
+      />
+    </>
   );
 }
 

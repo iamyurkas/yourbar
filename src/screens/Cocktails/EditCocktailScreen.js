@@ -55,6 +55,7 @@ import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 import useIngredientsData from "../../hooks/useIngredientsData";
 
@@ -1096,6 +1097,8 @@ export default function EditCocktailScreen() {
   const [ings, setIngs] = useState([]);
   const [allIngredients, setAllIngredients] = useState([]);
   const [dirty, setDirty] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [pendingNav, setPendingNav] = useState(null);
   const initialHashRef = useRef("{}");
   const skipPromptRef = useRef(false);
   const ratingRef = useRef(0);
@@ -1177,20 +1180,8 @@ export default function EditCocktailScreen() {
   );
 
   const handleDelete = useCallback(() => {
-    Alert.alert("Delete", "Delete this cocktail?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          skipPromptRef.current = true;
-          await deleteCocktail(cocktailId);
-          await refreshIngredientsData();
-          navigation.navigate(previousTab);
-        },
-      },
-    ]);
-  }, [navigation, cocktailId, previousTab, refreshIngredientsData]);
+    setConfirmDelete(true);
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -1281,21 +1272,10 @@ export default function EditCocktailScreen() {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       if (skipPromptRef.current || !dirty) return;
       e.preventDefault();
-      Alert.alert("Save changes?", "Do you want to save changes?", [
-        { text: "Discard", style: "destructive", onPress: () => {
-            skipPromptRef.current = true;
-            navigation.dispatch(e.data.action);
-          } },
-        { text: "Cancel", style: "cancel" },
-        { text: "Save", onPress: async () => {
-            skipPromptRef.current = true;
-            await handleSave(true);
-            navigation.dispatch(e.data.action);
-          } },
-      ]);
+      setPendingNav(e.data.action);
     });
     return unsub;
-  }, [navigation, dirty, handleSave]);
+  }, [navigation, dirty]);
 
   // SUBSTITUTE MODAL STATE
   const [subModal, setSubModal] = useState({
@@ -1922,6 +1902,52 @@ export default function EditCocktailScreen() {
           </Text>
         </Modal>
       </Portal>
+      <ConfirmationDialog
+        visible={confirmDelete}
+        title="Delete"
+        message="Delete this cocktail?"
+        confirmLabel="Delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={async () => {
+          skipPromptRef.current = true;
+          await deleteCocktail(cocktailId);
+          await refreshIngredientsData();
+          navigation.navigate(previousTab);
+          setConfirmDelete(false);
+        }}
+      />
+      <ConfirmationDialog
+        visible={!!pendingNav}
+        title="Save changes?"
+        message="Do you want to save changes?"
+        actions={[
+          {
+            label: "Discard",
+            mode: "outlined",
+            onPress: () => {
+              skipPromptRef.current = true;
+              navigation.dispatch(pendingNav);
+              setPendingNav(null);
+            },
+          },
+          {
+            label: "Cancel",
+            mode: "outlined",
+            onPress: () => setPendingNav(null),
+          },
+          {
+            label: "Save",
+            mode: "contained",
+            onPress: async () => {
+              skipPromptRef.current = true;
+              await handleSave(true);
+              navigation.dispatch(pendingNav);
+              setPendingNav(null);
+            },
+          },
+        ]}
+        onCancel={() => setPendingNav(null)}
+      />
     </>
   );
 }

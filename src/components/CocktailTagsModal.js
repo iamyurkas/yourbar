@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   Text,
   TextInput,
@@ -15,6 +15,7 @@ import {
   upsertCocktailTag,
   deleteCocktailTag,
 } from "../storage/cocktailTagsStorage";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 const COLOR_PALETTE = [
   "#FF6B6B",
@@ -42,6 +43,7 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLOR_PALETTE[0]);
+  const [deleteTag, setDeleteTag] = useState(null);
 
   useEffect(() => {
     if (!visible) return;
@@ -78,21 +80,7 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
   };
 
   const onDelete = (tag) => {
-    Alert.alert(
-      "Delete tag",
-      `Are you sure you want to delete “${tag.name}”?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            setTags((prev) => prev.filter((t) => t.id !== tag.id));
-            await deleteCocktailTag(tag.id);
-          },
-        },
-      ]
-    );
+    setDeleteTag(tag);
   };
 
   const isValidHex = useMemo(() => {
@@ -264,6 +252,19 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
           {editingId ? "Save" : "Add"}
         </Button>
       </Modal>
+
+      <ConfirmationDialog
+        visible={!!deleteTag}
+        title="Delete tag"
+        message={`Are you sure you want to delete “${deleteTag?.name}”?`}
+        confirmLabel="Delete"
+        onCancel={() => setDeleteTag(null)}
+        onConfirm={async () => {
+          setTags((prev) => prev.filter((t) => t.id !== deleteTag.id));
+          await deleteCocktailTag(deleteTag.id);
+          setDeleteTag(null);
+        }}
+      />
     </Portal>
   );
 }
