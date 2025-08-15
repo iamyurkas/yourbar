@@ -30,7 +30,6 @@ import CocktailRow, {
 export default function FavoriteCocktailsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -246,7 +245,7 @@ export default function FavoriteCocktailsScreen() {
           </View>
         }
       />
-      <TopTabBar navigation={tabNavigation} theme={theme} />
+      <TopTabBar navigation={navigation} theme={theme} />
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

@@ -18,7 +18,6 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 export default function ShoppingIngredientsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -133,7 +132,7 @@ export default function ShoppingIngredientsScreen() {
           />
         }
       />
-      <TopTabBar navigation={tabNavigation} theme={theme} />
+      <TopTabBar navigation={navigation} theme={theme} />
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

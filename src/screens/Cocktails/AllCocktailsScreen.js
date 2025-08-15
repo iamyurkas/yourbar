@@ -27,7 +27,6 @@ import CocktailRow, {
 export default function AllCocktailsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -217,7 +216,7 @@ export default function AllCocktailsScreen() {
           />
         }
       />
-      <TopTabBar navigation={tabNavigation} theme={theme} />
+      <TopTabBar navigation={navigation} theme={theme} />
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

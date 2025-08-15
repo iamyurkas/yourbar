@@ -28,7 +28,6 @@ const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 export default function MyCocktailsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -318,7 +317,7 @@ export default function MyCocktailsScreen() {
           />
         }
       />
-      <TopTabBar navigation={tabNavigation} theme={theme} />
+      <TopTabBar navigation={navigation} theme={theme} />
       <FlashList
         data={listData}
         keyExtractor={keyExtractor}
