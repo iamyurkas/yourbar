@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 // TopTabBar is rendered within each screen
 
@@ -25,12 +26,19 @@ function CocktailTabs() {
   return (
     <>
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+            if (route.name === "All") iconName = "list";
+            else if (route.name === "My") iconName = "check-circle";
+            else if (route.name === "Favorite") iconName = "star";
+            return <MaterialIcons name={iconName} size={size} color={color} />;
+          },
           tabBarActiveTintColor: theme.colors.primary,
           tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
           tabBarStyle: { backgroundColor: theme.colors.surface },
-        }}
+        })}
         tabBar={tabsOnTop ? () => null : undefined}
       >
         <Tab.Screen name="All" component={AllCocktailsScreen} />

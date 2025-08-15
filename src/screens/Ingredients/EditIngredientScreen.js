@@ -24,6 +24,7 @@ import {
   FlatList,
   Pressable,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -41,7 +42,6 @@ import {
   getIngredientById,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
-import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
@@ -124,9 +124,7 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { getTab } = useTabMemory();
   const { refresh: refreshIngredientsData } = useIngredientsData();
-  const previousTab = getTab("ingredients");
   const currentId = route.params?.id;
 
   // entity + form state
@@ -216,8 +214,8 @@ export default function EditIngredientScreen() {
 
   // видима кнопка Back у хедері
   const handleBackPress = useCallback(() => {
-    navigation.replace("IngredientsMain", { screen: previousTab });
-  }, [navigation, previousTab]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleDelete = useCallback(() => {
     if (!ingredient) return;
@@ -258,11 +256,11 @@ export default function EditIngredientScreen() {
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.replace("IngredientsMain", { screen: previousTab });
+      navigation.goBack();
       return true;
     });
     return () => hw.remove();
-  }, [navigation, previousTab]);
+  }, [navigation]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -396,7 +394,7 @@ export default function EditIngredientScreen() {
 
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.replace("IngredientsMain", { screen: previousTab });
+        navigation.goBack();
       }
       return updated;
     },
@@ -409,7 +407,6 @@ export default function EditIngredientScreen() {
       baseIngredientId,
       navigation,
       serialize,
-      previousTab,
     ]
   );
 
@@ -765,10 +762,7 @@ export default function EditIngredientScreen() {
           skipPromptRef.current = true;
           await deleteIngredient(ingredient.id);
           await refreshIngredientsData();
-          if (previousTab)
-            navigation.replace("IngredientsMain", { screen: previousTab });
-          else
-            navigation.replace("IngredientsMain", { screen: "All" });
+          navigation.popToTop();
           setConfirmDelete(false);
         }}
       />

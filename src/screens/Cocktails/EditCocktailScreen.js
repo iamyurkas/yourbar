@@ -33,7 +33,6 @@ import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/nativ
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
-import { useTabMemory } from "../../context/TabMemoryContext";
 
 import {
   Menu,
@@ -1059,8 +1058,6 @@ export default function EditCocktailScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const params = route.params || {};
-  const { getTab } = useTabMemory();
-  const previousTab = (typeof getTab === "function" && getTab("cocktails")) || "All";
   const cocktailId = params?.id;
   const { refresh: refreshIngredientsData } = useIngredientsData();
 
@@ -1162,7 +1159,7 @@ export default function EditCocktailScreen() {
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.replace("CocktailsMain", { screen: previousTab });
+        navigation.goBack();
       }
       return cocktail;
     },
@@ -1177,7 +1174,6 @@ export default function EditCocktailScreen() {
       cocktailId,
       navigation,
       serialize,
-      previousTab,
     ]
   );
 
@@ -1190,9 +1186,7 @@ export default function EditCocktailScreen() {
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
-          onPress={() =>
-            navigation.replace("CocktailsMain", { screen: previousTab })
-          }
+          onPress={() => navigation.goBack()}
           labelVisible={false}
         />
       ),
@@ -1208,7 +1202,7 @@ export default function EditCocktailScreen() {
       ),
       gestureEnabled: false,
     });
-  }, [navigation, handleDelete, theme.colors.onSurface, previousTab]);
+  }, [navigation, handleDelete, theme.colors.onSurface]);
 
   useEffect(() => {
     let mounted = true;
@@ -1223,11 +1217,11 @@ export default function EditCocktailScreen() {
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.replace("CocktailsMain", { screen: previousTab });
+      navigation.goBack();
       return true;
     });
     return () => hw.remove();
-  }, [navigation, previousTab]);
+  }, [navigation]);
 
   useEffect(() => {
     let mounted = true;
@@ -1929,7 +1923,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
           await refreshIngredientsData();
-          navigation.replace("CocktailsMain", { screen: previousTab });
+          navigation.popToTop();
           setConfirmDelete(false);
         }}
       />
