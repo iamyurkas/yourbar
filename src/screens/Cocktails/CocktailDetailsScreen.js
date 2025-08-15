@@ -56,13 +56,14 @@ const IngredientRow = memo(function IngredientRow({
   amount,
   unitName,
   inBar,
+  ignored,
   garnish,
   optional,
   substituteFor,
   onPress,
 }) {
   const theme = useTheme();
-  const backgroundColor = inBar
+  const backgroundColor = inBar && !ignored
     ? withAlpha(theme.colors.secondary, 0.25)
     : theme.colors.background;
 
@@ -75,7 +76,7 @@ const IngredientRow = memo(function IngredientRow({
         { borderBottomColor: theme.colors.background, backgroundColor },
       ]}
     >
-      <View style={[styles.ingItem, !inBar && styles.dimmed]}>
+      <View style={[styles.ingItem, !inBar && !ignored && styles.dimmed]}>
         {photoUri ? (
           <Image
             source={{ uri: photoUri }}
@@ -261,9 +262,10 @@ export default function CocktailDetailsScreen() {
     return list.map((r) => {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
-      const inBar = ing?.inBar || (ignoreGarnish && r.garnish);
+      const ignored = ignoreGarnish && r.garnish;
+      const inBar = ignored ? false : ing?.inBar;
       let substitute = null;
-      if (!inBar && ing) {
+      if (!inBar && ing && !ignored) {
         const baseId = ing.baseIngredientId ?? ing.id;
 
         if (r.allowBaseSubstitution) {
@@ -312,6 +314,7 @@ export default function CocktailDetailsScreen() {
         amount,
         unitName,
         inBar: substitute ? substitute.inBar : inBar,
+        ignored,
         garnish: !!r.garnish,
         optional: !!r.optional,
         substituteFor: substitute ? originalName : null,
