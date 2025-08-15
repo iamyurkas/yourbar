@@ -10,7 +10,11 @@ import {
   Divider,
   useTheme,
 } from "react-native-paper";
-import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
+import {
+  getCustomCocktailTags,
+  upsertCocktailTag,
+  deleteCocktailTag,
+} from "../storage/cocktailTagsStorage";
 
 const COLOR_PALETTE = [
   "#FF6B6B",
@@ -29,7 +33,7 @@ const COLOR_PALETTE = [
 
 const TOP_OFFSET = 0;
 
-export default function IngredientTagsModal({ visible, onClose, autoAdd = false }) {
+export default function CocktailTagsModal({ visible, onClose, autoAdd = false }) {
   const theme = useTheme();
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +46,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   useEffect(() => {
     if (!visible) return;
     const load = async () => {
-      const data = await getUserTags();
+      const data = await getCustomCocktailTags();
       setTags(Array.isArray(data) ? data : []);
       setLoading(false);
     };
@@ -66,7 +70,6 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
     }
   }, [visible, autoAdd]);
 
-
   const openEdit = (tag) => {
     setEditingId(tag.id);
     setName(tag.name);
@@ -84,9 +87,8 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            const next = tags.filter((t) => t.id !== tag.id);
-            setTags(next);
-            await saveUserTags(next);
+            setTags((prev) => prev.filter((t) => t.id !== tag.id));
+            await deleteCocktailTag(tag.id);
           },
         },
       ]
@@ -115,23 +117,21 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const onSave = async () => {
     const n = name.trim();
     if (!canSave) return;
-    let next;
+    let tag;
     if (editingId) {
-      next = tags.map((t) =>
-        t.id === editingId ? { ...t, name: n, color } : t
-      );
+      tag = { id: editingId, name: n, color };
+      setTags((prev) => prev.map((t) => (t.id === editingId ? tag : t)));
     } else {
-      const id = Date.now();
-      next = [...tags, { id, name: n, color }];
+      tag = { id: Date.now(), name: n, color };
+      setTags((prev) => [...prev, tag]);
     }
-    setTags(next);
-    await saveUserTags(next);
+    await upsertCocktailTag(tag);
     setDialogVisible(false);
     resetDialog();
   };
 
   const renderItem = ({ item }) => (
-    <View style={[styles.row, { borderBottomColor: theme.colors.outline }]}>
+    <View style={[styles.row, { borderBottomColor: theme.colors.outline }]}> 
       <View style={styles.left}>
         <View
           style={[
@@ -166,16 +166,9 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         ]}
       >
         <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}> 
-          Create, edit, or remove your own ingredient tags.
-        </Text>
+        <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>Create, edit, or remove your own cocktail tags.</Text>
 
-        <Button
-          mode="contained"
-          onPress={openAdd}
-          style={styles.addBtn}
-          icon="plus"
-        >
+        <Button mode="contained" onPress={openAdd} style={styles.addBtn} icon="plus">
           Add new tag
         </Button>
 
@@ -209,7 +202,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           },
         ]}
       >
-        <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}> 
+        <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}>
           {editingId ? "Edit tag" : "New tag"}
         </Text>
 
@@ -250,12 +243,15 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           })}
         </View>
 
+        <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Or enter hex code</Text>
         <TextInput
-          label="HEX (#RRGGBB or #RRGGBBAA)"
           mode="outlined"
           value={color}
           onChangeText={setColor}
           error={!isValidHex}
+          style={{ marginBottom: 8 }}
+          autoCapitalize="none"
+          autoCorrect={false}
           theme={{
             colors: {
               error: theme.colors.error,
@@ -263,14 +259,10 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
             },
           }}
         />
-        {!isValidHex ? (
-          <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
-        ) : null}
 
-        <View style={styles.dialogActions}>
-          <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-          <Button onPress={onSave} disabled={!canSave}>Save</Button>
-        </View>
+        <Button mode="contained" onPress={onSave} disabled={!canSave}>
+          {editingId ? "Save" : "Add"}
+        </Button>
       </Modal>
     </Portal>
   );
@@ -279,47 +271,56 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
-    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
+    marginTop: TOP_OFFSET,
   },
-  title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
-  subtitle: { marginBottom: 12 },
+  title: { fontSize: 18, fontWeight: "700" },
+  subtitle: { marginBottom: 16 },
   addBtn: { marginVertical: 12, width: "100%" },
+  emptyBox: { paddingVertical: 24, alignItems: "center" },
+  emptyText: { fontStyle: "italic" },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 4,
+    justifyContent: "space-between",
+    paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  left: { flexDirection: "row", alignItems: "center", flex: 1 },
+  left: { flexDirection: "row", alignItems: "center" },
   right: { flexDirection: "row", alignItems: "center" },
   swatch: {
-    width: 24,
-    height: 24,
+    width: 32,
+    height: 32,
     borderRadius: 6,
-    marginRight: 10,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
+    marginRight: 12,
   },
-  tagTextBox: { flexDirection: "column" },
-  tagName: { fontSize: 16, fontWeight: "600" },
+  tagTextBox: { justifyContent: "center" },
+  tagName: { fontWeight: "600" },
   tagColorCode: { fontSize: 12 },
-  errorText: { marginTop: -4, marginBottom: 6 },
-  sectionLabel: { fontWeight: "600", marginBottom: 6, marginTop: 4 },
-  palette: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 8 },
-  colorDot: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: "transparent" },
-  emptyBox: { paddingVertical: 24, alignItems: "center" },
-  emptyText: {},
   dialog: {
     marginHorizontal: 24,
-    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
+    marginTop: TOP_OFFSET,
   },
-  dialogTitle: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
-  dialogActions: { flexDirection: "row", justifyContent: "flex-end", marginTop: 16 },
+  dialogTitle: { fontSize: 16, fontWeight: "700", marginBottom: 12 },
+  errorText: { marginBottom: 8 },
+  sectionLabel: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
+  palette: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 8,
+  },
+  colorDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    margin: 4,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
 });
-
