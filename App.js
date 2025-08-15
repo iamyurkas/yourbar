@@ -43,7 +43,11 @@ function Tabs() {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-        tabBarStyle: { backgroundColor: theme.colors.surface },
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopWidth: 0,
+          borderTopColor: theme.colors.surface,
+        },
         tabBarActiveBackgroundColor: theme.colors.background,
       })}
     >

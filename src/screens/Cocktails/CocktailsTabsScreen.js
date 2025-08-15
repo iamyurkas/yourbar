@@ -40,7 +40,11 @@ function CocktailTabs() {
             tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
           };
           if (!tabsOnTop) {
-            options.tabBarStyle = { backgroundColor: theme.colors.background };
+            options.tabBarStyle = {
+              backgroundColor: theme.colors.background,
+              borderTopWidth: 0,
+              borderTopColor: theme.colors.background,
+            };
           }
           return options;
         }}
