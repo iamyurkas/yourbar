@@ -166,10 +166,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           },
         ]}
       >
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
-          <IconButton icon="close" onPress={onClose} accessibilityLabel="Close" />
-        </View>
+        <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
         <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}> 
           Create, edit, or remove your own ingredient tags.
         </Text>
@@ -299,10 +296,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
   },
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
   subtitle: { marginBottom: 12 },
-  addBtn: { alignSelf: "flex-start", marginBottom: 8 },
+  addBtn: { alignSelf: "center", marginBottom: 8 },
   row: {
     flexDirection: "row",
     alignItems: "center",
