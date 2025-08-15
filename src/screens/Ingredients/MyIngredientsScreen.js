@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -14,14 +9,10 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  getAllIngredients,
-  saveIngredient,
-} from "../../storage/ingredientsStorage";
+import { saveIngredient } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
-import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -29,8 +20,7 @@ export default function MyIngredientsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
-  const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { ingredients, loading, setIngredients } = useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
@@ -53,43 +43,7 @@ export default function MyIngredientsScreen() {
     };
   }, []);
 
-  const loadData = useCallback(async () => {
-    const [base, cocktails] = await Promise.all([
-      getAllIngredients(),
-      getAllCocktails(),
-    ]);
-    const sorted = [...base].sort((a, b) =>
-      a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-    );
-    const usageMap = mapCocktailsByIngredient(sorted, cocktails);
-    const cocktailMap = new Map(cocktails.map((c) => [c.id, c.name]));
-    return sorted.map((item) => {
-      const ids = usageMap[item.id] || [];
-      const usageCount = ids.length;
-      const singleCocktailName =
-        usageCount === 1 ? cocktailMap.get(ids[0]) : null;
-      return {
-        ...item,
-        searchName: item.name.toLowerCase(),
-        usageCount,
-        singleCocktailName,
-      };
-    });
-  }, []);
-
-  useEffect(() => {
-    let cancel = false;
-    if (!isFocused) return;
-    (async () => {
-      const data = await loadData();
-      if (cancel) return;
-      setIngredients(data);
-      setLoading(false);
-    })();
-    return () => {
-      cancel = true;
-    };
-  }, [isFocused, loadData]);
+  // data loading handled by hook
 
   useEffect(() => {
     const h = setTimeout(() => setSearchDebounced(search), 300);

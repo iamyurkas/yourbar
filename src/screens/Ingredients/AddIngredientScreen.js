@@ -42,6 +42,7 @@ import {
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
@@ -103,6 +104,7 @@ export default function AddIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
+  const { refresh: refreshIngredientsData } = useIngredientsData();
 
   // read incoming params
   const initialNameParam = route.params?.initialName || "";
@@ -323,6 +325,7 @@ export default function AddIngredientScreen() {
     };
 
     await addIngredient(newIng);
+    await refreshIngredientsData();
 
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {

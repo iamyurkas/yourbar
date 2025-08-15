@@ -38,6 +38,7 @@ import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
 } from "../../storage/settingsStorage";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 const PHOTO_SIZE = 200;
 const THUMB = 40;
@@ -105,6 +106,7 @@ export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const { id, fromCocktailId } = useRoute().params;
   const theme = useTheme();
+  const { setIngredients } = useIngredientsData();
 
   const [ingredient, setIngredient] = useState(null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -315,18 +317,26 @@ export default function IngredientDetailsScreen() {
       if (!prev) return prev;
       const next = { ...prev, inBar: !prev.inBar };
       saveIngredient(next);
+      setIngredients((list) =>
+        list.map((i) => (i.id === next.id ? { ...i, inBar: next.inBar } : i))
+      );
       return next;
     });
-  }, []);
+  }, [setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
       if (!prev) return prev;
       const next = { ...prev, inShoppingList: !prev.inShoppingList };
       saveIngredient(next);
+      setIngredients((list) =>
+        list.map((i) =>
+          i.id === next.id ? { ...i, inShoppingList: next.inShoppingList } : i
+        )
+      );
       return next;
     });
-  }, []);
+  }, [setIngredients]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -335,12 +345,15 @@ export default function IngredientDetailsScreen() {
       {
         text: "Unlink",
         style: "destructive",
-        onPress: async () => {
-          const updated = { ...ingredient, baseIngredientId: null };
-          await saveIngredient(updated);
-          setIngredient(updated);
-          setBaseIngredient(null);
-        },
+          onPress: async () => {
+            const updated = { ...ingredient, baseIngredientId: null };
+            await saveIngredient(updated);
+            setIngredient(updated);
+            setIngredients((list) =>
+              list.map((i) => (i.id === updated.id ? updated : i))
+            );
+            setBaseIngredient(null);
+          },
       },
     ]);
   }, [ingredient]);
@@ -357,6 +370,9 @@ export default function IngredientDetailsScreen() {
           onPress: async () => {
             const updatedChild = { ...child, baseIngredientId: null };
             await saveIngredient(updatedChild);
+            setIngredients((list) =>
+              list.map((i) => (i.id === updatedChild.id ? updatedChild : i))
+            );
             setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           },
         },
