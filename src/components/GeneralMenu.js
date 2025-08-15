@@ -7,7 +7,9 @@ import {
   StyleSheet,
   View,
   Text,
+  ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -16,6 +18,8 @@ import IngredientIcon from "../../assets/lemon.svg";
 import IngredientTagsModal from "./IngredientTagsModal";
 import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
+import useIngredientsData from "../hooks/useIngredientsData";
+import { exportAllData, importAllData } from "../storage/backupStorage";
 
 import {
   getUseMetric,
@@ -46,6 +50,8 @@ export default function GeneralMenu({ visible, onClose }) {
   const [ratingVisible, setRatingVisible] = useState(false);
   const [favRating, setFavRating] = useState(0);
 
+  const { refresh } = useIngredientsData();
+
   useEffect(() => {
     if (visible) {
       Animated.timing(slideAnim, {
@@ -75,6 +81,29 @@ export default function GeneralMenu({ visible, onClose }) {
   const openRatingModal = () => {
     onClose?.();
     setTimeout(() => setRatingVisible(true), 0);
+  };
+
+  const handleExport = async () => {
+    onClose?.();
+    try {
+      await exportAllData();
+      Alert.alert("Export", "Data exported successfully");
+    } catch (e) {
+      Alert.alert("Export", "Failed to export data");
+    }
+  };
+
+  const handleImport = async () => {
+    onClose?.();
+    try {
+      const ok = await importAllData();
+      if (ok) {
+        await refresh?.();
+        Alert.alert("Import", "Data imported successfully");
+      }
+    } catch (e) {
+      Alert.alert("Import", "Failed to import data");
+    }
   };
 
   useEffect(() => {
@@ -169,120 +198,160 @@ export default function GeneralMenu({ visible, onClose }) {
             style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
             onStartShouldSetResponder={() => true}
           >
-            <Text style={styles.title}>Settings</Text>
+            <ScrollView>
+              <Text style={styles.title}>Settings</Text>
 
-            <View style={styles.itemRow}>
-              <Checkbox
-                status={ignoreGarnish ? "checked" : "unchecked"}
-                onPress={toggleIgnoreGarnish}
-              />
-              <Pressable style={styles.itemText} onPress={toggleIgnoreGarnish}>
-                <Text style={styles.itemTitle}>Ignore garnishes</Text>
-                <Text style={styles.itemSub}>All garnishes are optional</Text>
-              </Pressable>
-            </View>
+              <View style={styles.itemRow}>
+                <Checkbox
+                  status={ignoreGarnish ? "checked" : "unchecked"}
+                  onPress={toggleIgnoreGarnish}
+                />
+                <Pressable style={styles.itemText} onPress={toggleIgnoreGarnish}>
+                  <Text style={styles.itemTitle}>Ignore garnishes</Text>
+                  <Text style={styles.itemSub}>All garnishes are optional</Text>
+                </Pressable>
+              </View>
 
-            <View style={styles.itemRow}>
-              <Checkbox
-                status={useMetric ? "checked" : "unchecked"}
-                onPress={toggleUseMetric}
-              />
-              <Pressable style={styles.itemText} onPress={toggleUseMetric}>
-                <Text style={styles.itemTitle}>Use metric system</Text>
-                <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
-              </Pressable>
-            </View>
+              <View style={styles.itemRow}>
+                <Checkbox
+                  status={useMetric ? "checked" : "unchecked"}
+                  onPress={toggleUseMetric}
+                />
+                <Pressable style={styles.itemText} onPress={toggleUseMetric}>
+                  <Text style={styles.itemTitle}>Use metric system</Text>
+                  <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
+                </Pressable>
+              </View>
 
-            <View style={styles.itemRow}>
-              <Checkbox
-                status={keepAwake ? "checked" : "unchecked"}
-                onPress={toggleKeepAwake}
-              />
-              <Pressable
-                style={styles.itemText}
-                onPress={toggleKeepAwake}
-              >
-                <Text style={styles.itemTitle}>Keep screen awake</Text>
-                <Text style={styles.itemSub}>
-                  Prevent the phone from sleeping while viewing cocktail details
-                </Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.itemRow}>
-              <Checkbox
-                status={tabsOnTop ? "checked" : "unchecked"}
-                onPress={toggleTabsOnTop}
-              />
-              <Pressable style={styles.itemText} onPress={toggleTabsOnTop}>
-                <Text style={styles.itemTitle}>Tabs on top</Text>
-                <Text style={styles.itemSub}>Uncheck to show tabs at bottom</Text>
-              </Pressable>
-            </View>
-
-            <TouchableOpacity style={styles.linkRow} onPress={openRatingModal}>
-              <MaterialIcons
-                name="star"
-                size={22}
-                color="#4DABF7"
-                style={styles.linkIcon}
-              />
-              <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>Favorites rating</Text>
-                {favRating ? (
+              <View style={styles.itemRow}>
+                <Checkbox
+                  status={keepAwake ? "checked" : "unchecked"}
+                  onPress={toggleKeepAwake}
+                />
+                <Pressable
+                  style={styles.itemText}
+                  onPress={toggleKeepAwake}
+                >
+                  <Text style={styles.itemTitle}>Keep screen awake</Text>
                   <Text style={styles.itemSub}>
-                    Only show cocktails with at least {favRating} star
-                    {favRating === 1 ? "" : "s"}
+                    Prevent the phone from sleeping while viewing cocktail details
                   </Text>
-                ) : (
-                  <Text style={styles.itemSub}>Show all favorite cocktails</Text>
-                )}
+                </Pressable>
               </View>
-              <MaterialIcons
-                name="chevron-right"
-                size={24}
-                color="#999"
-                style={styles.chevron}
-              />
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
-              <IngredientIcon
-                width={22}
-                height={22}
-                fill="#4DABF7"
-                style={styles.linkIcon}
-              />
-              <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>Ingredient tags</Text>
-                <Text style={styles.itemSub}>Create, edit or remove ingredient tags</Text>
+              <View style={styles.itemRow}>
+                <Checkbox
+                  status={tabsOnTop ? "checked" : "unchecked"}
+                  onPress={toggleTabsOnTop}
+                />
+                <Pressable style={styles.itemText} onPress={toggleTabsOnTop}>
+                  <Text style={styles.itemTitle}>Tabs on top</Text>
+                  <Text style={styles.itemSub}>Uncheck to show tabs at bottom</Text>
+                </Pressable>
               </View>
-              <MaterialIcons
-                name="chevron-right"
-                size={24}
-                color="#999"
-                style={styles.chevron}
-              />
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkRow} onPress={openCocktailTagsModal}>
-              <MaterialIcons
-                name="local-bar"
-                size={22}
-                color="#4DABF7"
-                style={styles.linkIcon}
-              />
-              <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>Cocktail tags</Text>
-                <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
-              </View>
-              <MaterialIcons
-                name="chevron-right"
-                size={24}
-                color="#999"
-                style={styles.chevron}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={openRatingModal}>
+                <MaterialIcons
+                  name="star"
+                  size={22}
+                  color="#4DABF7"
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Favorites rating</Text>
+                  {favRating ? (
+                    <Text style={styles.itemSub}>
+                      Only show cocktails with at least {favRating} star
+                      {favRating === 1 ? "" : "s"}
+                    </Text>
+                  ) : (
+                    <Text style={styles.itemSub}>Show all favorite cocktails</Text>
+                  )}
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color="#999"
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
+                <IngredientIcon
+                  width={22}
+                  height={22}
+                  fill="#4DABF7"
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Ingredient tags</Text>
+                  <Text style={styles.itemSub}>Create, edit or remove ingredient tags</Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color="#999"
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.linkRow} onPress={openCocktailTagsModal}>
+                <MaterialIcons
+                  name="local-bar"
+                  size={22}
+                  color="#4DABF7"
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Cocktail tags</Text>
+                  <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color="#999"
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.linkRow} onPress={handleExport}>
+                <MaterialIcons
+                  name="file-download"
+                  size={22}
+                  color="#4DABF7"
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Export data</Text>
+                  <Text style={styles.itemSub}>Export all ingredients and cocktails</Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color="#999"
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.linkRow} onPress={handleImport}>
+                <MaterialIcons
+                  name="file-upload"
+                  size={22}
+                  color="#4DABF7"
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Import data</Text>
+                  <Text style={styles.itemSub}>Import ingredients and cocktails</Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color="#999"
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+            </ScrollView>
           </Animated.View>
         </Pressable>
       </Modal>
