@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
-import TopTabBar, { TOP_TAB_BAR_HEIGHT } from "../../components/TopTabBar";
+// TopTabBar is rendered within each screen
 
 import AllIngredientsScreen from "./AllIngredientsScreen";
 import MyIngredientsScreen from "./MyIngredientsScreen";
@@ -22,11 +22,7 @@ function IngredientTabs() {
   const navigation = useNavigation();
   return (
     <>
-      <Tab.Navigator
-        screenOptions={{ headerShown: false }}
-        tabBar={(props) => <TopTabBar {...props} theme={theme} />}
-        sceneContainerStyle={{ paddingTop: TOP_TAB_BAR_HEIGHT }}
-      >
+      <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
         <Tab.Screen name="All" component={AllIngredientsScreen} />
         <Tab.Screen name="My" component={MyIngredientsScreen} />
         <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />

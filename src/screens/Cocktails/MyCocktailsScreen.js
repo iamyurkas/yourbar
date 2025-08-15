@@ -9,6 +9,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
+import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
@@ -27,6 +28,7 @@ const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 export default function MyCocktailsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -316,6 +318,7 @@ export default function MyCocktailsScreen() {
           />
         }
       />
+      <TopTabBar navigation={tabNavigation} theme={theme} />
       <FlashList
         data={listData}
         keyExtractor={keyExtractor}

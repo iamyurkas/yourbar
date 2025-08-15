@@ -9,6 +9,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
+import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
@@ -26,6 +27,7 @@ import CocktailRow, {
 export default function AllCocktailsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const tabNavigation = navigation.getParent() || navigation;
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
@@ -203,7 +205,7 @@ export default function AllCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -215,6 +217,7 @@ export default function AllCocktailsScreen() {
           />
         }
       />
+      <TopTabBar navigation={tabNavigation} theme={theme} />
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}
