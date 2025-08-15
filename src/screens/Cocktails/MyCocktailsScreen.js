@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useLayoutEffect,
 } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
@@ -296,6 +297,18 @@ export default function MyCocktailsScreen() {
     return `t${index}`;
   }, []);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TagFilterMenu
+          tags={availableTags}
+          selected={selectedTagIds}
+          setSelected={setSelectedTagIds}
+        />
+      ),
+    });
+  }, [navigation, availableTags, selectedTagIds]);
+
   if (loading)
     return (
       <View style={styles.loadingContainer}>
@@ -304,17 +317,10 @@ export default function MyCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        filterComponent={
-          <TagFilterMenu
-            tags={availableTags}
-            selected={selectedTagIds}
-            setSelected={setSelectedTagIds}
-          />
-        }
       />
       <FlashList
         data={listData}

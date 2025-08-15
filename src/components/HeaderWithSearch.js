@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   View,
   TextInput,
@@ -8,39 +8,19 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
-import GeneralMenu from "./GeneralMenu";
 
 export default function HeaderWithSearch({
-  onMenu,
   onSearch,
-  onFilter,
   searchValue,
   setSearchValue,
-  filterComponent,
+  rightComponent,
 }) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const handleMenuPress = () => {
-    if (onMenu) {
-      onMenu();
-    } else {
-      setMenuVisible(true);
-    }
-  };
 
   return (
     <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
       <View style={styles.container}>
-        <TouchableOpacity
-          onPress={handleMenuPress}
-          style={styles.iconBtn}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <MaterialIcons name="menu" size={28} color={theme.colors.onSurface} />
-        </TouchableOpacity>
-
         <View style={styles.searchBox}>
           <MaterialIcons
             name="search"
@@ -72,23 +52,8 @@ export default function HeaderWithSearch({
           ) : null}
         </View>
 
-        {filterComponent ? (
-          filterComponent
-        ) : (
-          <TouchableOpacity
-            onPress={onFilter}
-            style={styles.iconBtn}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <MaterialIcons
-              name="filter-list"
-              size={28}
-              color={theme.colors.onSurface}
-            />
-          </TouchableOpacity>
-        )}
+        {rightComponent}
       </View>
-      <GeneralMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
     </SafeAreaView>
   );
 }
@@ -119,10 +84,6 @@ const makeStyles = (theme) =>
       marginLeft: 6,
       fontSize: 16,
       color: theme.colors.onSurface,
-    },
-    iconBtn: {
-      paddingVertical: 4,
-      paddingHorizontal: 2,
     },
     clearBtn: {
       padding: 4,

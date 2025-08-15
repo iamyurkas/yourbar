@@ -11,6 +11,7 @@ import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
 import AddIngredientScreen from "./AddIngredientScreen";
 import IngredientDetailsScreen from "./IngredientDetailsScreen";
 import EditIngredientScreen from "./EditIngredientScreen";
+import MenuButton from "../../components/MenuButton";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -52,7 +53,7 @@ export default function IngredientsTabsScreen() {
       <Stack.Screen
         name="IngredientsMain"
         component={IngredientTabs}
-        options={{ title: "Ingredients", headerShown: true }}
+        options={{ headerTitle: "", headerLeft: () => <MenuButton /> }}
       />
       <Stack.Screen
         name="AddIngredient"

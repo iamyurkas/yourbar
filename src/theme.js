@@ -10,7 +10,7 @@ export const AppTheme = {
     secondary: "#74C0FC",
     tertiary: "#A5D8FF",
 
-    primaryContainer: "#D0EBFF",
+    primaryContainer: "#B5D9FF",
     onPrimaryContainer: "#00243D",
     secondaryContainer: "#E9F7DF",
 
