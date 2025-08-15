@@ -63,7 +63,7 @@ export default function GeneralMenu({ visible, onClose }) {
 
   const openRatingModal = () => {
     onClose?.();
-    setRatingVisible(true);
+    setTimeout(() => setRatingVisible(true), 0);
   };
 
   useEffect(() => {
