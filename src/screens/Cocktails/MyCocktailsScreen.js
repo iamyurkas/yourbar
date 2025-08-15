@@ -23,6 +23,7 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -42,6 +43,7 @@ export default function MyCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const { setIngredients: setGlobalIngredients } = useIngredientsData();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "My");
@@ -231,9 +233,16 @@ export default function MyCocktailsScreen() {
       const updated = { ...item, inShoppingList: !item.inShoppingList };
       next[idx] = updated;
       saveIngredient(updated).catch(() => {});
+      setGlobalIngredients((list) =>
+        list.map((i) =>
+          String(i.id) === String(id)
+            ? { ...i, inShoppingList: updated.inShoppingList }
+            : i
+        )
+      );
       return next;
     });
-  }, []);
+  }, [setGlobalIngredients]);
 
   const renderItem = useCallback(
     ({ item }) => {
