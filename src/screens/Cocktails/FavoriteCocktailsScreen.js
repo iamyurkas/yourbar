@@ -15,6 +15,8 @@ import { getAllIngredients } from "../../storage/ingredientsStorage";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
+  getFavoritesMinRating,
+  addFavoritesMinRatingListener,
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
@@ -38,6 +40,7 @@ export default function FavoriteCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [minRating, setMinRating] = useState(0);
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "Favorite");
@@ -65,24 +68,28 @@ export default function FavoriteCocktailsScreen() {
     if (!isFocused) return;
     (async () => {
       if (firstLoad.current) setLoading(true);
-      const [cocktailsList, ingredientsList, ig] = await Promise.all([
+      const [cocktailsList, ingredientsList, ig, favMin] = await Promise.all([
         getAllCocktails(),
         getAllIngredients(),
         getIgnoreGarnish(),
+        getFavoritesMinRating(),
       ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
       setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
+      setMinRating(favMin || 0);
       if (firstLoad.current) {
         setLoading(false);
         firstLoad.current = false;
       }
     })();
-    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subFav = addFavoritesMinRatingListener(setMinRating);
     return () => {
       cancel = true;
-      sub.remove();
+      subIg.remove();
+      subFav.remove();
     };
   }, [isFocused]);
 
@@ -95,7 +102,7 @@ export default function FavoriteCocktailsScreen() {
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
     const q = searchDebounced.trim().toLowerCase();
-    let list = cocktails.filter((c) => c.rating > 0);
+    let list = cocktails.filter((c) => c.rating > 0 && c.rating >= minRating);
     if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
@@ -163,7 +170,14 @@ export default function FavoriteCocktailsScreen() {
         ingredientLine,
       };
     });
-  }, [cocktails, ingredients, searchDebounced, selectedTagIds, ignoreGarnish]);
+  }, [
+    cocktails,
+    ingredients,
+    searchDebounced,
+    selectedTagIds,
+    ignoreGarnish,
+    minRating,
+  ]);
 
   const handlePress = useCallback(
     (id) => {

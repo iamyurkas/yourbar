@@ -8,6 +8,7 @@ const FAVORITES_MIN_RATING_KEY = "favoritesMinRating";
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
+export const FAVORITES_MIN_RATING_EVENT = "favoritesMinRatingChanged";
 
 export async function getUseMetric() {
   try {
@@ -85,4 +86,12 @@ export async function setFavoritesMinRating(value) {
       String(value)
     );
   } catch {}
+  DeviceEventEmitter.emit(FAVORITES_MIN_RATING_EVENT, value);
+}
+
+export function addFavoritesMinRatingListener(listener) {
+  return DeviceEventEmitter.addListener(
+    FAVORITES_MIN_RATING_EVENT,
+    listener
+  );
 }
