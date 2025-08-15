@@ -24,6 +24,7 @@ function IngredientRow({
   tags,
   usageCount,
   singleCocktailName,
+  showMake,
   inBar,
   inShoppingList,
   baseIngredientId,
@@ -111,7 +112,11 @@ function IngredientRow({
             >
               {usageCount > 0
                 ? usageCount === 1
-                  ? singleCocktailName || "1 cocktail"
+                  ? showMake
+                    ? `Make ${singleCocktailName || "1 cocktail"}.`
+                    : singleCocktailName || "1 cocktail"
+                  : showMake
+                  ? `Make ${usageCount} cocktails`
                   : `${usageCount} cocktails`
                 : "\u00A0"}
             </Text>

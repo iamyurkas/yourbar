@@ -13,6 +13,10 @@ import { saveIngredient } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import {
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
+} from "../../storage/settingsStorage";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -20,12 +24,14 @@ export default function MyIngredientsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
 
-  const { ingredients, loading, setIngredients } = useIngredientsData();
+  const { ingredients, loading, setIngredients, cocktails, usageMap } =
+    useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -43,12 +49,85 @@ export default function MyIngredientsScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const ig = await getIgnoreGarnish();
+      if (!cancelled) setIgnoreGarnish(!!ig);
+    })();
+    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
+    return () => {
+      cancelled = true;
+      sub.remove();
+    };
+  }, []);
+
   // data loading handled by hook
 
   useEffect(() => {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
+
+  const availableMap = useMemo(() => {
+    const ingMap = new Map(ingredients.map((i) => [String(i.id), i]));
+    const findBrand = (baseId) =>
+      ingredients.find(
+        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
+      );
+    const cocktailMap = new Map(cocktails.map((c) => [c.id, c]));
+    const result = new Map();
+
+    const isAvailable = (cocktail) => {
+      const required = (cocktail.ingredients || []).filter(
+        (r) => !r.optional && !(ignoreGarnish && r.garnish)
+      );
+      if (required.length === 0) return false;
+      for (const r of required) {
+        const ing = ingMap.get(String(r.ingredientId));
+        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+        let used = null;
+        if (ing?.inBar) used = ing;
+        else {
+          if (r.allowBaseSubstitution) {
+            const base = ingMap.get(baseId);
+            if (base?.inBar) used = base;
+          }
+          if (!used && (r.allowBrandedSubstitutes || ing?.baseIngredientId != null)) {
+            const brand = findBrand(baseId);
+            if (brand) used = brand;
+          }
+          if (!used && Array.isArray(r.substitutes)) {
+            for (const s of r.substitutes) {
+              const cand = ingMap.get(String(s.id));
+              if (cand?.inBar) {
+                used = cand;
+                break;
+              }
+            }
+          }
+        }
+        if (!used) return false;
+      }
+      return true;
+    };
+
+    ingredients.forEach((ing) => {
+      const ids = usageMap[ing.id] || [];
+      let count = 0;
+      let singleName = null;
+      ids.forEach((cid) => {
+        const cocktail = cocktailMap.get(cid);
+        if (cocktail && isAvailable(cocktail)) {
+          count++;
+          singleName = cocktail.name;
+        }
+      });
+      result.set(ing.id, { count, single: count === 1 ? singleName : null });
+    });
+
+    return result;
+  }, [ingredients, cocktails, usageMap, ignoreGarnish]);
 
   const filtered = useMemo(() => {
     const q = searchDebounced.trim().toLowerCase();
@@ -89,23 +168,27 @@ export default function MyIngredientsScreen() {
   );
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <IngredientRow
-        id={item.id}
-        name={item.name}
-        photoUri={item.photoUri}
-        tags={item.tags}
-        usageCount={item.usageCount}
-        singleCocktailName={item.singleCocktailName}
-        inBar={item.inBar}
-        inShoppingList={item.inShoppingList}
-        baseIngredientId={item.baseIngredientId}
-        onPress={onItemPress}
-        onToggleInBar={toggleInBar}
-        isNavigating={navigatingId === item.id}
-      />
-    ),
-    [onItemPress, toggleInBar, navigatingId]
+    ({ item }) => {
+      const info = availableMap.get(item.id) || { count: 0, single: null };
+      return (
+        <IngredientRow
+          id={item.id}
+          name={item.name}
+          photoUri={item.photoUri}
+          tags={item.tags}
+          usageCount={info.count}
+          singleCocktailName={info.single}
+          showMake
+          inBar={item.inBar}
+          inShoppingList={item.inShoppingList}
+          baseIngredientId={item.baseIngredientId}
+          onPress={onItemPress}
+          onToggleInBar={toggleInBar}
+          isNavigating={navigatingId === item.id}
+        />
+      );
+    },
+    [onItemPress, toggleInBar, navigatingId, availableMap]
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);
