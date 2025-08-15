@@ -156,6 +156,27 @@ export default function GeneralMenu({ visible, onClose }) {
               </Pressable>
             </View>
 
+            <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
+              <MaterialIcons
+                name="star"
+                size={22}
+                color="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Favorites minimum rating</Text>
+                <Text style={styles.itemSub}>
+                  Only show cocktails with at least X stars
+                </Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
               <IngredientIcon
                 width={22}
