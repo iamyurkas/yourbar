@@ -29,7 +29,11 @@ import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
 import { formatAmount, toMetric, toImperial } from "../../utils/units";
-import { getUseMetric } from "../../storage/settingsStorage";
+import {
+  getUseMetric,
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
+} from "../../storage/settingsStorage";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -157,6 +161,7 @@ export default function CocktailDetailsScreen() {
   const [ingList, setIngList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showImperial, setShowImperial] = useState(false);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -218,15 +223,17 @@ export default function CocktailDetailsScreen() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [loadedCocktail, allIngredients, useMetric] = await Promise.all([
+    const [loadedCocktail, allIngredients, useMetric, ig] = await Promise.all([
       getCocktailById(id),
       getAllIngredients(),
       getUseMetric(),
+      getIgnoreGarnish(),
     ]);
     setCocktail(loadedCocktail || null);
     setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
     setIngList(allIngredients || []);
     setShowImperial(!useMetric);
+    setIgnoreGarnish(!!ig);
     setLoading(false);
   }, [id]);
 
@@ -240,6 +247,11 @@ export default function CocktailDetailsScreen() {
     }, [load])
   );
 
+  useEffect(() => {
+    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
+    return () => sub.remove();
+  }, []);
+
   const rows = useMemo(() => {
     if (!cocktail) return [];
     const list = Array.isArray(cocktail.ingredients)
@@ -249,7 +261,7 @@ export default function CocktailDetailsScreen() {
     return list.map((r) => {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
-      const inBar = ing?.inBar;
+      const inBar = ing?.inBar || (ignoreGarnish && r.garnish);
       let substitute = null;
       if (!inBar && ing) {
         const baseId = ing.baseIngredientId ?? ing.id;
@@ -305,7 +317,7 @@ export default function CocktailDetailsScreen() {
         substituteFor: substitute ? originalName : null,
       };
     });
-  }, [cocktail, ingMap, ingList, showImperial]);
+  }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish]);
 
   if (loading)
     return (

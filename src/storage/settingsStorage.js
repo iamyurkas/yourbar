@@ -1,6 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DeviceEventEmitter } from "react-native";
 
 const USE_METRIC_KEY = "useMetric";
+const IGNORE_GARNISH_KEY = "ignoreGarnish";
+
+export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 
 export async function getUseMetric() {
   try {
@@ -16,4 +20,25 @@ export async function setUseMetric(value) {
   try {
     await AsyncStorage.setItem(USE_METRIC_KEY, value ? "true" : "false");
   } catch {}
+}
+
+export async function getIgnoreGarnish() {
+  try {
+    const value = await AsyncStorage.getItem(IGNORE_GARNISH_KEY);
+    if (value === null) return false;
+    return value === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setIgnoreGarnish(value) {
+  try {
+    await AsyncStorage.setItem(IGNORE_GARNISH_KEY, value ? "true" : "false");
+  } catch {}
+  DeviceEventEmitter.emit(IGNORE_GARNISH_EVENT, value);
+}
+
+export function addIgnoreGarnishListener(listener) {
+  return DeviceEventEmitter.addListener(IGNORE_GARNISH_EVENT, listener);
 }
