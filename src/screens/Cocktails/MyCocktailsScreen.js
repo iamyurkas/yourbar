@@ -11,7 +11,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -19,9 +19,10 @@ import {
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
-import CocktailRow, {
-  COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
-} from "../../components/CocktailRow";
+import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
+import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
+
+const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
 export default function MyCocktailsScreen() {
   const theme = useTheme();
@@ -87,9 +88,7 @@ export default function MyCocktailsScreen() {
   }, [isFocused]);
 
   const processed = useMemo(() => {
-    const ingMap = new Map(
-      (ingredients || []).map((i) => [String(i.id), i])
-    );
+    const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
     const findBrand = (baseId) =>
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
@@ -107,7 +106,8 @@ export default function MyCocktailsScreen() {
       const required = (c.ingredients || []).filter(
         (r) => !r.optional && !(ignoreGarnish && r.garnish)
       );
-      const missing = [];
+      const missingNames = [];
+      const missingIds = [];
       const ingredientNames = [];
       let allAvail = required.length > 0;
       for (const r of required) {
@@ -140,7 +140,8 @@ export default function MyCocktailsScreen() {
           ingredientNames.push(used.name);
         } else {
           const missingName = ing?.name || r.name || "";
-          if (missingName) missing.push(missingName);
+          if (missingName) missingNames.push(missingName);
+          missingIds.push(baseId);
           allAvail = false;
         }
       }
@@ -150,10 +151,10 @@ export default function MyCocktailsScreen() {
       });
       let ingredientLine = ingredientNames.join(", ");
       if (!allAvail) {
-        if (missing.length > 0 && missing.length <= 2) {
-          ingredientLine = `Missing: ${missing.join(", ")}`;
-        } else if (missing.length >= 3 || missing.length === 0) {
-          ingredientLine = `Missing: ${missing.length || required.length} ingredients`;
+        if (missingNames.length > 0 && missingNames.length <= 2) {
+          ingredientLine = `Missing: ${missingNames.join(", ")}`;
+        } else if (missingNames.length >= 3 || missingNames.length === 0) {
+          ingredientLine = `Missing: ${missingNames.length || required.length} ingredients`;
         }
       }
       return {
@@ -161,14 +162,43 @@ export default function MyCocktailsScreen() {
         isAllAvailable: allAvail,
         hasBranded: branded,
         ingredientLine,
+        missingIngredientIds: missingIds,
       };
     });
   }, [cocktails, ingredients, searchDebounced, selectedTagIds, ignoreGarnish]);
 
-  const available = useMemo(
-    () => processed.filter((c) => c.isAllAvailable),
-    [processed]
-  );
+  const { available, suggestions } = useMemo(() => {
+    const avail = processed.filter((c) => c.isAllAvailable);
+    const map = new Map();
+    for (const c of processed) {
+      if (c.isAllAvailable) continue;
+      if (c.missingIngredientIds?.length === 1) {
+        const id = c.missingIngredientIds[0];
+        if (!map.has(id)) map.set(id, []);
+        map.get(id).push(c);
+      }
+    }
+    const sugg = Array.from(map.entries())
+      .map(([id, cocks]) => ({
+        ingredient: ingredients.find((i) => String(i.id) === String(id)),
+        cocktails: cocks,
+      }))
+      .filter((s) => s.ingredient && !s.ingredient.inBar)
+      .sort((a, b) => b.cocktails.length - a.cocktails.length);
+    return { available: avail, suggestions: sugg };
+  }, [processed, ingredients]);
+
+  const listData = useMemo(() => {
+    const data = available.map((c) => ({ type: "cocktail", item: c }));
+    if (suggestions.length > 0) {
+      data.push({ type: "info" });
+      suggestions.forEach((s) => {
+        data.push({ type: "ingredient", ingredient: s.ingredient, cocktails: s.cocktails });
+        s.cocktails.forEach((c) => data.push({ type: "cocktail", item: c }));
+      });
+    }
+    return data;
+  }, [available, suggestions]);
 
   const handlePress = useCallback(
     (id) => {
@@ -182,26 +212,92 @@ export default function MyCocktailsScreen() {
     [navigation]
   );
 
-  const renderItem = useCallback(
-    ({ item }) => (
-      <CocktailRow
-        id={item.id}
-        name={item.name}
-        photoUri={item.photoUri}
-        glassId={item.glassId}
-        tags={item.tags}
-        ingredientLine={item.ingredientLine}
-        rating={item.rating}
-        isAllAvailable={item.isAllAvailable}
-        hasBranded={item.hasBranded}
-        onPress={handlePress}
-        isNavigating={navigatingId === item.id}
-      />
-    ),
-    [handlePress, navigatingId]
+  const handleIngredientPress = useCallback(
+    (id) => {
+      navigation.navigate("Ingredients", {
+        screen: "Create",
+        params: { screen: "IngredientDetails", params: { id } },
+      });
+    },
+    [navigation]
   );
 
-  const keyExtractor = useCallback((item) => String(item.id), []);
+  const toggleShoppingList = useCallback((id) => {
+    setIngredients((prev) => {
+      const idx = prev.findIndex((i) => String(i.id) === String(id));
+      if (idx === -1) return prev;
+      const next = [...prev];
+      const item = next[idx];
+      const updated = { ...item, inShoppingList: !item.inShoppingList };
+      next[idx] = updated;
+      saveIngredient(updated).catch(() => {});
+      return next;
+    });
+  }, []);
+
+  const renderItem = useCallback(
+    ({ item }) => {
+      if (item.type === "cocktail") {
+        const c = item.item;
+        return (
+          <CocktailRow
+            id={c.id}
+            name={c.name}
+            photoUri={c.photoUri}
+            glassId={c.glassId}
+            tags={c.tags}
+            ingredientLine={c.ingredientLine}
+            rating={c.rating}
+            isAllAvailable={c.isAllAvailable}
+            hasBranded={c.hasBranded}
+            onPress={handlePress}
+            isNavigating={navigatingId === c.id}
+          />
+        );
+      }
+      if (item.type === "ingredient") {
+        const ing = item.ingredient;
+        return (
+          <IngredientRow
+            id={ing.id}
+            name={ing.name}
+            photoUri={ing.photoUri}
+            tags={ing.tags}
+            usageCount={item.cocktails.length}
+            singleCocktailName={item.cocktails[0]?.name}
+            showMake
+            inBar={ing.inBar}
+            inShoppingList={ing.inShoppingList}
+            baseIngredientId={ing.baseIngredientId}
+            onPress={handleIngredientPress}
+            onToggleShoppingList={toggleShoppingList}
+            highlightColor={theme.colors.secondaryContainer}
+          />
+        );
+      }
+      return (
+        <View style={{ padding: 24 }}>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>
+            For the cocktails below – get more ingredients.
+          </Text>
+        </View>
+      );
+    },
+    [
+      handlePress,
+      navigatingId,
+      handleIngredientPress,
+      toggleShoppingList,
+      theme.colors.onSurfaceVariant,
+      theme.colors.secondaryContainer,
+    ]
+  );
+
+  const keyExtractor = useCallback((item, index) => {
+    if (item.type === "cocktail") return `c${item.item.id}`;
+    if (item.type === "ingredient") return `i${item.ingredient.id}`;
+    return `t${index}`;
+  }, []);
 
   if (loading)
     return (
@@ -211,7 +307,7 @@ export default function MyCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -224,14 +320,20 @@ export default function MyCocktailsScreen() {
         }
       />
       <FlashList
-        data={available}
+        data={listData}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         estimatedItemSize={ITEM_HEIGHT}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews
         initialNumToRender={12}
-        getItemType={() => "COCKTAIL"}
+        getItemType={(item) =>
+          item.type === "cocktail"
+            ? "COCKTAIL"
+            : item.type === "ingredient"
+            ? "ING"
+            : "TEXT"
+        }
         ListEmptyComponent={
           <View style={{ padding: 24 }}>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>

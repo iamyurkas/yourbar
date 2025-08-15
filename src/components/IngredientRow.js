@@ -30,8 +30,10 @@ function IngredientRow({
   baseIngredientId,
   onPress,
   onToggleInBar,
+  onToggleShoppingList,
   onRemove,
   isNavigating,
+  highlightColor,
 }) {
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
@@ -47,6 +49,7 @@ function IngredientRow({
         inBar ? styles.highlightWrapper : styles.normalWrapper,
         { borderBottomColor: theme.colors.background },
         inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        highlightColor && { backgroundColor: highlightColor },
       ]}
     >
       <View
@@ -56,14 +59,14 @@ function IngredientRow({
             ...styles.brandedStripe,
             borderLeftColor: theme.colors.primary,
           },
-          !inBar && styles.dimmed,
+          !inBar && !highlightColor && styles.dimmed,
           isNavigating && {
             ...styles.navigatingRow,
             backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
           },
         ]}
       >
-        {inShoppingList && (
+        {inShoppingList && !onToggleShoppingList && (
           <MaterialIcons
             name="shopping-cart"
             size={16}
@@ -162,6 +165,23 @@ function IngredientRow({
               name={inBar ? "check-circle" : "radio-button-unchecked"}
               size={22}
               color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
+            />
+          </Pressable>
+        ) : onToggleShoppingList ? (
+          <Pressable
+            onPress={() => onToggleShoppingList(id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            android_ripple={{ ...ripple, borderless: true }}
+            style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
+          >
+            <MaterialIcons
+              name={inShoppingList ? "shopping-cart" : "add-shopping-cart"}
+              size={22}
+              color={
+                inShoppingList
+                  ? theme.colors.primary
+                  : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         ) : null}
