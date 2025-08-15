@@ -14,6 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import IngredientIcon from "../../assets/lemon.svg";
 
 import IngredientTagsModal from "./IngredientTagsModal";
+import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
 
 import {
@@ -37,6 +38,7 @@ export default function GeneralMenu({ visible, onClose }) {
   const [useMetric, setUseMetric] = useState(true);
   const [keepAwake, setKeepAwake] = useState(false);
   const [tagsVisible, setTagsVisible] = useState(false);
+  const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
   const [favRating, setFavRating] = useState(0);
 
@@ -59,6 +61,11 @@ export default function GeneralMenu({ visible, onClose }) {
   const openTagsModal = () => {
     onClose?.();
     setTagsVisible(true);
+  };
+
+  const openCocktailTagsModal = () => {
+    onClose?.();
+    setCocktailTagsVisible(true);
   };
 
   const openRatingModal = () => {
@@ -123,6 +130,7 @@ export default function GeneralMenu({ visible, onClose }) {
   };
 
   const closeTagsModal = () => setTagsVisible(false);
+  const closeCocktailTagsModal = () => setCocktailTagsVisible(false);
 
   return (
     <>
@@ -222,7 +230,7 @@ export default function GeneralMenu({ visible, onClose }) {
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
+            <TouchableOpacity style={styles.linkRow} onPress={openCocktailTagsModal}>
               <MaterialIcons
                 name="local-bar"
                 size={22}
@@ -244,6 +252,10 @@ export default function GeneralMenu({ visible, onClose }) {
         </Pressable>
       </Modal>
       <IngredientTagsModal visible={tagsVisible} onClose={closeTagsModal} />
+      <CocktailTagsModal
+        visible={cocktailTagsVisible}
+        onClose={closeCocktailTagsModal}
+      />
       <FavoritesRatingModal
         visible={ratingVisible}
         rating={favRating}

@@ -52,8 +52,10 @@ const { Popover } = renderers;
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
+import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
+import CocktailTagsModal from "../../components/CocktailTagsModal";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -1134,6 +1136,30 @@ export default function AddCocktailScreen() {
     const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
     return custom ? [custom] : [{ id: 8, name: "custom", color: "#AFC9C3FF" }];
   });
+  const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
+  const [tagsModalVisible, setTagsModalVisible] = useState(false);
+  const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
+
+  const loadAvailableTags = useCallback(async () => {
+    const all = await getAllCocktailTags();
+    setAvailableTags(Array.isArray(all) ? all : BUILTIN_COCKTAIL_TAGS);
+  }, []);
+
+  const closeTagsModal = () => {
+    setTagsModalVisible(false);
+    setTagsModalAutoAdd(false);
+    loadAvailableTags();
+  };
+
+  const openAddTagModal = () => {
+    setTagsModalAutoAdd(true);
+    setTagsModalVisible(true);
+  };
+
+  useEffect(() => {
+    loadAvailableTags();
+  }, [loadAvailableTags]);
+
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
 
@@ -1215,7 +1241,6 @@ export default function AddCocktailScreen() {
     return list.slice(0, 40);
   }, [allIngredients, debouncedSubQuery, modalExcludedIds]);
 
-  const availableTags = BUILTIN_COCKTAIL_TAGS;
 
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -1588,22 +1613,50 @@ export default function AddCocktailScreen() {
             ))}
           </View>
 
-          <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}> 
             Add Tag
           </Text>
           <View style={styles.tagContainer}>
-            {BUILTIN_COCKTAIL_TAGS.filter(
-              (t) => !tags.some((x) => x.id === t.id)
-            ).map((t) => (
-              <TagPill
-                key={t.id}
-                id={t.id}
-                name={t.name}
-                color={t.color}
-                onToggle={toggleTagById}
-              />
-            ))}
+            {availableTags
+              .filter((t) => !tags.some((x) => x.id === t.id))
+              .map((t) => (
+                <TagPill
+                  key={t.id}
+                  id={t.id}
+                  name={t.name}
+                  color={t.color}
+                  onToggle={toggleTagById}
+                />
+              ))}
+            <Pressable
+              onPress={openAddTagModal}
+              style={[
+                styles.addTagButton,
+                {
+                  borderColor: theme.colors.primary,
+                  backgroundColor: theme.colors.background,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.addTagButtonText,
+                  { color: theme.colors.primary },
+                ]}
+              >
+                +Add
+              </Text>
+            </Pressable>
           </View>
+
+          <Pressable
+            onPress={() => {
+              setTagsModalAutoAdd(false);
+              setTagsModalVisible(true);
+            }}
+          >
+            <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
+          </Pressable>
 
           {/* Description */}
           <Text style={[styles.label, { color: theme.colors.onBackground }]}>
@@ -1713,6 +1766,12 @@ export default function AddCocktailScreen() {
           </Pressable>
         </ScrollView>
       </View>
+
+      <CocktailTagsModal
+        visible={tagsModalVisible}
+        onClose={closeTagsModal}
+        autoAdd={tagsModalAutoAdd}
+      />
 
       {/* Substitute Picker Modal */}
       <Portal>
@@ -1902,6 +1961,17 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   tagText: { color: "white", fontWeight: "bold" },
+
+  addTagButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    margin: 4,
+    borderWidth: 1,
+  },
+  addTagButtonText: { fontWeight: "500" },
+
+  manageTagsLink: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
 
   // ingredient card
   ingCard: {
