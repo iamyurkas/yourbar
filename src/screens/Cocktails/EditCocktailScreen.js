@@ -56,8 +56,12 @@ import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
-
-import useIngredientsData from "../../hooks/useIngredientsData";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import {
+  addCocktailToUsageMap,
+  removeCocktailFromUsageMap,
+  applyUsageMapToIngredients,
+} from "../../utils/ingredientUsage";
 
 
 /* ---------- helpers ---------- */
@@ -1059,7 +1063,14 @@ export default function EditCocktailScreen() {
   const route = useRoute();
   const params = route.params || {};
   const cocktailId = params?.id;
-  const { refresh: refreshIngredientsData } = useIngredientsData();
+  const {
+    ingredients,
+    cocktails,
+    setCocktails,
+    usageMap,
+    setUsageMap,
+    setIngredients,
+  } = useIngredientUsage();
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -1153,15 +1164,25 @@ export default function EditCocktailScreen() {
         createdAt: createdAtRef.current,
       };
 
-      await saveCocktail(cocktail);
-      await refreshIngredientsData();
+      const prev = cocktails.find((c) => c.id === cocktailId);
+      const updated = await saveCocktail(cocktail);
+      const nextCocktails = cocktails.map((c) =>
+        c.id === updated.id ? updated : c
+      );
+      setCocktails(nextCocktails);
+      let nextUsage = removeCocktailFromUsageMap(usageMap, ingredients, prev);
+      nextUsage = addCocktailToUsageMap(nextUsage, ingredients, updated);
+      setUsageMap(nextUsage);
+      setIngredients(
+        applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
+      );
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
         navigation.goBack();
       }
-      return cocktail;
+      return updated;
     },
     [
       name,
@@ -1174,6 +1195,12 @@ export default function EditCocktailScreen() {
       cocktailId,
       navigation,
       serialize,
+      cocktails,
+      usageMap,
+      ingredients,
+      setCocktails,
+      setUsageMap,
+      setIngredients,
     ]
   );
 
@@ -1921,8 +1948,19 @@ export default function EditCocktailScreen() {
         onCancel={() => setConfirmDelete(false)}
         onConfirm={async () => {
           skipPromptRef.current = true;
+          const prev = cocktails.find((c) => c.id === cocktailId);
           await deleteCocktail(cocktailId);
-          await refreshIngredientsData();
+          const nextCocktails = cocktails.filter((c) => c.id !== cocktailId);
+          setCocktails(nextCocktails);
+          const nextUsage = removeCocktailFromUsageMap(
+            usageMap,
+            ingredients,
+            prev
+          );
+          setUsageMap(nextUsage);
+          setIngredients(
+            applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
+          );
           navigation.popToTop();
           setConfirmDelete(false);
         }}
