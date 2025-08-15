@@ -44,6 +44,7 @@ import {
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 
 // ----------- helpers -----------
@@ -187,6 +188,8 @@ export default function EditIngredientScreen() {
 
   // --- dirty tracking (як в EditCocktailScreen) ---
   const [dirty, setDirty] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [pendingNav, setPendingNav] = useState(null);
   const initialHashRef = useRef("{}");
   const skipPromptRef = useRef(false);
 
@@ -218,21 +221,8 @@ export default function EditIngredientScreen() {
 
   const handleDelete = useCallback(() => {
     if (!ingredient) return;
-    Alert.alert("Delete Ingredient", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          skipPromptRef.current = true; // не питати про збереження
-          await deleteIngredient(ingredient.id);
-          await refreshIngredientsData();
-          if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
-        },
-      },
-    ]);
-  }, [ingredient, navigation, previousTab]);
+    setConfirmDelete(true);
+  }, [ingredient]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -437,30 +427,12 @@ export default function EditIngredientScreen() {
   // глобальне перехоплення виходу (будь-який navigate/back/gesture)
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
-      if (skipPromptRef.current || !dirty) return; // нічого не робимо
+      if (skipPromptRef.current || !dirty) return;
       e.preventDefault();
-      Alert.alert("Save changes?", "Do you want to save changes?", [
-        {
-          text: "Discard",
-          style: "destructive",
-          onPress: () => {
-            skipPromptRef.current = true;
-            navigation.dispatch(e.data.action);
-          },
-        },
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Save",
-          onPress: async () => {
-            skipPromptRef.current = true;
-            await handleSave(true); // зберегти, але залишитись
-            navigation.dispatch(e.data.action); // потім виконати перехоплену дію
-          },
-        },
-      ]);
+      setPendingNav(e.data.action);
     });
     return unsub;
-  }, [navigation, dirty, handleSave]);
+  }, [navigation, dirty]);
 
   if (!ingredient) {
     return (
@@ -772,6 +744,54 @@ export default function EditIngredientScreen() {
         visible={tagsModalVisible}
         onClose={closeTagsModal}
         autoAdd={tagsModalAutoAdd}
+      />
+      <ConfirmationDialog
+        visible={confirmDelete}
+        title="Delete Ingredient"
+        message="Are you sure?"
+        confirmLabel="Delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={async () => {
+          if (!ingredient) return;
+          skipPromptRef.current = true;
+          await deleteIngredient(ingredient.id);
+          await refreshIngredientsData();
+          if (previousTab) navigation.navigate(previousTab);
+          else navigation.goBack();
+          setConfirmDelete(false);
+        }}
+      />
+      <ConfirmationDialog
+        visible={!!pendingNav}
+        title="Save changes?"
+        message="Do you want to save changes?"
+        actions={[
+          {
+            label: "Discard",
+            mode: "outlined",
+            onPress: () => {
+              skipPromptRef.current = true;
+              navigation.dispatch(pendingNav);
+              setPendingNav(null);
+            },
+          },
+          {
+            label: "Cancel",
+            mode: "outlined",
+            onPress: () => setPendingNav(null),
+          },
+          {
+            label: "Save",
+            mode: "contained",
+            onPress: async () => {
+              skipPromptRef.current = true;
+              await handleSave(true);
+              navigation.dispatch(pendingNav);
+              setPendingNav(null);
+            },
+          },
+        ]}
+        onCancel={() => setPendingNav(null)}
       />
     </KeyboardAvoidingView>
   );

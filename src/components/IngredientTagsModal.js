@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   Text,
   TextInput,
@@ -11,6 +11,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 const COLOR_PALETTE = [
   "#FF6B6B",
@@ -38,6 +39,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLOR_PALETTE[0]);
+  const [deleteTag, setDeleteTag] = useState(null);
 
   useEffect(() => {
     if (!visible) return;
@@ -75,22 +77,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   };
 
   const onDelete = (tag) => {
-    Alert.alert(
-      "Delete tag",
-      `Are you sure you want to delete “${tag.name}”?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            const next = tags.filter((t) => t.id !== tag.id);
-            setTags(next);
-            await saveUserTags(next);
-          },
-        },
-      ]
-    );
+    setDeleteTag(tag);
   };
 
   const isValidHex = useMemo(() => {
@@ -272,6 +259,20 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           <Button onPress={onSave} disabled={!canSave}>Save</Button>
         </View>
       </Modal>
+
+      <ConfirmationDialog
+        visible={!!deleteTag}
+        title="Delete tag"
+        message={`Are you sure you want to delete “${deleteTag?.name}”?`}
+        confirmLabel="Delete"
+        onCancel={() => setDeleteTag(null)}
+        onConfirm={async () => {
+          const next = tags.filter((t) => t.id !== deleteTag.id);
+          setTags(next);
+          await saveUserTags(next);
+          setDeleteTag(null);
+        }}
+      />
     </Portal>
   );
 }
