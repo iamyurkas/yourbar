@@ -4532,40 +4532,7 @@
     ]
   },
 
-  {
-    "name": "Adonis",
-    "glassware": "cocktail_glass",
-    "tags": [1, 3],
-    "description": "Sherry and sweet vermouth in an elegant, low-proof duo. Aromatic, lightly sweet, and herbaceous. A classic aperitif with theater roots.",
-    "ingredients": [
-      {
-        "ingredient": "Dry Sherry",
-        "quantity": 45,
-        "unit": 11
-      },
-      {
-        "ingredient": "Sweet Vermouth",
-        "quantity": 45,
-        "unit": 11
-      },
-      {
-        "ingredient": "Orange Bitters",
-        "quantity": 2,
-        "unit": 6
-      },
-      {
-        "ingredient": "Ice",
-        "quantity": 90,
-        "unit": 8
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a Cocktail glass.",
-      "Stir sherry, vermouth, and bitters with ice.",
-      "Strain into the chilled glass.",
-      "No garnish required."
-    ]
-  },
+  
   {
     "name": "Hugo",
     "glassware": "wine_glass",
@@ -7387,34 +7354,7 @@
       "Garnish with a lemon wedge."
     ]
   },
-  {
-    "name": "Adonis",
-    "glassware": "cocktail_glass",
-    "tags": [1, 4],
-    "description": "A classic sherry-and-vermouth aperitif—low-alcohol, smooth and aromatic. Equal parts dry sherry and sweet vermouth, brightened with orange bitters and garnished with an orange twist.",
-    "ingredients": [
-      {
-        "ingredient": "Dry Sherry",
-        "quantity": 45,
-        "unit": 11
-      },
-      { "ingredient": "Sweet Vermouth", "quantity": 45, "unit": 11 },
-      { "ingredient": "Orange Bitters", "quantity": 2, "unit": 6 },
-      {
-        "ingredient": "Orange",
-        "quantity": 1,
-        "unit": 26,
-        "garnish": true
-      }
-    ],
-    "instructions": [
-      "Select and pre-chill a cocktail glass.",
-      "Add dry sherry, sweet vermouth, and bitters to a mixing glass filled with ice.",
-      "Stir until well chilled.",
-      "Strain into the chilled glass.",
-      "Express orange peel oils over the drink and discard, or garnish with the twist."
-    ]
-  },
+
   {
     "name": "B-52",
     "glassware": "shooter",
@@ -7881,7 +7821,7 @@
       { "ingredient": "Cream", "quantity": 60, "unit": 11 },
       { "ingredient": "Egg", "quantity": 1, "unit": 1 },
       { "ingredient": "Sugar", "quantity": 2, "unit": 24 },
-      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+      { "ingredient": "Grated Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
     ],
     "instructions": [
       "In a shaker, combine brandy, milk, cream, egg, and sugar.",
@@ -8022,7 +7962,7 @@
       { "ingredient": "Butterscotch Schnapps", "quantity": 30, "unit": 11 },
       { "ingredient": "Irish Cream Liqueur", "quantity": 30, "unit": 11 },
       { "ingredient": "Fresh Cream", "quantity": 30, "unit": 11 },
-      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+      { "ingredient": "Grated Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
     ],
     "instructions": [
       "Add all ingredients to a shaker with ice.",
@@ -8073,7 +8013,7 @@
       { "ingredient": "Egg Liqueur", "quantity": 60, "unit": 11 },
       { "ingredient": "White Wine", "quantity": 60, "unit": 11 },
       { "ingredient": "Lemon", "quantity": 1, "unit": 9 },
-      { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+      { "ingredient": "Grated Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
     ],
     "instructions": [
       "Add sherry, egg yolk, and sugar to a shaker without ice.",
@@ -8295,7 +8235,7 @@
     { "ingredient": "Vodka Vanilla", "quantity": 30, "unit": 11 },
     { "ingredient": "Creme de Cacao White", "quantity": 30, "unit": 11 },
     { "ingredient": "Cream", "quantity": 30, "unit": 11 },
-    { "ingredient": "Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
+    { "ingredient": "Grated Nutmeg", "quantity": 1, "unit": 15, "garnish": true }
   ],
   "instructions": [
     "Add all ingredients to a shaker with ice.",
