@@ -8,6 +8,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -16,6 +17,8 @@ import IngredientIcon from "../../assets/lemon.svg";
 import IngredientTagsModal from "./IngredientTagsModal";
 import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
+import useIngredientsData from "../hooks/useIngredientsData";
+import { exportAllData, importAllData } from "../storage/backupStorage";
 
 import {
   getUseMetric,
@@ -46,6 +49,8 @@ export default function GeneralMenu({ visible, onClose }) {
   const [ratingVisible, setRatingVisible] = useState(false);
   const [favRating, setFavRating] = useState(0);
 
+  const { refresh } = useIngredientsData();
+
   useEffect(() => {
     if (visible) {
       Animated.timing(slideAnim, {
@@ -75,6 +80,29 @@ export default function GeneralMenu({ visible, onClose }) {
   const openRatingModal = () => {
     onClose?.();
     setTimeout(() => setRatingVisible(true), 0);
+  };
+
+  const handleExport = async () => {
+    onClose?.();
+    try {
+      await exportAllData();
+      Alert.alert("Export", "Data exported successfully");
+    } catch (e) {
+      Alert.alert("Export", "Failed to export data");
+    }
+  };
+
+  const handleImport = async () => {
+    onClose?.();
+    try {
+      const ok = await importAllData();
+      if (ok) {
+        await refresh?.();
+        Alert.alert("Import", "Data imported successfully");
+      }
+    } catch (e) {
+      Alert.alert("Import", "Failed to import data");
+    }
   };
 
   useEffect(() => {
@@ -275,6 +303,44 @@ export default function GeneralMenu({ visible, onClose }) {
               <View style={styles.itemText}>
                 <Text style={styles.itemTitle}>Cocktail tags</Text>
                 <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.linkRow} onPress={handleExport}>
+              <MaterialIcons
+                name="file-download"
+                size={22}
+                color="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Export data</Text>
+                <Text style={styles.itemSub}>Export all ingredients and cocktails</Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.linkRow} onPress={handleImport}>
+              <MaterialIcons
+                name="file-upload"
+                size={22}
+                color="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Import data</Text>
+                <Text style={styles.itemSub}>Import ingredients and cocktails</Text>
               </View>
               <MaterialIcons
                 name="chevron-right"
