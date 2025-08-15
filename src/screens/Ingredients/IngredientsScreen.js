@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import AllIngredientsTab from "./AllIngredientsTab";
 import MyIngredientsTab from "./MyIngredientsTab";
 import ShoppingIngredientsTab from "./ShoppingIngredientsTab";
@@ -49,12 +49,17 @@ export default function IngredientsScreen() {
 
 function TabButton({ title, active, onPress }) {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
-      style={[styles.tabButton, active && styles.activeTab]}
+      android_ripple={{ color: "rgba(0,0,0,0.05)" }}
+      style={({ pressed }) => [
+        styles.tabButton,
+        active && styles.activeTab,
+        pressed && styles.pressedTab,
+      ]}
     >
       <Text style={active ? styles.activeText : styles.tabText}>{title}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -80,6 +85,9 @@ const styles = StyleSheet.create({
   activeTab: {
     borderBottomWidth: 3,
     borderBottomColor: "#4DABF7",
+  },
+  pressedTab: {
+    opacity: 0.7,
   },
   tabText: {
     color: "#666",
