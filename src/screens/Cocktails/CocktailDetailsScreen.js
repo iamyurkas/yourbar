@@ -36,7 +36,7 @@ import {
   getKeepAwake,
   addKeepAwakeListener,
 } from "../../storage/settingsStorage";
-import { activateKeepAwakeAsync, deactivateKeepAwakeAsync } from "expo-keep-awake";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -263,7 +263,7 @@ export default function CocktailDetailsScreen() {
       const sub = addKeepAwakeListener(setKeepAwake);
       return () => {
         sub.remove();
-        deactivateKeepAwakeAsync();
+        deactivateKeepAwake();
       };
     }, [])
   );
@@ -272,7 +272,7 @@ export default function CocktailDetailsScreen() {
     if (keepAwake) {
       activateKeepAwakeAsync();
     } else {
-      deactivateKeepAwakeAsync();
+      deactivateKeepAwake();
     }
   }, [keepAwake]);
 
