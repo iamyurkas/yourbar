@@ -13,6 +13,7 @@ import FavoriteCocktailsScreen from "./FavoriteCocktailsScreen";
 import CocktailDetailsScreen from "./CocktailDetailsScreen";
 import EditCocktailScreen from "./EditCocktailScreen";
 import AddCocktailScreen from "./AddCocktailScreen";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -20,16 +21,31 @@ const Stack = createNativeStackNavigator();
 function CocktailTabs() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const tabsOnTop = useTabsOnTop();
   return (
     <>
-      <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: theme.colors.primary,
+          tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+          tabBarStyle: { backgroundColor: theme.colors.surface },
+        }}
+        tabBar={tabsOnTop ? () => null : undefined}
+      >
         <Tab.Screen name="All" component={AllCocktailsScreen} />
         <Tab.Screen name="My" component={MyCocktailsScreen} />
         <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
       </Tab.Navigator>
       <FAB
         icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primaryContainer }]}
+        style={[
+          styles.fab,
+          {
+            backgroundColor: theme.colors.primaryContainer,
+            bottom: tabsOnTop ? 16 : 80,
+          },
+        ]}
         color={theme.colors.primary}
         onPress={() => navigation.navigate("AddCocktail")}
       />

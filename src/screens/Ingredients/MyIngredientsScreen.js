@@ -18,12 +18,14 @@ import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
 } from "../../storage/settingsStorage";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
+  const tabsOnTop = useTabsOnTop();
 
   const { ingredients, loading, setIngredients, cocktails, usageMap } =
     useIngredientsData();
@@ -215,7 +217,7 @@ export default function MyIngredientsScreen() {
           />
         }
       />
-      <TopTabBar navigation={navigation} theme={theme} />
+      {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

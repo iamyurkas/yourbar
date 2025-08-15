@@ -11,6 +11,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import {
@@ -29,6 +30,7 @@ export default function AllCocktailsScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
+  const tabsOnTop = useTabsOnTop();
 
   const [cocktails, setCocktails] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -216,7 +218,7 @@ export default function AllCocktailsScreen() {
           />
         }
       />
-      <TopTabBar navigation={navigation} theme={theme} />
+      {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

@@ -14,12 +14,14 @@ import { saveIngredient } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
+  const tabsOnTop = useTabsOnTop();
 
   const { ingredients, loading, setIngredients } = useIngredientsData();
   const [search, setSearch] = useState("");
@@ -132,7 +134,7 @@ export default function AllIngredientsScreen() {
           />
         }
       />
-      <TopTabBar navigation={navigation} theme={theme} />
+      {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

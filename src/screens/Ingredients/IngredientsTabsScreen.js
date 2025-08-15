@@ -13,6 +13,7 @@ import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
 import IngredientDetailsScreen from "./IngredientDetailsScreen";
 import EditIngredientScreen from "./EditIngredientScreen";
 import AddIngredientScreen from "./AddIngredientScreen";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -20,16 +21,31 @@ const Stack = createNativeStackNavigator();
 function IngredientTabs() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const tabsOnTop = useTabsOnTop();
   return (
     <>
-      <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: theme.colors.primary,
+          tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+          tabBarStyle: { backgroundColor: theme.colors.surface },
+        }}
+        tabBar={tabsOnTop ? () => null : undefined}
+      >
         <Tab.Screen name="All" component={AllIngredientsScreen} />
         <Tab.Screen name="My" component={MyIngredientsScreen} />
         <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
       </Tab.Navigator>
       <FAB
         icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primaryContainer }]}
+        style={[
+          styles.fab,
+          {
+            backgroundColor: theme.colors.primaryContainer,
+            bottom: tabsOnTop ? 16 : 80,
+          },
+        ]}
         color={theme.colors.primary}
         onPress={() => navigation.navigate("AddIngredient")}
       />
