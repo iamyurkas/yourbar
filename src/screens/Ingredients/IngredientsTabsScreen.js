@@ -26,19 +26,24 @@ function IngredientTabs() {
   return (
     <>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-            if (route.name === "All") iconName = "list";
-            else if (route.name === "My") iconName = "check-circle";
-            else if (route.name === "Shopping") iconName = "shopping-cart";
-            return <MaterialIcons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: theme.colors.primary,
-          tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-          tabBarStyle: { backgroundColor: theme.colors.surface },
-        })}
+        screenOptions={({ route }) => {
+          const options = {
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => {
+              let iconName;
+              if (route.name === "All") iconName = "list";
+              else if (route.name === "My") iconName = "check-circle";
+              else if (route.name === "Shopping") iconName = "shopping-cart";
+              return <MaterialIcons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: theme.colors.primary,
+            tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+          };
+          if (!tabsOnTop) {
+            options.tabBarStyle = { backgroundColor: theme.colors.background };
+          }
+          return options;
+        }}
         tabBar={tabsOnTop ? () => null : undefined}
       >
         <Tab.Screen name="All" component={AllIngredientsScreen} />
