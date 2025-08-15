@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+import { Pressable } from "react-native";
 
 import AllCocktailsScreen from "./AllCocktailsScreen";
 import CocktailDetailsScreen from "./CocktailDetailsScreen";
@@ -14,6 +15,19 @@ import AddCocktailScreen from "./AddCocktailScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+function TabBarButton({ style, ...props }) {
+  return (
+    <Pressable
+      {...props}
+      android_ripple={{ color: "rgba(0,0,0,0.05)" }}
+      style={({ pressed }) => [
+        typeof style === "function" ? style({ pressed }) : style,
+        pressed && { opacity: 0.7 },
+      ]}
+    />
+  );
+}
 
 // Stack for Create tab
 function CreateCocktailStack() {
@@ -54,6 +68,7 @@ export default function CocktailsTabsScreen() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarButton: (props) => <TabBarButton {...props} />,
         tabBarIcon: ({ color, size }) => {
           let iconName;
           if (route.name === "All") iconName = "list";
