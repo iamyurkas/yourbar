@@ -20,6 +20,8 @@ import {
   setUseMetric as saveUseMetric,
   getIgnoreGarnish,
   setIgnoreGarnish as saveIgnoreGarnish,
+  getKeepAwake,
+  setKeepAwake as saveKeepAwake,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -67,6 +69,12 @@ export default function GeneralMenu({ visible, onClose }) {
         setIgnoreGarnish(!!stored);
       } catch {}
     })();
+    (async () => {
+      try {
+        const stored = await getKeepAwake();
+        setKeepAwake(!!stored);
+      } catch {}
+    })();
   }, []);
 
   const toggleUseMetric = () => {
@@ -81,6 +89,14 @@ export default function GeneralMenu({ visible, onClose }) {
     setIgnoreGarnish((v) => {
       const next = !v;
       saveIgnoreGarnish(next);
+      return next;
+    });
+  };
+
+  const toggleKeepAwake = () => {
+    setKeepAwake((v) => {
+      const next = !v;
+      saveKeepAwake(next);
       return next;
     });
   };
@@ -127,11 +143,11 @@ export default function GeneralMenu({ visible, onClose }) {
             <View style={styles.itemRow}>
               <Checkbox
                 status={keepAwake ? "checked" : "unchecked"}
-                onPress={() => setKeepAwake((v) => !v)}
+                onPress={toggleKeepAwake}
               />
               <Pressable
                 style={styles.itemText}
-                onPress={() => setKeepAwake((v) => !v)}
+                onPress={toggleKeepAwake}
               >
                 <Text style={styles.itemTitle}>Keep screen awake</Text>
                 <Text style={styles.itemSub}>
