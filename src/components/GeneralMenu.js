@@ -28,6 +28,7 @@ import {
   setFavoritesMinRating as saveFavoritesMinRating,
   getTabsOnTop,
   setTabsOnTop as saveTabsOnTop,
+  addTabsOnTopListener,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -101,12 +102,18 @@ export default function GeneralMenu({ visible, onClose }) {
         setFavRating(stored);
       } catch {}
     })();
-    (async () => {
-      try {
-        const stored = await getTabsOnTop();
-        setTabsOnTop(!!stored);
-      } catch {}
-    })();
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    getTabsOnTop().then((stored) => {
+      if (mounted) setTabsOnTop(!!stored);
+    });
+    const sub = addTabsOnTopListener((v) => setTabsOnTop(!!v));
+    return () => {
+      mounted = false;
+      sub.remove();
+    };
   }, []);
 
   const toggleUseMetric = () => {
