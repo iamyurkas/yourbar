@@ -24,7 +24,7 @@ export default function ConfirmationDialog({
       <Modal
         visible={visible}
         onDismiss={onCancel}
-        style={{ justifyContent: "flex-start" }}
+        style={styles.modal}
         contentContainerStyle={[
           styles.container,
           { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
@@ -56,6 +56,10 @@ export default function ConfirmationDialog({
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    flex: 1,
+    justifyContent: "center",
+  },
   container: {
     marginHorizontal: 24,
     borderWidth: 1,
