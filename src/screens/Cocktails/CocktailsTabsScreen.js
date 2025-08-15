@@ -27,7 +27,12 @@ function CocktailTabs() {
         <Tab.Screen name="My" component={MyCocktailsScreen} />
         <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
       </Tab.Navigator>
-      <FAB icon="plus" style={styles.fab} onPress={() => navigation.navigate("AddCocktail")} />
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primaryContainer }]}
+        color={theme.colors.primary}
+        onPress={() => navigation.navigate("AddCocktail")}
+      />
     </>
   );
 }

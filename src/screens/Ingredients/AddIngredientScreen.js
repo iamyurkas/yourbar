@@ -345,7 +345,7 @@ export default function AddIngredientScreen() {
       return;
     }
 
-    navigation.navigate("IngredientDetails", { id: newIng.id });
+    navigation.navigate("Ingredients", { screen: lastIngredientsTab });
   }, [
     name,
     description,
@@ -356,6 +356,7 @@ export default function AddIngredientScreen() {
     fromCocktailFlow,
     returnTo,
     targetLocalId,
+    lastIngredientsTab,
   ]);
 
   const openMenu = useCallback(() => {

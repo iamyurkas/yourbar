@@ -27,7 +27,12 @@ function IngredientTabs() {
         <Tab.Screen name="My" component={MyIngredientsScreen} />
         <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
       </Tab.Navigator>
-      <FAB icon="plus" style={styles.fab} onPress={() => navigation.navigate("AddIngredient")} />
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primaryContainer }]}
+        color={theme.colors.primary}
+        onPress={() => navigation.navigate("AddIngredient")}
+      />
     </>
   );
 }

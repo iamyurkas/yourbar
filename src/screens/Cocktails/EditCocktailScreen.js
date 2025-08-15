@@ -32,6 +32,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { HeaderBackButton } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
 
 import {
@@ -1161,7 +1162,7 @@ export default function EditCocktailScreen() {
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.goBack();
+        navigation.navigate("Cocktails", { screen: previousTab });
       }
       return cocktail;
     },
@@ -1176,6 +1177,7 @@ export default function EditCocktailScreen() {
       cocktailId,
       navigation,
       serialize,
+      previousTab,
     ]
   );
 
@@ -1185,6 +1187,13 @@ export default function EditCocktailScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          onPress={() => navigation.navigate("Cocktails", { screen: previousTab })}
+          labelVisible={false}
+        />
+      ),
       headerRight: () => (
         <Pressable
           onPress={handleDelete}
@@ -1195,8 +1204,9 @@ export default function EditCocktailScreen() {
           <MaterialIcons name="delete" size={24} color={theme.colors.onSurface} />
         </Pressable>
       ),
+      gestureEnabled: false,
     });
-  }, [navigation, theme.colors.onSurface, handleDelete]);
+  }, [navigation, handleDelete, theme.colors.onSurface, previousTab]);
 
   useEffect(() => {
     let mounted = true;
@@ -1208,6 +1218,14 @@ export default function EditCocktailScreen() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const hw = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.navigate("Cocktails", { screen: previousTab });
+      return true;
+    });
+    return () => hw.remove();
+  }, [navigation, previousTab]);
 
   useEffect(() => {
     let mounted = true;
@@ -1909,7 +1927,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
           await refreshIngredientsData();
-          navigation.navigate(previousTab);
+          navigation.navigate("Cocktails", { screen: previousTab });
           setConfirmDelete(false);
         }}
       />

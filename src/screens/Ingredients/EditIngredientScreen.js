@@ -214,10 +214,10 @@ export default function EditIngredientScreen() {
     [name, description, photoUri, tags, baseIngredientId]
   );
 
-  // видима кнопка Back у хедері (викликає goBack → спрацює beforeRemove)
+  // видима кнопка Back у хедері
   const handleBackPress = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    navigation.navigate("Ingredients", { screen: previousTab });
+  }, [navigation, previousTab]);
 
   const handleDelete = useCallback(() => {
     if (!ingredient) return;
@@ -252,8 +252,17 @@ export default function EditIngredientScreen() {
           <MaterialIcons name="delete" size={24} color={theme.colors.onSurface} />
         </Pressable>
       ),
+      gestureEnabled: false,
     });
   }, [navigation, handleBackPress, theme.colors.onSurface, handleDelete]);
+
+  useEffect(() => {
+    const hw = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.navigate("Ingredients", { screen: previousTab });
+      return true;
+    });
+    return () => hw.remove();
+  }, [navigation, previousTab]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -386,9 +395,8 @@ export default function EditIngredientScreen() {
       setDirty(false);
 
       if (!stay) {
-        // звичайний сценарій — повертаємось на деталі
-        skipPromptRef.current = true; // щоб не спрацьовував beforeRemove
-        navigation.navigate("IngredientDetails", { id: updated.id });
+        skipPromptRef.current = true;
+        navigation.navigate("Ingredients", { screen: previousTab });
       }
       return updated;
     },
@@ -401,6 +409,7 @@ export default function EditIngredientScreen() {
       baseIngredientId,
       navigation,
       serialize,
+      previousTab,
     ]
   );
 
@@ -756,8 +765,9 @@ export default function EditIngredientScreen() {
           skipPromptRef.current = true;
           await deleteIngredient(ingredient.id);
           await refreshIngredientsData();
-          if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
+          if (previousTab)
+            navigation.navigate("Ingredients", { screen: previousTab });
+          else navigation.navigate("Ingredients", { screen: "All" });
           setConfirmDelete(false);
         }}
       />

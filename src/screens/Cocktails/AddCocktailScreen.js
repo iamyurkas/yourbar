@@ -1399,7 +1399,7 @@ export default function AddCocktailScreen() {
 
     await addCocktail(cocktail);
     await refreshIngredientsData();
-    navigation.navigate("CocktailDetails", { id: cocktail.id });
+    navigation.navigate("Cocktails", { screen: lastCocktailsTab });
   }, [
     name,
     photoUri,
@@ -1410,6 +1410,7 @@ export default function AddCocktailScreen() {
     ings,
     navigation,
     refreshIngredientsData,
+    lastCocktailsTab,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
