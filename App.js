@@ -43,7 +43,11 @@ function Tabs() {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-        tabBarStyle: { backgroundColor: theme.colors.surface },
+        tabBarActiveBackgroundColor: theme.colors.background,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopWidth: 0,
+        },
       })}
     >
       {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
