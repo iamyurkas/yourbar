@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 18, fontWeight: "700" },
   subtitle: { marginBottom: 16 },
-  addBtn: { marginVertical: 12 },
+  addBtn: { marginVertical: 12, width: "100%" },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: { fontStyle: "italic" },
   row: {

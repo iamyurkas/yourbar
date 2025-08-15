@@ -8,7 +8,6 @@ import {
   Portal,
   Modal,
   Divider,
-  Chip,
   useTheme,
 } from "react-native-paper";
 import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
@@ -268,17 +267,6 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
         ) : null}
 
-        <View style={styles.previewBox}>
-          <Text style={{ marginBottom: 8, color: theme.colors.onSurface }}>Preview</Text>
-          <Chip
-            selected
-            style={{ backgroundColor: color || "#ccc" }}
-            textStyle={{ color: "#fff", fontWeight: "700" }}
-          >
-            {name || "Tag name"}
-          </Chip>
-        </View>
-
         <View style={styles.dialogActions}>
           <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
           <Button onPress={onSave} disabled={!canSave}>Save</Button>
@@ -298,7 +286,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
   subtitle: { marginBottom: 12 },
-  addBtn: { alignSelf: "center", marginBottom: 8 },
+  addBtn: { marginVertical: 12, width: "100%" },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -322,7 +310,6 @@ const styles = StyleSheet.create({
   sectionLabel: { fontWeight: "600", marginBottom: 6, marginTop: 4 },
   palette: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 8 },
   colorDot: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: "transparent" },
-  previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
   dialog: {
