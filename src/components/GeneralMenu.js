@@ -107,10 +107,10 @@ export default function GeneralMenu({ visible, onClose }) {
                 status={ignoreGarnish ? "checked" : "unchecked"}
                 onPress={toggleIgnoreGarnish}
               />
-              <View style={styles.itemText}>
+              <Pressable style={styles.itemText} onPress={toggleIgnoreGarnish}>
                 <Text style={styles.itemTitle}>Ignore garnishes</Text>
                 <Text style={styles.itemSub}>All garnishes are optional</Text>
-              </View>
+              </Pressable>
             </View>
 
             <View style={styles.itemRow}>
@@ -118,10 +118,10 @@ export default function GeneralMenu({ visible, onClose }) {
                 status={useMetric ? "checked" : "unchecked"}
                 onPress={toggleUseMetric}
               />
-              <View style={styles.itemText}>
+              <Pressable style={styles.itemText} onPress={toggleUseMetric}>
                 <Text style={styles.itemTitle}>Use metric system</Text>
                 <Text style={styles.itemSub}>Uncheck to use U.S. units</Text>
-              </View>
+              </Pressable>
             </View>
 
             <View style={styles.itemRow}>
@@ -129,12 +129,15 @@ export default function GeneralMenu({ visible, onClose }) {
                 status={keepAwake ? "checked" : "unchecked"}
                 onPress={() => setKeepAwake((v) => !v)}
               />
-              <View style={styles.itemText}>
+              <Pressable
+                style={styles.itemText}
+                onPress={() => setKeepAwake((v) => !v)}
+              >
                 <Text style={styles.itemTitle}>Keep screen awake</Text>
                 <Text style={styles.itemSub}>
                   Prevent the phone from sleeping while viewing cocktail details
                 </Text>
-              </View>
+              </Pressable>
             </View>
 
             <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
