@@ -1072,11 +1072,8 @@ export default function AddCocktailScreen() {
           onPress={() => {
             if (fromIngredientFlow) {
               navigation.navigate("Ingredients", {
-                screen: "Create",
-                params: {
-                  screen: "IngredientDetails",
-                  params: { id: initialIngredient?.id },
-                },
+                screen: "IngredientDetails",
+                params: { id: initialIngredient?.id },
               });
             } else {
               navigation.navigate("Cocktails", { screen: lastCocktailsTab });
@@ -1096,11 +1093,8 @@ export default function AddCocktailScreen() {
       e.preventDefault();
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "Create",
-          params: {
-            screen: "IngredientDetails",
-            params: { id: initialIngredient?.id },
-          },
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
         });
       } else {
         navigation.navigate("Cocktails", { screen: lastCocktailsTab });
@@ -1110,11 +1104,8 @@ export default function AddCocktailScreen() {
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "Create",
-          params: {
-            screen: "IngredientDetails",
-            params: { id: initialIngredient?.id },
-          },
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
         });
       } else {
         navigation.navigate("Cocktails", { screen: lastCocktailsTab });
@@ -1329,14 +1320,11 @@ export default function AddCocktailScreen() {
   const openAddIngredient = useCallback(
     (initialName, localId) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
+        screen: "AddIngredient",
         params: {
-          screen: "AddIngredient",
-          params: {
-            initialName,
-            targetLocalId: localId,
-            returnTo: "AddCocktail",
-          },
+          initialName,
+          targetLocalId: localId,
+          returnTo: "AddCocktail",
         },
       });
     },

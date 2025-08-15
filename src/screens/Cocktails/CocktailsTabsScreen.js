@@ -1,42 +1,48 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "react-native-paper";
-import { Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme, FAB } from "react-native-paper";
+import { StyleSheet } from "react-native";
+
+import TopTabBar, { TOP_TAB_BAR_HEIGHT } from "../../components/TopTabBar";
 
 import AllCocktailsScreen from "./AllCocktailsScreen";
-import CocktailDetailsScreen from "./CocktailDetailsScreen";
-import EditCocktailScreen from "./EditCocktailScreen";
 import MyCocktailsScreen from "./MyCocktailsScreen";
 import FavoriteCocktailsScreen from "./FavoriteCocktailsScreen";
+import CocktailDetailsScreen from "./CocktailDetailsScreen";
+import EditCocktailScreen from "./EditCocktailScreen";
 import AddCocktailScreen from "./AddCocktailScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function TabBarButton({ style, ...props }) {
+function CocktailTabs() {
+  const theme = useTheme();
+  const navigation = useNavigation();
   return (
-    <Pressable
-      {...props}
-      android_ripple={{ color: "rgba(0,0,0,0.05)" }}
-      style={({ pressed }) => [
-        typeof style === "function" ? style({ pressed }) : style,
-        pressed && { opacity: 0.7 },
-      ]}
-    />
+    <>
+      <Tab.Navigator
+        screenOptions={{ headerShown: false }}
+        tabBar={(props) => <TopTabBar {...props} theme={theme} />}
+        sceneContainerStyle={{ paddingTop: TOP_TAB_BAR_HEIGHT }}
+      >
+        <Tab.Screen name="All" component={AllCocktailsScreen} />
+        <Tab.Screen name="My" component={MyCocktailsScreen} />
+        <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
+      </Tab.Navigator>
+      <FAB icon="plus" style={styles.fab} onPress={() => navigation.navigate("AddCocktail")} />
+    </>
   );
 }
 
-// Stack for Create tab
-function CreateCocktailStack() {
+export default function CocktailsTabsScreen() {
   return (
-    <Stack.Navigator initialRouteName="AddCocktail">
+    <Stack.Navigator>
       <Stack.Screen
-        name="AddCocktail"
-        component={AddCocktailScreen}
-        options={{ title: "Add Cocktail" }}
+        name="CocktailsMain"
+        component={CocktailTabs}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="CocktailDetails"
@@ -48,56 +54,20 @@ function CreateCocktailStack() {
         component={EditCocktailScreen}
         options={{ title: "Edit Cocktail" }}
       />
+      <Stack.Screen
+        name="AddCocktail"
+        component={AddCocktailScreen}
+        options={{ title: "Add Cocktail" }}
+      />
     </Stack.Navigator>
   );
 }
 
-export default function CocktailsTabsScreen() {
-  const theme = useTheme();
-  // ключ, який примусово перемонтовує стек "Create"
-  const [createKey, setCreateKey] = React.useState(0);
+const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+  },
+});
 
-  // Коли ВСЯ вкладка "Cocktails" втрачає фокус (перейшли на Shaker/Ingredients),
-  // збільшуємо ключ — при поверненні "Create" буде чистим.
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => setCreateKey((k) => k + 1);
-    }, [])
-  );
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarButton: (props) => <TabBarButton {...props} />,
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === "All") iconName = "list";
-          else if (route.name === "My") iconName = "check-circle";
-          else if (route.name === "Favorite") iconName = "star";
-          else if (route.name === "Create") iconName = "add-circle-outline";
-          return <MaterialIcons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-      })}
-    >
-      <Tab.Screen name="All" component={AllCocktailsScreen} />
-      <Tab.Screen name="My" component={MyCocktailsScreen} />
-      <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
-      <Tab.Screen
-        name="Create"
-        // Через render-prop ми можемо підставити key для примусового ремоунта
-        children={() => <CreateCocktailStack key={createKey} />}
-        listeners={({ navigation }) => ({
-          // При перемиканні з Create на інші саб-таби (All/My/Favorite)
-          blur: () => setCreateKey((k) => k + 1),
-          // І залишаємо авто-перехід на корінь створення по тапу на таб
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("Create", { screen: "AddCocktail" });
-          },
-        })}
-      />
-    </Tab.Navigator>
-  );
-}

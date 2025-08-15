@@ -203,10 +203,7 @@ export default function MyCocktailsScreen() {
   const handlePress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("Create", {
-        screen: "CocktailDetails",
-        params: { id },
-      });
+      navigation.navigate("CocktailDetails", { id });
       setTimeout(() => setNavigatingId(null), 500);
     },
     [navigation]
@@ -215,8 +212,8 @@ export default function MyCocktailsScreen() {
   const handleIngredientPress = useCallback(
     (id) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
-        params: { screen: "IngredientDetails", params: { id } },
+        screen: "IngredientDetails",
+        params: { id },
       });
     },
     [navigation]
