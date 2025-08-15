@@ -1076,7 +1076,7 @@ export default function AddCocktailScreen() {
                 params: { id: initialIngredient?.id },
               });
             } else {
-              navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+              navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
             }
           }}
           labelVisible={false}
@@ -1097,7 +1097,7 @@ export default function AddCocktailScreen() {
           params: { id: initialIngredient?.id },
         });
       } else {
-        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+        navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
       }
     });
 
@@ -1108,7 +1108,7 @@ export default function AddCocktailScreen() {
           params: { id: initialIngredient?.id },
         });
       } else {
-        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+        navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
       }
       return true;
     });
@@ -1399,7 +1399,7 @@ export default function AddCocktailScreen() {
 
     await addCocktail(cocktail);
     await refreshIngredientsData();
-    navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+    navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
   }, [
     name,
     photoUri,

@@ -1162,7 +1162,7 @@ export default function EditCocktailScreen() {
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.navigate("Cocktails", { screen: previousTab });
+        navigation.replace("CocktailsMain", { screen: previousTab });
       }
       return cocktail;
     },
@@ -1190,7 +1190,9 @@ export default function EditCocktailScreen() {
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
-          onPress={() => navigation.navigate("Cocktails", { screen: previousTab })}
+          onPress={() =>
+            navigation.replace("CocktailsMain", { screen: previousTab })
+          }
           labelVisible={false}
         />
       ),
@@ -1221,7 +1223,7 @@ export default function EditCocktailScreen() {
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.navigate("Cocktails", { screen: previousTab });
+      navigation.replace("CocktailsMain", { screen: previousTab });
       return true;
     });
     return () => hw.remove();
@@ -1927,7 +1929,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
           await refreshIngredientsData();
-          navigation.navigate("Cocktails", { screen: previousTab });
+          navigation.replace("CocktailsMain", { screen: previousTab });
           setConfirmDelete(false);
         }}
       />

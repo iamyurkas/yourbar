@@ -216,7 +216,7 @@ export default function EditIngredientScreen() {
 
   // видима кнопка Back у хедері
   const handleBackPress = useCallback(() => {
-    navigation.navigate("Ingredients", { screen: previousTab });
+    navigation.replace("IngredientsMain", { screen: previousTab });
   }, [navigation, previousTab]);
 
   const handleDelete = useCallback(() => {
@@ -258,7 +258,7 @@ export default function EditIngredientScreen() {
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.navigate("Ingredients", { screen: previousTab });
+      navigation.replace("IngredientsMain", { screen: previousTab });
       return true;
     });
     return () => hw.remove();
@@ -396,7 +396,7 @@ export default function EditIngredientScreen() {
 
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.navigate("Ingredients", { screen: previousTab });
+        navigation.replace("IngredientsMain", { screen: previousTab });
       }
       return updated;
     },
@@ -766,8 +766,9 @@ export default function EditIngredientScreen() {
           await deleteIngredient(ingredient.id);
           await refreshIngredientsData();
           if (previousTab)
-            navigation.navigate("Ingredients", { screen: previousTab });
-          else navigation.navigate("Ingredients", { screen: "All" });
+            navigation.replace("IngredientsMain", { screen: previousTab });
+          else
+            navigation.replace("IngredientsMain", { screen: "All" });
           setConfirmDelete(false);
         }}
       />
