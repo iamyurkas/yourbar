@@ -21,12 +21,14 @@ import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 
 import { importCocktailsAndIngredients } from "./scripts/importCocktailsAndIngredients";
+import useTabsOnTop from "./src/hooks/useTabsOnTop";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
 
 function Tabs() {
   const theme = useTheme();
+  const tabsOnTop = useTabsOnTop();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -44,11 +46,13 @@ function Tabs() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.colors.surface,
           borderTopWidth: 0,
-          borderTopColor: theme.colors.background,
+          borderTopColor: theme.colors.surface,
         },
-        tabBarActiveBackgroundColor: theme.colors.background,
+        ...(tabsOnTop
+          ? {}
+          : { tabBarActiveBackgroundColor: theme.colors.background }),
       })}
     >
       {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
