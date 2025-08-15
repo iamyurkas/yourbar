@@ -57,8 +57,11 @@ import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
-
-import useIngredientsData from "../../hooks/useIngredientsData";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import {
+  addCocktailToUsageMap,
+  applyUsageMapToIngredients,
+} from "../../utils/ingredientUsage";
 
 
 /* ---------- helpers ---------- */
@@ -1058,7 +1061,14 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { refresh: refreshIngredientsData } = useIngredientsData();
+  const {
+    ingredients,
+    cocktails,
+    setCocktails,
+    usageMap,
+    setUsageMap,
+    setIngredients,
+  } = useIngredientUsage();
   const initialIngredient = route.params?.initialIngredient;
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
@@ -1397,8 +1407,12 @@ export default function AddCocktailScreen() {
       createdAt: Date.now(),
     };
 
-    await addCocktail(cocktail);
-    await refreshIngredientsData();
+    const created = await addCocktail(cocktail);
+    const nextCocktails = [...cocktails, created];
+    setCocktails(nextCocktails);
+    const nextUsage = addCocktailToUsageMap(usageMap, ingredients, created);
+    setUsageMap(nextUsage);
+    setIngredients(applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails));
     navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
   }, [
     name,
@@ -1408,8 +1422,13 @@ export default function AddCocktailScreen() {
     instructions,
     glassId,
     ings,
+    cocktails,
+    usageMap,
+    ingredients,
+    setCocktails,
+    setUsageMap,
+    setIngredients,
     navigation,
-    refreshIngredientsData,
     lastCocktailsTab,
   ]);
 
