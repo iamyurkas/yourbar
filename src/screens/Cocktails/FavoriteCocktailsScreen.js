@@ -20,6 +20,7 @@ import {
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
+import SortMenu from "../../components/SortMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
@@ -41,6 +42,7 @@ export default function FavoriteCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [minRating, setMinRating] = useState(0);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "Favorite");
@@ -110,7 +112,7 @@ export default function FavoriteCocktailsScreen() {
           Array.isArray(c.tags) &&
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return list.map((c) => {
+    const mapped = list.map((c) => {
       const required = (c.ingredients || []).filter(
         (r) => !r.optional && !(ignoreGarnish && r.garnish)
       );
@@ -170,6 +172,13 @@ export default function FavoriteCocktailsScreen() {
         ingredientLine,
       };
     });
+    mapped.sort((a, b) => {
+      const aRating = a.rating ?? 0;
+      const bRating = b.rating ?? 0;
+      if (aRating === bRating) return a.name.localeCompare(b.name);
+      return sortOrder === "asc" ? aRating - bRating : bRating - aRating;
+    });
+    return mapped;
   }, [
     cocktails,
     ingredients,
@@ -177,6 +186,7 @@ export default function FavoriteCocktailsScreen() {
     selectedTagIds,
     ignoreGarnish,
     minRating,
+    sortOrder,
   ]);
 
   const handlePress = useCallback(
@@ -225,11 +235,14 @@ export default function FavoriteCocktailsScreen() {
         searchValue={search}
         setSearchValue={setSearch}
         filterComponent={
-          <TagFilterMenu
-            tags={availableTags}
-            selected={selectedTagIds}
-            setSelected={setSelectedTagIds}
-          />
+          <View style={{ flexDirection: "row" }}>
+            <SortMenu order={sortOrder} onChange={setSortOrder} />
+            <TagFilterMenu
+              tags={availableTags}
+              selected={selectedTagIds}
+              setSelected={setSelectedTagIds}
+            />
+          </View>
         }
       />
       <FlashList
