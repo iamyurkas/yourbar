@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TabMemoryProvider } from "./src/context/TabMemoryContext";
+import { IngredientUsageProvider } from "./src/context/IngredientUsageContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
@@ -62,22 +63,24 @@ export default function App() {
     <PaperProvider theme={AppTheme}>
       <MenuProvider>
         <SafeAreaProvider>
-          <TabMemoryProvider>
-            <NavigationContainer>
-              <RootStack.Navigator>
-                <RootStack.Screen
-                  name="Tabs"
-                  component={Tabs}
-                  options={{ headerShown: false }}
-                />
-                <RootStack.Screen
-                  name="EditCustomTags"
-                  component={EditCustomTagsScreen}
-                  options={{ title: "Custom tags" }}
-                />
-              </RootStack.Navigator>
-            </NavigationContainer>
-          </TabMemoryProvider>
+          <IngredientUsageProvider>
+            <TabMemoryProvider>
+              <NavigationContainer>
+                <RootStack.Navigator>
+                  <RootStack.Screen
+                    name="Tabs"
+                    component={Tabs}
+                    options={{ headerShown: false }}
+                  />
+                  <RootStack.Screen
+                    name="EditCustomTags"
+                    component={EditCustomTagsScreen}
+                    options={{ title: "Custom tags" }}
+                  />
+                </RootStack.Navigator>
+              </NavigationContainer>
+            </TabMemoryProvider>
+          </IngredientUsageProvider>
         </SafeAreaProvider>
       </MenuProvider>
     </PaperProvider>

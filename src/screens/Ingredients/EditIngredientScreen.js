@@ -44,6 +44,7 @@ import {
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -123,6 +124,7 @@ export default function EditIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
+  const { refresh: refreshIngredientsData } = useIngredientsData();
   const previousTab = getTab("ingredients");
   const currentId = route.params?.id;
 
@@ -224,6 +226,7 @@ export default function EditIngredientScreen() {
         onPress: async () => {
           skipPromptRef.current = true; // не питати про збереження
           await deleteIngredient(ingredient.id);
+          await refreshIngredientsData();
           if (previousTab) navigation.navigate(previousTab);
           else navigation.goBack();
         },
@@ -386,6 +389,7 @@ export default function EditIngredientScreen() {
         baseIngredientId: baseIngredientId ?? null,
       };
       await saveIngredient(updated);
+      await refreshIngredientsData();
 
       // оновити baseline і зняти dirty
       initialHashRef.current = serialize();
