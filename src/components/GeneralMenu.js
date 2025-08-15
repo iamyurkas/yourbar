@@ -185,7 +185,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 style={styles.linkIcon}
               />
               <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>Favorites minimum rating</Text>
+                <Text style={styles.itemTitle}>Favorites rating</Text>
                 {favRating ? (
                   <Text style={styles.itemSub}>
                     Only show cocktails with at least {favRating} star
