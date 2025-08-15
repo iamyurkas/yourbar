@@ -179,7 +179,8 @@ export default function CocktailDetailsScreen() {
   const handleRate = useCallback(
     async (value) => {
       if (!cocktail) return;
-      const updated = { ...cocktail, rating: value };
+      const newRating = cocktail.rating === value ? 0 : value;
+      const updated = { ...cocktail, rating: newRating };
       setCocktail(updated);
       await saveCocktail(updated);
     },

@@ -14,6 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import IngredientIcon from "../../assets/lemon.svg";
 
 import IngredientTagsModal from "./IngredientTagsModal";
+import FavoritesRatingModal from "./FavoritesRatingModal";
 
 import {
   getUseMetric,
@@ -22,6 +23,8 @@ import {
   setIgnoreGarnish as saveIgnoreGarnish,
   getKeepAwake,
   setKeepAwake as saveKeepAwake,
+  getFavoritesMinRating,
+  setFavoritesMinRating as saveFavoritesMinRating,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -34,6 +37,8 @@ export default function GeneralMenu({ visible, onClose }) {
   const [useMetric, setUseMetric] = useState(true);
   const [keepAwake, setKeepAwake] = useState(false);
   const [tagsVisible, setTagsVisible] = useState(false);
+  const [ratingVisible, setRatingVisible] = useState(false);
+  const [favRating, setFavRating] = useState(0);
 
   useEffect(() => {
     if (visible) {
@@ -56,6 +61,11 @@ export default function GeneralMenu({ visible, onClose }) {
     setTagsVisible(true);
   };
 
+  const openRatingModal = () => {
+    onClose?.();
+    setTimeout(() => setRatingVisible(true), 0);
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -73,6 +83,12 @@ export default function GeneralMenu({ visible, onClose }) {
       try {
         const stored = await getKeepAwake();
         setKeepAwake(!!stored);
+      } catch {}
+    })();
+    (async () => {
+      try {
+        const stored = await getFavoritesMinRating();
+        setFavRating(stored);
       } catch {}
     })();
   }, []);
@@ -99,6 +115,11 @@ export default function GeneralMenu({ visible, onClose }) {
       saveKeepAwake(next);
       return next;
     });
+  };
+
+  const handleSelectRating = (value) => {
+    setFavRating(value);
+    saveFavoritesMinRating(value);
   };
 
   const closeTagsModal = () => setTagsVisible(false);
@@ -156,6 +177,32 @@ export default function GeneralMenu({ visible, onClose }) {
               </Pressable>
             </View>
 
+            <TouchableOpacity style={styles.linkRow} onPress={openRatingModal}>
+              <MaterialIcons
+                name="star"
+                size={22}
+                color="#4DABF7"
+                style={styles.linkIcon}
+              />
+              <View style={styles.itemText}>
+                <Text style={styles.itemTitle}>Favorites minimum rating</Text>
+                {favRating ? (
+                  <Text style={styles.itemSub}>
+                    Only show cocktails with at least {favRating} star
+                    {favRating === 1 ? "" : "s"}
+                  </Text>
+                ) : (
+                  <Text style={styles.itemSub}>Show all favorite cocktails</Text>
+                )}
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={24}
+                color="#999"
+                style={styles.chevron}
+              />
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.linkRow} onPress={openTagsModal}>
               <IngredientIcon
                 width={22}
@@ -197,6 +244,12 @@ export default function GeneralMenu({ visible, onClose }) {
         </Pressable>
       </Modal>
       <IngredientTagsModal visible={tagsVisible} onClose={closeTagsModal} />
+      <FavoritesRatingModal
+        visible={ratingVisible}
+        rating={favRating}
+        onSelect={handleSelectRating}
+        onClose={() => setRatingVisible(false)}
+      />
     </>
   );
 }

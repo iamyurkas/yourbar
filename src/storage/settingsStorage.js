@@ -4,9 +4,11 @@ import { DeviceEventEmitter } from "react-native";
 const USE_METRIC_KEY = "useMetric";
 const IGNORE_GARNISH_KEY = "ignoreGarnish";
 const KEEP_AWAKE_KEY = "keepAwake";
+const FAVORITES_MIN_RATING_KEY = "favoritesMinRating";
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
+export const FAVORITES_MIN_RATING_EVENT = "favoritesMinRatingChanged";
 
 export async function getUseMetric() {
   try {
@@ -64,4 +66,32 @@ export async function setKeepAwake(value) {
 
 export function addKeepAwakeListener(listener) {
   return DeviceEventEmitter.addListener(KEEP_AWAKE_EVENT, listener);
+}
+
+export async function getFavoritesMinRating() {
+  try {
+    const value = await AsyncStorage.getItem(FAVORITES_MIN_RATING_KEY);
+    if (value === null) return 0;
+    const n = parseInt(value, 10);
+    return isNaN(n) ? 0 : n;
+  } catch {
+    return 0;
+  }
+}
+
+export async function setFavoritesMinRating(value) {
+  try {
+    await AsyncStorage.setItem(
+      FAVORITES_MIN_RATING_KEY,
+      String(value)
+    );
+  } catch {}
+  DeviceEventEmitter.emit(FAVORITES_MIN_RATING_EVENT, value);
+}
+
+export function addFavoritesMinRatingListener(listener) {
+  return DeviceEventEmitter.addListener(
+    FAVORITES_MIN_RATING_EVENT,
+    listener
+  );
 }
