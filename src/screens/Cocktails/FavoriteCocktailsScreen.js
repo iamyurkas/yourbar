@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useLayoutEffect,
 } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
@@ -219,6 +220,18 @@ export default function FavoriteCocktailsScreen() {
 
   const keyExtractor = useCallback((item) => String(item.id), []);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TagFilterMenu
+          tags={availableTags}
+          selected={selectedTagIds}
+          setSelected={setSelectedTagIds}
+        />
+      ),
+    });
+  }, [navigation, availableTags, selectedTagIds]);
+
   if (loading)
     return (
       <View style={styles.loadingContainer}>
@@ -227,21 +240,15 @@ export default function FavoriteCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]>
+
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        filterComponent={
-          <View style={{ flexDirection: "row" }}>
-            {minRating < 5 && (
-              <SortMenu order={sortOrder} onChange={setSortOrder} />
-            )}
-            <TagFilterMenu
-              tags={availableTags}
-              selected={selectedTagIds}
-              setSelected={setSelectedTagIds}
-            />
-          </View>
+        rightComponent={
+          minRating < 5 ? (
+            <SortMenu order={sortOrder} onChange={setSortOrder} />
+          ) : null
         }
       />
       <FlashList

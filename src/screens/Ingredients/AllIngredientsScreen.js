@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useLayoutEffect,
+} from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -107,6 +113,18 @@ export default function AllIngredientsScreen() {
 
   const keyExtractor = useCallback((item) => String(item.id), []);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TagFilterMenu
+          tags={availableTags}
+          selected={selectedTagIds}
+          setSelected={setSelectedTagIds}
+        />
+      ),
+    });
+  }, [navigation, availableTags, selectedTagIds]);
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -119,17 +137,10 @@ export default function AllIngredientsScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        filterComponent={
-          <TagFilterMenu
-            tags={availableTags}
-            selected={selectedTagIds}
-            setSelected={setSelectedTagIds}
-          />
-        }
       />
       <FlashList
         data={filtered}

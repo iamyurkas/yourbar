@@ -11,6 +11,7 @@ import FavoriteCocktailsScreen from "./FavoriteCocktailsScreen";
 import AddCocktailScreen from "./AddCocktailScreen";
 import CocktailDetailsScreen from "./CocktailDetailsScreen";
 import EditCocktailScreen from "./EditCocktailScreen";
+import MenuButton from "../../components/MenuButton";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -53,8 +54,8 @@ export default function CocktailsTabsScreen() {
         name="CocktailsMain"
         component={CocktailTabs}
         options={{
-          title: "Cocktails",
-          headerShown: true,
+          headerTitle: "",
+          headerLeft: () => <MenuButton />,
         }}
       />
       <Stack.Screen
