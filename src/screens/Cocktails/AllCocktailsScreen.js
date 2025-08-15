@@ -168,10 +168,7 @@ export default function AllCocktailsScreen() {
   const handlePress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("Create", {
-        screen: "CocktailDetails",
-        params: { id },
-      });
+      navigation.navigate("CocktailDetails", { id });
       setTimeout(() => setNavigatingId(null), 500);
     },
     [navigation]

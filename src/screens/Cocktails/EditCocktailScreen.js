@@ -1395,14 +1395,11 @@ export default function EditCocktailScreen() {
   const openAddIngredient = useCallback(
     (initialName, localId) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
+        screen: "AddIngredient",
         params: {
-          screen: "AddIngredient",
-          params: {
-            initialName,
-            targetLocalId: localId,
-            returnTo: "AddCocktail",
-          },
+          initialName,
+          targetLocalId: localId,
+          returnTo: "EditCocktail",
         },
       });
     },
@@ -1912,7 +1909,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
           await refreshIngredientsData();
-          navigation.navigate(previousTab);
+          navigation.navigate("CocktailsMain", { screen: previousTab });
           setConfirmDelete(false);
         }}
       />

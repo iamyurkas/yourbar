@@ -127,10 +127,11 @@ export default function IngredientDetailsScreen() {
   const handleGoBack = useCallback(() => {
     if (fromCocktailId)
       navigation.navigate("Cocktails", {
-        screen: "Create",
-        params: { screen: "CocktailDetails", params: { id: fromCocktailId } },
+        screen: "CocktailDetails",
+        params: { id: fromCocktailId },
       });
-    else if (previousTab) navigation.navigate(previousTab);
+    else if (previousTab)
+      navigation.navigate("IngredientsMain", { screen: previousTab });
     else navigation.goBack();
   }, [navigation, previousTab, fromCocktailId]);
 
@@ -360,8 +361,8 @@ export default function IngredientDetailsScreen() {
   const goToCocktail = useCallback(
     (goId) => {
       navigation.navigate("Cocktails", {
-        screen: "Create",
-        params: { screen: "CocktailDetails", params: { id: goId } },
+        screen: "CocktailDetails",
+        params: { id: goId },
       });
     },
     [navigation]
@@ -568,11 +569,8 @@ export default function IngredientDetailsScreen() {
         ]}
         onPress={() =>
           navigation.navigate("Cocktails", {
-            screen: "Create",
-            params: {
-              screen: "AddCocktail",
-              params: { initialIngredient: ingredient },
-            },
+            screen: "AddCocktail",
+            params: { initialIngredient: ingredient },
           })
         }
       >

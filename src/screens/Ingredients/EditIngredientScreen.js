@@ -756,7 +756,8 @@ export default function EditIngredientScreen() {
           skipPromptRef.current = true;
           await deleteIngredient(ingredient.id);
           await refreshIngredientsData();
-          if (previousTab) navigation.navigate(previousTab);
+          if (previousTab)
+            navigation.navigate("IngredientsMain", { screen: previousTab });
           else navigation.goBack();
           setConfirmDelete(false);
         }}

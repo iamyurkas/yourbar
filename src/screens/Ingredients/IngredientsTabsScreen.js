@@ -1,26 +1,59 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import { FAB, useTheme } from "react-native-paper";
+import { View } from "react-native";
 
 import AllIngredientsScreen from "./AllIngredientsScreen";
-
 import MyIngredientsScreen from "./MyIngredientsScreen";
-
 import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
-
+import AddIngredientScreen from "./AddIngredientScreen";
 import IngredientDetailsScreen from "./IngredientDetailsScreen";
 import EditIngredientScreen from "./EditIngredientScreen";
-import AddIngredientScreen from "./AddIngredientScreen";
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Стек для вкладки Create
-function CreateIngredientStack() {
+function IngredientTabs() {
+  const theme = useTheme();
+  const navigation = useNavigation();
   return (
-    <Stack.Navigator initialRouteName="AddIngredient">
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarActiveTintColor: theme.colors.primary,
+          tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+          tabBarIndicatorStyle: { backgroundColor: theme.colors.primary },
+        }}
+      >
+        <Tab.Screen name="All" component={AllIngredientsScreen} />
+        <Tab.Screen name="My" component={MyIngredientsScreen} />
+        <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
+      </Tab.Navigator>
+      <FAB
+        icon="plus"
+        style={{
+          position: "absolute",
+          right: 16,
+          bottom: 16,
+          backgroundColor: theme.colors.primaryContainer,
+        }}
+        color={theme.colors.onPrimaryContainer}
+        onPress={() => navigation.navigate("AddIngredient")}
+      />
+    </View>
+  );
+}
+
+export default function IngredientsTabsScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="IngredientsMain"
+        component={IngredientTabs}
+        options={{ title: "Ingredients", headerShown: true }}
+      />
       <Stack.Screen
         name="AddIngredient"
         component={AddIngredientScreen}
@@ -37,45 +70,5 @@ function CreateIngredientStack() {
         options={{ title: "Edit Ingredient" }}
       />
     </Stack.Navigator>
-  );
-}
-
-export default function IngredientsTabsScreen() {
-  const theme = useTheme();
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === "All") iconName = "list";
-          else if (route.name === "My") iconName = "check-circle";
-          else if (route.name === "Shopping") iconName = "shopping-cart";
-          else if (route.name === "Create") iconName = "add-circle-outline";
-          return <MaterialIcons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-      })}
-    >
-      <Tab.Screen name="All" component={AllIngredientsScreen} />
-      <Tab.Screen name="My" component={MyIngredientsScreen} />
-      <Tab.Screen name="Shopping" component={ShoppingIngredientsScreen} />
-      <Tab.Screen
-        name="Create"
-        component={CreateIngredientStack}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            // Запобігає стандартній поведінці
-            e.preventDefault();
-
-            // Скидає стек до початкового екрану AddIngredient
-            navigation.navigate("Create", {
-              screen: "AddIngredient",
-            });
-          },
-        })}
-      />
-    </Tab.Navigator>
   );
 }

@@ -222,7 +222,7 @@ export default function CocktailDetailsScreen() {
   useEffect(() => {
     const unsub = navigation.addListener("beforeRemove", (e) => {
       if (e.data.action.type === "NAVIGATE" || !previousTab) return;
-      navigation.navigate(previousTab);
+      navigation.navigate("CocktailsMain", { screen: previousTab });
     });
     return unsub;
   }, [navigation, previousTab]);
@@ -501,11 +501,8 @@ export default function CocktailDetailsScreen() {
                     ingredientId
                       ? () =>
                           navigation.navigate("Ingredients", {
-                            screen: "Create",
-                            params: {
-                              screen: "IngredientDetails",
-                              params: { id: ingredientId, fromCocktailId: id },
-                            },
+                            screen: "IngredientDetails",
+                            params: { id: ingredientId, fromCocktailId: id },
                           })
                       : undefined
                   }

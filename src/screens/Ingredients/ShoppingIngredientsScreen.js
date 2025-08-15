@@ -79,10 +79,7 @@ export default function ShoppingIngredientsScreen() {
   const onItemPress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("Create", {
-        screen: "IngredientDetails",
-        params: { id },
-      });
+      navigation.navigate("IngredientDetails", { id });
       setTimeout(() => setNavigatingId(null), 600);
     },
     [navigation]

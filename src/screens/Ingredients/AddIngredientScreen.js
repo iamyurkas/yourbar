@@ -188,7 +188,7 @@ export default function AddIngredientScreen() {
           <HeaderBackButton
             {...props}
             onPress={() =>
-              navigation.navigate("Ingredients", { screen: lastIngredientsTab })
+              navigation.navigate("IngredientsMain", { screen: lastIngredientsTab })
             }
             labelVisible={false}
           />
@@ -205,7 +205,7 @@ export default function AddIngredientScreen() {
       if (fromCocktailFlow) {
         navigation.navigate("Cocktails", { screen: returnTo });
       } else {
-        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+        navigation.navigate("IngredientsMain", { screen: lastIngredientsTab });
       }
     });
 
@@ -213,7 +213,7 @@ export default function AddIngredientScreen() {
       if (fromCocktailFlow) {
         navigation.navigate("Cocktails", { screen: returnTo });
       } else {
-        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+        navigation.navigate("IngredientsMain", { screen: lastIngredientsTab });
       }
       return true;
     });
