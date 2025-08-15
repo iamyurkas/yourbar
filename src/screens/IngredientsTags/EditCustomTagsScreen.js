@@ -191,7 +191,7 @@ export default function EditCustomTagsScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>Custom Tags</Text>
         <Text style={styles.subtitle}>
-          Create, edit, or remove your own ingredient tags.
+          Create, edit, or remove ingredient tags
         </Text>
 
         <Button

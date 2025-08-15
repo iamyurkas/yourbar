@@ -154,7 +154,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
       >
         <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
         <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}> 
-          Create, edit, or remove your own ingredient tags.
+          Create, edit, or remove ingredient tags
         </Text>
 
         <Button

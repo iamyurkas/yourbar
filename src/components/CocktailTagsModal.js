@@ -154,7 +154,7 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
         ]}
       >
         <Text style={[styles.title, { color: theme.colors.onSurface }]}>Custom Tags</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>Create, edit, or remove your own cocktail tags.</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>Create, edit, or remove cocktail tags</Text>
 
         <Button mode="contained" onPress={openAdd} style={styles.addBtn} icon="plus">
           Add new tag
