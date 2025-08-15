@@ -5,10 +5,12 @@ const USE_METRIC_KEY = "useMetric";
 const IGNORE_GARNISH_KEY = "ignoreGarnish";
 const KEEP_AWAKE_KEY = "keepAwake";
 const FAVORITES_MIN_RATING_KEY = "favoritesMinRating";
+const TABS_ON_TOP_KEY = "tabsOnTop";
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
 export const FAVORITES_MIN_RATING_EVENT = "favoritesMinRatingChanged";
+export const TABS_ON_TOP_EVENT = "tabsOnTopChanged";
 
 export async function getUseMetric() {
   try {
@@ -66,6 +68,27 @@ export async function setKeepAwake(value) {
 
 export function addKeepAwakeListener(listener) {
   return DeviceEventEmitter.addListener(KEEP_AWAKE_EVENT, listener);
+}
+
+export async function getTabsOnTop() {
+  try {
+    const value = await AsyncStorage.getItem(TABS_ON_TOP_KEY);
+    if (value === null) return true;
+    return value === "true";
+  } catch {
+    return true;
+  }
+}
+
+export async function setTabsOnTop(value) {
+  try {
+    await AsyncStorage.setItem(TABS_ON_TOP_KEY, value ? "true" : "false");
+  } catch {}
+  DeviceEventEmitter.emit(TABS_ON_TOP_EVENT, value);
+}
+
+export function addTabsOnTopListener(listener) {
+  return DeviceEventEmitter.addListener(TABS_ON_TOP_EVENT, listener);
 }
 
 export async function getFavoritesMinRating() {

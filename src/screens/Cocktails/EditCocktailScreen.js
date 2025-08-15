@@ -32,7 +32,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTabMemory } from "../../context/TabMemoryContext";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 import {
   Menu,
@@ -1058,8 +1058,6 @@ export default function EditCocktailScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const params = route.params || {};
-  const { getTab } = useTabMemory();
-  const previousTab = (typeof getTab === "function" && getTab("cocktails")) || "All";
   const cocktailId = params?.id;
   const { refresh: refreshIngredientsData } = useIngredientsData();
 
@@ -1185,6 +1183,13 @@ export default function EditCocktailScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          onPress={() => navigation.goBack()}
+          labelVisible={false}
+        />
+      ),
       headerRight: () => (
         <Pressable
           onPress={handleDelete}
@@ -1195,8 +1200,9 @@ export default function EditCocktailScreen() {
           <MaterialIcons name="delete" size={24} color={theme.colors.onSurface} />
         </Pressable>
       ),
+      gestureEnabled: false,
     });
-  }, [navigation, theme.colors.onSurface, handleDelete]);
+  }, [navigation, handleDelete, theme.colors.onSurface]);
 
   useEffect(() => {
     let mounted = true;
@@ -1208,6 +1214,14 @@ export default function EditCocktailScreen() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const hw = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.goBack();
+      return true;
+    });
+    return () => hw.remove();
+  }, [navigation]);
 
   useEffect(() => {
     let mounted = true;
@@ -1395,14 +1409,11 @@ export default function EditCocktailScreen() {
   const openAddIngredient = useCallback(
     (initialName, localId) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
+        screen: "AddIngredient",
         params: {
-          screen: "AddIngredient",
-          params: {
-            initialName,
-            targetLocalId: localId,
-            returnTo: "AddCocktail",
-          },
+          initialName,
+          targetLocalId: localId,
+          returnTo: "AddCocktail",
         },
       });
     },
@@ -1912,7 +1923,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
           await refreshIngredientsData();
-          navigation.navigate(previousTab);
+          navigation.popToTop();
           setConfirmDelete(false);
         }}
       />

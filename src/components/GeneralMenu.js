@@ -26,6 +26,9 @@ import {
   setKeepAwake as saveKeepAwake,
   getFavoritesMinRating,
   setFavoritesMinRating as saveFavoritesMinRating,
+  getTabsOnTop,
+  setTabsOnTop as saveTabsOnTop,
+  addTabsOnTopListener,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -37,6 +40,7 @@ export default function GeneralMenu({ visible, onClose }) {
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [useMetric, setUseMetric] = useState(true);
   const [keepAwake, setKeepAwake] = useState(false);
+  const [tabsOnTop, setTabsOnTop] = useState(true);
   const [tagsVisible, setTagsVisible] = useState(false);
   const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
@@ -100,6 +104,18 @@ export default function GeneralMenu({ visible, onClose }) {
     })();
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    getTabsOnTop().then((stored) => {
+      if (mounted) setTabsOnTop(!!stored);
+    });
+    const sub = addTabsOnTopListener((v) => setTabsOnTop(!!v));
+    return () => {
+      mounted = false;
+      sub.remove();
+    };
+  }, []);
+
   const toggleUseMetric = () => {
     setUseMetric((v) => {
       const next = !v;
@@ -120,6 +136,14 @@ export default function GeneralMenu({ visible, onClose }) {
     setKeepAwake((v) => {
       const next = !v;
       saveKeepAwake(next);
+      return next;
+    });
+  };
+
+  const toggleTabsOnTop = () => {
+    setTabsOnTop((v) => {
+      const next = !v;
+      saveTabsOnTop(next);
       return next;
     });
   };
@@ -182,6 +206,17 @@ export default function GeneralMenu({ visible, onClose }) {
                 <Text style={styles.itemSub}>
                   Prevent the phone from sleeping while viewing cocktail details
                 </Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.itemRow}>
+              <Checkbox
+                status={tabsOnTop ? "checked" : "unchecked"}
+                onPress={toggleTabsOnTop}
+              />
+              <Pressable style={styles.itemText} onPress={toggleTabsOnTop}>
+                <Text style={styles.itemTitle}>Tabs on top</Text>
+                <Text style={styles.itemSub}>Uncheck to show tabs at bottom</Text>
               </Pressable>
             </View>
 

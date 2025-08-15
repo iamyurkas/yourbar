@@ -188,7 +188,7 @@ export default function AddIngredientScreen() {
           <HeaderBackButton
             {...props}
             onPress={() =>
-              navigation.navigate("Ingredients", { screen: lastIngredientsTab })
+              navigation.replace("IngredientsMain", { screen: lastIngredientsTab })
             }
             labelVisible={false}
           />
@@ -200,12 +200,12 @@ export default function AddIngredientScreen() {
     if (!isFocused) return;
 
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
-      if (e.data.action.type === "NAVIGATE") return;
+      if (["NAVIGATE", "REPLACE"].includes(e.data.action.type)) return;
       e.preventDefault();
       if (fromCocktailFlow) {
         navigation.navigate("Cocktails", { screen: returnTo });
       } else {
-        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+        navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
       }
     });
 
@@ -213,7 +213,7 @@ export default function AddIngredientScreen() {
       if (fromCocktailFlow) {
         navigation.navigate("Cocktails", { screen: returnTo });
       } else {
-        navigation.navigate("Ingredients", { screen: lastIngredientsTab });
+        navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
       }
       return true;
     });
@@ -345,7 +345,7 @@ export default function AddIngredientScreen() {
       return;
     }
 
-    navigation.navigate("IngredientDetails", { id: newIng.id });
+    navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
   }, [
     name,
     description,
@@ -356,6 +356,7 @@ export default function AddIngredientScreen() {
     fromCocktailFlow,
     returnTo,
     targetLocalId,
+    lastIngredientsTab,
   ]);
 
   const openMenu = useCallback(() => {

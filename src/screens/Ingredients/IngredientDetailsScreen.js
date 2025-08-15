@@ -32,7 +32,6 @@ import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
-import { useTabMemory } from "../../context/TabMemoryContext";
 import { useTheme } from "react-native-paper";
 import {
   getIgnoreGarnish,
@@ -121,18 +120,14 @@ export default function IngredientDetailsScreen() {
     []
   );
 
-  const { getTab } = useTabMemory();
-  const previousTab = getTab("ingredients");
-
   const handleGoBack = useCallback(() => {
     if (fromCocktailId)
       navigation.navigate("Cocktails", {
-        screen: "Create",
-        params: { screen: "CocktailDetails", params: { id: fromCocktailId } },
+        screen: "CocktailDetails",
+        params: { id: fromCocktailId },
       });
-    else if (previousTab) navigation.navigate(previousTab);
     else navigation.goBack();
-  }, [navigation, previousTab, fromCocktailId]);
+  }, [navigation, fromCocktailId]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditIngredient", { id });
@@ -172,17 +167,14 @@ export default function IngredientDetailsScreen() {
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
+    if (!fromCocktailId) return;
     const unsub = navigation.addListener("beforeRemove", (e) => {
-      if (
-        e.data.action.type === "NAVIGATE" ||
-        (!fromCocktailId && !previousTab)
-      )
-        return;
+      if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       handleGoBack();
     });
     return unsub;
-  }, [navigation, handleGoBack, fromCocktailId, previousTab]);
+  }, [navigation, handleGoBack, fromCocktailId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -360,8 +352,8 @@ export default function IngredientDetailsScreen() {
   const goToCocktail = useCallback(
     (goId) => {
       navigation.navigate("Cocktails", {
-        screen: "Create",
-        params: { screen: "CocktailDetails", params: { id: goId } },
+        screen: "CocktailDetails",
+        params: { id: goId },
       });
     },
     [navigation]
@@ -568,11 +560,8 @@ export default function IngredientDetailsScreen() {
         ]}
         onPress={() =>
           navigation.navigate("Cocktails", {
-            screen: "Create",
-            params: {
-              screen: "AddCocktail",
-              params: { initialIngredient: ingredient },
-            },
+            screen: "AddCocktail",
+            params: { initialIngredient: ingredient },
           })
         }
       >

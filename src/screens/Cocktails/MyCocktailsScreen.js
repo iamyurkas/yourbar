@@ -9,7 +9,9 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
+import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
 import {
@@ -29,6 +31,7 @@ export default function MyCocktailsScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
+  const tabsOnTop = useTabsOnTop();
 
   const [cocktails, setCocktails] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -203,10 +206,7 @@ export default function MyCocktailsScreen() {
   const handlePress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("Create", {
-        screen: "CocktailDetails",
-        params: { id },
-      });
+      navigation.navigate("CocktailDetails", { id });
       setTimeout(() => setNavigatingId(null), 500);
     },
     [navigation]
@@ -215,8 +215,8 @@ export default function MyCocktailsScreen() {
   const handleIngredientPress = useCallback(
     (id) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
-        params: { screen: "IngredientDetails", params: { id } },
+        screen: "IngredientDetails",
+        params: { id },
       });
     },
     [navigation]
@@ -319,6 +319,7 @@ export default function MyCocktailsScreen() {
           />
         }
       />
+      {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
         data={listData}
         keyExtractor={keyExtractor}

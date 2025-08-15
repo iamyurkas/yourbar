@@ -4,6 +4,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
+import TopTabBar from "../../components/TopTabBar";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
@@ -17,12 +18,14 @@ import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
 } from "../../storage/settingsStorage";
+import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
+  const tabsOnTop = useTabsOnTop();
 
   const { ingredients, loading, setIngredients, cocktails, usageMap } =
     useIngredientsData();
@@ -158,10 +161,7 @@ export default function MyIngredientsScreen() {
   const onItemPress = useCallback(
     (id) => {
       setNavigatingId(id);
-      navigation.navigate("Create", {
-        screen: "IngredientDetails",
-        params: { id },
-      });
+      navigation.navigate("IngredientDetails", { id });
       setTimeout(() => setNavigatingId(null), 600);
     },
     [navigation]
@@ -217,6 +217,7 @@ export default function MyIngredientsScreen() {
           />
         }
       />
+      {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
         data={filtered}
         keyExtractor={keyExtractor}

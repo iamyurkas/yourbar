@@ -1072,14 +1072,11 @@ export default function AddCocktailScreen() {
           onPress={() => {
             if (fromIngredientFlow) {
               navigation.navigate("Ingredients", {
-                screen: "Create",
-                params: {
-                  screen: "IngredientDetails",
-                  params: { id: initialIngredient?.id },
-                },
+                screen: "IngredientDetails",
+                params: { id: initialIngredient?.id },
               });
             } else {
-              navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+              navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
             }
           }}
           labelVisible={false}
@@ -1092,32 +1089,26 @@ export default function AddCocktailScreen() {
     if (!isFocused) return;
 
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
-      if (e.data.action.type === "NAVIGATE") return;
+      if (["NAVIGATE", "REPLACE"].includes(e.data.action.type)) return;
       e.preventDefault();
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "Create",
-          params: {
-            screen: "IngredientDetails",
-            params: { id: initialIngredient?.id },
-          },
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
         });
       } else {
-        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+        navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
       }
     });
 
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fromIngredientFlow) {
         navigation.navigate("Ingredients", {
-          screen: "Create",
-          params: {
-            screen: "IngredientDetails",
-            params: { id: initialIngredient?.id },
-          },
+          screen: "IngredientDetails",
+          params: { id: initialIngredient?.id },
         });
       } else {
-        navigation.navigate("Cocktails", { screen: lastCocktailsTab });
+        navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
       }
       return true;
     });
@@ -1329,14 +1320,11 @@ export default function AddCocktailScreen() {
   const openAddIngredient = useCallback(
     (initialName, localId) => {
       navigation.navigate("Ingredients", {
-        screen: "Create",
+        screen: "AddIngredient",
         params: {
-          screen: "AddIngredient",
-          params: {
-            initialName,
-            targetLocalId: localId,
-            returnTo: "AddCocktail",
-          },
+          initialName,
+          targetLocalId: localId,
+          returnTo: "AddCocktail",
         },
       });
     },
@@ -1411,7 +1399,7 @@ export default function AddCocktailScreen() {
 
     await addCocktail(cocktail);
     await refreshIngredientsData();
-    navigation.navigate("CocktailDetails", { id: cocktail.id });
+    navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
   }, [
     name,
     photoUri,
@@ -1422,6 +1410,7 @@ export default function AddCocktailScreen() {
     ings,
     navigation,
     refreshIngredientsData,
+    lastCocktailsTab,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };

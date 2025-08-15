@@ -24,6 +24,7 @@ import {
   FlatList,
   Pressable,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -41,7 +42,6 @@ import {
   getIngredientById,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
-import { useTabMemory } from "../../context/TabMemoryContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
@@ -124,9 +124,7 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { getTab } = useTabMemory();
   const { refresh: refreshIngredientsData } = useIngredientsData();
-  const previousTab = getTab("ingredients");
   const currentId = route.params?.id;
 
   // entity + form state
@@ -214,7 +212,7 @@ export default function EditIngredientScreen() {
     [name, description, photoUri, tags, baseIngredientId]
   );
 
-  // видима кнопка Back у хедері (викликає goBack → спрацює beforeRemove)
+  // видима кнопка Back у хедері
   const handleBackPress = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -252,8 +250,17 @@ export default function EditIngredientScreen() {
           <MaterialIcons name="delete" size={24} color={theme.colors.onSurface} />
         </Pressable>
       ),
+      gestureEnabled: false,
     });
   }, [navigation, handleBackPress, theme.colors.onSurface, handleDelete]);
+
+  useEffect(() => {
+    const hw = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.goBack();
+      return true;
+    });
+    return () => hw.remove();
+  }, [navigation]);
 
   // load tags + entity on focus (паралельно)
   useEffect(() => {
@@ -386,9 +393,8 @@ export default function EditIngredientScreen() {
       setDirty(false);
 
       if (!stay) {
-        // звичайний сценарій — повертаємось на деталі
-        skipPromptRef.current = true; // щоб не спрацьовував beforeRemove
-        navigation.navigate("IngredientDetails", { id: updated.id });
+        skipPromptRef.current = true;
+        navigation.goBack();
       }
       return updated;
     },
@@ -756,8 +762,7 @@ export default function EditIngredientScreen() {
           skipPromptRef.current = true;
           await deleteIngredient(ingredient.id);
           await refreshIngredientsData();
-          if (previousTab) navigation.navigate(previousTab);
-          else navigation.goBack();
+          navigation.popToTop();
           setConfirmDelete(false);
         }}
       />

@@ -23,7 +23,6 @@ import {
 } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTabMemory } from "../../context/TabMemoryContext";
 import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -157,8 +156,6 @@ export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
   const theme = useTheme();
-  const { getTab } = useTabMemory();
-  const previousTab = getTab("cocktails");
 
   const [cocktail, setCocktail] = useState(null);
   const [ingMap, setIngMap] = useState(new Map());
@@ -218,14 +215,6 @@ export default function CocktailDetailsScreen() {
       ),
     });
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
-
-  useEffect(() => {
-    const unsub = navigation.addListener("beforeRemove", (e) => {
-      if (e.data.action.type === "NAVIGATE" || !previousTab) return;
-      navigation.navigate(previousTab);
-    });
-    return unsub;
-  }, [navigation, previousTab]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -501,11 +490,8 @@ export default function CocktailDetailsScreen() {
                     ingredientId
                       ? () =>
                           navigation.navigate("Ingredients", {
-                            screen: "Create",
-                            params: {
-                              screen: "IngredientDetails",
-                              params: { id: ingredientId, fromCocktailId: id },
-                            },
+                            screen: "IngredientDetails",
+                            params: { id: ingredientId, fromCocktailId: id },
                           })
                       : undefined
                   }
