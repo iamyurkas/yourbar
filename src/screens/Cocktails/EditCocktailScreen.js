@@ -1440,11 +1440,11 @@ export default function EditCocktailScreen() {
         params: {
           initialName,
           targetLocalId: localId,
-          returnTo: "AddCocktail",
+          returnTo: route.name,
         },
       });
     },
-    [navigation]
+    [navigation, route.name]
   );
 
   // Catch created ingredient returned from AddIngredient
