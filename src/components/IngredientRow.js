@@ -33,6 +33,7 @@ function IngredientRow({
   onToggleShoppingList,
   onRemove,
   isNavigating,
+  highlightColor,
 }) {
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
@@ -48,6 +49,7 @@ function IngredientRow({
         inBar ? styles.highlightWrapper : styles.normalWrapper,
         { borderBottomColor: theme.colors.background },
         inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        highlightColor && { backgroundColor: highlightColor },
       ]}
     >
       <View
@@ -57,14 +59,14 @@ function IngredientRow({
             ...styles.brandedStripe,
             borderLeftColor: theme.colors.primary,
           },
-          !inBar && styles.dimmed,
+          !inBar && !highlightColor && styles.dimmed,
           isNavigating && {
             ...styles.navigatingRow,
             backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
           },
         ]}
       >
-        {inShoppingList && (
+        {inShoppingList && !onToggleShoppingList && (
           <MaterialIcons
             name="shopping-cart"
             size={16}
