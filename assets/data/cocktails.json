@@ -2507,7 +2507,7 @@
     ]
   },
   {
-    "name": "Caipiríssima",
+    "name": "Caipirissima",
     "glassware": "rocks_glass",
     "tags": [1, 5],
     "description": "A Cuban spin on the Caipirinha using Cuban rum instead of cachaça. Lime and sugar deliver freshness, while rum adds depth and sugariness. Crushed ice makes it refreshingly cold.",
@@ -5889,38 +5889,7 @@
       "Top with a cherry."
     ]
   },
-  {
-    "name": "Angel’s Kiss",
-    "glassware": "shooter",
-    "tags": [6],
-    "description": "A layered sweet shot with crème de cacao, cream, brandy, and cherry brandy—dessert-like and smooth.",
-    "ingredients": [
-      {
-        "ingredient": "Creme de Cacao Brown",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Cream",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Brandy",
-        "quantity": 15,
-        "unit": 11
-      },
-      {
-        "ingredient": "Cherry Brandy",
-        "quantity": 15,
-        "unit": 11
-      }
-    ],
-    "instructions": [
-      "Layer ingredients carefully in a shot glass in the listed order.",
-      "Pour each slowly over the back of a bar spoon to maintain separation."
-    ]
-  },
+  
 
   {
     "name": "Bahama Mama",
@@ -6084,38 +6053,7 @@
       "Stir gently and garnish with a lime wedge."
     ]
   },
-  {
-    "name": "Bee’s Knees",
-    "glassware": "cocktail_glass",
-    "tags": [1, 3],
-    "description": "A Prohibition-era gin sour sweetened with honey—smooth, floral, and perfectly balanced.",
-    "ingredients": [
-      {
-        "ingredient": "Gin",
-        "quantity": 60,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lemon Juice",
-        "quantity": 22,
-        "unit": 11
-      },
-      {
-        "ingredient": "Honey Syrup",
-        "quantity": 22,
-        "unit": 11
-      },
-      {
-        "ingredient": "Ice",
-        "quantity": 90,
-        "unit": 8
-      }
-    ],
-    "instructions": [
-      "Shake gin, lemon juice, and honey syrup with ice until chilled.",
-      "Strain into a chilled cocktail glass."
-    ]
-  },
+  
   {
     "name": "Blue Margarita",
     "glassware": "margarita_glass",
@@ -6428,39 +6366,7 @@
       "Strain into a chilled cocktail glass."
     ]
   },
-  {
-    "name": "Caipirissima",
-    "glassware": "rocks_glass",
-    "tags": [3],
-    "description": "A rum-based version of the Caipirinha—tropical, citrusy, and smooth.",
-    "ingredients": [
-      {
-        "ingredient": "White Rum",
-        "quantity": 50,
-        "unit": 11
-      },
-      {
-        "ingredient": "Lime",
-        "quantity": 1,
-        "unit": 1
-      },
-      {
-        "ingredient": "Sugar",
-        "quantity": 2,
-        "unit": 23
-      },
-      {
-        "ingredient": "Ice",
-        "quantity": 90,
-        "unit": 8
-      }
-    ],
-    "instructions": [
-      "Cut lime into wedges and muddle with sugar in a rocks glass.",
-      "Fill with ice cubes.",
-      "Pour white rum over ice and stir gently."
-    ]
-  },
+  
   {
     "name": "Chocolate Espresso Martini",
     "glassware": "cocktail_glass",
@@ -7354,37 +7260,6 @@
       "Garnish with a lemon wedge."
     ]
   },
-
-  {
-    "name": "B-52",
-    "glassware": "shooter",
-    "tags": [6, 2],
-    "description": "A visually striking layered shot composed of coffee liqueur, Irish cream, and orange liqueur. Sweet, creamy, and rich with coffee and citrus notes—best built slowly for distinct layers.",
-    "ingredients": [
-      {
-        "ingredient": "Coffee Liqueur",
-        "quantity": 20,
-        "unit": 11
-      },
-      {
-        "ingredient": "Baileys",
-        "quantity": 20,
-        "unit": 11
-      },
-      {
-        "ingredient": "Triple Sec",
-        "quantity": 20,
-        "unit": 11
-      }
-    ],
-    "instructions": [
-      "Select a chilled shooter (shot) glass.",
-      "Pour coffee liqueur into the bottom.",
-      "Slowly layer the Irish cream over the back of a bar spoon.",
-      "Then layer the Triple Sec (or Grand Marnier) on top using the spoon.",
-      "Serve—optionally ignite the top layer for a dramatic flaming B-52 (exercise caution)."
-    ]
-  },
   {
     "name": "B-55",
     "glassware": "shooter",
@@ -7616,26 +7491,7 @@
       "Garnish with an orange peel."
     ]
   },
-  {
-    "name": "Black Russian",
-    "glassware": "rocks_glass",
-    "tags": [1, 2],
-    "description": "A simple, strong blend of vodka and coffee liqueur, smooth and bittersweet with a rich coffee aroma.",
-    "ingredients": [
-      { "ingredient": "Vodka", "quantity": 50, "unit": 11 },
-      {
-        "ingredient": "Coffee Liqueur",
-        "quantity": 20,
-        "unit": 11
-      }
-    ],
-    "instructions": [
-      "Fill a rocks glass with ice cubes.",
-      "Pour vodka and coffee liqueur over the ice.",
-      "Stir gently to mix.",
-      "Serve immediately."
-    ]
-  },
+  
   {
     "name": "Blow Job",
     "glassware": "shooter",
