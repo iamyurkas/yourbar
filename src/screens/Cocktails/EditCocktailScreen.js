@@ -53,7 +53,11 @@ import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
+
 import CocktailTagsModal from "../../components/CocktailTagsModal";
+
+import useIngredientsData from "../../hooks/useIngredientsData";
+
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -1056,6 +1060,7 @@ export default function EditCocktailScreen() {
   const { getTab } = useTabMemory();
   const previousTab = (typeof getTab === "function" && getTab("cocktails")) || "All";
   const cocktailId = params?.id;
+  const { refresh: refreshIngredientsData } = useIngredientsData();
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -1148,6 +1153,7 @@ export default function EditCocktailScreen() {
       };
 
       await saveCocktail(cocktail);
+      await refreshIngredientsData();
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
@@ -1179,11 +1185,12 @@ export default function EditCocktailScreen() {
         onPress: async () => {
           skipPromptRef.current = true;
           await deleteCocktail(cocktailId);
+          await refreshIngredientsData();
           navigation.navigate(previousTab);
         },
       },
     ]);
-  }, [navigation, cocktailId, previousTab]);
+  }, [navigation, cocktailId, previousTab, refreshIngredientsData]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

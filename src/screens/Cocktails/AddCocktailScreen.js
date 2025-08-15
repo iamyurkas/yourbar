@@ -55,7 +55,11 @@ import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
+
 import CocktailTagsModal from "../../components/CocktailTagsModal";
+
+import useIngredientsData from "../../hooks/useIngredientsData";
+
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -1054,6 +1058,7 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
+  const { refresh: refreshIngredientsData } = useIngredientsData();
   const initialIngredient = route.params?.initialIngredient;
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
@@ -1405,6 +1410,7 @@ export default function AddCocktailScreen() {
     };
 
     await addCocktail(cocktail);
+    await refreshIngredientsData();
     navigation.navigate("CocktailDetails", { id: cocktail.id });
   }, [
     name,
@@ -1415,6 +1421,7 @@ export default function AddCocktailScreen() {
     glassId,
     ings,
     navigation,
+    refreshIngredientsData,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };

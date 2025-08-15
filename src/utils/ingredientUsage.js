@@ -69,3 +69,28 @@ export function calculateIngredientUsage(ingredients, cocktails) {
   });
   return result;
 }
+
+export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
+  const { changedIngredientIds = [], changedCocktailIds = [] } = options;
+  const fullMap = mapCocktailsByIngredient(ingredients, cocktails);
+  if (
+    changedIngredientIds.length === 0 &&
+    changedCocktailIds.length === 0
+  ) {
+    return fullMap;
+  }
+  const affected = new Set(changedIngredientIds);
+  if (changedCocktailIds.length > 0) {
+    for (const [ingId, ids] of Object.entries(fullMap)) {
+      if (ids.some((id) => changedCocktailIds.includes(id))) {
+        affected.add(Number(ingId));
+      }
+    }
+  }
+  const next = { ...prevMap };
+  affected.forEach((id) => {
+    if (fullMap[id]) next[id] = fullMap[id];
+    else delete next[id];
+  });
+  return next;
+}
