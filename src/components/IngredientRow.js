@@ -30,6 +30,7 @@ function IngredientRow({
   baseIngredientId,
   onPress,
   onToggleInBar,
+  onToggleShoppingList,
   onRemove,
   isNavigating,
 }) {
@@ -162,6 +163,23 @@ function IngredientRow({
               name={inBar ? "check-circle" : "radio-button-unchecked"}
               size={22}
               color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
+            />
+          </Pressable>
+        ) : onToggleShoppingList ? (
+          <Pressable
+            onPress={() => onToggleShoppingList(id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            android_ripple={{ ...ripple, borderless: true }}
+            style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
+          >
+            <MaterialIcons
+              name={inShoppingList ? "shopping-cart" : "add-shopping-cart"}
+              size={22}
+              color={
+                inShoppingList
+                  ? theme.colors.primary
+                  : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         ) : null}
