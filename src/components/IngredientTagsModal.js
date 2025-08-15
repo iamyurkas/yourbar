@@ -7,7 +7,6 @@ import {
   IconButton,
   Portal,
   Modal,
-  Dialog,
   Divider,
   Chip,
   useTheme,
@@ -28,6 +27,8 @@ const COLOR_PALETTE = [
   "#F06595",
   "#20C997",
 ];
+
+const TOP_OFFSET = 0;
 
 export default function IngredientTagsModal({ visible, onClose, autoAdd = false }) {
   const theme = useTheme();
@@ -156,6 +157,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
       <Modal
         visible={visible}
         onDismiss={onClose}
+        style={{ justifyContent: "flex-start" }}
         contentContainerStyle={[
           styles.container,
           {
@@ -199,87 +201,92 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         />
       </Modal>
 
-      <View style={styles.dialogWrapper}>
-        <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
-          style={{ backgroundColor: theme.colors.surface, marginTop: 50 }}
-        >
-          <Dialog.Title>{editingId ? "Edit tag" : "New tag"}</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Name"
-              mode="outlined"
-            value={name}
-            onChangeText={setName}
-            error={!!nameError}
-            style={{ marginBottom: 8 }}
-            theme={{
-              colors: {
-                error: theme.colors.error,
-                errorContainer: theme.colors.errorContainer,
-              },
-            }}
-          />
-          {nameError ? (
-            <Text style={[styles.errorText, { color: theme.colors.error }]}>{nameError}</Text>
-          ) : null}
+      <Modal
+        visible={dialogVisible}
+        onDismiss={() => setDialogVisible(false)}
+        style={{ justifyContent: "flex-start" }}
+        contentContainerStyle={[
+          styles.dialog,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.outline,
+          },
+        ]}
+      >
+        <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}> 
+          {editingId ? "Edit tag" : "New tag"}
+        </Text>
 
-          <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Color</Text>
-          <View style={styles.palette}>
-            {COLOR_PALETTE.map((c) => {
-              const selected = c.toLowerCase() === (color || "").toLowerCase();
-              return (
-                <TouchableOpacity
-                  key={c}
-                  style={[
-                    styles.colorDot,
-                    { backgroundColor: c },
-                    selected && { borderColor: theme.colors.onSurface },
-                  ]}
-                  onPress={() => setColor(c)}
-                  accessibilityLabel={`Pick color ${c}`}
-                />
-              );
-            })}
-          </View>
+        <TextInput
+          label="Name"
+          mode="outlined"
+          value={name}
+          onChangeText={setName}
+          error={!!nameError}
+          style={{ marginBottom: 8 }}
+          theme={{
+            colors: {
+              error: theme.colors.error,
+              errorContainer: theme.colors.errorContainer,
+            },
+          }}
+        />
+        {nameError ? (
+          <Text style={[styles.errorText, { color: theme.colors.error }]}>{nameError}</Text>
+        ) : null}
 
-          <TextInput
-            label="HEX (#RRGGBB or #RRGGBBAA)"
-            mode="outlined"
-            value={color}
-            onChangeText={setColor}
-            error={!isValidHex}
-            theme={{
-              colors: {
-                error: theme.colors.error,
-                errorContainer: theme.colors.errorContainer,
-              },
-            }}
-          />
-          {!isValidHex ? (
-            <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
-          ) : null}
+        <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Color</Text>
+        <View style={styles.palette}>
+          {COLOR_PALETTE.map((c) => {
+            const selected = c.toLowerCase() === (color || "").toLowerCase();
+            return (
+              <TouchableOpacity
+                key={c}
+                style={[
+                  styles.colorDot,
+                  { backgroundColor: c },
+                  selected && { borderColor: theme.colors.onSurface },
+                ]}
+                onPress={() => setColor(c)}
+                accessibilityLabel={`Pick color ${c}`}
+              />
+            );
+          })}
+        </View>
 
-          <View style={styles.previewBox}>
-            <Text style={{ marginBottom: 8, color: theme.colors.onSurface }}>Preview</Text>
-            <Chip
-              selected
-              style={{ backgroundColor: color || "#ccc" }}
-              textStyle={{ color: "#fff", fontWeight: "700" }}
-            >
-              {name || "Tag name"}
-            </Chip>
-          </View>
-        </Dialog.Content>
-        <Dialog.Actions>
+        <TextInput
+          label="HEX (#RRGGBB or #RRGGBBAA)"
+          mode="outlined"
+          value={color}
+          onChangeText={setColor}
+          error={!isValidHex}
+          theme={{
+            colors: {
+              error: theme.colors.error,
+              errorContainer: theme.colors.errorContainer,
+            },
+          }}
+        />
+        {!isValidHex ? (
+          <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
+        ) : null}
+
+        <View style={styles.previewBox}>
+          <Text style={{ marginBottom: 8, color: theme.colors.onSurface }}>Preview</Text>
+          <Chip
+            selected
+            style={{ backgroundColor: color || "#ccc" }}
+            textStyle={{ color: "#fff", fontWeight: "700" }}
+          >
+            {name || "Tag name"}
+          </Chip>
+        </View>
+
+        <View style={styles.dialogActions}>
           <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-          <Button onPress={onSave} disabled={!canSave}>
-            Save
-          </Button>
-        </Dialog.Actions>
-        </Dialog>
-      </View>
+          <Button onPress={onSave} disabled={!canSave}>Save</Button>
+        </View>
+      </Modal>
     </Portal>
   );
 }
@@ -287,7 +294,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
-    marginVertical: 48,
+    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
@@ -322,6 +329,14 @@ const styles = StyleSheet.create({
   previewBox: { marginTop: 10, marginBottom: 4 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: {},
-  dialogWrapper: { flex: 1, justifyContent: "flex-start" },
+  dialog: {
+    marginHorizontal: 24,
+    marginTop: TOP_OFFSET,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+  },
+  dialogTitle: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
+  dialogActions: { flexDirection: "row", justifyContent: "flex-end", marginTop: 16 },
 });
 
