@@ -277,8 +277,8 @@ export default function MyCocktailsScreen() {
       }
       return (
         <View style={{ padding: 24 }}>
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>
-            For the cocktails below – get more ingredients.
+          <Text style={{ textAlign:"center", color: theme.colors.onSurfaceVariant }}>
+            More ingredients needed
           </Text>
         </View>
       );
