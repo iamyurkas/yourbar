@@ -301,6 +301,9 @@ export default function IngredientDetailsScreen() {
       let cancelled = false;
       const task = InteractionManager.runAfterInteractions(async () => {
         try {
+          if (route.params?.initialIngredient) {
+            await new Promise((res) => setTimeout(res, 500));
+          }
           if (!cancelled) await load();
         } catch {}
       });
@@ -308,7 +311,7 @@ export default function IngredientDetailsScreen() {
         cancelled = true;
         task.cancel();
       };
-    }, [load])
+    }, [load, route.params?.initialIngredient])
   );
 
   useEffect(() => {

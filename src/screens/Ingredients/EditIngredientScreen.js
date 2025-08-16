@@ -124,7 +124,8 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { refresh: refreshIngredientsData } = useIngredientsData();
+  const { refresh: refreshIngredientsData, setIngredients: setGlobalIngredients } =
+    useIngredientsData();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -385,10 +386,12 @@ export default function EditIngredientScreen() {
         tags,
         baseIngredientId: baseIngredientId ?? null,
       };
-      await saveIngredient(updated);
-      await refreshIngredientsData();
+      // оптимістично оновити глобальний список
+      setGlobalIngredients((list) =>
+        list.map((i) => (i.id === updated.id ? { ...i, ...updated } : i))
+      );
 
-      // оновити baseline і зняти dirty
+      // зберегти локально baseline і зняти dirty
       initialHashRef.current = serialize();
       setDirty(false);
 
@@ -404,7 +407,15 @@ export default function EditIngredientScreen() {
           });
         }
         navigation.goBack();
+      } else {
+        setIngredient(updated);
       }
+
+      // асинхронно зберегти та оновити дані
+      saveIngredient(updated)
+        .then(() => refreshIngredientsData())
+        .catch(() => {});
+
       return updated;
     },
     [
@@ -416,6 +427,8 @@ export default function EditIngredientScreen() {
       baseIngredientId,
       navigation,
       serialize,
+      setGlobalIngredients,
+      refreshIngredientsData,
     ]
   );
 
