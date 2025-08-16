@@ -9,7 +9,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,6 +17,7 @@ import IngredientIcon from "../../assets/lemon.svg";
 import IngredientTagsModal from "./IngredientTagsModal";
 import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
+import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { exportAllData, importAllData } from "../storage/backupStorage";
 
@@ -49,6 +49,7 @@ export default function GeneralMenu({ visible, onClose }) {
   const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
   const [favRating, setFavRating] = useState(0);
+  const [dialog, setDialog] = useState({ visible: false, title: "", message: "" });
 
   const { refresh } = useIngredientsData();
 
@@ -87,9 +88,9 @@ export default function GeneralMenu({ visible, onClose }) {
     onClose?.();
     try {
       await exportAllData();
-      Alert.alert("Export", "Data exported successfully");
+      setDialog({ visible: true, title: "Export", message: "Data exported successfully" });
     } catch (e) {
-      Alert.alert("Export", "Failed to export data");
+      setDialog({ visible: true, title: "Export", message: "Failed to export data" });
     }
   };
 
@@ -99,10 +100,10 @@ export default function GeneralMenu({ visible, onClose }) {
       const ok = await importAllData();
       if (ok) {
         await refresh?.();
-        Alert.alert("Import", "Data imported successfully");
+        setDialog({ visible: true, title: "Import", message: "Data imported successfully" });
       }
     } catch (e) {
-      Alert.alert("Import", "Failed to import data");
+      setDialog({ visible: true, title: "Import", message: "Failed to import data" });
     }
   };
 
@@ -366,6 +367,19 @@ export default function GeneralMenu({ visible, onClose }) {
         rating={favRating}
         onSelect={handleSelectRating}
         onClose={() => setRatingVisible(false)}
+      />
+      <ConfirmationDialog
+        visible={dialog.visible}
+        title={dialog.title}
+        message={dialog.message}
+        onCancel={() => setDialog((d) => ({ ...d, visible: false }))}
+        actions={[
+          {
+            label: "OK",
+            mode: "contained",
+            onPress: () => setDialog((d) => ({ ...d, visible: false })),
+          },
+        ]}
       />
     </>
   );
