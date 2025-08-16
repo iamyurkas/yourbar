@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   counterButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 4,
+    borderRadius: 8,
     marginHorizontal: 4,
   },
   clearButton: {

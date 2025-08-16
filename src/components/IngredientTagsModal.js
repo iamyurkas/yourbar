@@ -254,10 +254,9 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
           <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
         ) : null}
 
-        <View style={styles.dialogActions}>
-          <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-          <Button onPress={onSave} disabled={!canSave}>Save</Button>
-        </View>
+        <Button mode="contained" onPress={onSave} disabled={!canSave} style={{ borderRadius: 8 }}>
+          {editingId ? "Save" : "Add"}
+        </Button>
       </Modal>
 
       <ConfirmationDialog
@@ -287,7 +286,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
   subtitle: { marginBottom: 12 },
-  addBtn: { marginVertical: 12, width: "100%" },
+  addBtn: { marginVertical: 12, width: "100%", borderRadius: 8 },
   row: {
     flexDirection: "row",
     alignItems: "center",

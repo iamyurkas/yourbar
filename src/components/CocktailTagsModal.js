@@ -248,7 +248,7 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
           }}
         />
 
-        <Button mode="contained" onPress={onSave} disabled={!canSave}>
+        <Button mode="contained" onPress={onSave} disabled={!canSave} style={{ borderRadius: 8 }}>
           {editingId ? "Save" : "Add"}
         </Button>
       </Modal>
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 18, fontWeight: "700" },
   subtitle: { marginBottom: 16 },
-  addBtn: { marginVertical: 12, width: "100%" },
+  addBtn: { marginVertical: 12, width: "100%", borderRadius: 8 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
   emptyText: { fontStyle: "italic" },
   row: {
