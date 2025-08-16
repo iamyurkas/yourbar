@@ -10,7 +10,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveIngredient, updateIngredientById } from "../../storage/ingredientsStorage";
+import { saveAllIngredients, updateIngredientById } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -35,6 +35,7 @@ export default function MyIngredientsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [pendingUpdates, setPendingUpdates] = useState([]);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -71,6 +72,33 @@ export default function MyIngredientsScreen() {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
+
+  const flushPending = useCallback(() => {
+    if (pendingUpdates.length) {
+      saveAllIngredients(ingredients).catch(() => {});
+      setPendingUpdates([]);
+    }
+  }, [pendingUpdates, ingredients]);
+
+  useEffect(() => {
+    if (!pendingUpdates.length) return;
+    const handle = setTimeout(() => {
+      flushPending();
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [pendingUpdates, flushPending]);
+
+  useEffect(() => {
+    if (!isFocused) {
+      flushPending();
+    }
+  }, [isFocused, flushPending]);
+
+  useEffect(() => {
+    return () => {
+      flushPending();
+    };
+  }, [flushPending]);
 
   const availableMap = useMemo(() => {
     const ingMap = new Map(ingredients.map((i) => [String(i.id), i]));
@@ -145,16 +173,19 @@ export default function MyIngredientsScreen() {
     return data;
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback((id) => {
-    setIngredients((prev) => {
-      const item = prev.find((i) => i.id === id);
-      if (!item) return prev;
-      const updated = { ...item, inBar: !item.inBar };
-      const next = updateIngredientById(prev, updated);
-      saveIngredient(next).catch(() => {});
-      return next;
-    });
-  }, []);
+  const toggleInBar = useCallback(
+    (id) => {
+      let updated;
+      setIngredients((prev) => {
+        const item = prev.find((i) => i.id === id);
+        if (!item) return prev;
+        updated = { ...item, inBar: !item.inBar };
+        return updateIngredientById(prev, updated);
+      });
+      if (updated) setPendingUpdates((p) => [...p, updated]);
+    },
+    [setIngredients]
+  );
 
   const onItemPress = useCallback(
     (id) => {

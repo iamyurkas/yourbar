@@ -10,7 +10,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveIngredient, updateIngredientById } from "../../storage/ingredientsStorage";
+import { saveAllIngredients, updateIngredientById } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -29,6 +29,7 @@ export default function ShoppingIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  const [pendingUpdates, setPendingUpdates] = useState([]);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "Shopping");
@@ -53,6 +54,33 @@ export default function ShoppingIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
+  const flushPending = useCallback(() => {
+    if (pendingUpdates.length) {
+      saveAllIngredients(ingredients).catch(() => {});
+      setPendingUpdates([]);
+    }
+  }, [pendingUpdates, ingredients]);
+
+  useEffect(() => {
+    if (!pendingUpdates.length) return;
+    const handle = setTimeout(() => {
+      flushPending();
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [pendingUpdates, flushPending]);
+
+  useEffect(() => {
+    if (!isFocused) {
+      flushPending();
+    }
+  }, [isFocused, flushPending]);
+
+  useEffect(() => {
+    return () => {
+      flushPending();
+    };
+  }, [flushPending]);
+
   const filtered = useMemo(() => {
     const q = searchDebounced.trim().toLowerCase();
     let data = ingredients.filter((i) => i.inShoppingList);
@@ -66,16 +94,19 @@ export default function ShoppingIngredientsScreen() {
     return data;
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const removeFromList = useCallback((id) => {
-    setIngredients((prev) => {
-      const item = prev.find((i) => i.id === id);
-      if (!item) return prev;
-      const updated = { ...item, inShoppingList: false };
-      const next = updateIngredientById(prev, updated);
-      saveIngredient(next).catch(() => {});
-      return next;
-    });
-  }, []);
+  const removeFromList = useCallback(
+    (id) => {
+      let updated;
+      setIngredients((prev) => {
+        const item = prev.find((i) => i.id === id);
+        if (!item) return prev;
+        updated = { ...item, inShoppingList: false };
+        return updateIngredientById(prev, updated);
+      });
+      if (updated) setPendingUpdates((p) => [...p, updated]);
+    },
+    [setIngredients]
+  );
 
   const onItemPress = useCallback(
     (id) => {
