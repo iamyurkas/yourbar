@@ -26,7 +26,6 @@ import {
 } from "@react-navigation/native";
 
 import {
-  getIngredientById,
   getAllIngredients,
   saveAllIngredients,
   updateIngredientById,
@@ -113,7 +112,8 @@ export default function IngredientDetailsScreen() {
   const { id, fromCocktailId, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
-  const { ingredientsById } = useIngredientUsage();
+  const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
+    useIngredientUsage();
 
   const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -227,13 +227,14 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(async () => {
-    const [all, cocktails, ig] = await Promise.all([
-      getAllIngredients(),
-      getAllCocktails(),
-      getIgnoreGarnish(),
-    ]);
-    const loaded = ingredientsById[id] || all.find((i) => i.id === id);
+  const load = useCallback(
+    async (refresh = false) => {
+      const [all, cocktails, ig] = await Promise.all([
+        !refresh && ingredients.length ? ingredients : getAllIngredients(),
+        !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
+        getIgnoreGarnish(),
+      ]);
+      const loaded = ingredientsById[id] || all.find((i) => i.id === id);
     setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {
@@ -326,7 +327,13 @@ export default function IngredientDetailsScreen() {
         };
       });
     setUsedCocktails(list);
-  }, [id, collator, ingredientsById]);
+  }, [
+    id,
+    collator,
+    ingredientsById,
+    ingredients,
+    cocktailsCtx,
+  ]);
 
   useFocusEffect(
     useCallback(() => {

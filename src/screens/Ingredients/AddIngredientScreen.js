@@ -106,7 +106,8 @@ export default function AddIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { ingredients: globalIngredients = [], setIngredients: setGlobalIngredients } =
+    useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
 
   // read incoming params
@@ -246,13 +247,17 @@ export default function AddIngredientScreen() {
     loadAvailableTags();
   }, [isFocused, loadAvailableTags]);
 
-  const loadBases = useCallback(async () => {
-    if (basesLoaded || loadingBases) return;
-    setLoadingBases(true);
-    try {
-      await InteractionManager.runAfterInteractions();
-      const ingredients = await getAllIngredients();
-      const baseOnly = ingredients
+  const loadBases = useCallback(
+    async (refresh = false) => {
+      if (basesLoaded || loadingBases) return;
+      setLoadingBases(true);
+      try {
+        await InteractionManager.runAfterInteractions();
+        const ingredients =
+          !refresh && globalIngredients.length
+            ? globalIngredients
+            : await getAllIngredients();
+        const baseOnly = ingredients
         .filter((i) => i.baseIngredientId == null)
         .sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
@@ -266,10 +271,12 @@ export default function AddIngredientScreen() {
       if (!isMountedRef.current) return;
       setBaseOnlySorted(baseOnly);
       setBasesLoaded(true);
-    } finally {
-      if (isMountedRef.current) setLoadingBases(false);
-    }
-  }, [basesLoaded, loadingBases]);
+      } finally {
+        if (isMountedRef.current) setLoadingBases(false);
+      }
+    },
+    [basesLoaded, loadingBases, globalIngredients]
+  );
 
   useEffect(() => {
     if (!isFocused) return;

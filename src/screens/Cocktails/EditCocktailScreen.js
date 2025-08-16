@@ -1235,13 +1235,17 @@ export default function EditCocktailScreen() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const list = await getAllIngredients();
-      if (mounted) setAllIngredients(Array.isArray(list) ? list : []);
+      if (ingredients.length) {
+        if (mounted) setAllIngredients(ingredients);
+      } else {
+        const list = await getAllIngredients();
+        if (mounted) setAllIngredients(Array.isArray(list) ? list : []);
+      }
     })();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [ingredients]);
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
