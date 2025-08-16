@@ -126,7 +126,11 @@ export default function EditIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
-  const { setUsageMap, ingredientsById } = useIngredientUsage();
+  const {
+    setUsageMap,
+    ingredientsById,
+    ingredients: globalIngredients = [],
+  } = useIngredientUsage();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -303,30 +307,36 @@ export default function EditIngredientScreen() {
   }, [isFocused, currentId, loadAvailableTags, ingredientsById]);
 
   // lazy-load bases (exclude current ingredient)
-  const loadBases = useCallback(async () => {
-    if (basesLoaded || loadingBases) return;
-    setLoadingBases(true);
-    try {
-      await InteractionManager.runAfterInteractions();
-      const ingredients = await getAllIngredients();
-      const baseOnly = ingredients
-        .filter((i) => i.baseIngredientId == null && i.id !== currentId)
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-        )
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          photoUri: i.photoUri || null,
-          nameLower: (i.name || "").toLowerCase(),
-        }));
-      if (!isMountedRef.current) return;
-      setBaseOnlySorted(baseOnly);
-      setBasesLoaded(true);
-    } finally {
-      if (isMountedRef.current) setLoadingBases(false);
-    }
-  }, [basesLoaded, loadingBases, currentId]);
+  const loadBases = useCallback(
+    async (refresh = false) => {
+      if (basesLoaded || loadingBases) return;
+      setLoadingBases(true);
+      try {
+        await InteractionManager.runAfterInteractions();
+        const ingredients =
+          !refresh && globalIngredients.length
+            ? globalIngredients
+            : await getAllIngredients();
+        const baseOnly = ingredients
+          .filter((i) => i.baseIngredientId == null && i.id !== currentId)
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+          )
+          .map((i) => ({
+            id: i.id,
+            name: i.name,
+            photoUri: i.photoUri || null,
+            nameLower: (i.name || "").toLowerCase(),
+          }));
+        if (!isMountedRef.current) return;
+        setBaseOnlySorted(baseOnly);
+        setBasesLoaded(true);
+      } finally {
+        if (isMountedRef.current) setLoadingBases(false);
+      }
+    },
+    [basesLoaded, loadingBases, currentId, globalIngredients]
+  );
 
   // префетч баз
   useEffect(() => {

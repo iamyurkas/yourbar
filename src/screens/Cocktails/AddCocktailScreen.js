@@ -1205,13 +1205,17 @@ export default function AddCocktailScreen() {
   useEffect(() => {
     let cancel = false;
     (async () => {
-      const list = await getAllIngredients();
-      if (!cancel) setAllIngredients(Array.isArray(list) ? list : []);
+      if (ingredients.length) {
+        if (!cancel) setAllIngredients(ingredients);
+      } else {
+        const list = await getAllIngredients();
+        if (!cancel) setAllIngredients(Array.isArray(list) ? list : []);
+      }
     })();
     return () => {
       cancel = true;
     };
-  }, []);
+  }, [ingredients]);
 
   // SUBSTITUTE MODAL STATE
   const [subModal, setSubModal] = useState({

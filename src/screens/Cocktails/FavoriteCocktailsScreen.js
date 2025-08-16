@@ -14,6 +14,7 @@ import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -34,6 +35,8 @@ export default function FavoriteCocktailsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
+  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
+    useIngredientUsage();
 
   const [cocktails, setCocktails] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -73,9 +76,13 @@ export default function FavoriteCocktailsScreen() {
     if (!isFocused) return;
     (async () => {
       if (firstLoad.current) setLoading(true);
+      const cocktailPromise =
+        globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
+      const ingredientPromise =
+        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
       const [cocktailsList, ingredientsList, ig, favMin] = await Promise.all([
-        getAllCocktails(),
-        getAllIngredients(),
+        cocktailPromise,
+        ingredientPromise,
         getIgnoreGarnish(),
         getFavoritesMinRating(),
       ]);
@@ -96,7 +103,7 @@ export default function FavoriteCocktailsScreen() {
       subIg.remove();
       subFav.remove();
     };
-  }, [isFocused]);
+  }, [isFocused, globalCocktails, globalIngredients]);
 
   const filtered = useMemo(() => {
     const ingMap = new Map(

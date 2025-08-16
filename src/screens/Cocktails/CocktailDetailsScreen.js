@@ -25,6 +25,7 @@ import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
 import { formatAmount, toMetric, toImperial } from "../../utils/units";
@@ -156,6 +157,7 @@ export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
   const { id } = useRoute().params;
   const theme = useTheme();
+  const { ingredients: globalIngredients = [] } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(null);
   const [ingMap, setIngMap] = useState(new Map());
@@ -216,21 +218,28 @@ export default function CocktailDetailsScreen() {
     });
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const [loadedCocktail, allIngredients, useMetric, ig] = await Promise.all([
-      getCocktailById(id),
-      getAllIngredients(),
-      getUseMetric(),
-      getIgnoreGarnish(),
-    ]);
-    setCocktail(loadedCocktail || null);
-    setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
-    setIngList(allIngredients || []);
-    setShowImperial(!useMetric);
-    setIgnoreGarnish(!!ig);
-    setLoading(false);
-  }, [id]);
+  const load = useCallback(
+    async (refresh = false) => {
+      setLoading(true);
+      const ingredientPromise =
+        !refresh && globalIngredients.length
+          ? Promise.resolve(globalIngredients)
+          : getAllIngredients();
+      const [loadedCocktail, allIngredients, useMetric, ig] = await Promise.all([
+        getCocktailById(id),
+        ingredientPromise,
+        getUseMetric(),
+        getIgnoreGarnish(),
+      ]);
+      setCocktail(loadedCocktail || null);
+      setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
+      setIngList(allIngredients || []);
+      setShowImperial(!useMetric);
+      setIgnoreGarnish(!!ig);
+      setLoading(false);
+    },
+    [id, globalIngredients]
+  );
 
   useFocusEffect(
     useCallback(() => {

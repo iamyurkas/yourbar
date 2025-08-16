@@ -26,7 +26,6 @@ import {
 } from "@react-navigation/native";
 
 import {
-  getIngredientById,
   getAllIngredients,
   saveAllIngredients,
   updateIngredientById,
@@ -113,7 +112,8 @@ export default function IngredientDetailsScreen() {
   const { id, fromCocktailId, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
-  const { ingredientsById } = useIngredientUsage();
+  const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
+    useIngredientUsage();
 
   const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -134,29 +134,8 @@ export default function IngredientDetailsScreen() {
   );
 
   const handleGoBack = useCallback(() => {
-    const returnTo = route.params?.returnTo;
-    if (returnTo) {
-      navigation.navigate("Cocktails", {
-        screen: returnTo,
-        params: {
-          createdIngredient: route.params?.createdIngredient,
-          targetLocalId: route.params?.targetLocalId,
-        },
-        merge: true,
-      });
-    } else if (fromCocktailId) {
-      navigation.navigate("Cocktails", {
-        screen: "CocktailDetails",
-        params: { id: fromCocktailId },
-      });
-    } else navigation.goBack();
-  }, [
-    navigation,
-    fromCocktailId,
-    route.params?.returnTo,
-    route.params?.createdIngredient,
-    route.params?.targetLocalId,
-  ]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditIngredient", {
@@ -207,14 +186,38 @@ export default function IngredientDetailsScreen() {
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
-    if (!fromCocktailId) return;
-    const unsub = navigation.addListener("beforeRemove", (e) => {
+    const returnTo = route.params?.returnTo;
+    if (!fromCocktailId && !returnTo) return;
+    const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
-      handleGoBack();
-    });
-    return unsub;
-  }, [navigation, handleGoBack, fromCocktailId]);
+      sub();
+      navigation.dispatch(e.data.action);
+      if (returnTo) {
+        navigation.navigate("Cocktails", {
+          screen: returnTo,
+          params: {
+            createdIngredient: route.params?.createdIngredient,
+            targetLocalId: route.params?.targetLocalId,
+          },
+          merge: true,
+        });
+      } else {
+        navigation.navigate("Cocktails", {
+          screen: "CocktailDetails",
+          params: { id: fromCocktailId },
+        });
+      }
+    };
+    const sub = navigation.addListener("beforeRemove", beforeRemove);
+    return sub;
+  }, [
+    navigation,
+    fromCocktailId,
+    route.params?.returnTo,
+    route.params?.createdIngredient,
+    route.params?.targetLocalId,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -227,13 +230,14 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(async () => {
-    const [all, cocktails, ig] = await Promise.all([
-      getAllIngredients(),
-      getAllCocktails(),
-      getIgnoreGarnish(),
-    ]);
-    const loaded = ingredientsById[id] || all.find((i) => i.id === id);
+  const load = useCallback(
+    async (refresh = false) => {
+      const [all, cocktails, ig] = await Promise.all([
+        !refresh && ingredients.length ? ingredients : getAllIngredients(),
+        !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
+        getIgnoreGarnish(),
+      ]);
+      const loaded = ingredientsById[id] || all.find((i) => i.id === id);
     setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {
@@ -326,7 +330,13 @@ export default function IngredientDetailsScreen() {
         };
       });
     setUsedCocktails(list);
-  }, [id, collator, ingredientsById]);
+  }, [
+    id,
+    collator,
+    ingredientsById,
+    ingredients,
+    cocktailsCtx,
+  ]);
 
   useFocusEffect(
     useCallback(() => {

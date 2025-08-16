@@ -28,6 +28,7 @@ import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -48,6 +49,8 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
+    useIngredientUsage();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "My");
@@ -75,9 +78,13 @@ export default function MyCocktailsScreen() {
     if (!isFocused) return;
     (async () => {
       if (firstLoad.current) setLoading(true);
+      const cocktailPromise =
+        globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
+      const ingredientPromise =
+        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
       const [cocktailsList, ingredientsList, ig] = await Promise.all([
-        getAllCocktails(),
-        getAllIngredients(),
+        cocktailPromise,
+        ingredientPromise,
         getIgnoreGarnish(),
       ]);
       if (cancel) return;
@@ -94,7 +101,7 @@ export default function MyCocktailsScreen() {
       cancel = true;
       sub.remove();
     };
-  }, [isFocused]);
+  }, [isFocused, globalCocktails, globalIngredients]);
 
   const processed = useMemo(() => {
     const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
