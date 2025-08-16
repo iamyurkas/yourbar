@@ -19,6 +19,7 @@ import { getAllTags } from "../storage/ingredientTagsStorage";
 
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const { ingredients, usageMap, loading } = useIngredientsData();
   const [allTags, setAllTags] = useState([]);
   const [expanded, setExpanded] = useState({});
@@ -159,7 +160,7 @@ export default function ShakerScreen({ navigation }) {
                 <MaterialIcons
                   name={isOpen ? "expand-less" : "expand-more"}
                   size={24}
-                  color="#fff"
+                  color={theme.colors.onPrimary}
                 />
               </TouchableOpacity>
               {isOpen &&
@@ -227,44 +228,50 @@ export default function ShakerScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  scroll: { paddingBottom: 16 },
-  section: { marginBottom: 12 },
-  tagHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 4,
-    height: 56,
-  },
-  tagTitle: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  counter: {
-    padding: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  counterText: { fontWeight: "bold", flex: 1, textAlign: "center" },
-  counterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    marginHorizontal: 4,
-  },
-  clearButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-  },
-  counterButtonText: { fontWeight: "bold" },
-  loadingContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+const createStyles = (theme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.colors.background },
+    scroll: { paddingBottom: 16 },
+    section: { marginBottom: 12 },
+    tagHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 4,
+      height: 56,
+    },
+    tagTitle: {
+      color: theme.colors.onPrimary,
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+    counter: {
+      padding: 16,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.colors.outline,
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    counterText: { fontWeight: "bold", flex: 1, textAlign: "center" },
+    counterButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      marginHorizontal: 4,
+    },
+    clearButton: {
+      backgroundColor: theme.colors.background,
+      borderWidth: 1,
+      borderColor: theme.colors.outline,
+    },
+    counterButtonText: { fontWeight: "bold" },
+    loadingContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  });
 

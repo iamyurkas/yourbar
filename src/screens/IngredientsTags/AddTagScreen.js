@@ -14,11 +14,14 @@ import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { useNavigation } from "@react-navigation/native";
 import WheelColorPicker from "react-native-wheel-color-picker";
+import { useTheme } from "react-native-paper";
+import { TAG_COLORS } from "../theme";
 
 export default function AddTagScreen() {
   const navigation = useNavigation();
+  const theme = useTheme();
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#4DABF7");
+  const [color, setColor] = useState(TAG_COLORS[0]);
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -41,7 +44,7 @@ export default function AddTagScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <Text style={styles.label}>Tag name:</Text>
@@ -49,24 +52,32 @@ export default function AddTagScreen() {
         placeholder="e.g. bitters"
         value={name}
         onChangeText={setName}
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.colors.outline }]}
       />
 
       <Text style={styles.label}>Choose color:</Text>
       <View style={styles.colorPreview}>
-        <View style={[styles.colorBox, { backgroundColor: color }]} />
+        <View
+          style={[
+            styles.colorBox,
+            { backgroundColor: color, borderColor: theme.colors.onSurface },
+          ]}
+        />
         <Text style={styles.colorCode}>{color}</Text>
       </View>
 
       <WheelColorPicker
         color={color}
         onColorChange={setColor}
-        thumbStyle={{ borderWidth: 2, borderColor: "#000" }}
+        thumbStyle={{ borderWidth: 2, borderColor: theme.colors.onSurface }}
         style={{ height: 240, marginBottom: 16 }}
       />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveText}>Save Tag</Text>
+      <TouchableOpacity
+        style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+        onPress={handleSave}
+      >
+        <Text style={[styles.saveText, { color: theme.colors.onPrimary }]}>Save Tag</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -75,7 +86,6 @@ export default function AddTagScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    backgroundColor: "white",
     flex: 1,
   },
   label: {
@@ -84,7 +94,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 10,
     marginTop: 8,
     borderRadius: 8,
@@ -101,20 +110,17 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 12,
     borderWidth: 1,
-    borderColor: "#333",
   },
   colorCode: {
     fontFamily: "monospace",
   },
   saveButton: {
     marginTop: 24,
-    backgroundColor: "#4DABF7",
     paddingVertical: 12,
     alignItems: "center",
     borderRadius: 8,
   },
   saveText: {
-    color: "white",
     fontWeight: "bold",
   },
 });

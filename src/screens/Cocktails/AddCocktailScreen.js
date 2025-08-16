@@ -36,6 +36,7 @@ import {
   useIsFocused,
 } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
+import { TAG_COLORS } from "../../theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
@@ -127,7 +128,9 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
         pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Text style={styles.tagText}>{name}</Text>
+      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
+        {name}
+      </Text>
     </Pressable>
   );
 });
@@ -543,7 +546,7 @@ const IngredientRow = memo(function IngredientRow({
                 maxHeight: suggestState.maxHeight,
                 backgroundColor: theme.colors.surface,
                 borderColor: theme.colors.outline,
-                shadowColor: "#000",
+                shadowColor: theme.colors.onSurface,
               },
             ]}
           >
@@ -1141,7 +1144,7 @@ export default function AddCocktailScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState(() => {
     const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
-    return custom ? [custom] : [{ id: 8, name: "custom", color: "#AFC9C3FF" }];
+    return custom ? [custom] : [{ id: 8, name: "custom", color: TAG_COLORS[15] }];
   });
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
@@ -1980,7 +1983,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
 
   addTagButton: {
     paddingHorizontal: 10,
@@ -2132,6 +2135,5 @@ const styles = StyleSheet.create({
     height: 32,
     aspectRatio: 1,
     borderRadius: 6,
-    backgroundColor: "#ccc",
   },
 });

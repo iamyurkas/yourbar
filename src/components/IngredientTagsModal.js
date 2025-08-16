@@ -12,21 +12,7 @@ import {
 } from "react-native-paper";
 import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
 import ConfirmationDialog from "./ConfirmationDialog";
-
-const COLOR_PALETTE = [
-  "#FF6B6B",
-  "#FF8787",
-  "#FFA94D",
-  "#FFD43B",
-  "#69DB7C",
-  "#38D9A9",
-  "#4DABF7",
-  "#9775FA",
-  "#8AADCFFF",
-  "#AFC9C3FF",
-  "#F06595",
-  "#20C997",
-];
+import { TAG_COLORS } from "../theme";
 
 const TOP_OFFSET = 0;
 
@@ -38,7 +24,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const [dialogVisible, setDialogVisible] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
-  const [color, setColor] = useState(COLOR_PALETTE[0]);
+  const [color, setColor] = useState(TAG_COLORS[0]);
   const [deleteTag, setDeleteTag] = useState(null);
 
   useEffect(() => {
@@ -54,7 +40,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const resetDialog = () => {
     setEditingId(null);
     setName("");
-    setColor(COLOR_PALETTE[0]);
+    setColor(TAG_COLORS[0]);
   };
 
   const openAdd = () => {
@@ -72,7 +58,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
   const openEdit = (tag) => {
     setEditingId(tag.id);
     setName(tag.name);
-    setColor(tag.color || COLOR_PALETTE[0]);
+    setColor(tag.color || TAG_COLORS[0]);
     setDialogVisible(true);
   };
 
@@ -123,7 +109,10 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
         <View
           style={[
             styles.swatch,
-            { backgroundColor: item.color || "#ccc", borderColor: theme.colors.outlineVariant },
+            {
+              backgroundColor: item.color || theme.colors.surfaceVariant,
+              borderColor: theme.colors.outlineVariant,
+            },
           ]}
         />
         <View style={styles.tagTextBox}>
@@ -220,7 +209,7 @@ export default function IngredientTagsModal({ visible, onClose, autoAdd = false 
 
         <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Color</Text>
         <View style={styles.palette}>
-          {COLOR_PALETTE.map((c) => {
+          {TAG_COLORS.map((c) => {
             const selected = c.toLowerCase() === (color || "").toLowerCase();
             return (
               <TouchableOpacity

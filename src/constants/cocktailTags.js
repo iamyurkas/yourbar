@@ -1,21 +1,15 @@
-// src/constants/cocktailTags.js
+import { TAG_COLORS } from "../theme";
 
 // Вшиті (builtin) теги коктейлів: стабільні numeric id + читабельні кольори під білий текст
 export const BUILTIN_COCKTAIL_TAGS = [
-  { id: 1, name: "IBA Official", color: "#38D9A9" },
-  { id: 2, name: "strong", color: "#FF6B6B" },
-  { id: 3, name: "moderate", color: "#FF8787" },
-  { id: 4, name: "soft", color: "#FFA94D" },
-  { id: 5, name: "long", color: "#FFD43B" },
-  { id: 6, name: "shooter", color: "#c78acfff" },
-  { id: 7, name: "non-alcoholic", color: "#69DB7C" },
-  { id: 8, name: "custom", color: "#AFC9C3FF" },
-  //  { id: 9, name: "sweet", color: "#FF7F7F" },
-  //  { id: 10, name: "sour", color: "#66C7C7" },
-  //  { id: 11, name: "bitter", color: "#A970C4" },
-  //  { id: 12, name: "spicy", color: "#FF9060" },
-  //  { id: 13, name: "fruity", color: "#79C28D" },
-  //  { id: 14, name: "creamy", color: "#9E9EF7" },
+  { id: 1, name: "IBA Official", color: TAG_COLORS[5] },
+  { id: 2, name: "strong", color: TAG_COLORS[0] },
+  { id: 3, name: "moderate", color: TAG_COLORS[1] },
+  { id: 4, name: "soft", color: TAG_COLORS[2] },
+  { id: 5, name: "long", color: TAG_COLORS[3] },
+  { id: 6, name: "shooter", color: TAG_COLORS[7] },
+  { id: 7, name: "non-alcoholic", color: TAG_COLORS[4] },
+  { id: 8, name: "custom", color: TAG_COLORS[15] },
 ];
 
 // Утиліти

@@ -127,7 +127,9 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
         pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Text style={styles.tagText}>{name}</Text>
+      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
+        {name}
+      </Text>
     </Pressable>
   );
 });
@@ -546,7 +548,7 @@ const IngredientRow = memo(function IngredientRow({
                 maxHeight: suggestState.maxHeight,
                 backgroundColor: theme.colors.surface,
                 borderColor: theme.colors.outline,
-                shadowColor: "#000",
+                shadowColor: theme.colors.onSurface,
               },
             ]}
           >
@@ -2081,7 +2083,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
 
   addTagButton: {
     paddingHorizontal: 10,
@@ -2233,6 +2235,5 @@ const styles = StyleSheet.create({
     height: 32,
     aspectRatio: 1,
     borderRadius: 6,
-    backgroundColor: "#ccc",
   },
 });

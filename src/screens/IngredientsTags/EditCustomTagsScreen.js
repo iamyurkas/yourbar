@@ -16,67 +16,14 @@ import {
   Dialog,
   Divider,
   Chip,
-  MD3LightTheme as BaseTheme,
 } from "react-native-paper";
 
 import { getUserTags, saveUserTags } from "../../storage/ingredientTagsStorage";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
-
-// ====== ТЕМА (MD3) — твої кольори ======
-const theme = {
-  ...BaseTheme,
-  version: 3,
-  colors: {
-    ...BaseTheme.colors,
-
-    // Основні
-    primary: "#4DABF7", // синій акцент
-    background: "#FFFFFF", // білий фон екрана
-    surface: "#ecececff", // дуже світло-сіро-блакитна поверхня (картки/діалоги)
-
-    // Роздільники та обводки
-    outline: "#E5EAF0", // сіро-блакитний бордер
-    outlineVariant: "#E9EEF4",
-
-    // Стани
-    error: "#FF6B6B", // червоний для помилок/критичних дій
-    errorContainer: "#FFE3E6", // 👈 світлий фон помилки (для TextInput у MD3)
-    onError: "#FFFFFF",
-    onErrorContainer: "#7A1C1C",
-
-    // Текст
-    onPrimary: "#FFFFFF",
-    onBackground: "#000000",
-    onSurface: "#000000",
-
-    // Додаткові акценти
-    secondary: "#74C0FC", // світліший синій
-    tertiary: "#A5D8FF", // пастельний блакитний
-
-    // Сервісні
-    disabled: "#CED4DA",
-    placeholder: "#A1A1A1",
-    backdrop: "rgba(0,0,0,0.4)",
-  },
-};
-
-// Мала палітра для вибору кольорів у діалозі
-const COLOR_PALETTE = [
-  "#FF6B6B",
-  "#FF8787",
-  "#FFA94D",
-  "#FFD43B",
-  "#69DB7C",
-  "#38D9A9",
-  "#4DABF7",
-  "#9775FA",
-  "#8AADCFFF",
-  "#AFC9C3FF",
-  "#F06595",
-  "#20C997",
-];
+import { AppTheme, TAG_COLORS } from "../../theme";
 
 export default function EditCustomTagsScreen() {
+  const theme = AppTheme;
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,7 +31,7 @@ export default function EditCustomTagsScreen() {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
-  const [color, setColor] = useState(COLOR_PALETTE[0]);
+  const [color, setColor] = useState(TAG_COLORS[0]);
   const [deleteTag, setDeleteTag] = useState(null);
 
   useEffect(() => {
@@ -99,7 +46,7 @@ export default function EditCustomTagsScreen() {
   const resetDialog = () => {
     setEditingId(null);
     setName("");
-    setColor(COLOR_PALETTE[0]);
+    setColor(TAG_COLORS[0]);
   };
 
   const openAdd = () => {
@@ -110,7 +57,7 @@ export default function EditCustomTagsScreen() {
   const openEdit = (tag) => {
     setEditingId(tag.id);
     setName(tag.name);
-    setColor(tag.color || COLOR_PALETTE[0]);
+    setColor(tag.color || TAG_COLORS[0]);
     setDialogVisible(true);
   };
 
@@ -160,7 +107,10 @@ export default function EditCustomTagsScreen() {
     <View style={styles.row}>
       <View style={styles.left}>
         <View
-          style={[styles.swatch, { backgroundColor: item.color || "#ccc" }]}
+          style={[
+            styles.swatch,
+            { backgroundColor: item.color || theme.colors.surfaceVariant },
+          ]}
         />
         <View style={styles.tagTextBox}>
           <Text style={styles.tagName}>{item.name}</Text>
@@ -253,7 +203,7 @@ export default function EditCustomTagsScreen() {
 
             {/* Палітра кольорів */}
             <View style={styles.palette}>
-              {COLOR_PALETTE.map((c) => {
+          {TAG_COLORS.map((c) => {
                 const selected =
                   c.toLowerCase() === (color || "").toLowerCase();
                 return (
@@ -295,8 +245,11 @@ export default function EditCustomTagsScreen() {
               <Text style={{ marginBottom: 8 }}>Preview</Text>
               <Chip
                 selected
-                style={{ backgroundColor: color || "#ccc" }}
-                textStyle={{ color: "#fff", fontWeight: "700" }}
+                style={{ backgroundColor: color || theme.colors.surfaceVariant }}
+                textStyle={{
+                  color: theme.colors.onPrimary,
+                  fontWeight: "700",
+                }}
               >
                 {name || "Tag name"}
               </Chip>
@@ -328,38 +281,54 @@ export default function EditCustomTagsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
-  title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
-  subtitle: { color: "#666", marginBottom: 12 },
+  container: {
+    flex: 1,
+    backgroundColor: AppTheme.colors.background,
+    padding: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 4,
+    color: AppTheme.colors.onSurface,
+  },
+  subtitle: { color: AppTheme.colors.onSurfaceVariant, marginBottom: 12 },
   addBtn: { alignSelf: "flex-start", marginBottom: 8 },
-
   row: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#eee",
+    borderBottomColor: AppTheme.colors.outline,
   },
   left: { flexDirection: "row", alignItems: "center", flex: 1 },
   right: { flexDirection: "row", alignItems: "center" },
-
   swatch: {
     width: 24,
     height: 24,
     borderRadius: 6,
     marginRight: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(0,0,0,0.1)",
+    borderColor: AppTheme.colors.outlineVariant,
   },
   tagTextBox: { flexDirection: "column" },
-  tagName: { fontSize: 16, fontWeight: "600", color: "#111" },
-  tagColorCode: { fontSize: 12, color: "#6c757d" },
-
-  // Використовуємо червоний з теми (тон близький до #FF6B6B)
-  errorText: { color: "#FF6B6B", marginTop: -4, marginBottom: 6 },
-
-  sectionLabel: { fontWeight: "600", marginBottom: 6, marginTop: 4 },
+  tagName: { fontSize: 16, fontWeight: "600", color: AppTheme.colors.onSurface },
+  tagColorCode: {
+    fontSize: 12,
+    color: AppTheme.colors.onSurfaceVariant,
+  },
+  errorText: {
+    color: AppTheme.colors.error,
+    marginTop: -4,
+    marginBottom: 6,
+  },
+  sectionLabel: {
+    fontWeight: "600",
+    marginBottom: 6,
+    marginTop: 4,
+    color: AppTheme.colors.onSurface,
+  },
   palette: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -373,11 +342,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "transparent",
   },
-  colorDotSelected: {
-    borderColor: "#333",
-  },
+  colorDotSelected: { borderColor: AppTheme.colors.onSurface },
   previewBox: { marginTop: 10, marginBottom: 4 },
-
   emptyBox: { paddingVertical: 24, alignItems: "center" },
-  emptyText: { color: "#666" },
+  emptyText: { color: AppTheme.colors.onSurfaceVariant },
 });

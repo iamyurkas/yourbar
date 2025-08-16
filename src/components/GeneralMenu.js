@@ -20,6 +20,7 @@ import FavoritesRatingModal from "./FavoritesRatingModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { exportAllData, importAllData } from "../storage/backupStorage";
+import { useTheme } from "react-native-paper";
 
 import {
   getUseMetric,
@@ -40,6 +41,61 @@ const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 
 export default function GeneralMenu({ visible, onClose }) {
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
+
+  const theme = useTheme();
+  const styles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        overlay: {
+          flex: 1,
+          backgroundColor: theme.colors.backdrop,
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+        },
+        menu: {
+          height: "100%",
+          backgroundColor: theme.colors.background,
+          paddingTop: 48,
+          paddingHorizontal: 16,
+        },
+        title: {
+          fontSize: 20,
+          fontWeight: "600",
+          marginBottom: 16,
+        },
+        itemRow: {
+          flexDirection: "row",
+          alignItems: "flex-start",
+          paddingVertical: 12,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: theme.colors.outline,
+        },
+        linkRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          paddingVertical: 14,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: theme.colors.outline,
+        },
+        itemText: {
+          flex: 1,
+          marginLeft: 8,
+        },
+        itemTitle: {
+          fontSize: 16,
+          color: theme.colors.onSurface,
+          fontWeight: "500",
+        },
+        itemSub: {
+          fontSize: 12,
+          color: theme.colors.onSurfaceVariant,
+          marginTop: 2,
+        },
+        linkIcon: { marginRight: 8 },
+        chevron: { marginLeft: 8 },
+      }),
+    [theme]
+  );
 
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [useMetric, setUseMetric] = useState(true);
@@ -256,7 +312,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="star"
                   size={22}
-                  color="#4DABF7"
+                  color={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
@@ -273,7 +329,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="chevron-right"
                   size={24}
-                  color="#999"
+                  color={theme.colors.onSurfaceVariant}
                   style={styles.chevron}
                 />
               </TouchableOpacity>
@@ -282,7 +338,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <IngredientIcon
                   width={22}
                   height={22}
-                  fill="#4DABF7"
+                  fill={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
@@ -292,7 +348,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="chevron-right"
                   size={24}
-                  color="#999"
+                  color={theme.colors.onSurfaceVariant}
                   style={styles.chevron}
                 />
               </TouchableOpacity>
@@ -301,7 +357,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="local-bar"
                   size={22}
-                  color="#4DABF7"
+                  color={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
@@ -311,7 +367,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="chevron-right"
                   size={24}
-                  color="#999"
+                  color={theme.colors.onSurfaceVariant}
                   style={styles.chevron}
                 />
               </TouchableOpacity>
@@ -320,7 +376,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="file-download"
                   size={22}
-                  color="#4DABF7"
+                  color={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
@@ -330,7 +386,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="chevron-right"
                   size={24}
-                  color="#999"
+                  color={theme.colors.onSurfaceVariant}
                   style={styles.chevron}
                 />
               </TouchableOpacity>
@@ -339,7 +395,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="file-upload"
                   size={22}
-                  color="#4DABF7"
+                  color={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
@@ -349,7 +405,7 @@ export default function GeneralMenu({ visible, onClose }) {
                 <MaterialIcons
                   name="chevron-right"
                   size={24}
-                  color="#999"
+                  color={theme.colors.onSurfaceVariant}
                   style={styles.chevron}
                 />
               </TouchableOpacity>
@@ -384,57 +440,3 @@ export default function GeneralMenu({ visible, onClose }) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-  },
-  menu: {
-    height: "100%",
-    backgroundColor: "#fff",
-    paddingTop: 48,
-    paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  itemRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#eee",
-  },
-  linkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#eee",
-  },
-  itemText: {
-    flex: 1,
-    marginLeft: 8,
-  },
-  itemTitle: {
-    fontSize: 16,
-    color: "#111",
-    fontWeight: "500",
-  },
-  itemSub: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 2,
-  },
-  linkIcon: {
-    marginRight: 8,
-  },
-  chevron: {
-    marginLeft: 8,
-  },
-});

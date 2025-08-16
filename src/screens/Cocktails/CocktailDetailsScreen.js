@@ -461,7 +461,9 @@ export default function CocktailDetailsScreen() {
                   key={tag.id}
                   style={[styles.tag, { backgroundColor: tag.color }]}
                 >
-                  <Text style={styles.tagText}>{tag.name}</Text>
+                  <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
+                    {tag.name}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -561,7 +563,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginBottom: 6,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
   section: { marginTop: 16 },
   sectionLabel: { fontWeight: "bold", marginBottom: 8 },
   sectionText: { lineHeight: 20 },

@@ -17,7 +17,7 @@ export default function TopTabBar({ navigation, theme }) {
           <Pressable
             key={route.key}
             onPress={() => navigation.navigate(route.name)}
-            android_ripple={{ color: "rgba(0,0,0,0.1)" }}
+            android_ripple={{ color: theme.colors.surfaceVariant }}
             style={styles.tab}
           >
             <Text style={{ color }}>{label}</Text>

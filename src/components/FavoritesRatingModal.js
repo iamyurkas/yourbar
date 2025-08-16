@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "react-native-paper";
 
 export default function FavoritesRatingModal({
   visible,
@@ -15,6 +16,34 @@ export default function FavoritesRatingModal({
   onSelect,
   onClose,
 }) {
+  const theme = useTheme();
+  const styles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        overlay: {
+          flex: 1,
+          backgroundColor: theme.colors.backdrop,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        box: {
+          padding: 24,
+          borderRadius: 8,
+          backgroundColor: theme.colors.background,
+          width: 280,
+          alignItems: "center",
+        },
+        title: { fontSize: 18, fontWeight: "600", marginBottom: 8 },
+        subtitle: {
+          fontSize: 14,
+          color: theme.colors.onSurfaceVariant,
+          textAlign: "center",
+          marginBottom: 16,
+        },
+        starsRow: { flexDirection: "row" },
+      }),
+    [theme]
+  );
   return (
     <Modal
       transparent
@@ -37,7 +66,7 @@ export default function FavoritesRatingModal({
                 <MaterialIcons
                   name={value <= rating ? "star" : "star-border"}
                   size={32}
-                  color="#4DABF7"
+                  color={theme.colors.primary}
                 />
               </TouchableOpacity>
             ))}
@@ -47,22 +76,3 @@ export default function FavoritesRatingModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  box: {
-    padding: 24,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    width: 280,
-    alignItems: "center",
-  },
-  title: { fontSize: 18, fontWeight: "600", marginBottom: 8 },
-  subtitle: { fontSize: 14, color: "#555", textAlign: "center", marginBottom: 16 },
-  starsRow: { flexDirection: "row" },
-});
