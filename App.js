@@ -62,7 +62,7 @@ function ShakerStackScreen() {
       <ShakerStack.Screen
         name="ShakerResults"
         component={ShakerResultsScreen}
-        options={{ title: "Available Cocktails" }}
+        options={{ headerShown: false }}
       />
     </ShakerStack.Navigator>
   );
