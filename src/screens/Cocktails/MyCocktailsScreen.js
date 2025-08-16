@@ -13,7 +13,8 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
+import { getAllIngredients } from "../../storage/ingredientsStorage";
+import useBatchedIngredientSaver from "../../hooks/useBatchedIngredientSaver";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -44,6 +45,7 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { queueIngredientUpdate } = useBatchedIngredientSaver();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "My");
@@ -232,7 +234,7 @@ export default function MyCocktailsScreen() {
       const item = next[idx];
       const updated = { ...item, inShoppingList: !item.inShoppingList };
       next[idx] = updated;
-      saveIngredient(updated).catch(() => {});
+      queueIngredientUpdate(updated);
       setGlobalIngredients((list) =>
         list.map((i) =>
           String(i.id) === String(id)
@@ -242,7 +244,7 @@ export default function MyCocktailsScreen() {
       );
       return next;
     });
-  }, [setGlobalIngredients]);
+  }, [queueIngredientUpdate, setGlobalIngredients]);
 
   const renderItem = useCallback(
     ({ item }) => {

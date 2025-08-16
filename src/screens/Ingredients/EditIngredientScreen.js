@@ -37,11 +37,11 @@ import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
-  saveIngredient,
   deleteIngredient,
   getIngredientById,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
+import useBatchedIngredientSaver from "../../hooks/useBatchedIngredientSaver";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
@@ -127,6 +127,8 @@ export default function EditIngredientScreen() {
   const isFocused = useIsFocused();
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
+  const { queueIngredientUpdate, flushPendingUpdates } =
+    useBatchedIngredientSaver();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -439,7 +441,8 @@ export default function EditIngredientScreen() {
       }
 
       // асинхронно зберегти без важкого перезавантаження
-      saveIngredient(updated).catch(() => {});
+      queueIngredientUpdate(updated);
+      flushPendingUpdates();
 
       return updated;
     },
@@ -455,6 +458,8 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
+      queueIngredientUpdate,
+      flushPendingUpdates,
     ]
   );
 

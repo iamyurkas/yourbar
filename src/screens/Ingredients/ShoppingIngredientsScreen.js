@@ -10,7 +10,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveIngredient } from "../../storage/ingredientsStorage";
+import useBatchedIngredientSaver from "../../hooks/useBatchedIngredientSaver";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -22,6 +22,7 @@ export default function ShoppingIngredientsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
+  const { queueIngredientUpdate } = useBatchedIngredientSaver();
 
   const { ingredients, loading, setIngredients } = useIngredientsData();
   const [search, setSearch] = useState("");
@@ -74,10 +75,10 @@ export default function ShoppingIngredientsScreen() {
       const item = next[idx];
       const updated = { ...item, inShoppingList: false };
       next[idx] = updated;
-      saveIngredient(updated).catch(() => {});
+      queueIngredientUpdate(updated);
       return next;
     });
-  }, []);
+  }, [queueIngredientUpdate]);
 
   const onItemPress = useCallback(
     (id) => {

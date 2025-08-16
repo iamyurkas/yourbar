@@ -27,8 +27,8 @@ import {
 import {
   getIngredientById,
   getAllIngredients,
-  saveIngredient,
 } from "../../storage/ingredientsStorage";
+import useBatchedIngredientSaver from "../../hooks/useBatchedIngredientSaver";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -109,6 +109,8 @@ export default function IngredientDetailsScreen() {
   const { id, fromCocktailId, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
+  const { queueIngredientUpdate, flushPendingUpdates } =
+    useBatchedIngredientSaver();
 
   const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -350,19 +352,19 @@ export default function IngredientDetailsScreen() {
     setIngredient((prev) => {
       if (!prev) return prev;
       const next = { ...prev, inBar: !prev.inBar };
-      saveIngredient(next);
+      queueIngredientUpdate(next);
       setIngredients((list) =>
         list.map((i) => (i.id === next.id ? { ...i, inBar: next.inBar } : i))
       );
       return next;
     });
-  }, [setIngredients]);
+  }, [queueIngredientUpdate, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
       if (!prev) return prev;
       const next = { ...prev, inShoppingList: !prev.inShoppingList };
-      saveIngredient(next);
+      queueIngredientUpdate(next);
       setIngredients((list) =>
         list.map((i) =>
           i.id === next.id ? { ...i, inShoppingList: next.inShoppingList } : i
@@ -370,7 +372,7 @@ export default function IngredientDetailsScreen() {
       );
       return next;
     });
-  }, [setIngredients]);
+  }, [queueIngredientUpdate, setIngredients]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -620,7 +622,8 @@ export default function IngredientDetailsScreen() {
         onConfirm={async () => {
           if (!ingredient) return;
           const updated = { ...ingredient, baseIngredientId: null };
-          await saveIngredient(updated);
+          queueIngredientUpdate(updated);
+          await flushPendingUpdates();
           setIngredient(updated);
           setIngredients((list) =>
             list.map((i) => (i.id === updated.id ? updated : i))
@@ -643,7 +646,8 @@ export default function IngredientDetailsScreen() {
           const child = unlinkChildTarget;
           if (!child) return;
           const updatedChild = { ...child, baseIngredientId: null };
-          await saveIngredient(updatedChild);
+          queueIngredientUpdate(updatedChild);
+          await flushPendingUpdates();
           setIngredients((list) =>
             list.map((i) => (i.id === updatedChild.id ? updatedChild : i))
           );
