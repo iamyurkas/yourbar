@@ -220,15 +220,12 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
           })}
         </View>
 
-        <Text style={[styles.sectionLabel, { color: theme.colors.onSurface }]}>Or enter hex code</Text>
         <TextInput
+          label="HEX (#RRGGBB or #RRGGBBAA)"
           mode="outlined"
           value={color}
           onChangeText={setColor}
           error={!isValidHex}
-          style={{ marginBottom: 8 }}
-          autoCapitalize="none"
-          autoCorrect={false}
           theme={{
             colors: {
               error: theme.colors.error,
@@ -236,6 +233,9 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
             },
           }}
         />
+        {!isValidHex ? (
+          <Text style={[styles.errorText, { color: theme.colors.error }]}>Enter a valid hex color</Text>
+        ) : null}
 
         <Button mode="contained" onPress={onSave} disabled={!canSave} style={{ borderRadius: 8 }}>
           {editingId ? "Save" : "Add"}
@@ -261,56 +261,45 @@ export default function CocktailTagsModal({ visible, onClose, autoAdd = false })
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
+    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
-    marginTop: TOP_OFFSET,
   },
-  title: { fontSize: 18, fontWeight: "700" },
-  subtitle: { marginBottom: 16 },
+  title: { fontSize: 20, fontWeight: "700", marginBottom: 4 },
+  subtitle: { marginBottom: 12 },
   addBtn: { marginVertical: 12, width: "100%", borderRadius: 8 },
   emptyBox: { paddingVertical: 24, alignItems: "center" },
-  emptyText: { fontStyle: "italic" },
+  emptyText: {},
   row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  left: { flexDirection: "row", alignItems: "center" },
+  left: { flexDirection: "row", alignItems: "center", flex: 1 },
   right: { flexDirection: "row", alignItems: "center" },
   swatch: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     borderRadius: 6,
-    borderWidth: 1,
-    marginRight: 12,
+    marginRight: 10,
+    borderWidth: StyleSheet.hairlineWidth,
   },
-  tagTextBox: { justifyContent: "center" },
-  tagName: { fontWeight: "600" },
+  tagTextBox: { flexDirection: "column" },
+  tagName: { fontSize: 16, fontWeight: "600" },
   tagColorCode: { fontSize: 12 },
   dialog: {
     marginHorizontal: 24,
+    marginTop: TOP_OFFSET,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
-    marginTop: TOP_OFFSET,
   },
-  dialogTitle: { fontSize: 16, fontWeight: "700", marginBottom: 12 },
-  errorText: { marginBottom: 8 },
-  sectionLabel: { marginTop: 8, marginBottom: 4, fontWeight: "500" },
-  palette: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 8,
-  },
-  colorDot: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    margin: 4,
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
+  dialogTitle: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
+  errorText: { marginTop: -4, marginBottom: 6 },
+  sectionLabel: { fontWeight: "600", marginBottom: 6, marginTop: 4 },
+  palette: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 8 },
+  colorDot: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: "transparent" },
 });
