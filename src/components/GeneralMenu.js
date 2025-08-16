@@ -20,6 +20,7 @@ import FavoritesRatingModal from "./FavoritesRatingModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { exportAllData, importAllData } from "../storage/backupStorage";
+import * as Sharing from "expo-sharing";
 import { useTheme } from "react-native-paper";
 
 import {
@@ -143,7 +144,14 @@ export default function GeneralMenu({ visible, onClose }) {
   const handleExport = async () => {
     onClose?.();
     try {
-      await exportAllData();
+      const uri = await exportAllData();
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "application/zip",
+          dialogTitle: "Share yourbar backup",
+          UTI: "public.zip-archive",
+        });
+      }
       setDialog({ visible: true, title: "Export", message: "Data exported successfully" });
     } catch (e) {
       setDialog({ visible: true, title: "Export", message: "Failed to export data" });

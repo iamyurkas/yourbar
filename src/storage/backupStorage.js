@@ -1,6 +1,5 @@
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
-import * as Sharing from 'expo-sharing';
 import JSZip from 'jszip';
 
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
@@ -42,8 +41,8 @@ function dirName(path) {
 }
 
 /**
- * Export all ingredients and cocktails with photos into a ZIP archive and open
- * share dialog. Returns the URI of the created archive.
+ * Export all ingredients and cocktails with photos into a ZIP archive.
+ * Returns the URI of the created archive.
  */
 export async function exportAllData() {
   const [ingredients, cocktails] = await Promise.all([
@@ -89,16 +88,6 @@ export async function exportAllData() {
     encoding: FileSystem.EncodingType.Base64,
   });
 
-  try {
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(fileUri, {
-        mimeType: 'application/zip',
-        dialogTitle: 'Share yourbar backup',
-      });
-    }
-  } catch (e) {
-    console.warn('Sharing failed', e);
-  }
   return fileUri;
 }
 
