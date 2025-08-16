@@ -46,6 +46,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -124,8 +125,8 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { refresh: refreshIngredientsData, setIngredients: setGlobalIngredients } =
-    useIngredientsData();
+  const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { setUsageMap } = useIngredientUsage();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -387,9 +388,18 @@ export default function EditIngredientScreen() {
         baseIngredientId: baseIngredientId ?? null,
       };
       // оптимістично оновити глобальний список
-      setGlobalIngredients((list) =>
-        list.map((i) => (i.id === updated.id ? { ...i, ...updated } : i))
-      );
+      setGlobalIngredients((list) => {
+        const next = list
+          .map((i) =>
+            i.id === updated.id
+              ? { ...i, ...updated, searchName: updated.name.toLowerCase() }
+              : i
+          )
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+          );
+        return next;
+      });
 
       // зберегти локально baseline і зняти dirty
       initialHashRef.current = serialize();
@@ -428,10 +438,8 @@ export default function EditIngredientScreen() {
         setIngredient(updated);
       }
 
-      // асинхронно зберегти та оновити дані
-      saveIngredient(updated)
-        .then(() => refreshIngredientsData())
-        .catch(() => {});
+      // асинхронно зберегти без важкого перезавантаження
+      saveIngredient(updated).catch(() => {});
 
       return updated;
     },
@@ -447,7 +455,6 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
-      refreshIngredientsData,
     ]
   );
 
@@ -791,7 +798,14 @@ export default function EditIngredientScreen() {
           if (!ingredient) return;
           skipPromptRef.current = true;
           await deleteIngredient(ingredient.id);
-          await refreshIngredientsData();
+          setGlobalIngredients((list) =>
+            list.filter((i) => i.id !== ingredient.id)
+          );
+          setUsageMap((prev) => {
+            const next = { ...prev };
+            delete next[ingredient.id];
+            return next;
+          });
           navigation.popToTop();
           setConfirmDelete(false);
         }}

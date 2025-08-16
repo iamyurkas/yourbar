@@ -41,6 +41,7 @@ import {
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
 
@@ -104,7 +105,8 @@ export default function AddIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { refresh: refreshIngredientsData } = useIngredientsData();
+  const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { setUsageMap } = useIngredientUsage();
 
   // read incoming params
   const initialNameParam = route.params?.initialName || "";
@@ -322,10 +324,23 @@ export default function AddIngredientScreen() {
       tags,
       baseIngredientId: baseIngredientId ?? null,
       createdAt: Date.now(),
+      inBar: false,
     };
 
-    await addIngredient(newIng);
-    await refreshIngredientsData();
+    addIngredient(newIng).catch(() => {});
+    const enriched = {
+      ...newIng,
+      searchName: newIng.name.toLowerCase(),
+      usageCount: 0,
+      singleCocktailName: null,
+    };
+    setGlobalIngredients((list) => {
+      const next = [...list, enriched].sort((a, b) =>
+        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+      );
+      return next;
+    });
+    setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
 
     const detailParams = {
       id: newIng.id,
@@ -363,8 +378,9 @@ export default function AddIngredientScreen() {
     fromCocktailFlow,
     returnTo,
     targetLocalId,
-    refreshIngredientsData,
     addIngredient,
+    setGlobalIngredients,
+    setUsageMap,
   ]);
 
   const openMenu = useCallback(() => {
