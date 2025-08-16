@@ -7,6 +7,13 @@ export async function getAllIngredients() {
   return json ? JSON.parse(json) : [];
 }
 
+export function buildIndex(list) {
+  return list.reduce((acc, item) => {
+    acc[item.id] = item;
+    return acc;
+  }, {});
+}
+
 export async function saveAllIngredients(ingredients) {
   await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
 }
@@ -41,9 +48,8 @@ export async function addIngredient(ingredient) {
   return ingredient.id;
 }
 
-export async function getIngredientById(id) {
-  const all = await getAllIngredients();
-  return all.find((i) => i.id === id);
+export function getIngredientById(id, index) {
+  return index ? index[id] : null;
 }
 
 export async function deleteIngredient(id) {

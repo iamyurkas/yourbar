@@ -39,7 +39,6 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   saveIngredient,
   deleteIngredient,
-  getIngredientById,
   getAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -126,7 +125,7 @@ export default function EditIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
-  const { setUsageMap } = useIngredientUsage();
+  const { setUsageMap, ingredientsById } = useIngredientUsage();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -271,12 +270,9 @@ export default function EditIngredientScreen() {
 
     (async () => {
       try {
-        const [, data] = await Promise.all([
-          loadAvailableTags(),
-          getIngredientById(currentId),
-        ]);
+        await loadAvailableTags();
         if (cancelled || !isMountedRef.current) return;
-
+        const data = ingredientsById[currentId];
         if (data) {
           setIngredient(data);
           setName(data.name || "");
@@ -303,7 +299,7 @@ export default function EditIngredientScreen() {
     return () => {
       cancelled = true;
     };
-  }, [isFocused, currentId, loadAvailableTags]);
+  }, [isFocused, currentId, loadAvailableTags, ingredientsById]);
 
   // lazy-load bases (exclude current ingredient)
   const loadBases = useCallback(async () => {
