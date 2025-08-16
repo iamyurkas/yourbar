@@ -28,7 +28,7 @@ import {
 import {
   getIngredientById,
   getAllIngredients,
-  saveIngredient,
+  saveAllIngredients,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
 
@@ -360,12 +360,12 @@ export default function IngredientDetailsScreen() {
           id: updated.id,
           inBar: updated.inBar,
         });
-        saveIngredient(nextList);
+        saveAllIngredients(nextList);
         return nextList;
       });
       return updated;
     });
-  }, [setIngredients]);
+  }, [setIngredients, saveAllIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
@@ -379,12 +379,12 @@ export default function IngredientDetailsScreen() {
           id: updated.id,
           inShoppingList: updated.inShoppingList,
         });
-        saveIngredient(nextList);
+        saveAllIngredients(nextList);
         return nextList;
       });
       return updated;
     });
-  }, [setIngredients]);
+  }, [setIngredients, saveAllIngredients]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -639,7 +639,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updated);
             return nextList;
           });
-          await saveIngredient(nextList);
+          await saveAllIngredients(nextList);
           setIngredient(updated);
           setBaseIngredient(null);
           setUnlinkBaseVisible(false);
@@ -664,7 +664,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updatedChild);
             return nextList;
           });
-          await saveIngredient(nextList);
+          await saveAllIngredients(nextList);
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           setUnlinkChildTarget(null);
         }}

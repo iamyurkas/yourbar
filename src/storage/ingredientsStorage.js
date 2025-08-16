@@ -30,10 +30,9 @@ export async function saveIngredient(updatedList) {
   await saveAllIngredients(updatedList);
 }
 
-export async function addIngredient(ingredient) {
-  const current = await getAllIngredients();
-  const newList = [
-    ...current,
+export function addIngredient(list, ingredient) {
+  return [
+    ...list,
     {
       ...ingredient,
       inBar: false,
@@ -41,21 +40,12 @@ export async function addIngredient(ingredient) {
       baseIngredientId: ingredient.baseIngredientId ?? null,
     },
   ];
-  await saveAllIngredients(newList);
-  return ingredient.id;
 }
 
 export function getIngredientById(id, index) {
   return index ? index[id] : null;
 }
 
-export async function deleteIngredient(id) {
-  try {
-    const json = await AsyncStorage.getItem(INGREDIENTS_KEY);
-    const list = json ? JSON.parse(json) : [];
-    const updated = list.filter((item) => item.id !== id);
-    await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(updated));
-  } catch (e) {
-    console.error("Failed to delete ingredient", e);
-  }
+export function deleteIngredient(list, id) {
+  return list.filter((item) => item.id !== id);
 }

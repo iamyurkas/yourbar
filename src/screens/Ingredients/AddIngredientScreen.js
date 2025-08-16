@@ -39,6 +39,7 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   addIngredient,
   getAllIngredients,
+  saveAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
@@ -326,20 +327,21 @@ export default function AddIngredientScreen() {
       createdAt: Date.now(),
       inBar: false,
     };
-
-    addIngredient(newIng).catch(() => {});
     const enriched = {
       ...newIng,
       searchName: newIng.name.toLowerCase(),
       usageCount: 0,
       singleCocktailName: null,
     };
+    let updatedList;
     setGlobalIngredients((list) => {
-      const next = [...list, enriched].sort((a, b) =>
+      const next = addIngredient(list, enriched).sort((a, b) =>
         a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
       );
+      updatedList = next;
       return next;
     });
+    await saveAllIngredients(updatedList).catch(() => {});
     setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
 
     const detailParams = {
@@ -381,6 +383,7 @@ export default function AddIngredientScreen() {
     addIngredient,
     setGlobalIngredients,
     setUsageMap,
+    saveAllIngredients,
   ]);
 
   const openMenu = useCallback(() => {

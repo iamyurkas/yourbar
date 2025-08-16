@@ -37,10 +37,10 @@ import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
-  saveIngredient,
   deleteIngredient,
   getAllIngredients,
   updateIngredientById,
+  saveAllIngredients,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -392,7 +392,7 @@ export default function EditIngredientScreen() {
         }).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );
-        saveIngredient(next).catch(() => {});
+        saveAllIngredients(next).catch(() => {});
         return next;
       });
 
@@ -447,6 +447,7 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
+      saveAllIngredients,
     ]
   );
 
@@ -789,15 +790,17 @@ export default function EditIngredientScreen() {
         onConfirm={async () => {
           if (!ingredient) return;
           skipPromptRef.current = true;
-          await deleteIngredient(ingredient.id);
-          setGlobalIngredients((list) =>
-            list.filter((i) => i.id !== ingredient.id)
-          );
+          let updatedList;
+          setGlobalIngredients((list) => {
+            updatedList = deleteIngredient(list, ingredient.id);
+            return updatedList;
+          });
           setUsageMap((prev) => {
             const next = { ...prev };
             delete next[ingredient.id];
             return next;
           });
+          await saveAllIngredients(updatedList);
           navigation.popToTop();
           setConfirmDelete(false);
         }}
