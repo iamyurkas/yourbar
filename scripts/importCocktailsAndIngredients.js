@@ -3,7 +3,8 @@ import RAW_DATA from "../assets/data/open-cocktails.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
-import * as FileSystem from "expo-file-system";
+import { Image } from "react-native";
+import { ASSET_MAP } from "./assetMap";
 
 const INGREDIENTS_KEY = "ingredients";
 const COCKTAILS_KEY = "cocktails_v1";
@@ -28,9 +29,10 @@ function resolvePhoto(path) {
   if (!path) return null;
   const str = String(path);
   if (/^(https?:|file:)/.test(str)) return str;
-  if (str.startsWith("assets/")) {
-    const base = FileSystem.bundleDirectory ?? "";
-    return base + str;
+  const mod = ASSET_MAP[str];
+  if (mod) {
+    const resolved = Image.resolveAssetSource(mod);
+    return resolved?.uri ?? null;
   }
   console.warn("Missing asset", str);
   return null;
