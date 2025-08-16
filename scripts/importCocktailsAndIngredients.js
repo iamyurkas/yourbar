@@ -30,7 +30,11 @@ function normalizeIngredients(raw) {
     id: `${now}-${idx}`,
     name: String(it?.name ?? "").trim(),
     description: String(it?.description ?? "").trim(),
-    photoUri: it?.image ? String(it.image) : null,
+    photoUri: it?.photoUri
+      ? String(it.photoUri)
+      : it?.image
+      ? String(it.image)
+      : null,
     tags: toIngredientTags(it?.tags),
     baseIngredientId: null,
   }));
@@ -48,6 +52,11 @@ function normalizeCocktails(raw, ingNameToId) {
   return raw.map((c, idx) => ({
     id: now + idx,
     name: String(c?.name ?? "").trim(),
+    photoUri: c?.photoUri
+      ? String(c.photoUri)
+      : c?.image
+      ? String(c.image)
+      : null,
     glassId: c?.glassware ? String(c.glassware) : null,
     description: String(c?.description ?? "").trim(),
     instructions: Array.isArray(c?.instructions)

@@ -25,7 +25,11 @@ function normalize(raw) {
     id: `${now}-${idx}`, // стабільний id у межах імпорту
     name: String(it?.name ?? "").trim(),
     description: String(it?.description ?? "").trim(), // дефолт
-    photoUri: it?.image ? String(it.image) : null,
+    photoUri: it?.photoUri
+      ? String(it.photoUri)
+      : it?.image
+      ? String(it.image)
+      : null,
     tags: toTagObjects(it?.tags), // масив ОБ'ЄКТІВ тегів
     baseIngredientId: null, // дефолт
   }));
