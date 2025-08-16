@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
-  photo: { width: "100%", height: 200, marginTop: 12 },
+  photo: { width: 100, height: 100, marginTop: 12, alignSelf: "center" },
   title: {
     fontSize: 22,
     fontWeight: "bold",

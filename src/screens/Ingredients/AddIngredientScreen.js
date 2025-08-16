@@ -56,7 +56,7 @@ const useDebounced = (value, delay = 300) => {
   return v;
 };
 
-const IMAGE_SIZE = 120;
+const IMAGE_SIZE = 100;
 const MENU_ROW_HEIGHT = 56;
 const RIPPLE = { color: "#E3F2FD" };
 
