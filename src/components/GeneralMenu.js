@@ -198,7 +198,8 @@ export default function GeneralMenu({ visible, onClose }) {
             style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
             onStartShouldSetResponder={() => true}
           >
-            <ScrollView>
+            <ScrollView
+            style={{ marginTop:-40 }}>
               <Text style={styles.title}>Settings</Text>
 
               <View style={styles.itemRow}>
