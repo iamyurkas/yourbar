@@ -397,16 +397,10 @@ export default function EditIngredientScreen() {
 
       if (!stay) {
         skipPromptRef.current = true;
-        const state = navigation.getState?.();
-        const prev = state?.routes?.[state.index - 1];
-        if (prev?.name === "IngredientDetails") {
-          navigation.navigate({
-            name: "IngredientDetails",
-            params: { id: updated.id, initialIngredient: updated },
-            merge: true,
-          });
-        }
-        navigation.goBack();
+        navigation.replace("IngredientDetails", {
+          id: updated.id,
+          initialIngredient: updated,
+        });
       } else {
         setIngredient(updated);
       }

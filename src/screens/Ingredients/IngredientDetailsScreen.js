@@ -202,7 +202,7 @@ export default function IngredientDetailsScreen() {
       getAllCocktails(),
       getIgnoreGarnish(),
     ]);
-    setIngredient(loaded || null);
+    setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {
       setBrandedChildren([]);
