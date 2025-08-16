@@ -134,30 +134,8 @@ export default function IngredientDetailsScreen() {
   );
 
   const handleGoBack = useCallback(() => {
-    const returnTo = route.params?.returnTo;
-    if (returnTo) {
-      navigation.navigate("Cocktails", {
-        screen: returnTo,
-        params: {
-          createdIngredient: route.params?.createdIngredient,
-          targetLocalId: route.params?.targetLocalId,
-        },
-        merge: true,
-      });
-    } else if (fromCocktailId) {
-      navigation.goBack();
-      navigation.navigate("Cocktails", {
-        screen: "CocktailDetails",
-        params: { id: fromCocktailId },
-      });
-    } else navigation.goBack();
-  }, [
-    navigation,
-    fromCocktailId,
-    route.params?.returnTo,
-    route.params?.createdIngredient,
-    route.params?.targetLocalId,
-  ]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditIngredient", {
@@ -208,14 +186,38 @@ export default function IngredientDetailsScreen() {
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
-    if (!fromCocktailId) return;
-    const unsub = navigation.addListener("beforeRemove", (e) => {
+    const returnTo = route.params?.returnTo;
+    if (!fromCocktailId && !returnTo) return;
+    const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
-      handleGoBack();
-    });
-    return unsub;
-  }, [navigation, handleGoBack, fromCocktailId]);
+      sub();
+      navigation.dispatch(e.data.action);
+      if (returnTo) {
+        navigation.navigate("Cocktails", {
+          screen: returnTo,
+          params: {
+            createdIngredient: route.params?.createdIngredient,
+            targetLocalId: route.params?.targetLocalId,
+          },
+          merge: true,
+        });
+      } else {
+        navigation.navigate("Cocktails", {
+          screen: "CocktailDetails",
+          params: { id: fromCocktailId },
+        });
+      }
+    };
+    const sub = navigation.addListener("beforeRemove", beforeRemove);
+    return sub;
+  }, [
+    navigation,
+    fromCocktailId,
+    route.params?.returnTo,
+    route.params?.createdIngredient,
+    route.params?.targetLocalId,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
