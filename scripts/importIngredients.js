@@ -2,6 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RAW_INGREDIENTS from "../assets/data/ingredients.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
+import { Image } from "react-native";
 
 const INGREDIENTS_KEY = "ingredients";
 const IMPORT_FLAG_KEY = "ingredients_imported_flag";
@@ -19,17 +20,25 @@ function toTagObjects(tagIds) {
   return tagObj ? [tagObj] : [];
 }
 
+function resolvePhoto(path) {
+  if (!path) return null;
+  const str = String(path);
+  if (/^(https?:|file:)/.test(str)) return str;
+  try {
+    return Image.resolveAssetSource(require("../" + str)).uri;
+  } catch (e) {
+    console.warn("Missing asset", str);
+    return null;
+  }
+}
+
 function normalize(raw) {
   const now = Date.now();
   return raw.map((it, idx) => ({
     id: `${now}-${idx}`, // стабільний id у межах імпорту
     name: String(it?.name ?? "").trim(),
     description: String(it?.description ?? "").trim(), // дефолт
-    photoUri: it?.photoUri
-      ? String(it.photoUri)
-      : it?.image
-      ? String(it.image)
-      : null,
+    photoUri: resolvePhoto(it?.photoUri || it?.image),
     tags: toTagObjects(it?.tags), // масив ОБ'ЄКТІВ тегів
     baseIngredientId: null, // дефолт
   }));

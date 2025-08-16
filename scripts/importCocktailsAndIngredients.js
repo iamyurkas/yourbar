@@ -3,6 +3,7 @@ import RAW_DATA from "../assets/data/open-cocktails.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
+import { Image } from "react-native";
 
 const INGREDIENTS_KEY = "ingredients";
 const COCKTAILS_KEY = "cocktails_v1";
@@ -23,17 +24,25 @@ function mapTags(tags, map) {
     .filter(Boolean);
 }
 
+function resolvePhoto(path) {
+  if (!path) return null;
+  const str = String(path);
+  if (/^(https?:|file:)/.test(str)) return str;
+  try {
+    return Image.resolveAssetSource(require("../" + str)).uri;
+  } catch (e) {
+    console.warn("Missing asset", str);
+    return null;
+  }
+}
+
 function sanitizeIngredients(raw) {
   return Array.isArray(raw)
     ? raw.map((it) => ({
         id: String(it?.id ?? ""),
         name: String(it?.name ?? "").trim(),
         description: String(it?.description ?? "").trim(),
-        photoUri: it?.photoUri
-          ? String(it.photoUri)
-          : it?.image
-          ? String(it.image)
-          : null,
+        photoUri: resolvePhoto(it?.photoUri || it?.image),
         tags: mapTags(it?.tags, ING_TAG_BY_ID),
         baseIngredientId: it?.baseIngredientId ?? null,
         usageCount: Number(it?.usageCount ?? 0),
@@ -47,11 +56,7 @@ function sanitizeCocktails(raw) {
   return Array.isArray(raw)
     ? raw.map((c) => ({
         ...c,
-        photoUri: c?.photoUri
-          ? String(c.photoUri)
-          : c?.image
-          ? String(c.image)
-          : null,
+        photoUri: resolvePhoto(c?.photoUri || c?.image),
         tags: mapTags(c?.tags, COCKTAIL_TAG_BY_ID),
         ingredients: Array.isArray(c?.ingredients) ? c.ingredients : [],
       }))
