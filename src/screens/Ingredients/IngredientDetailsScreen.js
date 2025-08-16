@@ -109,7 +109,7 @@ const RelationRow = memo(function RelationRow({
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id, fromCocktailId, initialIngredient } = route.params;
+  const { id, fromCocktailId, initialIngredient, fromShaker } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
   const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
@@ -218,6 +218,19 @@ export default function IngredientDetailsScreen() {
     route.params?.createdIngredient,
     route.params?.targetLocalId,
   ]);
+
+  useEffect(() => {
+    if (!fromShaker) return;
+    const beforeRemove = (e) => {
+      if (e.data.action.type === "NAVIGATE") return;
+      e.preventDefault();
+      sub();
+      navigation.dispatch(e.data.action);
+      navigation.navigate("Shaker");
+    };
+    const sub = navigation.addListener("beforeRemove", beforeRemove);
+    return sub;
+  }, [navigation, fromShaker]);
 
   useFocusEffect(
     useCallback(() => {

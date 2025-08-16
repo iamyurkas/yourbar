@@ -170,7 +170,7 @@ export default function ShakerScreen() {
                       onDetails={(id) =>
                         navigation.navigate("Ingredients", {
                           screen: "IngredientDetails",
-                          params: { id },
+                          params: { id, fromShaker: true },
                         })
                       }
                       highlightColor={
