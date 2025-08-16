@@ -401,13 +401,9 @@ const IngredientRow = memo(function IngredientRow({
         },
       ]}
     >
-      {/* Header: index + reorder + remove */}
+      {/* Header: reorder controls + index + remove */}
       <View style={styles.ingHeader}>
-        <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
-          {index + 1}.
-        </Text>
-
-        <View style={styles.headerControls}>
+        <View style={styles.headerLeft}>
           {canRemove ? (
             <>
               {/* Move up */}
@@ -443,25 +439,30 @@ const IngredientRow = memo(function IngredientRow({
                   color={theme.colors.onSurfaceVariant}
                 />
               </Pressable>
-
-              {/* Remove */}
-              <Pressable
-                onPress={onRemove}
-                android_ripple={{
-                  color: withAlpha(theme.colors.error, 0.12),
-                  borderless: true,
-                }}
-                style={styles.removeBtn}
-              >
-                <MaterialIcons
-                  name="delete-outline"
-                  size={20}
-                  color={theme.colors.error}
-                />
-              </Pressable>
             </>
           ) : null}
+
+          <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
+            {index + 1}.
+          </Text>
         </View>
+
+        {canRemove ? (
+          <Pressable
+            onPress={onRemove}
+            android_ripple={{
+              color: withAlpha(theme.colors.error, 0.12),
+              borderless: true,
+            }}
+            style={styles.removeBtn}
+          >
+            <MaterialIcons
+              name="delete-outline"
+              size={20}
+              color={theme.colors.error}
+            />
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Ingredient */}
@@ -2001,11 +2002,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  headerControls: {
+  headerLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
-  iconBtn: { padding: 4, marginLeft: 2 },
+  iconBtn: { padding: 4, marginRight: 4 },
   removeBtn: { padding: 4, marginLeft: 4 },
 
   row2: {
