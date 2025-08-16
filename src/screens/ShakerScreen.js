@@ -85,8 +85,8 @@ export default function ShakerScreen({ navigation }) {
     );
   };
 
-  const cocktailsCount = useMemo(() => {
-    if (selectedIds.length === 0) return 0;
+  const { count: cocktailsCount, ids: availableCocktailIds } = useMemo(() => {
+    if (selectedIds.length === 0) return { count: 0, ids: [] };
 
     // group selected ingredients by tag
     const groups = new Map();
@@ -97,7 +97,7 @@ export default function ShakerScreen({ navigation }) {
       if (selected.length > 0) groups.set(tagId, selected);
     });
 
-    if (groups.size === 0) return 0;
+    if (groups.size === 0) return { count: 0, ids: [] };
 
     let intersection;
     groups.forEach((ids) => {
@@ -114,8 +114,18 @@ export default function ShakerScreen({ navigation }) {
       }
     });
 
-    return intersection ? intersection.size : 0;
+    return {
+      count: intersection ? intersection.size : 0,
+      ids: intersection ? Array.from(intersection) : [],
+    };
   }, [selectedIds, usageMap, grouped]);
+
+  const handleClear = () => setSelectedIds([]);
+
+  const handleShow = () => {
+    if (availableCocktailIds.length === 0) return;
+    navigation.navigate("ShakerResults", { ids: availableCocktailIds });
+  };
 
   if (loading) {
     return (
@@ -179,7 +189,39 @@ export default function ShakerScreen({ navigation }) {
         })}
       </ScrollView>
       <View style={styles.counter}>
-        <Text style={styles.counterText}>Cocktails available: {cocktailsCount}</Text>
+        <TouchableOpacity
+          onPress={handleClear}
+          style={[
+            styles.counterButton,
+            styles.clearButton,
+            { borderColor: theme.colors.error },
+          ]}
+        >
+          <Text
+            style={[
+              styles.counterButtonText,
+              { color: theme.colors.error },
+            ]}
+          >
+            Clear
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.counterText}>
+          Cocktails available: {cocktailsCount}
+        </Text>
+        <TouchableOpacity
+          onPress={handleShow}
+          style={[styles.counterButton, { backgroundColor: theme.colors.primary }]}
+        >
+          <Text
+            style={[
+              styles.counterButtonText,
+              { color: theme.colors.onPrimary },
+            ]}
+          >
+            Show
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -204,8 +246,21 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: "#ccc",
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
   },
-  counterText: { fontWeight: "bold" },
+  counterText: { fontWeight: "bold", flex: 1, textAlign: "center" },
+  counterButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  clearButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+  },
+  counterButtonText: { fontWeight: "bold" },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
