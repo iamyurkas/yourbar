@@ -21,14 +21,17 @@ function toTagObjects(tagIds) {
 
 function normalize(raw) {
   const now = Date.now();
-  return raw.map((it, idx) => ({
-    id: `${now}-${idx}`, // стабільний id у межах імпорту
-    name: String(it?.name ?? "").trim(),
-    description: String(it?.description ?? "").trim(), // дефолт
-    photoUri: it?.image ? String(it.image) : null,
-    tags: toTagObjects(it?.tags), // масив ОБ'ЄКТІВ тегів
-    baseIngredientId: null, // дефолт
-  }));
+  return raw.map((it, idx) => {
+    const photo = it?.photoUri ?? it?.image;
+    return {
+      id: `${now}-${idx}`, // стабільний id у межах імпорту
+      name: String(it?.name ?? "").trim(),
+      description: String(it?.description ?? "").trim(), // дефолт
+      photoUri: photo ? String(photo) : null,
+      tags: toTagObjects(it?.tags), // масив ОБ'ЄКТІВ тегів
+      baseIngredientId: null, // дефолт
+    };
+  });
 }
 
 export async function importIngredients({ force = false } = {}) {
