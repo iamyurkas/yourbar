@@ -1077,6 +1077,7 @@ export default function EditCocktailScreen() {
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([]);
+  const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
   const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
@@ -1680,7 +1681,7 @@ export default function EditCocktailScreen() {
           </Text>
           <View style={styles.tagContainer}>
             {availableTags
-              .filter((t) => !tags.some((x) => x.id === t.id))
+              .filter((t) => !selectedTagIds.has(t.id))
               .map((t) => (
                 <TagPill
                   key={t.id}

@@ -139,6 +139,7 @@ export default function EditIngredientScreen() {
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([]);
+  const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]); // builtin + custom
@@ -576,7 +577,7 @@ export default function EditIngredientScreen() {
         </Text>
         <View style={styles.tagContainer}>
           {availableTags
-            .filter((t) => !tags.some((x) => x.id === t.id))
+            .filter((t) => !selectedTagIds.has(t.id))
             .map((t) => (
               <TagPill
                 key={t.id}
