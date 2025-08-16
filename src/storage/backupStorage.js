@@ -87,12 +87,31 @@ export async function exportAllData() {
     zip.file('data.json', JSON.stringify(data, null, 2));
 
     console.log('Export: generating ZIP');
-    const base64Zip = await zip.generateAsync({ type: 'base64' });
     const fileName = `yourbar-backup-${Date.now()}.zip`;
     const fileUri = FileSystem.cacheDirectory + fileName;
-    await FileSystem.writeAsStringAsync(fileUri, base64Zip, {
+
+    // create empty file
+    await FileSystem.writeAsStringAsync(fileUri, '', {
       encoding: FileSystem.EncodingType.Base64,
     });
+
+    // stream zip to file to avoid large memory usage
+    await new Promise((resolve, reject) => {
+      let chain = Promise.resolve();
+      const stream = zip.generateInternalStream({ type: 'base64', streamFiles: true });
+      stream.on('data', (chunk) => {
+        chain = chain.then(() =>
+          FileSystem.writeAsStringAsync(fileUri, chunk, {
+            encoding: FileSystem.EncodingType.Base64,
+            append: true,
+          })
+        );
+      });
+      stream.on('error', reject);
+      stream.on('end', () => chain.then(resolve).catch(reject));
+      stream.resume();
+    });
+
     console.log('Export: archive created at', fileUri);
 
     return fileUri;
