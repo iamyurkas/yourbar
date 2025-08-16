@@ -17,6 +17,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import {
   useNavigation,
@@ -104,16 +105,23 @@ const RelationRow = memo(function RelationRow({
 
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
-  const { id, fromCocktailId } = useRoute().params;
+  const route = useRoute();
+  const { id, fromCocktailId, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
 
-  const [ingredient, setIngredient] = useState(null);
+  const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
   const [baseIngredient, setBaseIngredient] = useState(null);
   const [usedCocktails, setUsedCocktails] = useState([]);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+
+  useEffect(() => {
+    if (route.params?.initialIngredient) {
+      setIngredient(route.params.initialIngredient);
+    }
+  }, [route.params?.initialIngredient]);
 
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
@@ -194,7 +202,7 @@ export default function IngredientDetailsScreen() {
       getAllCocktails(),
       getIgnoreGarnish(),
     ]);
-    setIngredient(loaded || null);
+    setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {
       setBrandedChildren([]);
@@ -291,15 +299,19 @@ export default function IngredientDetailsScreen() {
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
-      (async () => {
+      const task = InteractionManager.runAfterInteractions(async () => {
         try {
+          if (route.params?.initialIngredient) {
+            await new Promise((res) => setTimeout(res, 500));
+          }
           if (!cancelled) await load();
         } catch {}
-      })();
+      });
       return () => {
         cancelled = true;
+        task.cancel();
       };
-    }, [load])
+    }, [load, route.params?.initialIngredient])
   );
 
   useEffect(() => {

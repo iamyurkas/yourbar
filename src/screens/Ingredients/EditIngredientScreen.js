@@ -21,7 +21,6 @@ import {
   Platform,
   InteractionManager,
   ActivityIndicator,
-  FlatList,
   Pressable,
   TouchableOpacity,
   BackHandler,
@@ -124,7 +123,8 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { refresh: refreshIngredientsData } = useIngredientsData();
+  const { refresh: refreshIngredientsData, setIngredients: setGlobalIngredients } =
+    useIngredientsData();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -385,17 +385,30 @@ export default function EditIngredientScreen() {
         tags,
         baseIngredientId: baseIngredientId ?? null,
       };
-      await saveIngredient(updated);
-      await refreshIngredientsData();
+      // оптимістично оновити глобальний список
+      setGlobalIngredients((list) =>
+        list.map((i) => (i.id === updated.id ? { ...i, ...updated } : i))
+      );
 
-      // оновити baseline і зняти dirty
+      // зберегти локально baseline і зняти dirty
       initialHashRef.current = serialize();
       setDirty(false);
 
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.goBack();
+        navigation.replace("IngredientDetails", {
+          id: updated.id,
+          initialIngredient: updated,
+        });
+      } else {
+        setIngredient(updated);
       }
+
+      // асинхронно зберегти та оновити дані
+      saveIngredient(updated)
+        .then(() => refreshIngredientsData())
+        .catch(() => {});
+
       return updated;
     },
     [
@@ -407,6 +420,8 @@ export default function EditIngredientScreen() {
       baseIngredientId,
       navigation,
       serialize,
+      setGlobalIngredients,
+      refreshIngredientsData,
     ]
   );
 
@@ -659,33 +674,36 @@ export default function EditIngredientScreen() {
               </Text>
             </View>
           ) : (
-            <FlatList
-              data={[
-                { id: "__none__", name: "None", nameLower: "none" },
-                ...filteredBase,
-              ]}
-              keyExtractor={(item, i) => String(item.id ?? i)}
-              renderItem={({ item }) =>
-                item.id === "__none__" ? (
-                  <Pressable
-                    onPress={() => {
-                      setBaseIngredientId(null);
-                      setMenuVisible(false);
-                    }}
-                    android_ripple={ripple}
-                    style={({ pressed }) => [
-                      styles.menuRow,
-                      pressed && { opacity: 0.9 },
-                    ]}
-                  >
-                    <View style={styles.menuRowInner}>
-                      <PaperText style={{ color: theme.colors.onSurface }}>
-                        None
-                      </PaperText>
-                    </View>
-                  </Pressable>
-                ) : (
+            <View
+              style={{
+                maxHeight: Math.min(
+                  300,
+                  MENU_ROW_HEIGHT * (filteredBase.length + 1)
+                ),
+              }}
+            >
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <Pressable
+                  onPress={() => {
+                    setBaseIngredientId(null);
+                    setMenuVisible(false);
+                  }}
+                  android_ripple={ripple}
+                  style={({ pressed }) => [
+                    styles.menuRow,
+                    pressed && { opacity: 0.9 },
+                  ]}
+                >
+                  <View style={styles.menuRowInner}>
+                    <PaperText style={{ color: theme.colors.onSurface }}>
+                      None
+                    </PaperText>
+                  </View>
+                </Pressable>
+
+                {filteredBase.map((item) => (
                   <BaseRow
+                    key={item.id}
                     id={item.id}
                     name={item.name}
                     photoUri={item.photoUri}
@@ -694,23 +712,9 @@ export default function EditIngredientScreen() {
                       setMenuVisible(false);
                     }}
                   />
-                )
-              }
-              style={{
-                height: Math.min(
-                  300,
-                  MENU_ROW_HEIGHT * (filteredBase.length + 1)
-                ),
-              }}
-              keyboardShouldPersistTaps="handled"
-              removeClippedSubviews
-              initialNumToRender={10}
-              getItemLayout={(_, index) => ({
-                length: MENU_ROW_HEIGHT,
-                offset: MENU_ROW_HEIGHT * index,
-                index,
-              })}
-            />
+                ))}
+              </ScrollView>
+            </View>
           )}
         </Menu>
 
