@@ -168,10 +168,7 @@ export default function ShakerScreen() {
                       inShoppingList={ing.inShoppingList}
                       onPress={toggleIngredient}
                       onDetails={(id) =>
-                        navigation.navigate("Ingredients", {
-                          screen: "IngredientDetails",
-                          params: { id },
-                        })
+                        navigation.navigate("IngredientDetails", { id })
                       }
                       highlightColor={
                         active ? theme.colors.secondaryContainer : undefined
