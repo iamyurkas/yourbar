@@ -24,12 +24,14 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
+
 import {
   getIngredientById,
   getAllIngredients,
   saveIngredient,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
+
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -40,6 +42,7 @@ import {
   addIgnoreGarnishListener,
 } from "../../storage/settingsStorage";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const PHOTO_SIZE = 200;
@@ -110,6 +113,7 @@ export default function IngredientDetailsScreen() {
   const { id, fromCocktailId, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
+  const { ingredientsById } = useIngredientUsage();
 
   const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -224,12 +228,12 @@ export default function IngredientDetailsScreen() {
   );
 
   const load = useCallback(async () => {
-    const [loaded, all, cocktails, ig] = await Promise.all([
-      getIngredientById(id),
+    const [all, cocktails, ig] = await Promise.all([
       getAllIngredients(),
       getAllCocktails(),
       getIgnoreGarnish(),
     ]);
+    const loaded = ingredientsById[id] || all.find((i) => i.id === id);
     setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {
@@ -322,7 +326,7 @@ export default function IngredientDetailsScreen() {
         };
       });
     setUsedCocktails(list);
-  }, [id, collator]);
+  }, [id, collator, ingredientsById]);
 
   useFocusEffect(
     useCallback(() => {
