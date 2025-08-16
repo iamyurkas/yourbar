@@ -193,13 +193,14 @@ export default function ShakerScreen({ navigation }) {
           onPress={handleClear}
           style={[
             styles.counterButton,
-            { backgroundColor: theme.colors.secondaryContainer },
+            styles.clearButton,
+            { borderColor: theme.colors.error },
           ]}
         >
           <Text
             style={[
               styles.counterButtonText,
-              { color: theme.colors.onSecondaryContainer },
+              { color: theme.colors.error },
             ]}
           >
             Clear
@@ -254,6 +255,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 4,
     marginHorizontal: 4,
+  },
+  clearButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
   },
   counterButtonText: { fontWeight: "bold" },
   loadingContainer: {

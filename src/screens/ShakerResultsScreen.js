@@ -1,15 +1,32 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useTheme } from "react-native-paper";
 
+import HeaderWithSearch from "../components/HeaderWithSearch";
+import TagFilterMenu from "../components/TagFilterMenu";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../components/CocktailRow";
 import useIngredientsData from "../hooks/useIngredientsData";
+import { getAllCocktailTags } from "../storage/cocktailTagsStorage";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { ids = [] } = route.params || {};
   const theme = useTheme();
   const { cocktails, ingredients, loading } = useIngredientsData();
+  const [search, setSearch] = useState("");
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const tags = await getAllCocktailTags();
+      if (!cancelled) setAvailableTags(tags || []);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const data = useMemo(() => {
     const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
@@ -17,9 +34,16 @@ export default function ShakerResultsScreen({ route, navigation }) {
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-    return cocktails
-      .filter((c) => ids.includes(c.id))
-      .map((c) => {
+    const q = search.trim().toLowerCase();
+    let list = cocktails.filter((c) => ids.includes(c.id));
+    if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+    if (selectedTagIds.length > 0)
+      list = list.filter(
+        (c) =>
+          Array.isArray(c.tags) &&
+          c.tags.some((t) => selectedTagIds.includes(t.id))
+      );
+    return list.map((c) => {
         const required = (c.ingredients || []).filter((r) => !r.optional);
         const missing = [];
         const ingredientNames = [];
@@ -79,7 +103,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
           hasBranded: branded,
         };
       });
-  }, [cocktails, ingredients, ids]);
+  }, [cocktails, ingredients, ids, search, selectedTagIds]);
 
   if (loading) {
     return (
@@ -90,7 +114,18 @@ export default function ShakerResultsScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <HeaderWithSearch
+        searchValue={search}
+        setSearchValue={setSearch}
+        filterComponent={
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
+        }
+      />
       <FlashList
         data={data}
         keyExtractor={(item) => String(item.id)}
