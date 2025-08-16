@@ -1,9 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RAW_COCKTAILS from "../assets/data/cocktails.json";
-import RAW_INGREDIENTS from "../assets/data/ingredients.json";
+import OPEN_DATA from "../assets/data/open-cocktails.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
+
+const RAW_INGREDIENTS = OPEN_DATA.ingredients || [];
+const RAW_COCKTAILS = OPEN_DATA.cocktails || [];
 
 const INGREDIENTS_KEY = "ingredients";
 const COCKTAILS_KEY = "cocktails_v1";
@@ -26,14 +28,17 @@ function toIngredientTags(tagIds) {
 
 function normalizeIngredients(raw) {
   const now = Date.now();
-  return raw.map((it, idx) => ({
-    id: `${now}-${idx}`,
-    name: String(it?.name ?? "").trim(),
-    description: String(it?.description ?? "").trim(),
-    photoUri: it?.image ? String(it.image) : null,
-    tags: toIngredientTags(it?.tags),
-    baseIngredientId: null,
-  }));
+  return raw.map((it, idx) => {
+    const photo = it?.photoUri ?? it?.image;
+    return {
+      id: `${now}-${idx}`,
+      name: String(it?.name ?? "").trim(),
+      description: String(it?.description ?? "").trim(),
+      photoUri: photo ? String(photo) : null,
+      tags: toIngredientTags(it?.tags),
+      baseIngredientId: null,
+    };
+  });
 }
 
 function toCocktailTags(tagIds) {
@@ -45,31 +50,35 @@ function toCocktailTags(tagIds) {
 
 function normalizeCocktails(raw, ingNameToId) {
   const now = Date.now();
-  return raw.map((c, idx) => ({
-    id: now + idx,
-    name: String(c?.name ?? "").trim(),
-    glassId: c?.glassware ? String(c.glassware) : null,
-    description: String(c?.description ?? "").trim(),
-    instructions: Array.isArray(c?.instructions)
-      ? c.instructions.join("\n")
-      : String(c?.instructions ?? ""),
-    tags: toCocktailTags(c?.tags),
-    ingredients: Array.isArray(c?.ingredients)
-      ? c.ingredients.map((r, i) => ({
-          order: i + 1,
-          ingredientId:
-            ingNameToId.get(String(r.ingredient).toLowerCase()) ?? null,
-          name: String(r.ingredient ?? "").trim(),
-          amount: String(r.quantity ?? "").trim(),
-          unitId: Number(r.unit ?? 11),
-          garnish: !!r.garnish,
-          optional: !!r.optional,
-          allowBaseSubstitution: false,
-          allowBrandedSubstitutes: false,
-          substitutes: [],
-        }))
-      : [],
-  }));
+  return raw.map((c, idx) => {
+    const photo = c?.photoUri ?? c?.image;
+    return {
+      id: now + idx,
+      name: String(c?.name ?? "").trim(),
+      photoUri: photo ? String(photo) : null,
+      glassId: c?.glassware ? String(c.glassware) : null,
+      description: String(c?.description ?? "").trim(),
+      instructions: Array.isArray(c?.instructions)
+        ? c.instructions.join("\n")
+        : String(c?.instructions ?? ""),
+      tags: toCocktailTags(c?.tags),
+      ingredients: Array.isArray(c?.ingredients)
+        ? c.ingredients.map((r, i) => ({
+            order: i + 1,
+            ingredientId:
+              ingNameToId.get(String(r.ingredient).toLowerCase()) ?? null,
+            name: String(r.ingredient ?? "").trim(),
+            amount: String(r.quantity ?? "").trim(),
+            unitId: Number(r.unit ?? 11),
+            garnish: !!r.garnish,
+            optional: !!r.optional,
+            allowBaseSubstitution: false,
+            allowBrandedSubstitutes: false,
+            substitutes: [],
+          }))
+        : [],
+    };
+  });
 }
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
