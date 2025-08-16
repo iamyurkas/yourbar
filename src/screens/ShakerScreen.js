@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 4,
+    height: 56,
   },
   tagTitle: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   counter: {
