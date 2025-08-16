@@ -187,7 +187,8 @@ export default function IngredientDetailsScreen() {
 
   useEffect(() => {
     const returnTo = route.params?.returnTo;
-    if (!fromCocktailId && !returnTo) return;
+    const returnToTab = route.params?.returnToTab;
+    if (!fromCocktailId && !returnTo && !returnToTab) return;
     const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
@@ -202,6 +203,8 @@ export default function IngredientDetailsScreen() {
           },
           merge: true,
         });
+      } else if (returnToTab) {
+        navigation.navigate(returnToTab);
       } else {
         navigation.navigate("Cocktails", {
           screen: "CocktailDetails",
@@ -215,6 +218,7 @@ export default function IngredientDetailsScreen() {
     navigation,
     fromCocktailId,
     route.params?.returnTo,
+    route.params?.returnToTab,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
   ]);
