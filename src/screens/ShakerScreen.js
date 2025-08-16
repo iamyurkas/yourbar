@@ -124,8 +124,9 @@ export default function ShakerScreen() {
                       id={ing.id}
                       name={ing.name}
                       photoUri={ing.photoUri}
-                      tags={ing.tags}
                       usageCount={0}
+                      inBar={ing.inBar}
+                      inShoppingList={ing.inShoppingList}
                       onPress={toggleIngredient}
                       highlightColor={
                         active ? theme.colors.secondaryContainer : undefined
@@ -145,8 +146,8 @@ export default function ShakerScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scroll: { padding: 16 },
+  container: { flex: 1, backgroundColor: "#fff" },
+  scroll: { paddingBottom: 16 },
   section: { marginBottom: 12 },
   tagHeader: {
     flexDirection: "row",
