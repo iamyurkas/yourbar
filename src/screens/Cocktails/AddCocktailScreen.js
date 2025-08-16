@@ -404,6 +404,10 @@ const IngredientRow = memo(function IngredientRow({
       {/* Header: reorder controls + index + remove */}
       <View style={styles.ingHeader}>
         <View style={styles.headerLeft}>
+          <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
+            {index + 1}.
+          </Text>
+
           {canRemove ? (
             <>
               {/* Move up */}
@@ -441,10 +445,6 @@ const IngredientRow = memo(function IngredientRow({
               </Pressable>
             </>
           ) : null}
-
-          <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
-            {index + 1}.
-          </Text>
         </View>
 
         {canRemove ? (
@@ -2006,7 +2006,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  iconBtn: { padding: 4, marginRight: 4 },
+  iconBtn: { padding: 4, marginLeft: 4 },
   removeBtn: { padding: 4, marginLeft: 4 },
 
   row2: {
