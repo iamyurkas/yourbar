@@ -35,3 +35,18 @@ export const AppTheme = {
     backdrop: "rgba(0,0,0,0.4)",
   },
 };
+
+export const TAG_COLORS = [
+  "#FF6B6B",
+  "#FF8787",
+  "#FFA94D",
+  "#FFD43B",
+  "#69DB7C",
+  "#38D9A9",
+  "#4DABF7",
+  "#9775FA",
+  "#8AADCFFF",
+  "#AFC9C3FF",
+  "#F06595",
+  "#20C997",
+];

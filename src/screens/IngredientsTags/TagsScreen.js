@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,32 @@ import {
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getUserTags } from "../storage/ingredientTagsStorage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useTheme } from "react-native-paper";
 
 export default function TagsScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: { padding: 16 },
+        tagSection: { flexDirection: "row", flexWrap: "wrap", marginBottom: 24 },
+        tag: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, margin: 4 },
+        tagText: { color: theme.colors.onPrimary, fontWeight: "bold" },
+        sectionTitle: { fontWeight: "bold", fontSize: 16, marginBottom: 8 },
+        addButton: {
+          backgroundColor: theme.colors.primary,
+          padding: 12,
+          borderRadius: 8,
+          alignItems: "center",
+          margin: 16,
+        },
+        addText: { color: theme.colors.onPrimary, fontWeight: "bold" },
+      }),
+    [theme]
+  );
+
   const [userTags, setUserTags] = useState([]);
 
   useEffect(() => {
@@ -74,39 +96,3 @@ export default function TagsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  tagSection: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 24,
-  },
-  tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    margin: 4,
-  },
-  tagText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  sectionTitle: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  addButton: {
-    backgroundColor: "#4DABF7",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    margin: 16,
-  },
-  addText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-});

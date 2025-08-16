@@ -1,14 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import AllIngredientsTab from "./AllIngredientsTab";
 import MyIngredientsTab from "./MyIngredientsTab";
 import ShoppingIngredientsTab from "./ShoppingIngredientsTab";
 import AddIngredientScreen from "./AddIngredientScreen";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "react-native-paper";
 
 export default function IngredientsScreen() {
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: { flex: 1, backgroundColor: theme.colors.background },
+        content: { flex: 1 },
+        tabBar: {
+          flexDirection: "row",
+          borderTopWidth: 1,
+          borderColor: theme.colors.outline,
+        },
+        tabButton: {
+          flex: 1,
+          padding: 12,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        activeTab: {
+          borderBottomWidth: 3,
+          borderBottomColor: theme.colors.primary,
+        },
+        pressedTab: { opacity: 0.7 },
+        tabText: { color: theme.colors.onSurfaceVariant },
+        activeText: { color: theme.colors.primary, fontWeight: "bold" },
+        createButton: { backgroundColor: theme.colors.primary },
+        createText: { color: theme.colors.onPrimary, fontWeight: "bold" },
+      }),
+    [theme]
+  );
+
   const [activeTab, setActiveTab] = useState("All");
   const navigation = useNavigation();
+
+  const TabButton = ({ title, active, onPress }) => (
+    <Pressable
+      onPress={onPress}
+      android_ripple={{ color: theme.colors.surfaceVariant }}
+      style={({ pressed }) => [
+        styles.tabButton,
+        active && styles.activeTab,
+        pressed && styles.pressedTab,
+      ]}
+    >
+      <Text style={active ? styles.activeText : styles.tabText}>{title}</Text>
+    </Pressable>
+  );
 
   let Content;
   if (activeTab === "All") Content = <AllIngredientsTab />;
@@ -46,61 +91,3 @@ export default function IngredientsScreen() {
     </View>
   );
 }
-
-function TabButton({ title, active, onPress }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      android_ripple={{ color: "rgba(0,0,0,0.05)" }}
-      style={({ pressed }) => [
-        styles.tabButton,
-        active && styles.activeTab,
-        pressed && styles.pressedTab,
-      ]}
-    >
-      <Text style={active ? styles.activeText : styles.tabText}>{title}</Text>
-    </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  content: {
-    flex: 1,
-  },
-  tabBar: {
-    flexDirection: "row",
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-  },
-  tabButton: {
-    flex: 1,
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  activeTab: {
-    borderBottomWidth: 3,
-    borderBottomColor: "#4DABF7",
-  },
-  pressedTab: {
-    opacity: 0.7,
-  },
-  tabText: {
-    color: "#666",
-  },
-  activeText: {
-    color: "#4DABF7",
-    fontWeight: "bold",
-  },
-  createButton: {
-    backgroundColor: "#4DABF7",
-  },
-  createText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-});

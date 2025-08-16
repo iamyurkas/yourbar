@@ -58,31 +58,40 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 100;
 const MENU_ROW_HEIGHT = 56;
-const RIPPLE = { color: "#E3F2FD" };
+
+const withAlpha = (hex, alpha) => {
+  if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 9)) return hex;
+  const a = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0");
+  return hex.length === 7 ? `${hex}${a}` : `${hex.slice(0, 7)}${a}`;
+};
 
 /* -------------- pills for tags (memo) -------------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={() => onToggle(id)}
-      android_ripple={RIPPLE}
+      android_ripple={{ color: withAlpha(theme.colors.primary, 0.1) }}
       style={({ pressed }) => [
         styles.tag,
-        { backgroundColor: color || "#ccc" },
+        { backgroundColor: color || theme.colors.surfaceVariant },
         pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Text style={styles.tagText}>{name}</Text>
+      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>{name}</Text>
     </Pressable>
   );
 });
 
 /* -------------- row in base menu (memo) -------------- */
 const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={() => onSelect(id)}
-      android_ripple={RIPPLE}
+      android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
       style={({ pressed }) => [
         styles.menuRow,
         pressed && { opacity: 0.96, transform: [{ scale: 0.997 }] },
@@ -90,9 +99,14 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
     >
       <View style={styles.menuRowInner}>
         {photoUri ? (
-          <Image source={{ uri: photoUri }} style={styles.menuImg} />
+          <Image
+            source={{ uri: photoUri }}
+            style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
+          />
         ) : (
-          <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+          <View
+            style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
+          />
         )}
         <PaperText numberOfLines={1}>{name}</PaperText>
       </View>
@@ -122,9 +136,10 @@ export default function AddIngredientScreen() {
   const [name, setName] = useState(initialNameParam);
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState([
-    { id: 10, name: "other", color: "#AFC9C3FF" },
-  ]);
+  const [tags, setTags] = useState(() => {
+    const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
+    return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[9] }];
+  });
 
   // reference lists
   const [availableTags, setAvailableTags] = useState([]);
@@ -548,7 +563,9 @@ export default function AddIngredientScreen() {
                   style={styles.menuImg}
                 />
               ) : selectedBase ? (
-                <View style={[styles.menuImg, styles.menuImgPlaceholder]} />
+                <View
+                  style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
+                />
               ) : null}
               <PaperText
                 style={{
@@ -677,7 +694,7 @@ export default function AddIngredientScreen() {
         <Pressable
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
-          android_ripple={{ color: "rgba(255,255,255,0.15)" }}
+          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
           disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
@@ -723,7 +740,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     margin: 4,
   },
-  tagText: { color: "white", fontWeight: "bold" },
+  tagText: { fontWeight: "bold" },
 
   addTagButton: {
     paddingHorizontal: 10,
@@ -750,10 +767,8 @@ const styles = StyleSheet.create({
     height: 40,
     aspectRatio: 1,
     borderRadius: 8,
-    backgroundColor: "#fff",
     resizeMode: "contain",
   },
-  menuImgPlaceholder: { backgroundColor: "#EAEAEA" },
 
   saveButton: {
     marginTop: 24,

@@ -70,7 +70,11 @@ export default function TagFilterMenu({
               <Text
                 style={[
                   styles.tagText,
-                  { color: active ? "white" : theme.colors.onSurface },
+                  {
+                    color: active
+                      ? theme.colors.onPrimary
+                      : theme.colors.onSurface,
+                  },
                 ]}
               >
                 {tag.name}
