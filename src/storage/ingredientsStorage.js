@@ -18,19 +18,16 @@ export async function saveAllIngredients(ingredients) {
   await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
 }
 
-export async function saveIngredient(updatedIngredient) {
-  const all = await getAllIngredients();
-  const index = all.findIndex((i) => i.id === updatedIngredient.id);
+export function updateIngredientById(list, updated) {
+  const index = list.findIndex((i) => i.id === updated.id);
+  if (index === -1) return list;
+  const next = [...list];
+  next[index] = { ...next[index], ...updated };
+  return next;
+}
 
-  if (index !== -1) {
-    all[index] = {
-      ...all[index],
-      ...updatedIngredient, // зберігає всі поля, включно з baseIngredientId
-    };
-    await saveAllIngredients(all);
-  } else {
-    console.warn("Ingredient not found:", updatedIngredient.id);
-  }
+export async function saveIngredient(updatedList) {
+  await saveAllIngredients(updatedList);
 }
 
 export async function addIngredient(ingredient) {

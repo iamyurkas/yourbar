@@ -10,7 +10,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveIngredient } from "../../storage/ingredientsStorage";
+import { saveIngredient, updateIngredientById } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -147,13 +147,11 @@ export default function MyIngredientsScreen() {
 
   const toggleInBar = useCallback((id) => {
     setIngredients((prev) => {
-      const idx = prev.findIndex((i) => i.id === id);
-      if (idx === -1) return prev;
-      const next = [...prev];
-      const item = next[idx];
-      const inBar = !item.inBar;
-      next[idx] = { ...item, inBar };
-      saveIngredient({ ...item, inBar }).catch(() => {});
+      const item = prev.find((i) => i.id === id);
+      if (!item) return prev;
+      const updated = { ...item, inBar: !item.inBar };
+      const next = updateIngredientById(prev, updated);
+      saveIngredient(next).catch(() => {});
       return next;
     });
   }, []);
