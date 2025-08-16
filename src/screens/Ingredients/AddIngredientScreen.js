@@ -29,6 +29,7 @@ import {
   useNavigation,
   useRoute,
   useIsFocused,
+  CommonActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -326,25 +327,32 @@ export default function AddIngredientScreen() {
     await addIngredient(newIng);
     await refreshIngredientsData();
 
+    const detailParams = {
+      id: newIng.id,
+      initialIngredient: newIng,
+    };
+
     if (fromCocktailFlow) {
-      navigation.navigate("Cocktails", {
-        screen: returnTo,
-        params: {
-          createdIngredient: {
-            id: newIng.id,
-            name: newIng.name,
-            photoUri: newIng.photoUri || null,
-            baseIngredientId: newIng.baseIngredientId ?? null,
-            tags: newIng.tags || [],
-          },
-          targetLocalId,
-        },
-        merge: true,
-      });
-      return;
+      detailParams.returnTo = returnTo;
+      detailParams.createdIngredient = {
+        id: newIng.id,
+        name: newIng.name,
+        photoUri: newIng.photoUri || null,
+        baseIngredientId: newIng.baseIngredientId ?? null,
+        tags: newIng.tags || [],
+      };
+      detailParams.targetLocalId = targetLocalId;
     }
 
-    navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
+    navigation.dispatch((state) => {
+      const routes = state.routes.slice(0, -1);
+      routes.push({ name: "IngredientDetails", params: detailParams });
+      return CommonActions.reset({
+        ...state,
+        routes,
+        index: routes.length - 1,
+      });
+    });
   }, [
     name,
     description,
@@ -355,7 +363,8 @@ export default function AddIngredientScreen() {
     fromCocktailFlow,
     returnTo,
     targetLocalId,
-    lastIngredientsTab,
+    refreshIngredientsData,
+    addIngredient,
   ]);
 
   const openMenu = useCallback(() => {

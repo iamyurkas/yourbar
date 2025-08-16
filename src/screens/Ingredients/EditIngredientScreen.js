@@ -30,6 +30,7 @@ import {
   useNavigation,
   useRoute,
   useIsFocused,
+  CommonActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 
@@ -396,9 +397,32 @@ export default function EditIngredientScreen() {
 
       if (!stay) {
         skipPromptRef.current = true;
-        navigation.replace("IngredientDetails", {
+        const detailParams = {
           id: updated.id,
           initialIngredient: updated,
+        };
+        if (route.params?.returnTo) {
+          detailParams.returnTo = route.params.returnTo;
+          detailParams.createdIngredient = {
+            id: updated.id,
+            name: updated.name,
+            photoUri: updated.photoUri || null,
+            baseIngredientId: updated.baseIngredientId ?? null,
+            tags: updated.tags || [],
+          };
+          detailParams.targetLocalId = route.params.targetLocalId;
+        }
+        navigation.dispatch((state) => {
+          const routes = state.routes.filter((r) => r.name !== "IngredientDetails");
+          routes[routes.length - 1] = {
+            name: "IngredientDetails",
+            params: detailParams,
+          };
+          return CommonActions.reset({
+            ...state,
+            routes,
+            index: routes.length - 1,
+          });
         });
       } else {
         setIngredient(updated);
@@ -419,6 +443,8 @@ export default function EditIngredientScreen() {
       tags,
       baseIngredientId,
       navigation,
+      route.params?.returnTo,
+      route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
       refreshIngredientsData,
