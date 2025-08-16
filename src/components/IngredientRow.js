@@ -150,7 +150,7 @@ function IngredientRow({
             style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
           >
             <MaterialIcons
-              name="info"
+              name="chevron-right"
               size={22}
               color={theme.colors.onSurfaceVariant}
             />
