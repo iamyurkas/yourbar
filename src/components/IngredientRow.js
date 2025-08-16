@@ -67,7 +67,7 @@ function IngredientRow({
           },
         ]}
       >
-        {inShoppingList && !onToggleShoppingList && (
+        {inShoppingList && !onToggleShoppingList && !onRemove && (
           <MaterialIcons
             name="shopping-cart"
             size={16}
