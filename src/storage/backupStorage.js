@@ -45,50 +45,61 @@ function dirName(path) {
  * Returns the URI of the created archive.
  */
 export async function exportAllData() {
-  const [ingredients, cocktails] = await Promise.all([
-    getAllIngredients(),
-    getAllCocktails(),
-  ]);
+  try {
+    console.log('Export: fetching data');
+    const [ingredients, cocktails] = await Promise.all([
+      getAllIngredients(),
+      getAllCocktails(),
+    ]);
+    console.log(
+      `Export: preparing ${ingredients.length} ingredients and ${cocktails.length} cocktails`
+    );
 
-  const zip = new JSZip();
-  const data = { ingredients: [], cocktails: [] };
+    const zip = new JSZip();
+    const data = { ingredients: [], cocktails: [] };
 
-  for (const ing of ingredients) {
-    const item = { ...ing };
-    if (ing.photoUri) {
-      const rel = `ingredients/${ing.id}${getExt(ing.photoUri)}`;
-      const img = await readFileBase64(ing.photoUri);
-      if (img) {
-        zip.file(rel, img, { base64: true });
-        item.photoUri = rel;
+    for (const ing of ingredients) {
+      const item = { ...ing };
+      if (ing.photoUri) {
+        const rel = `ingredients/${ing.id}${getExt(ing.photoUri)}`;
+        const img = await readFileBase64(ing.photoUri);
+        if (img) {
+          zip.file(rel, img, { base64: true });
+          item.photoUri = rel;
+        }
       }
+      data.ingredients.push(item);
     }
-    data.ingredients.push(item);
-  }
 
-  for (const c of cocktails) {
-    const item = { ...c };
-    if (c.photoUri) {
-      const rel = `cocktails/${c.id}${getExt(c.photoUri)}`;
-      const img = await readFileBase64(c.photoUri);
-      if (img) {
-        zip.file(rel, img, { base64: true });
-        item.photoUri = rel;
+    for (const c of cocktails) {
+      const item = { ...c };
+      if (c.photoUri) {
+        const rel = `cocktails/${c.id}${getExt(c.photoUri)}`;
+        const img = await readFileBase64(c.photoUri);
+        if (img) {
+          zip.file(rel, img, { base64: true });
+          item.photoUri = rel;
+        }
       }
+      data.cocktails.push(item);
     }
-    data.cocktails.push(item);
+
+    zip.file('data.json', JSON.stringify(data, null, 2));
+
+    console.log('Export: generating ZIP');
+    const base64Zip = await zip.generateAsync({ type: 'base64' });
+    const fileName = `yourbar-backup-${Date.now()}.zip`;
+    const fileUri = FileSystem.cacheDirectory + fileName;
+    await FileSystem.writeAsStringAsync(fileUri, base64Zip, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    console.log('Export: archive created at', fileUri);
+
+    return fileUri;
+  } catch (e) {
+    console.error('exportAllData failed', e);
+    throw e;
   }
-
-  zip.file('data.json', JSON.stringify(data, null, 2));
-
-  const base64Zip = await zip.generateAsync({ type: 'base64' });
-  const fileName = `yourbar-backup-${Date.now()}.zip`;
-  const fileUri = FileSystem.cacheDirectory + fileName;
-  await FileSystem.writeAsStringAsync(fileUri, base64Zip, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-
-  return fileUri;
 }
 
 /**

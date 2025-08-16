@@ -144,7 +144,9 @@ export default function GeneralMenu({ visible, onClose }) {
   const handleExport = async () => {
     onClose?.();
     try {
+      console.log('Export: start');
       const uri = await exportAllData();
+      console.log('Export: file ready at', uri);
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, {
           mimeType: "application/zip",
@@ -154,6 +156,7 @@ export default function GeneralMenu({ visible, onClose }) {
       }
       setDialog({ visible: true, title: "Export", message: "Data exported successfully" });
     } catch (e) {
+      console.error('Export failed', e);
       setDialog({ visible: true, title: "Export", message: "Failed to export data" });
     }
   };
