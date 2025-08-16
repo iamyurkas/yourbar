@@ -45,7 +45,7 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
-const PHOTO_SIZE = 200;
+const PHOTO_SIZE = 100;
 const THUMB = 40;
 
 /** Gray-square photo (no icon/initials), uses theme */
