@@ -13,7 +13,11 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
+import {
+  getAllIngredients,
+  saveIngredient,
+  updateIngredientById,
+} from "../../storage/ingredientsStorage";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -224,25 +228,25 @@ export default function MyCocktailsScreen() {
     [navigation]
   );
 
-  const toggleShoppingList = useCallback((id) => {
-    setIngredients((prev) => {
-      const idx = prev.findIndex((i) => String(i.id) === String(id));
-      if (idx === -1) return prev;
-      const next = [...prev];
-      const item = next[idx];
-      const updated = { ...item, inShoppingList: !item.inShoppingList };
-      next[idx] = updated;
-      saveIngredient(updated).catch(() => {});
-      setGlobalIngredients((list) =>
-        list.map((i) =>
-          String(i.id) === String(id)
-            ? { ...i, inShoppingList: updated.inShoppingList }
-            : i
-        )
-      );
-      return next;
-    });
-  }, [setGlobalIngredients]);
+  const toggleShoppingList = useCallback(
+    (id) => {
+      setIngredients((prev) => {
+        const item = prev.find((i) => String(i.id) === String(id));
+        if (!item) return prev;
+        const updated = { ...item, inShoppingList: !item.inShoppingList };
+        const next = updateIngredientById(prev, updated);
+        saveIngredient(next).catch(() => {});
+        setGlobalIngredients((list) =>
+          updateIngredientById(list, {
+            id,
+            inShoppingList: updated.inShoppingList,
+          })
+        );
+        return next;
+      });
+    },
+    [setGlobalIngredients]
+  );
 
   const renderItem = useCallback(
     ({ item }) => {

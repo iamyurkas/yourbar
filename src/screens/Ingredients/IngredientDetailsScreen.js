@@ -28,6 +28,7 @@ import {
   getIngredientById,
   getAllIngredients,
   saveIngredient,
+  updateIngredientById,
 } from "../../storage/ingredientsStorage";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
@@ -349,26 +350,35 @@ export default function IngredientDetailsScreen() {
   const toggleInBar = useCallback(() => {
     setIngredient((prev) => {
       if (!prev) return prev;
-      const next = { ...prev, inBar: !prev.inBar };
-      saveIngredient(next);
-      setIngredients((list) =>
-        list.map((i) => (i.id === next.id ? { ...i, inBar: next.inBar } : i))
-      );
-      return next;
+      const updated = { ...prev, inBar: !prev.inBar };
+      setIngredients((list) => {
+        const nextList = updateIngredientById(list, {
+          id: updated.id,
+          inBar: updated.inBar,
+        });
+        saveIngredient(nextList);
+        return nextList;
+      });
+      return updated;
     });
   }, [setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
       if (!prev) return prev;
-      const next = { ...prev, inShoppingList: !prev.inShoppingList };
-      saveIngredient(next);
-      setIngredients((list) =>
-        list.map((i) =>
-          i.id === next.id ? { ...i, inShoppingList: next.inShoppingList } : i
-        )
-      );
-      return next;
+      const updated = {
+        ...prev,
+        inShoppingList: !prev.inShoppingList,
+      };
+      setIngredients((list) => {
+        const nextList = updateIngredientById(list, {
+          id: updated.id,
+          inShoppingList: updated.inShoppingList,
+        });
+        saveIngredient(nextList);
+        return nextList;
+      });
+      return updated;
     });
   }, [setIngredients]);
 
@@ -620,11 +630,13 @@ export default function IngredientDetailsScreen() {
         onConfirm={async () => {
           if (!ingredient) return;
           const updated = { ...ingredient, baseIngredientId: null };
-          await saveIngredient(updated);
+          let nextList;
+          setIngredients((list) => {
+            nextList = updateIngredientById(list, updated);
+            return nextList;
+          });
+          await saveIngredient(nextList);
           setIngredient(updated);
-          setIngredients((list) =>
-            list.map((i) => (i.id === updated.id ? updated : i))
-          );
           setBaseIngredient(null);
           setUnlinkBaseVisible(false);
         }}
@@ -643,10 +655,12 @@ export default function IngredientDetailsScreen() {
           const child = unlinkChildTarget;
           if (!child) return;
           const updatedChild = { ...child, baseIngredientId: null };
-          await saveIngredient(updatedChild);
-          setIngredients((list) =>
-            list.map((i) => (i.id === updatedChild.id ? updatedChild : i))
-          );
+          let nextList;
+          setIngredients((list) => {
+            nextList = updateIngredientById(list, updatedChild);
+            return nextList;
+          });
+          await saveIngredient(nextList);
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           setUnlinkChildTarget(null);
         }}
