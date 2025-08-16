@@ -14,6 +14,8 @@ import ShoppingIngredientsScreen from "./ShoppingIngredientsScreen";
 import IngredientDetailsScreen from "./IngredientDetailsScreen";
 import EditIngredientScreen from "./EditIngredientScreen";
 import AddIngredientScreen from "./AddIngredientScreen";
+import CocktailDetailsScreen from "../Cocktails/CocktailDetailsScreen";
+import EditCocktailScreen from "../Cocktails/EditCocktailScreen";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 
 const Tab = createBottomTabNavigator();
@@ -92,6 +94,16 @@ export default function IngredientsTabsScreen() {
         name="AddIngredient"
         component={AddIngredientScreen}
         options={{ title: "Add Ingredient" }}
+      />
+      <Stack.Screen
+        name="CocktailDetails"
+        component={CocktailDetailsScreen}
+        options={{ title: "Cocktail Details" }}
+      />
+      <Stack.Screen
+        name="EditCocktail"
+        component={EditCocktailScreen}
+        options={{ title: "Edit Cocktail" }}
       />
     </Stack.Navigator>
   );

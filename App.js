@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { TabMemoryProvider } from "./src/context/TabMemoryContext";
+import { TabMemoryProvider, useTabMemory } from "./src/context/TabMemoryContext";
 import { IngredientUsageProvider } from "./src/context/IngredientUsageContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,6 +12,10 @@ import { MenuProvider } from "react-native-popup-menu";
 
 import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
+import IngredientDetailsScreen from "./src/screens/Ingredients/IngredientDetailsScreen";
+import EditIngredientScreen from "./src/screens/Ingredients/EditIngredientScreen";
+import CocktailDetailsScreen from "./src/screens/Cocktails/CocktailDetailsScreen";
+import EditCocktailScreen from "./src/screens/Cocktails/EditCocktailScreen";
 import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScreen";
 
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
@@ -24,9 +28,43 @@ import { importCocktailsAndIngredients } from "./scripts/importCocktailsAndIngre
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
+const ShakerStack = createNativeStackNavigator();
+
+function ShakerStackScreen() {
+  return (
+    <ShakerStack.Navigator>
+      <ShakerStack.Screen
+        name="ShakerMain"
+        component={ShakerScreen}
+        options={{ headerShown: false }}
+      />
+      <ShakerStack.Screen
+        name="IngredientDetails"
+        component={IngredientDetailsScreen}
+        options={{ title: "Ingredient Details" }}
+      />
+      <ShakerStack.Screen
+        name="EditIngredient"
+        component={EditIngredientScreen}
+        options={{ title: "Edit Ingredient" }}
+      />
+      <ShakerStack.Screen
+        name="CocktailDetails"
+        component={CocktailDetailsScreen}
+        options={{ title: "Cocktail Details" }}
+      />
+      <ShakerStack.Screen
+        name="EditCocktail"
+        component={EditCocktailScreen}
+        options={{ title: "Edit Cocktail" }}
+      />
+    </ShakerStack.Navigator>
+  );
+}
 
 function Tabs() {
   const theme = useTheme();
+  const { getTab } = useTabMemory();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -52,8 +90,21 @@ function Tabs() {
     >
       {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
       <Tab.Screen name="Cocktails" component={CocktailsTabsScreen} />
-      <Tab.Screen name="Shaker" component={ShakerScreen} />
-      <Tab.Screen name="Ingredients" component={IngredientsTabsScreen} />
+      <Tab.Screen name="Shaker" component={ShakerStackScreen} />
+      <Tab.Screen
+        name="Ingredients"
+        component={IngredientsTabsScreen}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            const saved =
+              typeof getTab === "function" && getTab("ingredients");
+            navigation.navigate("Ingredients", {
+              screen: "IngredientsMain",
+              params: { screen: saved || "All" },
+            });
+          },
+        })}
+      />
     </Tab.Navigator>
   );
 }

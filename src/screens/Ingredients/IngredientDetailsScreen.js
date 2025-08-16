@@ -24,6 +24,7 @@ import {
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
+import { goBack } from "../../utils/navigation";
 
 import {
   getAllIngredients,
@@ -109,7 +110,7 @@ const RelationRow = memo(function RelationRow({
 export default function IngredientDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id, fromCocktailId, initialIngredient } = route.params;
+  const { id, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
   const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
@@ -134,7 +135,7 @@ export default function IngredientDetailsScreen() {
   );
 
   const handleGoBack = useCallback(() => {
-    navigation.goBack();
+    goBack(navigation);
   }, [navigation]);
 
   const handleEdit = useCallback(() => {
@@ -187,33 +188,25 @@ export default function IngredientDetailsScreen() {
 
   useEffect(() => {
     const returnTo = route.params?.returnTo;
-    if (!fromCocktailId && !returnTo) return;
+    if (!returnTo) return;
     const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
       navigation.dispatch(e.data.action);
-      if (returnTo) {
-        navigation.navigate("Cocktails", {
-          screen: returnTo,
-          params: {
-            createdIngredient: route.params?.createdIngredient,
-            targetLocalId: route.params?.targetLocalId,
-          },
-          merge: true,
-        });
-      } else {
-        navigation.navigate("Cocktails", {
-          screen: "CocktailDetails",
-          params: { id: fromCocktailId },
-        });
-      }
+      navigation.navigate("Cocktails", {
+        screen: returnTo,
+        params: {
+          createdIngredient: route.params?.createdIngredient,
+          targetLocalId: route.params?.targetLocalId,
+        },
+        merge: true,
+      });
     };
     const sub = navigation.addListener("beforeRemove", beforeRemove);
     return sub;
   }, [
     navigation,
-    fromCocktailId,
     route.params?.returnTo,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
@@ -414,10 +407,7 @@ export default function IngredientDetailsScreen() {
 
   const goToCocktail = useCallback(
     (goId) => {
-      navigation.navigate("Cocktails", {
-        screen: "CocktailDetails",
-        params: { id: goId },
-      });
+      navigation.push("CocktailDetails", { id: goId });
     },
     [navigation]
   );

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
 import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow from "../components/IngredientRow";
@@ -18,9 +17,8 @@ import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 
-export default function ShakerScreen() {
+export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
-  const navigation = useNavigation();
   const { ingredients, usageMap, loading } = useIngredientsData();
   const [allTags, setAllTags] = useState([]);
   const [expanded, setExpanded] = useState({});
@@ -168,10 +166,7 @@ export default function ShakerScreen() {
                       inShoppingList={ing.inShoppingList}
                       onPress={toggleIngredient}
                       onDetails={(id) =>
-                        navigation.navigate("Ingredients", {
-                          screen: "IngredientDetails",
-                          params: { id },
-                        })
+                        navigation.push("IngredientDetails", { id })
                       }
                       highlightColor={
                         active ? theme.colors.secondaryContainer : undefined

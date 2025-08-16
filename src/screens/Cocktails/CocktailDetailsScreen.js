@@ -15,12 +15,14 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import {
   useNavigation,
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
+import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
@@ -168,7 +170,7 @@ export default function CocktailDetailsScreen() {
   const [keepAwake, setKeepAwake] = useState(false);
 
   const handleGoBack = useCallback(() => {
-    navigation.goBack();
+    goBack(navigation);
   }, [navigation]);
 
   const handleEdit = useCallback(() => {
@@ -217,6 +219,17 @@ export default function CocktailDetailsScreen() {
       ),
     });
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBack = () => {
+        goBack(navigation);
+        return true;
+      };
+      const sub = BackHandler.addEventListener("hardwareBackPress", onBack);
+      return () => sub.remove();
+    }, [navigation])
+  );
 
   const load = useCallback(
     async (refresh = false) => {
@@ -497,11 +510,7 @@ export default function CocktailDetailsScreen() {
                   {...props}
                   onPress={
                     ingredientId
-                      ? () =>
-                          navigation.navigate("Ingredients", {
-                            screen: "IngredientDetails",
-                            params: { id: ingredientId, fromCocktailId: id },
-                          })
+                      ? () => navigation.push("IngredientDetails", { id: ingredientId })
                       : undefined
                   }
                 />
