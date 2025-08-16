@@ -3,7 +3,6 @@ import RAW_DATA from "../assets/data/open-cocktails.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
-import { Image } from "react-native";
 
 const INGREDIENTS_KEY = "ingredients";
 const COCKTAILS_KEY = "cocktails_v1";
@@ -28,12 +27,10 @@ function resolvePhoto(path) {
   if (!path) return null;
   const str = String(path);
   if (/^(https?:|file:)/.test(str)) return str;
-  try {
-    return Image.resolveAssetSource(require("../" + str)).uri;
-  } catch (e) {
-    console.warn("Missing asset", str);
-    return null;
-  }
+  // For bundled assets we keep the relative path; UI should resolve it
+  if (str.startsWith("assets/")) return str;
+  console.warn("Missing asset", str);
+  return null;
 }
 
 function sanitizeIngredients(raw) {

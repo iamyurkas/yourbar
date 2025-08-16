@@ -2,7 +2,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RAW_INGREDIENTS from "../assets/data/ingredients.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
-import { Image } from "react-native";
 
 const INGREDIENTS_KEY = "ingredients";
 const IMPORT_FLAG_KEY = "ingredients_imported_flag";
@@ -24,12 +23,10 @@ function resolvePhoto(path) {
   if (!path) return null;
   const str = String(path);
   if (/^(https?:|file:)/.test(str)) return str;
-  try {
-    return Image.resolveAssetSource(require("../" + str)).uri;
-  } catch (e) {
-    console.warn("Missing asset", str);
-    return null;
-  }
+  // Keep relative paths for bundled assets; UI will resolve
+  if (str.startsWith("assets/")) return str;
+  console.warn("Missing asset", str);
+  return null;
 }
 
 function normalize(raw) {
