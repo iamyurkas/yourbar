@@ -20,6 +20,7 @@ import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScre
 
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
 import { AppTheme } from "./src/theme";
+import ShakerResultsScreen from "./src/screens/ShakerResultsScreen";
 
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
@@ -57,6 +58,11 @@ function ShakerStackScreen() {
         name="EditCocktail"
         component={EditCocktailScreen}
         options={{ title: "Edit Cocktail" }}
+      />
+      <ShakerStack.Screen
+        name="ShakerResults"
+        component={ShakerResultsScreen}
+        options={{ title: "Available Cocktails" }}
       />
     </ShakerStack.Navigator>
   );
