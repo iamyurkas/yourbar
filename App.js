@@ -13,6 +13,9 @@ import { MenuProvider } from "react-native-popup-menu";
 import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
 import IngredientDetailsScreen from "./src/screens/Ingredients/IngredientDetailsScreen";
+import EditIngredientScreen from "./src/screens/Ingredients/EditIngredientScreen";
+import CocktailDetailsScreen from "./src/screens/Cocktails/CocktailDetailsScreen";
+import EditCocktailScreen from "./src/screens/Cocktails/EditCocktailScreen";
 import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScreen";
 
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
@@ -39,6 +42,21 @@ function ShakerStackScreen() {
         name="IngredientDetails"
         component={IngredientDetailsScreen}
         options={{ title: "Ingredient Details" }}
+      />
+      <ShakerStack.Screen
+        name="EditIngredient"
+        component={EditIngredientScreen}
+        options={{ title: "Edit Ingredient" }}
+      />
+      <ShakerStack.Screen
+        name="CocktailDetails"
+        component={CocktailDetailsScreen}
+        options={{ title: "Cocktail Details" }}
+      />
+      <ShakerStack.Screen
+        name="EditCocktail"
+        component={EditCocktailScreen}
+        options={{ title: "Edit Cocktail" }}
       />
     </ShakerStack.Navigator>
   );
