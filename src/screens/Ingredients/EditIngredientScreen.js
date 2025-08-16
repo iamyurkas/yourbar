@@ -41,6 +41,7 @@ import {
   deleteIngredient,
   getIngredientById,
   getAllIngredients,
+  updateIngredientById,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -387,17 +388,15 @@ export default function EditIngredientScreen() {
         tags,
         baseIngredientId: baseIngredientId ?? null,
       };
-      // оптимістично оновити глобальний список
+      // оптимістично оновити глобальний список і зберегти оновлені дані
       setGlobalIngredients((list) => {
-        const next = list
-          .map((i) =>
-            i.id === updated.id
-              ? { ...i, ...updated, searchName: updated.name.toLowerCase() }
-              : i
-          )
-          .sort((a, b) =>
-            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-          );
+        const next = updateIngredientById(list, {
+          ...updated,
+          searchName: updated.name.toLowerCase(),
+        }).sort((a, b) =>
+          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+        );
+        saveIngredient(next).catch(() => {});
         return next;
       });
 
@@ -437,9 +436,6 @@ export default function EditIngredientScreen() {
       } else {
         setIngredient(updated);
       }
-
-      // асинхронно зберегти без важкого перезавантаження
-      saveIngredient(updated).catch(() => {});
 
       return updated;
     },
