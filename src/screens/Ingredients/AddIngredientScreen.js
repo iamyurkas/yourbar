@@ -138,7 +138,7 @@ export default function AddIngredientScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState(() => {
     const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
-    return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[9] }];
+    return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
 
   // reference lists

@@ -9,7 +9,7 @@ export const BUILTIN_COCKTAIL_TAGS = [
   { id: 5, name: "long", color: TAG_COLORS[3] },
   { id: 6, name: "shooter", color: TAG_COLORS[7] },
   { id: 7, name: "non-alcoholic", color: TAG_COLORS[4] },
-  { id: 8, name: "custom", color: TAG_COLORS[9] },
+  { id: 8, name: "custom", color: TAG_COLORS[15] },
 ];
 
 // Утиліти

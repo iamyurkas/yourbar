@@ -1144,7 +1144,7 @@ export default function AddCocktailScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState(() => {
     const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
-    return custom ? [custom] : [{ id: 8, name: "custom", color: TAG_COLORS[9] }];
+    return custom ? [custom] : [{ id: 8, name: "custom", color: TAG_COLORS[15] }];
   });
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
