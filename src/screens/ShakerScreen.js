@@ -10,6 +10,8 @@ import {
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import HeaderWithSearch from "../components/HeaderWithSearch";
+import IngredientRow from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
@@ -20,6 +22,7 @@ export default function ShakerScreen() {
   const [allTags, setAllTags] = useState([]);
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +51,17 @@ export default function ShakerScreen() {
     }
     return map;
   }, [allTags, ingredients]);
+
+  const filteredGrouped = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return grouped;
+    const map = new Map();
+    grouped.forEach((items, id) => {
+      const filtered = items.filter((i) => i.searchName.includes(q));
+      if (filtered.length) map.set(id, filtered);
+    });
+    return map;
+  }, [grouped, search]);
 
   const toggleTag = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -78,9 +92,14 @@ export default function ShakerScreen() {
 
   return (
     <View style={styles.container}>
+      <HeaderWithSearch
+        searchValue={search}
+        setSearchValue={setSearch}
+        filterComponent={<View style={{ width: 28 }} />}
+      />
       <ScrollView contentContainerStyle={styles.scroll}>
         {allTags.map((tag) => {
-          const items = grouped.get(tag.id) || [];
+          const items = filteredGrouped.get(tag.id) || [];
           if (items.length === 0) return null;
           const isOpen = expanded[tag.id];
           return (
@@ -100,25 +119,18 @@ export default function ShakerScreen() {
                 items.map((ing) => {
                   const active = selectedIds.includes(ing.id);
                   return (
-                    <TouchableOpacity
+                    <IngredientRow
                       key={ing.id}
-                      onPress={() => toggleIngredient(ing.id)}
-                      style={[
-                        styles.ingredientRow,
-                        active && {
-                          backgroundColor: theme.colors.secondaryContainer,
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.ingredientText,
-                          active && { color: theme.colors.onSecondaryContainer },
-                        ]}
-                      >
-                        {ing.name}
-                      </Text>
-                    </TouchableOpacity>
+                      id={ing.id}
+                      name={ing.name}
+                      photoUri={ing.photoUri}
+                      tags={ing.tags}
+                      usageCount={0}
+                      onPress={toggleIngredient}
+                      highlightColor={
+                        active ? theme.colors.secondaryContainer : undefined
+                      }
+                    />
                   );
                 })}
             </View>
@@ -145,13 +157,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   tagTitle: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  ingredientRow: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-  },
-  ingredientText: { fontSize: 15 },
   counter: {
     padding: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
