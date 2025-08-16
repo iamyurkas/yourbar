@@ -145,6 +145,7 @@ export default function IngredientDetailsScreen() {
         merge: true,
       });
     } else if (fromCocktailId) {
+      navigation.goBack();
       navigation.navigate("Cocktails", {
         screen: "CocktailDetails",
         params: { id: fromCocktailId },
