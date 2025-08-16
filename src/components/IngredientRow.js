@@ -29,6 +29,7 @@ function IngredientRow({
   inShoppingList,
   baseIngredientId,
   onPress,
+  onDetails,
   onToggleInBar,
   onToggleShoppingList,
   onRemove,
@@ -139,6 +140,21 @@ function IngredientRow({
               />
             ))}
           </View>
+        )}
+
+        {onDetails && (
+          <Pressable
+            onPress={() => onDetails(id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            android_ripple={{ ...ripple, borderless: true }}
+            style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
+          >
+            <MaterialIcons
+              name="info"
+              size={22}
+              color={theme.colors.onSurfaceVariant}
+            />
+          </Pressable>
         )}
 
         {onRemove ? (
