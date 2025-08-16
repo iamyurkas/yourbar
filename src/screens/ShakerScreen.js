@@ -87,12 +87,35 @@ export default function ShakerScreen() {
 
   const cocktailsCount = useMemo(() => {
     if (selectedIds.length === 0) return 0;
-    const [first, ...rest] = selectedIds.map((id) => usageMap[id] || []);
-    return rest.reduce(
-      (acc, arr) => acc.filter((x) => arr.includes(x)),
-      [...first]
-    ).length;
-  }, [selectedIds, usageMap]);
+
+    // group selected ingredients by tag
+    const groups = new Map();
+    grouped.forEach((items, tagId) => {
+      const selected = items
+        .filter((ing) => selectedIds.includes(ing.id))
+        .map((ing) => ing.id);
+      if (selected.length > 0) groups.set(tagId, selected);
+    });
+
+    if (groups.size === 0) return 0;
+
+    let intersection;
+    groups.forEach((ids) => {
+      const union = new Set();
+      ids.forEach((id) => {
+        (usageMap[id] || []).forEach((cid) => union.add(cid));
+      });
+      if (!intersection) {
+        intersection = union;
+      } else {
+        intersection = new Set(
+          [...intersection].filter((cid) => union.has(cid))
+        );
+      }
+    });
+
+    return intersection ? intersection.size : 0;
+  }, [selectedIds, usageMap, grouped]);
 
   if (loading) {
     return (
