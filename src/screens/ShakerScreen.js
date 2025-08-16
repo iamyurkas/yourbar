@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Switch,
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -23,6 +24,7 @@ export default function ShakerScreen() {
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +65,16 @@ export default function ShakerScreen() {
     return map;
   }, [grouped, search]);
 
+  const displayGrouped = useMemo(() => {
+    if (!inStockOnly) return filteredGrouped;
+    const map = new Map();
+    filteredGrouped.forEach((items, id) => {
+      const filtered = items.filter((i) => i.inBar);
+      if (filtered.length) map.set(id, filtered);
+    });
+    return map;
+  }, [filteredGrouped, inStockOnly]);
+
   const toggleTag = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -95,11 +107,13 @@ export default function ShakerScreen() {
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
-        filterComponent={<View style={{ width: 28 }} />}
+        filterComponent={
+          <Switch value={inStockOnly} onValueChange={setInStockOnly} />
+        }
       />
       <ScrollView contentContainerStyle={styles.scroll}>
         {allTags.map((tag) => {
-          const items = filteredGrouped.get(tag.id) || [];
+          const items = displayGrouped.get(tag.id) || [];
           if (items.length === 0) return null;
           const isOpen = expanded[tag.id];
           return (
