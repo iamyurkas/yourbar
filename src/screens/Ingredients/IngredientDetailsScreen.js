@@ -129,17 +129,44 @@ export default function IngredientDetailsScreen() {
   );
 
   const handleGoBack = useCallback(() => {
-    if (fromCocktailId)
+    const returnTo = route.params?.returnTo;
+    if (returnTo) {
+      navigation.navigate("Cocktails", {
+        screen: returnTo,
+        params: {
+          createdIngredient: route.params?.createdIngredient,
+          targetLocalId: route.params?.targetLocalId,
+        },
+        merge: true,
+      });
+    } else if (fromCocktailId) {
       navigation.navigate("Cocktails", {
         screen: "CocktailDetails",
         params: { id: fromCocktailId },
       });
-    else navigation.goBack();
-  }, [navigation, fromCocktailId]);
+    } else navigation.goBack();
+  }, [
+    navigation,
+    fromCocktailId,
+    route.params?.returnTo,
+    route.params?.createdIngredient,
+    route.params?.targetLocalId,
+  ]);
 
   const handleEdit = useCallback(() => {
-    navigation.navigate("EditIngredient", { id });
-  }, [navigation, id]);
+    navigation.navigate("EditIngredient", {
+      id,
+      returnTo: route.params?.returnTo,
+      createdIngredient: route.params?.createdIngredient,
+      targetLocalId: route.params?.targetLocalId,
+    });
+  }, [
+    navigation,
+    id,
+    route.params?.returnTo,
+    route.params?.createdIngredient,
+    route.params?.targetLocalId,
+  ]);
 
   // Always show custom back button
   useLayoutEffect(() => {
