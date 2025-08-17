@@ -49,8 +49,8 @@ export const TAG_COLORS = [
   "#81C784",
   "#AED581",
   "#DCE775",
-  "#FFF176",
   "#FFD54F",
   "#FFB74D",
   "#FF8A65",
+  "#a8a8a8",
 ];
