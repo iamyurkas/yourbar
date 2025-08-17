@@ -231,9 +231,9 @@ export default function GeneralMenu({ visible, onClose }) {
     setAllowSubstitutes((v) => {
       const next = !v;
       saveAllowSubstitutes(next);
-      refresh?.();
       return next;
     });
+    refresh?.();
   };
 
   const toggleKeepAwake = () => {
