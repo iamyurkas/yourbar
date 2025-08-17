@@ -167,8 +167,6 @@ export default function CocktailDetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
-  const [keepAwake, setKeepAwake] = useState(false);
-
   const handleGoBack = useCallback(() => {
     goBack(navigation);
   }, [navigation]);
@@ -269,24 +267,24 @@ export default function CocktailDetailsScreen() {
       (async () => {
         try {
           const enabled = await getKeepAwake();
-          setKeepAwake(!!enabled);
+          if (enabled) {
+            activateKeepAwakeAsync();
+          }
         } catch {}
       })();
-      const sub = addKeepAwakeListener(setKeepAwake);
+      const sub = addKeepAwakeListener((enabled) => {
+        if (enabled) {
+          activateKeepAwakeAsync();
+        } else {
+          deactivateKeepAwake();
+        }
+      });
       return () => {
         sub.remove();
         deactivateKeepAwake();
       };
     }, [])
   );
-
-  useEffect(() => {
-    if (keepAwake) {
-      activateKeepAwakeAsync();
-    } else {
-      deactivateKeepAwake();
-    }
-  }, [keepAwake]);
 
   useEffect(() => {
     const sub = addIgnoreGarnishListener(setIgnoreGarnish);
