@@ -1923,7 +1923,7 @@ export default function AddCocktailScreen() {
 }
 
 /* ---------- styles ---------- */
-const IMAGE_SIZE = 100;
+const IMAGE_SIZE = 150;
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40 },

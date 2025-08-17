@@ -49,7 +49,7 @@ import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import ExpandableText from "../../components/ExpandableText";
 
-const PHOTO_SIZE = 100;
+const PHOTO_SIZE = 150;
 const THUMB = 40;
 
 /** Gray-square photo (no icon/initials), uses theme */
