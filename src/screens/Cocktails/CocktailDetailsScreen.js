@@ -334,9 +334,8 @@ export default function CocktailDetailsScreen() {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
       const inBar = ing?.inBar;
-      const ignored = ignoreGarnish && r.garnish && !inBar;
       let substitute = null;
-      if (!inBar && ing && !ignored) {
+      if (!inBar && ing) {
         const baseId = ing.baseIngredientId ?? ing.id;
 
         if (allowSubstitutes || r.allowBaseSubstitution) {
@@ -367,6 +366,8 @@ export default function CocktailDetailsScreen() {
       }
 
       const display = substitute || ing || {};
+      const finalInBar = substitute ? substitute.inBar : inBar;
+      const ignored = ignoreGarnish && r.garnish && !finalInBar;
       let amount = r.amount;
       let unitName = getUnitById(r.unitId)?.name || "";
       if (amount != null) {
@@ -387,7 +388,7 @@ export default function CocktailDetailsScreen() {
         photoUri: display.photoUri || null,
         amount,
         unitName,
-        inBar: substitute ? substitute.inBar : inBar,
+        inBar: finalInBar,
         ignored,
         garnish: !!r.garnish,
         optional: !!r.optional,
