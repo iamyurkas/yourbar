@@ -286,14 +286,22 @@ const IngredientRow = memo(function IngredientRow({
     const match = allIngredients.find(
       (i) => collator.compare((i.name || "").trim(), q) === 0
     );
-    if (match) {
+    if (match && suggestions.length <= 1) {
       onChange({
         selectedId: match.id,
         selectedItem: match,
         name: match.name,
       });
     }
-  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
+  }, [
+    query,
+    debounced,
+    row.selectedId,
+    allIngredients,
+    collator,
+    suggestions.length,
+    onChange,
+  ]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
