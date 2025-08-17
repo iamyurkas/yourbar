@@ -23,6 +23,7 @@ import {
   useNavigation,
   useRoute,
   useFocusEffect,
+  CommonActions,
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
@@ -194,7 +195,9 @@ export default function IngredientDetailsScreen() {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
-      navigation.dispatch(e.data.action);
+      navigation.dispatch(
+        CommonActions.reset({ index: 0, routes: [{ name: "IngredientsMain" }] })
+      );
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
