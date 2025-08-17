@@ -127,6 +127,7 @@ export default function AllCocktailsScreen() {
       const missing = [];
       const ingredientNames = [];
       let allAvail = required.length > 0;
+      let branded = false;
       for (const r of required) {
         const ing = ingMap.get(String(r.ingredientId));
         const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
@@ -158,16 +159,14 @@ export default function AllCocktailsScreen() {
         }
         if (used) {
           ingredientNames.push(used.name);
+          if (used.baseIngredientId != null) branded = true;
         } else {
+          if (ing?.baseIngredientId != null) branded = true;
           const missingName = ing?.name || r.name || "";
           if (missingName) missing.push(missingName);
           allAvail = false;
         }
       }
-      const branded = (c.ingredients || []).some((r) => {
-        const ing = ingMap.get(String(r.ingredientId));
-        return ing && ing.baseIngredientId != null;
-      });
       let ingredientLine = ingredientNames.join(", ");
       if (!allAvail) {
         if (missing.length > 0 && missing.length <= 2) {
