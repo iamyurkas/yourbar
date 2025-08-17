@@ -65,6 +65,7 @@ const IngredientRow = memo(function IngredientRow({
   garnish,
   optional,
   substituteFor,
+  isBranded,
   onPress,
 }) {
   const theme = useTheme();
@@ -81,7 +82,16 @@ const IngredientRow = memo(function IngredientRow({
         { borderBottomColor: theme.colors.background, backgroundColor },
       ]}
     >
-      <View style={[styles.ingItem, !inBar && !ignored && styles.dimmed]}>
+      <View
+        style={[
+          styles.ingItem,
+          isBranded && {
+            ...styles.brandedStripe,
+            borderLeftColor: theme.colors.primary,
+          },
+          !inBar && !ignored && styles.dimmed,
+        ]}
+      >
         {photoUri ? (
           <Image
             source={{ uri: photoUri }}
@@ -358,6 +368,7 @@ export default function CocktailDetailsScreen() {
         garnish: !!r.garnish,
         optional: !!r.optional,
         substituteFor: substitute ? originalName : null,
+        isBranded: display.baseIngredientId != null,
       };
     });
   }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish]);
@@ -592,4 +603,5 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, marginTop: 2 },
   amountText: { fontSize: 14, marginLeft: 8 },
   dimmed: { opacity: 0.88 },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
