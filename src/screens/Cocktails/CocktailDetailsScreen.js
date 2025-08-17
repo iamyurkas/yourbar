@@ -333,8 +333,8 @@ export default function CocktailDetailsScreen() {
     return list.map((r) => {
       const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
-      const ignored = ignoreGarnish && r.garnish;
-      const inBar = ignored ? false : ing?.inBar;
+      const inBar = ing?.inBar;
+      const ignored = ignoreGarnish && r.garnish && !inBar;
       let substitute = null;
       if (!inBar && ing && !ignored) {
         const baseId = ing.baseIngredientId ?? ing.id;
