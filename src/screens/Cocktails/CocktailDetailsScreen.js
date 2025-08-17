@@ -21,6 +21,7 @@ import {
   useNavigation,
   useRoute,
   useFocusEffect,
+  StackActions,
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
@@ -168,7 +169,7 @@ const IngredientRow = memo(function IngredientRow({
 
 export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
-  const { id } = useRoute().params;
+  const { id, backToIngredientId } = useRoute().params;
   const theme = useTheme();
   const { ingredients: globalIngredients = [] } = useIngredientUsage();
 
@@ -181,8 +182,16 @@ export default function CocktailDetailsScreen() {
   const [keepAwake, setKeepAwake] = useState(false);
 
   const handleGoBack = useCallback(() => {
-    goBack(navigation);
-  }, [navigation]);
+    if (backToIngredientId != null) {
+      navigation.navigate("Ingredients", {
+        screen: "IngredientDetails",
+        params: { id: backToIngredientId },
+      });
+      navigation.dispatch(StackActions.pop(1));
+    } else {
+      goBack(navigation);
+    }
+  }, [navigation, backToIngredientId]);
 
   const handleEdit = useCallback(() => {
     navigation.navigate("EditCocktail", { id });
@@ -234,12 +243,12 @@ export default function CocktailDetailsScreen() {
   useFocusEffect(
     useCallback(() => {
       const onBack = () => {
-        goBack(navigation);
+        handleGoBack();
         return true;
       };
       const sub = BackHandler.addEventListener("hardwareBackPress", onBack);
       return () => sub.remove();
-    }, [navigation])
+    }, [handleGoBack])
   );
 
   const load = useCallback(

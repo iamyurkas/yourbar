@@ -1421,7 +1421,14 @@ export default function AddCocktailScreen() {
     const nextUsage = addCocktailToUsageMap(usageMap, ingredients, created);
     setUsageMap(nextUsage);
     setIngredients(applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails));
-    navigation.replace("CocktailsMain", { screen: lastCocktailsTab });
+    if (fromIngredientFlow) {
+      navigation.replace("CocktailDetails", {
+        id: created.id,
+        backToIngredientId: initialIngredient?.id,
+      });
+    } else {
+      navigation.replace("CocktailDetails", { id: created.id });
+    }
   }, [
     name,
     photoUri,
@@ -1437,7 +1444,8 @@ export default function AddCocktailScreen() {
     setUsageMap,
     setIngredients,
     navigation,
-    lastCocktailsTab,
+    fromIngredientFlow,
+    initialIngredient?.id,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
