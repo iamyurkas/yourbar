@@ -133,15 +133,17 @@ const IngredientRow = memo(function IngredientRow({
           </Text>
           {(() => {
             const meta = [];
-            if (optional) meta.push("(optional)");
-            if (garnish) meta.push("(garnish)");
+            
+            
             if (substituteFor)
               meta.push(`Substitute for: ${substituteFor}`);
+            if (garnish) meta.push("(garnish)");
+            if (optional) meta.push("(optional)");
             const metaText = meta.join(" ");
             return (
               metaText && (
                 <Text
-                  numberOfLines={1}
+                  numberOfLines={2}
                   style={[
                     styles.meta,
                     { color: theme.colors.onSurfaceVariant },
