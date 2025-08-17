@@ -227,10 +227,7 @@ export default function MyCocktailsScreen() {
 
   const handleIngredientPress = useCallback(
     (id) => {
-      navigation.navigate("Ingredients", {
-        screen: "IngredientDetails",
-        params: { id },
-      });
+      navigation.navigate("IngredientDetails", { id });
     },
     [navigation]
   );
