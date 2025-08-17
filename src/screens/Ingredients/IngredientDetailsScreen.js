@@ -44,6 +44,7 @@ import {
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import ExpandableText from "../../components/ExpandableText";
 
 const PHOTO_SIZE = 100;
 const THUMB = 40;
@@ -509,14 +510,10 @@ export default function IngredientDetailsScreen() {
 
       {ingredient.description ? (
         <View style={styles.section}>
-          <Text
-            style={[
-              styles.sectionText,
-              { color: theme.colors.onSurfaceVariant },
-            ]}
-          >
-            {ingredient.description}
-          </Text>
+          <ExpandableText
+            text={ingredient.description}
+            style={[styles.sectionText, { color: theme.colors.onSurfaceVariant }]}
+          />
         </View>
       ) : null}
 
