@@ -46,6 +46,8 @@ import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
 
+
+
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
   const [v, setV] = useState(value);
@@ -70,6 +72,7 @@ const withAlpha = (hex, alpha) => {
 /* -------------- pills for tags (memo) -------------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   const theme = useTheme();
+  const RIPPLE = { color: withAlpha(theme.colors.onSurface, 0.12) };
   return (
     <Pressable
       onPress={() => onToggle(id)}
