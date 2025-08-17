@@ -72,7 +72,6 @@ const withAlpha = (hex, alpha) => {
 /* -------------- pills for tags (memo) -------------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   const theme = useTheme();
-  const RIPPLE = { color: withAlpha(theme.colors.onSurface, 0.12) };
   return (
     <Pressable
       onPress={() => onToggle(id)}
@@ -119,6 +118,7 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
 
 export default function AddIngredientScreen() {
   const theme = useTheme();
+  const RIPPLE = { color: withAlpha(theme.colors.onSurface, 0.12) };
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
