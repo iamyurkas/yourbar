@@ -131,27 +131,27 @@ const IngredientRow = memo(function IngredientRow({
           >
             {name}
           </Text>
-          {optional && (
-            <Text
-              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
-            >
-              (optional)
-            </Text>
-          )}
-          {garnish && (
-            <Text
-              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
-            >
-              (garnish)
-            </Text>
-          )}
-          {substituteFor && (
-            <Text
-              style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}
-            >
-              Substitute for: {substituteFor}
-            </Text>
-          )}
+          {(() => {
+            const meta = [];
+            if (optional) meta.push("(optional)");
+            if (garnish) meta.push("(garnish)");
+            if (substituteFor)
+              meta.push(`Substitute for: ${substituteFor}`);
+            const metaText = meta.join(" ");
+            return (
+              metaText && (
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.meta,
+                    { color: theme.colors.onSurfaceVariant },
+                  ]}
+                >
+                  {metaText}
+                </Text>
+              )
+            );
+          })()}
         </View>
 
         {amount ? (
