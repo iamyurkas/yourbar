@@ -104,7 +104,11 @@ export async function exportAllData() {
         streamFiles: true,
       });
       stream.on('data', (chunk) => {
-        const data = remainder + chunk;
+        // JSZip may emit base64 chunks with newlines which Expo's
+        // writeAsStringAsync can't decode. Strip them before processing
+        // and ensure we only write complete 4-char base64 blocks.
+        const clean = chunk.replace(/\r?\n/g, '');
+        const data = remainder + clean;
         const validLen = data.length - (data.length % 4);
         remainder = data.slice(validLen);
         const toWrite = data.slice(0, validLen);
@@ -120,6 +124,10 @@ export async function exportAllData() {
       stream.on('error', reject);
       stream.on('end', () => {
         if (remainder) {
+          if (remainder.length % 4) {
+            reject(new Error('Invalid base64 stream')); 
+            return;
+          }
           chain = chain.then(() =>
             FileSystem.writeAsStringAsync(fileUri, remainder, {
               encoding: FileSystem.EncodingType.Base64,
