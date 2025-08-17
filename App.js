@@ -100,6 +100,7 @@ function Tabs() {
       <Tab.Screen
         name="Ingredients"
         component={IngredientsTabsScreen}
+        options={{ unmountOnBlur: true }}
         listeners={({ navigation }) => ({
           tabPress: () => {
             const saved =
