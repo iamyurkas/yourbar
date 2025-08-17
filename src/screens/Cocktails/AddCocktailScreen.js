@@ -65,6 +65,8 @@ import {
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
 
+const COLLATOR = new Intl.Collator("uk", { sensitivity: "base" });
+
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -159,10 +161,6 @@ const IngredientRow = memo(function IngredientRow({
   const [query, setQuery] = useState(row.name || "");
   const debounced = useDebounced(query, 200);
 
-  const collator = useMemo(
-    () => new Intl.Collator("uk", { sensitivity: "base" }),
-    []
-  );
 
   // refs + layout
   const nameAnchorRef = useRef(null); // для позиціювання підказок (контейнер)
@@ -218,18 +216,31 @@ const IngredientRow = memo(function IngredientRow({
 
   const suggestions = useMemo(() => {
     if (queryTrimmed.length < MIN_CHARS) return [];
+    if (
+      row.selectedId &&
+      COLLATOR.compare((row.selectedItem?.name || "").trim(), queryTrimmed) === 0 &&
+      !suggestState.visible
+    ) {
+      return [];
+    }
     const matches = allIngredients.filter((i) =>
       wordPrefixMatch(i.name || "", queryTrimmed)
     );
     if (row.selectedId) {
       return matches
         .filter(
-          (i) => collator.compare((i.name || "").trim(), queryTrimmed) !== 0
+          (i) => COLLATOR.compare((i.name || "").trim(), queryTrimmed) !== 0
         )
         .slice(0, 20);
     }
     return matches.slice(0, 20);
-  }, [allIngredients, queryTrimmed, row.selectedId, collator]);
+  }, [
+    allIngredients,
+    queryTrimmed,
+    row.selectedId,
+    row.selectedItem?.name,
+    suggestState.visible,
+  ]);
 
   const showSuggest = suggestions.length > 0;
 
@@ -293,7 +304,7 @@ const IngredientRow = memo(function IngredientRow({
     const q = raw.trim();
     if (!q) return;
     const match = allIngredients.find(
-      (i) => collator.compare((i.name || "").trim(), q) === 0
+      (i) => COLLATOR.compare((i.name || "").trim(), q) === 0
     );
     if (match) {
       onChange({
@@ -302,15 +313,16 @@ const IngredientRow = memo(function IngredientRow({
         name: match.name,
       });
     }
-  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
+  }, [query, debounced, row.selectedId, allIngredients, onChange]);
 
   const hasExactMatch = useMemo(() => {
+    if (row.selectedId) return true;
     const t = query.trim();
     if (!t) return true;
     return allIngredients.some(
-      (i) => collator.compare((i.name || "").trim(), t) === 0
+      (i) => COLLATOR.compare((i.name || "").trim(), t) === 0
     );
-  }, [allIngredients, collator, query]);
+  }, [allIngredients, query, row.selectedId]);
 
   const showAddNewBtn =
     !row.selectedId && query.trim().length > 1 && !hasExactMatch;
