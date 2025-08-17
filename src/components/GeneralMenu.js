@@ -274,7 +274,7 @@ export default function GeneralMenu({ visible, onClose }) {
             onStartShouldSetResponder={() => true}
           >
             <ScrollView
-            style={{ marginTop:-40 }}>
+            style={{ marginTop:-32 }}>
               <Text style={styles.title}>Settings</Text>
 
               <View style={styles.itemRow}>
@@ -297,7 +297,7 @@ export default function GeneralMenu({ visible, onClose }) {
                   style={styles.itemText}
                   onPress={toggleAllowSubstitutes}
                 >
-                  <Text style={styles.itemTitle}>Allow ingredient substitutes</Text>
+                  <Text style={styles.itemTitle}>Allways allow substitutes</Text>
                   <Text style={styles.itemSub}>
                     Use base or branded alternatives regardless of recipe
                   </Text>
