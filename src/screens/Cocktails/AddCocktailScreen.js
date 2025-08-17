@@ -214,16 +214,24 @@ const IngredientRow = memo(function IngredientRow({
   });
   const [openedFor, setOpenedFor] = useState(null);
 
-  const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
+  const queryTrimmed = debounced.trim();
 
   const suggestions = useMemo(() => {
-    if (!showSuggest) return [];
-    const q = debounced.trim();
-    if (!q) return [];
-    return allIngredients
-      .filter((i) => wordPrefixMatch(i.name || "", q))
-      .slice(0, 20);
-  }, [allIngredients, debounced, showSuggest]);
+    if (queryTrimmed.length < MIN_CHARS) return [];
+    const matches = allIngredients.filter((i) =>
+      wordPrefixMatch(i.name || "", queryTrimmed)
+    );
+    if (row.selectedId) {
+      return matches
+        .filter(
+          (i) => collator.compare((i.name || "").trim(), queryTrimmed) !== 0
+        )
+        .slice(0, 20);
+    }
+    return matches.slice(0, 20);
+  }, [allIngredients, queryTrimmed, row.selectedId, collator]);
+
+  const showSuggest = suggestions.length > 0;
 
   // sync from external
   useEffect(() => {
