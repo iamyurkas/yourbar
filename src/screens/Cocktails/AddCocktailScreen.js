@@ -282,19 +282,19 @@ const IngredientRow = memo(function IngredientRow({
     const stable = debounced;
     if (!raw || row.selectedId) return;
     if (raw !== stable) return;
-    if (raw.trim() !== raw) return;
     const q = raw.trim();
-    const matches = allIngredients.filter((i) =>
-      wordPrefixMatch(i.name || "", q)
+    if (!q) return;
+    const match = allIngredients.find(
+      (i) => collator.compare((i.name || "").trim(), q) === 0
     );
-    if (
-      matches.length === 1 &&
-      collator.compare((matches[0].name || "").trim(), q) === 0
-    ) {
-      const match = matches[0];
-      onChange({ selectedId: match.id, selectedItem: match });
+    if (match) {
+      onChange({
+        selectedId: match.id,
+        selectedItem: match,
+        name: match.name,
+      });
     }
-  }, [query, debounced, row.selectedId, allIngredients, collator, onChange, wordPrefixMatch]);
+  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
