@@ -1,4 +1,5 @@
-export function mapCocktailsByIngredient(ingredients, cocktails) {
+export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
+  const { allowSubstitutes = false } = options;
   const byId = new Map(ingredients.map((i) => [i.id, i]));
   const byBase = new Map();
   ingredients.forEach((i) => {
@@ -38,7 +39,7 @@ export function mapCocktailsByIngredient(ingredients, cocktails) {
       } else {
         // branded ingredient used: base ingredient always counts
         add(baseId, c.id);
-        if (r.allowBrandedSubstitutes) {
+        if (allowSubstitutes || r.allowBrandedSubstitutes) {
           group.forEach((item) => {
             if (item.id !== ing.id && item.id !== baseId) add(item.id, c.id);
           });
@@ -60,8 +61,8 @@ export function mapCocktailsByIngredient(ingredients, cocktails) {
   return result;
 }
 
-export function calculateIngredientUsage(ingredients, cocktails) {
-  const map = mapCocktailsByIngredient(ingredients, cocktails);
+export function calculateIngredientUsage(ingredients, cocktails, options = {}) {
+  const map = mapCocktailsByIngredient(ingredients, cocktails, options);
   const result = {};
   ingredients.forEach((i) => {
     const arr = map[i.id];
@@ -71,8 +72,8 @@ export function calculateIngredientUsage(ingredients, cocktails) {
 }
 
 export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
-  const { changedIngredientIds = [], changedCocktailIds = [] } = options;
-  const fullMap = mapCocktailsByIngredient(ingredients, cocktails);
+  const { changedIngredientIds = [], changedCocktailIds = [], allowSubstitutes = false } = options;
+  const fullMap = mapCocktailsByIngredient(ingredients, cocktails, { allowSubstitutes });
   if (
     changedIngredientIds.length === 0 &&
     changedCocktailIds.length === 0
@@ -95,7 +96,8 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
   return next;
 }
 
-export function addCocktailToUsageMap(prevMap, ingredients, cocktail) {
+export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = {}) {
+  const { allowSubstitutes = false } = options;
   const map = { ...prevMap };
   const byId = new Map(ingredients.map((i) => [i.id, i]));
   const byBase = new Map();
@@ -128,7 +130,7 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail) {
         });
       } else {
         add(baseId);
-        if (r.allowBrandedSubstitutes) {
+        if (allowSubstitutes || r.allowBrandedSubstitutes) {
           group.forEach((item) => {
             if (item.id !== ing.id && item.id !== baseId) add(item.id);
           });
@@ -143,7 +145,8 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail) {
   return map;
 }
 
-export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail) {
+export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, options = {}) {
+  const { allowSubstitutes = false } = options;
   const map = { ...prevMap };
   if (!cocktail) return map;
   const byId = new Map(ingredients.map((i) => [i.id, i]));
@@ -177,7 +180,7 @@ export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail) {
         });
       } else {
         remove(baseId);
-        if (r.allowBrandedSubstitutes) {
+        if (allowSubstitutes || r.allowBrandedSubstitutes) {
           group.forEach((item) => {
             if (item.id !== ing.id && item.id !== baseId) remove(item.id);
           });

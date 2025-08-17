@@ -62,6 +62,7 @@ import {
   removeCocktailFromUsageMap,
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
+import { getAllowSubstitutes } from "../../storage/settingsStorage";
 
 
 /* ---------- helpers ---------- */
@@ -1174,8 +1175,13 @@ export default function EditCocktailScreen() {
         c.id === updated.id ? updated : c
       );
       setCocktails(nextCocktails);
-      let nextUsage = removeCocktailFromUsageMap(usageMap, ingredients, prev);
-      nextUsage = addCocktailToUsageMap(nextUsage, ingredients, updated);
+      const allowSubs = await getAllowSubstitutes();
+      let nextUsage = removeCocktailFromUsageMap(usageMap, ingredients, prev, {
+        allowSubstitutes: !!allowSubs,
+      });
+      nextUsage = addCocktailToUsageMap(nextUsage, ingredients, updated, {
+        allowSubstitutes: !!allowSubs,
+      });
       setUsageMap(nextUsage);
       setIngredients(
         applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
@@ -1960,10 +1966,12 @@ export default function EditCocktailScreen() {
           await deleteCocktail(cocktailId);
           const nextCocktails = cocktails.filter((c) => c.id !== cocktailId);
           setCocktails(nextCocktails);
+          const allowSubs = await getAllowSubstitutes();
           const nextUsage = removeCocktailFromUsageMap(
             usageMap,
             ingredients,
-            prev
+            prev,
+            { allowSubstitutes: !!allowSubs }
           );
           setUsageMap(nextUsage);
           setIngredients(

@@ -63,6 +63,7 @@ import {
   addCocktailToUsageMap,
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
+import { getAllowSubstitutes } from "../../storage/settingsStorage";
 
 
 /* ---------- helpers ---------- */
@@ -1418,7 +1419,10 @@ export default function AddCocktailScreen() {
     const created = await addCocktail(cocktail);
     const nextCocktails = [...cocktails, created];
     setCocktails(nextCocktails);
-    const nextUsage = addCocktailToUsageMap(usageMap, ingredients, created);
+    const allowSubs = await getAllowSubstitutes();
+    const nextUsage = addCocktailToUsageMap(usageMap, ingredients, created, {
+      allowSubstitutes: !!allowSubs,
+    });
     setUsageMap(nextUsage);
     setIngredients(applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails));
     navigation.replace("CocktailsMain", { screen: lastCocktailsTab });

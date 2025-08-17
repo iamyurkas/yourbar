@@ -17,6 +17,8 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 
@@ -35,6 +37,7 @@ export default function MyIngredientsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [pendingUpdates, setPendingUpdates] = useState([]);
 
   useEffect(() => {
@@ -56,13 +59,21 @@ export default function MyIngredientsScreen() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const ig = await getIgnoreGarnish();
-      if (!cancelled) setIgnoreGarnish(!!ig);
+      const [ig, allow] = await Promise.all([
+        getIgnoreGarnish(),
+        getAllowSubstitutes(),
+      ]);
+      if (!cancelled) {
+        setIgnoreGarnish(!!ig);
+        setAllowSubstitutes(!!allow);
+      }
     })();
-    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subAs = addAllowSubstitutesListener(setAllowSubstitutes);
     return () => {
       cancelled = true;
-      sub.remove();
+      subIg.remove();
+      subAs.remove();
     };
   }, []);
 
@@ -120,11 +131,14 @@ export default function MyIngredientsScreen() {
         let used = null;
         if (ing?.inBar) used = ing;
         else {
-          if (r.allowBaseSubstitution) {
+          if (allowSubstitutes || r.allowBaseSubstitution) {
             const base = ingMap.get(baseId);
             if (base?.inBar) used = base;
           }
-          if (!used && (r.allowBrandedSubstitutes || ing?.baseIngredientId != null)) {
+          if (
+            !used &&
+            (allowSubstitutes || r.allowBrandedSubstitutes || ing?.baseIngredientId != null)
+          ) {
             const brand = findBrand(baseId);
             if (brand) used = brand;
           }
@@ -158,7 +172,7 @@ export default function MyIngredientsScreen() {
     });
 
     return result;
-  }, [ingredients, cocktails, usageMap, ignoreGarnish]);
+  }, [ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes]);
 
   const filtered = useMemo(() => {
     const q = searchDebounced.trim().toLowerCase();

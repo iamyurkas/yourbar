@@ -41,6 +41,8 @@ import { useTheme } from "react-native-paper";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
@@ -229,10 +231,11 @@ export default function IngredientDetailsScreen() {
 
   const load = useCallback(
     async (refresh = false) => {
-      const [all, cocktails, ig] = await Promise.all([
+      const [all, cocktails, ig, allowSubs] = await Promise.all([
         !refresh && ingredients.length ? ingredients : getAllIngredients(),
         !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
         getIgnoreGarnish(),
+        getAllowSubstitutes(),
       ]);
       const loaded = ingredientsById[id] || all.find((i) => i.id === id);
     setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
@@ -255,7 +258,9 @@ export default function IngredientDetailsScreen() {
         : null;
     setBaseIngredient(base || null);
 
-    const map = mapCocktailsByIngredient(all, cocktails);
+    const map = mapCocktailsByIngredient(all, cocktails, {
+      allowSubstitutes: !!allowSubs,
+    });
     const byId = new Map(cocktails.map((c) => [c.id, c]));
     const ingMap = new Map(all.map((i) => [String(i.id), i]));
     const findBrand = (baseId) =>
@@ -278,12 +283,15 @@ export default function IngredientDetailsScreen() {
           if (ing?.inBar) {
             used = ing;
           } else {
-            if (r.allowBaseSubstitution) {
+            if (allowSubs || r.allowBaseSubstitution) {
               const base = ingMap.get(baseId);
               if (base?.inBar) used = base;
             }
             const isBaseIngredient = ing?.baseIngredientId == null;
-            if (!used && (r.allowBrandedSubstitutes || isBaseIngredient)) {
+            if (
+              !used &&
+              (allowSubs || r.allowBrandedSubstitutes || isBaseIngredient)
+            ) {
               const brand = findBrand(baseId);
               if (brand) used = brand;
             }
@@ -355,6 +363,11 @@ export default function IngredientDetailsScreen() {
 
   useEffect(() => {
     const sub = addIgnoreGarnishListener(() => load());
+    return () => sub.remove();
+  }, [load]);
+
+  useEffect(() => {
+    const sub = addAllowSubstitutesListener(() => load());
     return () => sub.remove();
   }, [load]);
 

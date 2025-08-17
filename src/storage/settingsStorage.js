@@ -6,11 +6,13 @@ const IGNORE_GARNISH_KEY = "ignoreGarnish";
 const KEEP_AWAKE_KEY = "keepAwake";
 const FAVORITES_MIN_RATING_KEY = "favoritesMinRating";
 const TABS_ON_TOP_KEY = "tabsOnTop";
+const ALLOW_SUBSTITUTES_KEY = "allowSubstitutes";
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
 export const FAVORITES_MIN_RATING_EVENT = "favoritesMinRatingChanged";
 export const TABS_ON_TOP_EVENT = "tabsOnTopChanged";
+export const ALLOW_SUBSTITUTES_EVENT = "allowSubstitutesChanged";
 
 export async function getUseMetric() {
   try {
@@ -47,6 +49,27 @@ export async function setIgnoreGarnish(value) {
 
 export function addIgnoreGarnishListener(listener) {
   return DeviceEventEmitter.addListener(IGNORE_GARNISH_EVENT, listener);
+}
+
+export async function getAllowSubstitutes() {
+  try {
+    const value = await AsyncStorage.getItem(ALLOW_SUBSTITUTES_KEY);
+    if (value === null) return false;
+    return value === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setAllowSubstitutes(value) {
+  try {
+    await AsyncStorage.setItem(ALLOW_SUBSTITUTES_KEY, value ? "true" : "false");
+  } catch {}
+  DeviceEventEmitter.emit(ALLOW_SUBSTITUTES_EVENT, value);
+}
+
+export function addAllowSubstitutesListener(listener) {
+  return DeviceEventEmitter.addListener(ALLOW_SUBSTITUTES_EVENT, listener);
 }
 
 export async function getKeepAwake() {

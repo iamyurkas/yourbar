@@ -3,6 +3,10 @@ import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
 import IngredientUsageContext from "../context/IngredientUsageContext";
+import {
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
+} from "../storage/settingsStorage";
 
 export default function useIngredientsData() {
   const {
@@ -18,14 +22,17 @@ export default function useIngredientsData() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [ing, cocks] = await Promise.all([
+    const [ing, cocks, allowSubs] = await Promise.all([
       getAllIngredients(),
       getAllCocktails(),
+      getAllowSubstitutes(),
     ]);
     const sorted = [...ing].sort((a, b) =>
       a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
     );
-    const map = mapCocktailsByIngredient(sorted, cocks);
+    const map = mapCocktailsByIngredient(sorted, cocks, {
+      allowSubstitutes: !!allowSubs,
+    });
     const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));
     const withUsage = sorted.map((item) => {
       const ids = map[item.id] || [];
@@ -49,6 +56,13 @@ export default function useIngredientsData() {
       load();
     }
   }, [loading, load]);
+
+  useEffect(() => {
+    const sub = addAllowSubstitutesListener(() => {
+      load();
+    });
+    return () => sub.remove();
+  }, [load]);
 
   const refresh = useCallback(async () => {
     await load();
