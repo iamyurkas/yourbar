@@ -39,6 +39,7 @@ import {
   addKeepAwakeListener,
 } from "../../storage/settingsStorage";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import ExpandableText from "../../components/ExpandableText";
 
 /* ---------- helpers ---------- */
 const withAlpha = (hex, alpha) => {
@@ -483,14 +484,10 @@ export default function CocktailDetailsScreen() {
 
         {cocktail.description ? (
           <View style={styles.section}>
-            <Text
-              style={[
-                styles.sectionText,
-                { color: theme.colors.onSurfaceVariant },
-              ]}
-            >
-              {cocktail.description}
-            </Text>
+            <ExpandableText
+              text={cocktail.description}
+              style={[styles.sectionText, { color: theme.colors.onSurfaceVariant }]}
+            />
           </View>
         ) : null}
 
