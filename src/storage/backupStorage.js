@@ -98,17 +98,37 @@ export async function exportAllData() {
     // stream zip to file to avoid large memory usage
     await new Promise((resolve, reject) => {
       let chain = Promise.resolve();
-      const stream = zip.generateInternalStream({ type: 'base64', streamFiles: true });
+      let remainder = '';
+      const stream = zip.generateInternalStream({
+        type: 'base64',
+        streamFiles: true,
+      });
       stream.on('data', (chunk) => {
-        chain = chain.then(() =>
-          FileSystem.writeAsStringAsync(fileUri, chunk, {
-            encoding: FileSystem.EncodingType.Base64,
-            append: true,
-          })
-        );
+        const data = remainder + chunk;
+        const validLen = data.length - (data.length % 4);
+        remainder = data.slice(validLen);
+        const toWrite = data.slice(0, validLen);
+        if (toWrite) {
+          chain = chain.then(() =>
+            FileSystem.writeAsStringAsync(fileUri, toWrite, {
+              encoding: FileSystem.EncodingType.Base64,
+              append: true,
+            })
+          );
+        }
       });
       stream.on('error', reject);
-      stream.on('end', () => chain.then(resolve).catch(reject));
+      stream.on('end', () => {
+        if (remainder) {
+          chain = chain.then(() =>
+            FileSystem.writeAsStringAsync(fileUri, remainder, {
+              encoding: FileSystem.EncodingType.Base64,
+              append: true,
+            })
+          );
+        }
+        chain.then(resolve).catch(reject);
+      });
       stream.resume();
     });
 
