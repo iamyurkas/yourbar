@@ -1071,6 +1071,7 @@ export default function EditCocktailScreen() {
   const route = useRoute();
   const params = route.params || {};
   const cocktailId = params?.id;
+  const passedCocktail = params?.cocktail || null;
   const {
     ingredients,
     cocktails,
@@ -1121,6 +1122,48 @@ export default function EditCocktailScreen() {
   const skipPromptRef = useRef(false);
   const ratingRef = useRef(0);
   const createdAtRef = useRef(Date.now());
+
+  const loadCocktailData = useCallback((data) => {
+    if (!data) return;
+    setName(data.name || "");
+    setPhotoUri(data.photoUri || null);
+    setTags(Array.isArray(data.tags) ? data.tags : []);
+    setDescription(data.description || "");
+    setInstructions(data.instructions || "");
+    setGlassId(data.glassId || "cocktail_glass");
+    ratingRef.current = data.rating || 0;
+    createdAtRef.current = data.createdAt || Date.now();
+    const ts = Date.now();
+    const initialIngs = Array.isArray(data.ingredients)
+      ? data.ingredients.map((r, idx) => ({
+          localId: ts + idx,
+          name: r.name || "",
+          selectedId: r.ingredientId ?? null,
+          selectedItem: null,
+          quantity: r.amount || r.quantity || "",
+          unitId: r.unitId || UNIT_ID.ML,
+          garnish: !!r.garnish,
+          optional: !!r.optional,
+          allowBaseSubstitute: !!(
+            r.allowBaseSubstitution || r.allowBaseSubstitute
+          ),
+          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+          substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
+        }))
+      : [];
+    setIngs(initialIngs);
+    initialHashRef.current = JSON.stringify({
+      name: data.name || "",
+      photoUri: data.photoUri || null,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      description: data.description || "",
+      instructions: data.instructions || "",
+      glassId: data.glassId || "cocktail_glass",
+      ings: initialIngs,
+    });
+    setDirty(false);
+    setLoading(false);
+  }, []);
 
   const serialize = useCallback(
     () =>
@@ -1268,58 +1311,27 @@ export default function EditCocktailScreen() {
     return () => hw.remove();
   }, [navigation]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let mounted = true;
+    const existing = passedCocktail || cocktails.find((c) => c.id === cocktailId);
+    if (existing) {
+      loadCocktailData(existing);
+      return () => {
+        mounted = false;
+      };
+    }
     (async () => {
       const data = await getCocktailById(cocktailId);
-      if (!mounted || !data) {
+      if (mounted && data) {
+        loadCocktailData(data);
+      } else if (mounted) {
         setLoading(false);
-        return;
       }
-      setName(data.name || "");
-      setPhotoUri(data.photoUri || null);
-      setTags(Array.isArray(data.tags) ? data.tags : []);
-      setDescription(data.description || "");
-      setInstructions(data.instructions || "");
-      setGlassId(data.glassId || "cocktail_glass");
-      ratingRef.current = data.rating || 0;
-      createdAtRef.current = data.createdAt || Date.now();
-      const initialIngs = Array.isArray(data.ingredients)
-        ? data.ingredients.map((r, idx) => ({
-            localId: Date.now() + idx,
-            name: r.name || "",
-            selectedId: r.ingredientId ?? null,
-            selectedItem: null,
-            quantity: r.amount || r.quantity || "",
-            unitId: r.unitId || UNIT_ID.ML,
-            garnish: !!r.garnish,
-            optional: !!r.optional,
-            allowBaseSubstitute: !!(
-              r.allowBaseSubstitution || r.allowBaseSubstitute
-            ),
-            allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-            substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
-          }))
-        : [];
-      setIngs(initialIngs);
-      requestAnimationFrame(() => {
-        initialHashRef.current = JSON.stringify({
-          name: data.name || "",
-          photoUri: data.photoUri || null,
-          tags: Array.isArray(data.tags) ? data.tags : [],
-          description: data.description || "",
-          instructions: data.instructions || "",
-          glassId: data.glassId || "cocktail_glass",
-          ings: initialIngs,
-        });
-        setDirty(false);
-        setLoading(false);
-      });
     })();
     return () => {
       mounted = false;
     };
-  }, [cocktailId]);
+  }, [cocktailId, passedCocktail, cocktails, loadCocktailData]);
 
   useEffect(() => {
     if (loading) return;

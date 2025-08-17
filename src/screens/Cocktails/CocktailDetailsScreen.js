@@ -197,8 +197,8 @@ export default function CocktailDetailsScreen() {
   }, [navigation, backToIngredientId]);
 
   const handleEdit = useCallback(() => {
-    navigation.navigate("EditCocktail", { id });
-  }, [navigation, id]);
+    navigation.navigate("EditCocktail", { id, cocktail });
+  }, [navigation, id, cocktail]);
 
   const handleRate = useCallback(
     async (value) => {
