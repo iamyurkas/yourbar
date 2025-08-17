@@ -20,6 +20,8 @@ import {
   addIgnoreGarnishListener,
   getFavoritesMinRating,
   addFavoritesMinRatingListener,
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
@@ -47,6 +49,7 @@ export default function FavoriteCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [minRating, setMinRating] = useState(0);
   const [sortOrder, setSortOrder] = useState("desc");
 
@@ -80,17 +83,20 @@ export default function FavoriteCocktailsScreen() {
         globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
       const ingredientPromise =
         globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig, favMin] = await Promise.all([
-        cocktailPromise,
-        ingredientPromise,
-        getIgnoreGarnish(),
-        getFavoritesMinRating(),
-      ]);
+      const [cocktailsList, ingredientsList, ig, favMin, allowSubs] =
+        await Promise.all([
+          cocktailPromise,
+          ingredientPromise,
+          getIgnoreGarnish(),
+          getFavoritesMinRating(),
+          getAllowSubstitutes(),
+        ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
       setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
       setMinRating(favMin || 0);
+      setAllowSubstitutes(!!allowSubs);
       if (firstLoad.current) {
         setLoading(false);
         firstLoad.current = false;
@@ -98,10 +104,12 @@ export default function FavoriteCocktailsScreen() {
     })();
     const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     const subFav = addFavoritesMinRatingListener(setMinRating);
+    const subAs = addAllowSubstitutesListener(setAllowSubstitutes);
     return () => {
       cancel = true;
       subIg.remove();
       subFav.remove();
+      subAs.remove();
     };
   }, [isFocused, globalCocktails, globalIngredients]);
 
@@ -136,12 +144,15 @@ export default function FavoriteCocktailsScreen() {
         if (ing?.inBar) {
           used = ing;
         } else {
-          if (r.allowBaseSubstitution) {
+          if (allowSubstitutes || r.allowBaseSubstitution) {
             const base = ingMap.get(baseId);
             if (base?.inBar) used = base;
           }
           const isBaseIngredient = ing?.baseIngredientId == null;
-          if (!used && (r.allowBrandedSubstitutes || isBaseIngredient)) {
+          if (
+            !used &&
+            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+          ) {
             const brand = findBrand(baseId);
             if (brand) used = brand;
           }
@@ -197,6 +208,7 @@ export default function FavoriteCocktailsScreen() {
     ignoreGarnish,
     minRating,
     sortOrder,
+    allowSubstitutes,
   ]);
 
   const handlePress = useCallback(

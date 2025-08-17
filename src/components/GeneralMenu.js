@@ -34,6 +34,8 @@ import {
   getTabsOnTop,
   setTabsOnTop as saveTabsOnTop,
   addTabsOnTopListener,
+  getAllowSubstitutes,
+  setAllowSubstitutes as saveAllowSubstitutes,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -101,6 +103,7 @@ export default function GeneralMenu({ visible, onClose }) {
   const [useMetric, setUseMetric] = useState(true);
   const [keepAwake, setKeepAwake] = useState(false);
   const [tabsOnTop, setTabsOnTop] = useState(true);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [tagsVisible, setTagsVisible] = useState(false);
   const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
@@ -178,6 +181,12 @@ export default function GeneralMenu({ visible, onClose }) {
     })();
     (async () => {
       try {
+        const stored = await getAllowSubstitutes();
+        setAllowSubstitutes(!!stored);
+      } catch {}
+    })();
+    (async () => {
+      try {
         const stored = await getKeepAwake();
         setKeepAwake(!!stored);
       } catch {}
@@ -214,6 +223,15 @@ export default function GeneralMenu({ visible, onClose }) {
     setIgnoreGarnish((v) => {
       const next = !v;
       saveIgnoreGarnish(next);
+      return next;
+    });
+  };
+
+  const toggleAllowSubstitutes = () => {
+    setAllowSubstitutes((v) => {
+      const next = !v;
+      saveAllowSubstitutes(next);
+      refresh?.();
       return next;
     });
   };
@@ -267,6 +285,22 @@ export default function GeneralMenu({ visible, onClose }) {
                 <Pressable style={styles.itemText} onPress={toggleIgnoreGarnish}>
                   <Text style={styles.itemTitle}>Ignore garnishes</Text>
                   <Text style={styles.itemSub}>All garnishes are optional</Text>
+                </Pressable>
+              </View>
+
+              <View style={styles.itemRow}>
+                <Checkbox
+                  status={allowSubstitutes ? "checked" : "unchecked"}
+                  onPress={toggleAllowSubstitutes}
+                />
+                <Pressable
+                  style={styles.itemText}
+                  onPress={toggleAllowSubstitutes}
+                >
+                  <Text style={styles.itemTitle}>Allow ingredient substitutes</Text>
+                  <Text style={styles.itemSub}>
+                    Use base or branded alternatives regardless of recipe
+                  </Text>
                 </Pressable>
               </View>
 

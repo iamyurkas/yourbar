@@ -8,6 +8,10 @@ import TagFilterMenu from "../components/TagFilterMenu";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../components/CocktailRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { getAllCocktailTags } from "../storage/cocktailTagsStorage";
+import {
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
+} from "../storage/settingsStorage";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { ids = [] } = route.params || {};
@@ -16,6 +20,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
   const [search, setSearch] = useState("");
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,6 +30,19 @@ export default function ShakerResultsScreen({ route, navigation }) {
     })();
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const allow = await getAllowSubstitutes();
+      if (!cancelled) setAllowSubstitutes(!!allow);
+    })();
+    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    return () => {
+      cancelled = true;
+      sub.remove();
     };
   }, []);
 
@@ -55,12 +73,15 @@ export default function ShakerResultsScreen({ route, navigation }) {
           if (ing?.inBar) {
             used = ing;
           } else {
-            if (r.allowBaseSubstitution) {
+            if (allowSubstitutes || r.allowBaseSubstitution) {
               const base = ingMap.get(baseId);
               if (base?.inBar) used = base;
             }
             const isBaseIngredient = ing?.baseIngredientId == null;
-            if (!used && (r.allowBrandedSubstitutes || isBaseIngredient)) {
+            if (
+              !used &&
+              (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+            ) {
               const brand = findBrand(baseId);
               if (brand) used = brand;
             }
@@ -103,7 +124,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
           hasBranded: branded,
         };
       });
-  }, [cocktails, ingredients, ids, search, selectedTagIds]);
+  }, [cocktails, ingredients, ids, search, selectedTagIds, allowSubstitutes]);
 
   if (loading) {
     return (

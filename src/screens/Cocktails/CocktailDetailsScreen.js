@@ -38,6 +38,8 @@ import {
   addIgnoreGarnishListener,
   getKeepAwake,
   addKeepAwakeListener,
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import ExpandableText from "../../components/ExpandableText";
@@ -180,6 +182,7 @@ export default function CocktailDetailsScreen() {
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
 
   const handleGoBack = useCallback(() => {
     if (backToIngredientId != null) {
@@ -258,17 +261,20 @@ export default function CocktailDetailsScreen() {
         !refresh && globalIngredients.length
           ? Promise.resolve(globalIngredients)
           : getAllIngredients();
-      const [loadedCocktail, allIngredients, useMetric, ig] = await Promise.all([
-        getCocktailById(id),
-        ingredientPromise,
-        getUseMetric(),
-        getIgnoreGarnish(),
-      ]);
+      const [loadedCocktail, allIngredients, useMetric, ig, allowSubs] =
+        await Promise.all([
+          getCocktailById(id),
+          ingredientPromise,
+          getUseMetric(),
+          getIgnoreGarnish(),
+          getAllowSubstitutes(),
+        ]);
       setCocktail(loadedCocktail || null);
       setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
       setIngList(allIngredients || []);
       setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
+      setAllowSubstitutes(!!allowSubs);
       setLoading(false);
     },
     [id, globalIngredients]
@@ -313,6 +319,11 @@ export default function CocktailDetailsScreen() {
     return () => sub.remove();
   }, []);
 
+  useEffect(() => {
+    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    return () => sub.remove();
+  }, []);
+
   const rows = useMemo(() => {
     if (!cocktail) return [];
     const list = Array.isArray(cocktail.ingredients)
@@ -328,13 +339,16 @@ export default function CocktailDetailsScreen() {
       if (!inBar && ing && !ignored) {
         const baseId = ing.baseIngredientId ?? ing.id;
 
-        if (r.allowBaseSubstitution) {
+        if (allowSubstitutes || r.allowBaseSubstitution) {
           const base = allIngs.find((i) => i.id === baseId && i.inBar);
           if (base) substitute = base;
         }
 
         const isBaseIngredient = ing.baseIngredientId == null;
-        if (!substitute && (r.allowBrandedSubstitutes || isBaseIngredient)) {
+        if (
+          !substitute &&
+          (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+        ) {
           const brand = allIngs.find(
             (i) => i.inBar && i.baseIngredientId === baseId
           );
@@ -381,7 +395,7 @@ export default function CocktailDetailsScreen() {
         isBranded: display.baseIngredientId != null,
       };
     });
-  }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish]);
+  }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish, allowSubstitutes]);
 
   if (loading)
     return (

@@ -21,6 +21,8 @@ import {
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
 import TagFilterMenu from "../../components/TagFilterMenu";
@@ -48,6 +50,7 @@ export default function MyCocktailsScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
@@ -82,24 +85,28 @@ export default function MyCocktailsScreen() {
         globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
       const ingredientPromise =
         globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig] = await Promise.all([
+      const [cocktailsList, ingredientsList, ig, allowSubs] = await Promise.all([
         cocktailPromise,
         ingredientPromise,
         getIgnoreGarnish(),
+        getAllowSubstitutes(),
       ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
       setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
+      setAllowSubstitutes(!!allowSubs);
       if (firstLoad.current) {
         setLoading(false);
         firstLoad.current = false;
       }
     })();
-    const sub = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
+    const subAs = addAllowSubstitutesListener(setAllowSubstitutes);
     return () => {
       cancel = true;
-      sub.remove();
+      subIg.remove();
+      subAs.remove();
     };
   }, [isFocused, globalCocktails, globalIngredients]);
 
@@ -133,12 +140,15 @@ export default function MyCocktailsScreen() {
         if (ing?.inBar) {
           used = ing;
         } else {
-          if (r.allowBaseSubstitution) {
+          if (allowSubstitutes || r.allowBaseSubstitution) {
             const base = ingMap.get(baseId);
             if (base?.inBar) used = base;
           }
           const isBaseIngredient = ing?.baseIngredientId == null;
-          if (!used && (r.allowBrandedSubstitutes || isBaseIngredient)) {
+          if (
+            !used &&
+            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+          ) {
             const brand = findBrand(baseId);
             if (brand) used = brand;
           }
@@ -181,7 +191,14 @@ export default function MyCocktailsScreen() {
         missingIngredientIds: missingIds,
       };
     });
-  }, [cocktails, ingredients, searchDebounced, selectedTagIds, ignoreGarnish]);
+  }, [
+    cocktails,
+    ingredients,
+    searchDebounced,
+    selectedTagIds,
+    ignoreGarnish,
+    allowSubstitutes,
+  ]);
 
   const { available, suggestions } = useMemo(() => {
     const avail = processed.filter((c) => c.isAllAvailable);
