@@ -131,6 +131,7 @@ export default function AddIngredientScreen() {
   const initialNameParam = route.params?.initialName || "";
   const targetLocalId = route.params?.targetLocalId;
   const returnTo = route.params?.returnTo || "AddCocktail";
+  const returnKey = route.params?.returnKey;
   const fromCocktailFlow = targetLocalId != null;
   const lastIngredientsTab =
     (typeof getTab === "function" && getTab("ingredients")) || "All";
@@ -202,7 +203,9 @@ export default function AddIngredientScreen() {
           <HeaderBackButton
             {...props}
             onPress={() =>
-              navigation.navigate("Cocktails", { screen: returnTo })
+              returnKey
+                ? navigation.navigate({ key: returnKey })
+                : navigation.navigate("Cocktails", { screen: returnTo })
             }
             labelVisible={false}
           />
@@ -216,7 +219,7 @@ export default function AddIngredientScreen() {
           />
         ),
     });
-  }, [navigation, fromCocktailFlow, returnTo, lastIngredientsTab]);
+  }, [navigation, fromCocktailFlow, returnTo, returnKey, lastIngredientsTab]);
 
   useEffect(() => {
     if (!isFocused) return;
@@ -225,7 +228,11 @@ export default function AddIngredientScreen() {
       if (["NAVIGATE", "REPLACE"].includes(e.data.action.type)) return;
       e.preventDefault();
       if (fromCocktailFlow) {
-        navigation.navigate("Cocktails", { screen: returnTo });
+        if (returnKey) {
+          navigation.navigate({ key: returnKey });
+        } else {
+          navigation.navigate("Cocktails", { screen: returnTo });
+        }
       } else {
         navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
       }
@@ -233,7 +240,11 @@ export default function AddIngredientScreen() {
 
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fromCocktailFlow) {
-        navigation.navigate("Cocktails", { screen: returnTo });
+        if (returnKey) {
+          navigation.navigate({ key: returnKey });
+        } else {
+          navigation.navigate("Cocktails", { screen: returnTo });
+        }
       } else {
         navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
       }
@@ -244,7 +255,14 @@ export default function AddIngredientScreen() {
       beforeRemoveSub();
       hwSub.remove();
     };
-  }, [isFocused, navigation, fromCocktailFlow, returnTo, lastIngredientsTab]);
+  }, [
+    isFocused,
+    navigation,
+    fromCocktailFlow,
+    returnTo,
+    returnKey,
+    lastIngredientsTab,
+  ]);
 
   /* ---------- Lifecycle ---------- */
   useEffect(() => {
@@ -376,6 +394,7 @@ export default function AddIngredientScreen() {
 
     if (fromCocktailFlow) {
       detailParams.returnTo = returnTo;
+      detailParams.returnKey = returnKey;
       detailParams.createdIngredient = {
         id: newIng.id,
         name: newIng.name,

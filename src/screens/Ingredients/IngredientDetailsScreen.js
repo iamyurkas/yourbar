@@ -146,6 +146,7 @@ export default function IngredientDetailsScreen() {
     navigation.navigate("EditIngredient", {
       id,
       returnTo: route.params?.returnTo,
+      returnKey: route.params?.returnKey,
       createdIngredient: route.params?.createdIngredient,
       targetLocalId: route.params?.targetLocalId,
     });
@@ -153,6 +154,7 @@ export default function IngredientDetailsScreen() {
     navigation,
     id,
     route.params?.returnTo,
+    route.params?.returnKey,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
   ]);
@@ -191,15 +193,15 @@ export default function IngredientDetailsScreen() {
   }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
 
   useEffect(() => {
-    const returnTo = route.params?.returnTo;
-    if (!returnTo) return;
+    const returnKey = route.params?.returnKey;
+    if (!returnKey) return;
     const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
       const navKey = navigation.getState().key;
-      navigation.navigate("Cocktails", {
-        screen: returnTo,
+      navigation.navigate({
+        key: returnKey,
         params: {
           createdIngredient: route.params?.createdIngredient,
           targetLocalId: route.params?.targetLocalId,
@@ -218,7 +220,7 @@ export default function IngredientDetailsScreen() {
     return sub;
   }, [
     navigation,
-    route.params?.returnTo,
+    route.params?.returnKey,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
   ]);
