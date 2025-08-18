@@ -197,9 +197,7 @@ export default function IngredientDetailsScreen() {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
-      navigation.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "IngredientsMain" }] })
-      );
+      const navKey = navigation.getState().key;
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
@@ -208,6 +206,13 @@ export default function IngredientDetailsScreen() {
         },
         merge: true,
       });
+      navigation.dispatch(
+        CommonActions.reset({
+          key: navKey,
+          index: 0,
+          routes: [{ name: "IngredientsMain" }],
+        })
+      );
     };
     const sub = navigation.addListener("beforeRemove", beforeRemove);
     return sub;
