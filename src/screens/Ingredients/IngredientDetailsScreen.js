@@ -23,7 +23,7 @@ import {
   useNavigation,
   useRoute,
   useFocusEffect,
-  CommonActions,
+  StackActions,
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
@@ -197,9 +197,8 @@ export default function IngredientDetailsScreen() {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
-      navigation.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "IngredientsMain" }] })
-      );
+      const parent = navigation.getParent(); // стек Ingredients
+      parent?.dispatch(StackActions.popToTop()); // очистити лише стек Ingredients
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
