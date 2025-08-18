@@ -202,13 +202,19 @@ export default function AddIngredientScreen() {
         fromCocktailFlow ? (
           <HeaderBackButton
             {...props}
-            onPress={() =>
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: "IngredientsMain", params: { screen: lastIngredientsTab } }],
+                })
+              );
               navigation.navigate("Cocktails", {
                 screen: returnTo,
                 params: { id: cocktailId },
                 merge: true,
-              })
-            }
+              });
+            }}
             labelVisible={false}
           />
         ) : (
@@ -230,6 +236,12 @@ export default function AddIngredientScreen() {
       if (["NAVIGATE", "REPLACE"].includes(e.data.action.type)) return;
       e.preventDefault();
       if (fromCocktailFlow) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "IngredientsMain", params: { screen: lastIngredientsTab } }],
+          })
+        );
         navigation.navigate("Cocktails", {
           screen: returnTo,
           params: { id: cocktailId },
@@ -242,6 +254,12 @@ export default function AddIngredientScreen() {
 
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fromCocktailFlow) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "IngredientsMain", params: { screen: lastIngredientsTab } }],
+          })
+        );
         navigation.navigate("Cocktails", {
           screen: returnTo,
           params: { id: cocktailId },
