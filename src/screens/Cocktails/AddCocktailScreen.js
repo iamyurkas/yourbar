@@ -296,6 +296,13 @@ const IngredientRow = memo(function IngredientRow({
     }
   }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
 
+  useEffect(() => {
+    if (!row.selectedId) return;
+    if (query.trim() !== row.selectedItem?.name) {
+      onChange({ selectedId: null, selectedItem: null });
+    }
+  }, [query, row.selectedId, row.selectedItem?.name, onChange]);
+
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
     if (!t) return true;
