@@ -525,27 +525,27 @@ const IngredientRow = memo(function IngredientRow({
             ]}
             returnKeyType="done"
           />
-        </View>
 
-        {showAddNewBtn ? (
-          <Pressable
-            onPress={() => onAddNewIngredient(query.trim())}
-            android_ripple={{
-              color: withAlpha(theme.colors.tertiary, 0.2),
-              borderless: true,
-            }}
-            style={styles.addInlineBtn}
-            accessibilityLabel="Add new ingredient"
-          >
-            <MaterialIcons name="add" size={18} color={theme.colors.primary} />
-            <Text
-              numberOfLines={1}
-              style={{ color: theme.colors.primary, fontWeight: "600" }}
+          {showAddNewBtn ? (
+            <Pressable
+              onPress={() => onAddNewIngredient(query.trim())}
+              android_ripple={{
+                color: withAlpha(theme.colors.tertiary, 0.2),
+                borderless: true,
+              }}
+              style={styles.addInlineBtn}
+              accessibilityLabel="Add new ingredient"
             >
-              Add
-            </Text>
-          </Pressable>
-        ) : null}
+              <MaterialIcons name="add" size={18} color={theme.colors.primary} />
+              <Text
+                numberOfLines={1}
+                style={{ color: theme.colors.primary, fontWeight: "600" }}
+              >
+                Add
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       {/* Suggest dropdown */}
@@ -2091,6 +2091,7 @@ const styles = StyleSheet.create({
   nameInputWrap: {
     flex: 1,
     minWidth: 0,
+    position: "relative",
   },
 
   input: {
@@ -2101,7 +2102,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  nameInput: {},
+  nameInput: {
+    paddingRight: 72,
+  },
 
   multiline: { minHeight: 80, textAlignVertical: "top" },
 
@@ -2237,6 +2240,10 @@ const styles = StyleSheet.create({
   },
 
   addInlineBtn: {
+    position: "absolute",
+    right: 8,
+    top: "50%",
+    transform: [{ translateY: "-50%" }],
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
