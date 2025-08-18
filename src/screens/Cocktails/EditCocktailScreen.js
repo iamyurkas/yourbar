@@ -29,7 +29,12 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+  CommonActions,
+} from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -2057,7 +2062,26 @@ export default function EditCocktailScreen() {
             mode: "contained",
             onPress: async () => {
               skipPromptRef.current = true;
-              await handleSave(true);
+              const updated = await handleSave(true);
+              navigation.dispatch((state) => {
+                const routes = [...state.routes];
+                const prevIndex = routes.length - 2;
+                if (prevIndex >= 0) {
+                  routes[prevIndex] = {
+                    ...routes[prevIndex],
+                    params: {
+                      ...routes[prevIndex].params,
+                      id: updated.id,
+                      initialCocktail: updated,
+                    },
+                  };
+                }
+                return CommonActions.reset({
+                  ...state,
+                  routes,
+                  index: state.index,
+                });
+              });
               navigation.dispatch(pendingNav);
               setPendingNav(null);
             },
