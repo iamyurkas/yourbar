@@ -214,7 +214,7 @@ const IngredientRow = memo(function IngredientRow({
   });
   const [openedFor, setOpenedFor] = useState(null);
 
-  const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
+  const showSuggest = debounced.trim().length >= MIN_CHARS;
 
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
@@ -295,6 +295,13 @@ const IngredientRow = memo(function IngredientRow({
       });
     }
   }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
+
+  useEffect(() => {
+    if (!row.selectedId) return;
+    const q = query.trim();
+    if (q === (row.selectedItem?.name || '').trim()) return;
+    onChange({ selectedId: null, selectedItem: null });
+  }, [query, row.selectedId, row.selectedItem?.name, onChange]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
@@ -1393,17 +1400,19 @@ export default function AddCocktailScreen() {
       return;
     }
 
-    const cocktail = {
-      id: Date.now(),
-      name: title,
-      photoUri: photoUri || null,
-      tags,
-      description: description.trim(),
-      instructions: instructions.trim(),
-      glassId,
-      ingredients: nonEmptyIngredients.map((r, idx) => ({
+    const collator = new Intl.Collator("uk", { sensitivity: "base" });
+    const mappedIngredients = nonEmptyIngredients.map((r, idx) => {
+      let ingredientId = r.selectedId;
+      if (!ingredientId) {
+        const match = allIngredients.find(
+          (i) =>
+            collator.compare((i.name || "").trim(), r.name.trim()) === 0
+        );
+        if (match) ingredientId = match.id;
+      }
+      return {
         order: idx + 1,
-        ingredientId: r.selectedId,
+        ingredientId,
         name: r.name.trim(),
         quantity: r.quantity.trim(),
         unitId: r.unitId,
@@ -1412,7 +1421,18 @@ export default function AddCocktailScreen() {
         allowBaseSubstitute: !!r.allowBaseSubstitute,
         allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
         substitutes: r.substitutes || [],
-      })),
+      };
+    });
+
+    const cocktail = {
+      id: Date.now(),
+      name: title,
+      photoUri: photoUri || null,
+      tags,
+      description: description.trim(),
+      instructions: instructions.trim(),
+      glassId,
+      ingredients: mappedIngredients,
       createdAt: Date.now(),
     };
 
