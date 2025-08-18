@@ -95,14 +95,39 @@ function Tabs() {
       })}
     >
       {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
-      <Tab.Screen name="Cocktails" component={CocktailsTabsScreen} />
-      <Tab.Screen name="Shaker" component={ShakerStackScreen} />
+      <Tab.Screen
+        name="Cocktails"
+        component={CocktailsTabsScreen}
+        options={{ unmountOnBlur: true }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            const saved = typeof getTab === "function" && getTab("cocktails");
+            navigation.navigate("Cocktails", {
+              screen: "CocktailsMain",
+              params: { screen: saved || "All" },
+            });
+          },
+        })}
+      />
+      <Tab.Screen
+        name="Shaker"
+        component={ShakerStackScreen}
+        options={{ unmountOnBlur: true }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("Shaker", { screen: "ShakerMain" });
+          },
+        })}
+      />
       <Tab.Screen
         name="Ingredients"
         component={IngredientsTabsScreen}
         options={{ unmountOnBlur: true }}
         listeners={({ navigation }) => ({
-          tabPress: () => {
+          tabPress: (e) => {
+            e.preventDefault();
             const saved =
               typeof getTab === "function" && getTab("ingredients");
             navigation.navigate("Ingredients", {
