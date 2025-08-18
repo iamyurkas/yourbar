@@ -819,7 +819,7 @@ export default function EditIngredientScreen() {
             return next;
           });
           await saveAllIngredients(updatedList);
-          navigation.goBack();
+          navigation.pop(2);
           setConfirmDelete(false);
         }}
       />
