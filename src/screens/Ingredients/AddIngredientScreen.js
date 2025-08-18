@@ -194,6 +194,7 @@ export default function AddIngredientScreen() {
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
   const isMountedRef = useRef(true);
+  const beforeRemoveRef = useRef(null);
 
   /* ---------- Back button logic ---------- */
   useLayoutEffect(() => {
@@ -203,6 +204,8 @@ export default function AddIngredientScreen() {
           <HeaderBackButton
             {...props}
             onPress={() => {
+              beforeRemoveRef.current?.();
+              beforeRemoveRef.current = null;
               navigation.dispatch(
                 CommonActions.reset({
                   index: 0,
@@ -235,11 +238,15 @@ export default function AddIngredientScreen() {
     const beforeRemoveSub = navigation.addListener("beforeRemove", (e) => {
       if (["NAVIGATE", "REPLACE"].includes(e.data.action.type)) return;
       e.preventDefault();
+      beforeRemoveSub();
+      beforeRemoveRef.current = null;
       if (fromCocktailFlow) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "IngredientsMain", params: { screen: lastIngredientsTab } }],
+            routes: [
+              { name: "IngredientsMain", params: { screen: lastIngredientsTab } },
+            ],
           })
         );
         navigation.navigate("Cocktails", {
@@ -251,13 +258,18 @@ export default function AddIngredientScreen() {
         navigation.replace("IngredientsMain", { screen: lastIngredientsTab });
       }
     });
+    beforeRemoveRef.current = beforeRemoveSub;
 
     const hwSub = BackHandler.addEventListener("hardwareBackPress", () => {
+      beforeRemoveRef.current?.();
+      beforeRemoveRef.current = null;
       if (fromCocktailFlow) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "IngredientsMain", params: { screen: lastIngredientsTab } }],
+            routes: [
+              { name: "IngredientsMain", params: { screen: lastIngredientsTab } },
+            ],
           })
         );
         navigation.navigate("Cocktails", {
@@ -272,7 +284,7 @@ export default function AddIngredientScreen() {
     });
 
     return () => {
-      beforeRemoveSub();
+      beforeRemoveRef.current?.();
       hwSub.remove();
     };
   }, [isFocused, navigation, fromCocktailFlow, returnTo, cocktailId, lastIngredientsTab]);
@@ -418,6 +430,8 @@ export default function AddIngredientScreen() {
       detailParams.targetLocalId = targetLocalId;
     }
 
+    beforeRemoveRef.current?.();
+    beforeRemoveRef.current = null;
     navigation.dispatch((state) => {
       const routes = state.routes.slice(0, -1);
       routes.push({ name: "IngredientDetails", params: detailParams });
