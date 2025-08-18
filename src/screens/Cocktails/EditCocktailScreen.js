@@ -1272,6 +1272,13 @@ export default function EditCocktailScreen() {
       headerRight: () => (
         <Pressable
           onPress={handleDelete}
+          android_ripple={{ color: theme.colors.outlineVariant, borderless: true }}
+          style={({ pressed }) => ({
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            opacity: pressed ? 0.5 : 1,
+            borderRadius: 8,
+          })}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityRole="button"
           accessibilityLabel="Delete cocktail"
