@@ -369,22 +369,30 @@ export default function AddIngredientScreen() {
     await saveAllIngredients(updatedList).catch(() => {});
     setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
 
+    const createdPayload = {
+      id: newIng.id,
+      name: newIng.name,
+      photoUri: newIng.photoUri || null,
+      baseIngredientId: newIng.baseIngredientId ?? null,
+      tags: newIng.tags || [],
+    };
+
+    if (fromCocktailFlow) {
+      navigation.navigate("Cocktails", {
+        screen: returnTo,
+        params: {
+          createdIngredient: createdPayload,
+          targetLocalId,
+        },
+        merge: true,
+      });
+      return;
+    }
+
     const detailParams = {
       id: newIng.id,
       initialIngredient: newIng,
     };
-
-    if (fromCocktailFlow) {
-      detailParams.returnTo = returnTo;
-      detailParams.createdIngredient = {
-        id: newIng.id,
-        name: newIng.name,
-        photoUri: newIng.photoUri || null,
-        baseIngredientId: newIng.baseIngredientId ?? null,
-        tags: newIng.tags || [],
-      };
-      detailParams.targetLocalId = targetLocalId;
-    }
 
     navigation.dispatch((state) => {
       const routes = state.routes.slice(0, -1);
