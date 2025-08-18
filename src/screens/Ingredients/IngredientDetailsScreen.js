@@ -192,13 +192,18 @@ export default function IngredientDetailsScreen() {
 
   useEffect(() => {
     const returnTo = route.params?.returnTo;
+    const returnKey = route.params?.returnKey;
     if (!returnTo) return;
     const beforeRemove = (e) => {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
       navigation.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "IngredientsMain" }] })
+        CommonActions.reset({
+          key: navigation.getState().key,
+          index: 0,
+          routes: [{ name: "IngredientsMain" }],
+        })
       );
       navigation.navigate("Cocktails", {
         screen: returnTo,
@@ -207,6 +212,7 @@ export default function IngredientDetailsScreen() {
           targetLocalId: route.params?.targetLocalId,
         },
         merge: true,
+        key: returnKey,
       });
     };
     const sub = navigation.addListener("beforeRemove", beforeRemove);
@@ -214,6 +220,7 @@ export default function IngredientDetailsScreen() {
   }, [
     navigation,
     route.params?.returnTo,
+    route.params?.returnKey,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
   ]);

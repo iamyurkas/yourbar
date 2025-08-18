@@ -1499,10 +1499,11 @@ export default function EditCocktailScreen() {
           initialName,
           targetLocalId: localId,
           returnTo: route.name,
+          returnKey: route.key,
         },
       });
     },
-    [navigation, route.name]
+    [navigation, route.name, route.key]
   );
 
   // Catch created ingredient returned from AddIngredient
