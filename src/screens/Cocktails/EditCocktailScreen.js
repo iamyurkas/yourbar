@@ -2029,7 +2029,7 @@ export default function EditCocktailScreen() {
           setIngredients(
             applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
           );
-          navigation.popToTop();
+          navigation.goBack();
           setConfirmDelete(false);
         }}
       />
