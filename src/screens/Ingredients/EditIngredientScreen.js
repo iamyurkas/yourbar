@@ -419,6 +419,9 @@ export default function EditIngredientScreen() {
         };
         if (route.params?.returnTo) {
           detailParams.returnTo = route.params.returnTo;
+          if (route.params?.cocktailId != null) {
+            detailParams.cocktailId = route.params.cocktailId;
+          }
           detailParams.createdIngredient = {
             id: updated.id,
             name: updated.name,
@@ -456,6 +459,7 @@ export default function EditIngredientScreen() {
       navigation,
       route.params?.returnTo,
       route.params?.targetLocalId,
+      route.params?.cocktailId,
       serialize,
       setGlobalIngredients,
       saveAllIngredients,

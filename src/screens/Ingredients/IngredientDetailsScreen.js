@@ -148,6 +148,7 @@ export default function IngredientDetailsScreen() {
       returnTo: route.params?.returnTo,
       createdIngredient: route.params?.createdIngredient,
       targetLocalId: route.params?.targetLocalId,
+      cocktailId: route.params?.cocktailId,
     });
   }, [
     navigation,
@@ -155,6 +156,7 @@ export default function IngredientDetailsScreen() {
     route.params?.returnTo,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
+    route.params?.cocktailId,
   ]);
 
   // Always show custom back button
@@ -202,6 +204,7 @@ export default function IngredientDetailsScreen() {
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
+          id: route.params?.cocktailId,
           createdIngredient: route.params?.createdIngredient,
           targetLocalId: route.params?.targetLocalId,
         },
@@ -215,6 +218,7 @@ export default function IngredientDetailsScreen() {
     route.params?.returnTo,
     route.params?.createdIngredient,
     route.params?.targetLocalId,
+    route.params?.cocktailId,
   ]);
 
   useFocusEffect(
