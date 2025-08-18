@@ -861,7 +861,11 @@ export default function EditIngredientScreen() {
                     },
                   };
                 }
-                return { ...state, routes };
+                return CommonActions.reset({
+                  ...state,
+                  routes,
+                  index: state.index,
+                });
               });
               navigation.dispatch(pendingNav);
               setPendingNav(null);

@@ -29,7 +29,12 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+  CommonActions,
+} from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -2071,7 +2076,11 @@ export default function EditCocktailScreen() {
                     },
                   };
                 }
-                return { ...state, routes };
+                return CommonActions.reset({
+                  ...state,
+                  routes,
+                  index: state.index,
+                });
               });
               navigation.dispatch(pendingNav);
               setPendingNav(null);
