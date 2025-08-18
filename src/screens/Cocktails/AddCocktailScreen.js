@@ -214,7 +214,7 @@ const IngredientRow = memo(function IngredientRow({
   });
   const [openedFor, setOpenedFor] = useState(null);
 
-  const showSuggest = debounced.trim().length >= MIN_CHARS && !row.selectedId;
+  const showSuggest = debounced.trim().length >= MIN_CHARS;
 
   const suggestions = useMemo(() => {
     if (!showSuggest) return [];
@@ -276,25 +276,6 @@ const IngredientRow = memo(function IngredientRow({
     return () => sub?.remove?.();
   }, [suggestState.visible, recalcPlacement]);
 
-  // авто-бінд по exact match
-  useEffect(() => {
-    const raw = query;
-    const stable = debounced;
-    if (!raw || row.selectedId) return;
-    if (raw !== stable) return;
-    const q = raw.trim();
-    if (!q) return;
-    const match = allIngredients.find(
-      (i) => collator.compare((i.name || "").trim(), q) === 0
-    );
-    if (match) {
-      onChange({
-        selectedId: match.id,
-        selectedItem: match,
-        name: match.name,
-      });
-    }
-  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
@@ -1387,7 +1368,19 @@ export default function AddCocktailScreen() {
       Alert.alert("Validation", "Please enter a cocktail name.");
       return;
     }
-    const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
+    const nonEmptyIngredients = ings
+      .filter((r) => r.name.trim().length > 0)
+      .map((r) => {
+        if (!r.selectedId) {
+          const match = allIngredients.find(
+            (i) => normalizeUk(i.name).trim() === normalizeUk(r.name).trim()
+          );
+          if (match) {
+            return { ...r, selectedId: match.id };
+          }
+        }
+        return r;
+      });
     if (nonEmptyIngredients.length === 0) {
       Alert.alert("Validation", "Please add at least one ingredient.");
       return;
