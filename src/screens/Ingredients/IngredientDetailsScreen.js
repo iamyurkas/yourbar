@@ -199,8 +199,7 @@ export default function IngredientDetailsScreen() {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
-      const parent = navigation.getParent(); // стек Ingredients
-      parent?.dispatch(StackActions.popToTop()); // очистити лише стек Ingredients
+      navigation.dispatch(StackActions.popToTop()); // очистити лише стек Ingredients
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
