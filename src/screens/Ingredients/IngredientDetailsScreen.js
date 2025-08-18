@@ -202,7 +202,6 @@ export default function IngredientDetailsScreen() {
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
-          id: route.params?.id,
           createdIngredient: route.params?.createdIngredient,
           targetLocalId: route.params?.targetLocalId,
         },
