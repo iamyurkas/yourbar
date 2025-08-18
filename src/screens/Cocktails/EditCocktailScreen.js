@@ -2057,7 +2057,22 @@ export default function EditCocktailScreen() {
             mode: "contained",
             onPress: async () => {
               skipPromptRef.current = true;
-              await handleSave(true);
+              const updated = await handleSave(true);
+              navigation.dispatch((state) => {
+                const routes = [...state.routes];
+                const prevIndex = routes.length - 2;
+                if (prevIndex >= 0) {
+                  routes[prevIndex] = {
+                    ...routes[prevIndex],
+                    params: {
+                      ...routes[prevIndex].params,
+                      id: updated.id,
+                      initialCocktail: updated,
+                    },
+                  };
+                }
+                return { ...state, routes };
+              });
               navigation.dispatch(pendingNav);
               setPendingNav(null);
             },
