@@ -100,7 +100,8 @@ function Tabs() {
         component={CocktailsTabsScreen}
         options={{ unmountOnBlur: true }}
         listeners={({ navigation }) => ({
-          tabPress: () => {
+          tabPress: (e) => {
+            e.preventDefault();
             const saved = typeof getTab === "function" && getTab("cocktails");
             navigation.navigate("Cocktails", {
               screen: "CocktailsMain",
@@ -115,7 +116,8 @@ function Tabs() {
         component={IngredientsTabsScreen}
         options={{ unmountOnBlur: true }}
         listeners={({ navigation }) => ({
-          tabPress: () => {
+          tabPress: (e) => {
+            e.preventDefault();
             const saved =
               typeof getTab === "function" && getTab("ingredients");
             navigation.navigate("Ingredients", {
