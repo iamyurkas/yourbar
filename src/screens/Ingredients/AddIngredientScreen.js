@@ -682,8 +682,8 @@ export default function AddIngredientScreen() {
           )}
         </Menu>
 
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Description
+        <Text style={[styles.label, { color: theme.colors.onBackground }]}> 
+          Description:
         </Text>
         <TextInput
           placeholder="Optional description"
@@ -692,8 +692,8 @@ export default function AddIngredientScreen() {
           onChangeText={setDescription}
           style={[
             styles.input,
+            styles.multiline,
             {
-              height: 60,
               borderColor: theme.colors.outline,
               color: theme.colors.onSurface,
               backgroundColor: theme.colors.surface,
@@ -727,6 +727,7 @@ const styles = StyleSheet.create({
   label: { fontWeight: "bold", marginTop: 16 },
 
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
+  multiline: { minHeight: 80, textAlignVertical: "top" },
   anchorInput: { justifyContent: "center", minHeight: 44 },
   anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
 
