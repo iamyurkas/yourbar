@@ -283,18 +283,29 @@ const IngredientRow = memo(function IngredientRow({
     if (!raw || row.selectedId) return;
     if (raw !== stable) return;
     const q = raw.trim();
-    if (!q) return;
+    if (!q) {
+      if (row.pendingExactMatch) onChange({ pendingExactMatch: null });
+      return;
+    }
     const match = allIngredients.find(
       (i) => collator.compare((i.name || "").trim(), q) === 0
     );
     if (match) {
-      onChange({
-        selectedId: match.id,
-        selectedItem: match,
-        name: match.name,
-      });
+      if (row.pendingExactMatch?.id !== match.id) {
+        onChange({ pendingExactMatch: match });
+      }
+    } else if (row.pendingExactMatch) {
+      onChange({ pendingExactMatch: null });
     }
-  }, [query, debounced, row.selectedId, allIngredients, collator, onChange]);
+  }, [
+    query,
+    debounced,
+    row.selectedId,
+    row.pendingExactMatch,
+    allIngredients,
+    collator,
+    onChange,
+  ]);
 
   const hasExactMatch = useMemo(() => {
     const t = query.trim();
@@ -493,7 +504,12 @@ const IngredientRow = memo(function IngredientRow({
             value={query}
             onChangeText={(t) => {
               setQuery(t);
-              onChange({ name: t, selectedId: null, selectedItem: null });
+              onChange({
+                name: t,
+                selectedId: null,
+                selectedItem: null,
+                pendingExactMatch: null,
+              });
             }}
             style={[
               styles.input,
@@ -561,6 +577,7 @@ const IngredientRow = memo(function IngredientRow({
                       name: item.name,
                       selectedId: item.id,
                       selectedItem: item,
+                      pendingExactMatch: null,
                     });
                     setQuery(item.name);
                     handleDismissSuggest();
@@ -1190,6 +1207,7 @@ export default function AddCocktailScreen() {
       allowBaseSubstitute: false,
       allowBrandedSubstitutes: false,
       substitutes: [],
+      pendingExactMatch: null,
     };
     if (initialIngredient) {
       return [
@@ -1198,6 +1216,7 @@ export default function AddCocktailScreen() {
           name: initialIngredient.name || "",
           selectedId: initialIngredient.id ?? null,
           selectedItem: initialIngredient,
+          pendingExactMatch: null,
         },
       ];
     }
@@ -1312,6 +1331,7 @@ export default function AddCocktailScreen() {
         allowBaseSubstitute: false,
         allowBrandedSubstitutes: false,
         substitutes: [],
+        pendingExactMatch: null,
       },
     ]);
   }, []);
@@ -1369,6 +1389,7 @@ export default function AddCocktailScreen() {
                 name: created.name,
                 selectedId: created.id,
                 selectedItem: created,
+                pendingExactMatch: null,
               }
             : r
         )
@@ -1393,6 +1414,31 @@ export default function AddCocktailScreen() {
       return;
     }
 
+    const committed = nonEmptyIngredients.map((r) => {
+      if (r.selectedId == null && r.pendingExactMatch) {
+        return {
+          ...r,
+          selectedId: r.pendingExactMatch.id,
+          selectedItem: r.pendingExactMatch,
+          pendingExactMatch: null,
+        };
+      }
+      return { ...r, pendingExactMatch: null };
+    });
+    setIngs((prev) =>
+      prev.map((r) => {
+        if (r.selectedId == null && r.pendingExactMatch) {
+          return {
+            ...r,
+            selectedId: r.pendingExactMatch.id,
+            selectedItem: r.pendingExactMatch,
+            pendingExactMatch: null,
+          };
+        }
+        return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
+      })
+    );
+
     const cocktail = {
       id: Date.now(),
       name: title,
@@ -1401,7 +1447,7 @@ export default function AddCocktailScreen() {
       description: description.trim(),
       instructions: instructions.trim(),
       glassId,
-      ingredients: nonEmptyIngredients.map((r, idx) => ({
+      ingredients: committed.map((r, idx) => ({
         order: idx + 1,
         ingredientId: r.selectedId,
         name: r.name.trim(),
