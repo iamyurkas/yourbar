@@ -63,6 +63,7 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
+import useIngredientsData from "../../hooks/useIngredientsData";
 
 
 /* ---------- helpers ---------- */
@@ -1092,6 +1093,7 @@ export default function EditCocktailScreen() {
     setUsageMap,
     setIngredients,
   } = useIngredientUsage();
+  const { refresh } = useIngredientsData();
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -1228,6 +1230,7 @@ export default function EditCocktailScreen() {
       setIngredients(
         applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
       );
+      await refresh();
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
@@ -1253,6 +1256,7 @@ export default function EditCocktailScreen() {
       setCocktails,
       setUsageMap,
       setIngredients,
+      refresh,
     ]
   );
 
