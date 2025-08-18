@@ -422,6 +422,14 @@ const IngredientRow = memo(function IngredientRow({
           <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
             {index + 1}.
           </Text>
+          <Text
+            style={[
+              styles.labelText,
+              { marginLeft: 8, color: theme.colors.onSurface },
+            ]}
+          >
+            Ingredient:
+          </Text>
 
           {canRemove ? (
             <>
@@ -479,14 +487,6 @@ const IngredientRow = memo(function IngredientRow({
           </Pressable>
         ) : null}
       </View>
-
-      {/* Ingredient */}
-      <View style={styles.labelRow}>
-        <Text style={[styles.labelText, { color: theme.colors.onSurface }]}>
-          Ingredient
-        </Text>
-      </View>
-
       {/* Name input + inline [+Add] */}
       <View style={styles.inputRow}>
         <View
@@ -1974,14 +1974,6 @@ const IMAGE_SIZE = 150;
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40 },
   label: { fontWeight: "bold", marginTop: 16 },
-
-  // special for Ingredient + [+]
-  labelRow: {
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
   labelText: { fontWeight: "bold" },
 
   // input + inline add in one row
