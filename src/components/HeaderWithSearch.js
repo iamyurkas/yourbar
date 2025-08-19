@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GeneralMenu from "./GeneralMenu";
 
 export default function HeaderWithSearch({
@@ -19,7 +20,8 @@ export default function HeaderWithSearch({
   filterComponent,
 }) {
   const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(() => makeStyles(theme, insets), [theme, insets]);
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleMenuPress = () => {
@@ -31,7 +33,7 @@ export default function HeaderWithSearch({
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
+    <SafeAreaView style={{ backgroundColor: theme.colors.background, flex: 0 }}>
       <View style={styles.container}>
         <TouchableOpacity
           onPress={handleMenuPress}
@@ -93,13 +95,13 @@ export default function HeaderWithSearch({
   );
 }
 
-const makeStyles = (theme) =>
+const makeStyles = (theme, insets) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: 16,
-      paddingTop: 32,
+      paddingTop: insets.top,
       backgroundColor: theme.colors.background,
       gap: 10,
     },
