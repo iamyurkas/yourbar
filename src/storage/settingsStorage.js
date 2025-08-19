@@ -33,10 +33,10 @@ export async function setUseMetric(value) {
 export async function getIgnoreGarnish() {
   try {
     const value = await AsyncStorage.getItem(IGNORE_GARNISH_KEY);
-    if (value === null) return false;
+    if (value === null) return true;
     return value === "true";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -54,10 +54,10 @@ export function addIgnoreGarnishListener(listener) {
 export async function getAllowSubstitutes() {
   try {
     const value = await AsyncStorage.getItem(ALLOW_SUBSTITUTES_KEY);
-    if (value === null) return false;
+    if (value === null) return true;
     return value === "true";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -75,10 +75,10 @@ export function addAllowSubstitutesListener(listener) {
 export async function getKeepAwake() {
   try {
     const value = await AsyncStorage.getItem(KEEP_AWAKE_KEY);
-    if (value === null) return false;
+    if (value === null) return true;
     return value === "true";
   } catch {
-    return false;
+    return true;
   }
 }
 
