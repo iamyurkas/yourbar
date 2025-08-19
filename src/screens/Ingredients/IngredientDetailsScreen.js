@@ -197,8 +197,12 @@ export default function IngredientDetailsScreen() {
       if (e.data.action.type === "NAVIGATE") return;
       e.preventDefault();
       sub();
-      navigation.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "IngredientsMain" }] })
+      navigation.dispatch((state) =>
+        CommonActions.reset({
+          ...state,
+          routes: [{ name: "IngredientsMain" }],
+          index: 0,
+        })
       );
       navigation.navigate("Cocktails", {
         screen: returnTo,
