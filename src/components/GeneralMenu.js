@@ -19,7 +19,7 @@ import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
-import { exportAllData, importAllData } from "../storage/backupStorage";
+import { exportAllData, importAllData, exportAllPhotos } from "../storage/backupStorage";
 import { useTheme } from "react-native-paper";
 
 import {
@@ -141,6 +141,24 @@ export default function GeneralMenu({ visible, onClose }) {
   const openRatingModal = () => {
     onClose?.();
     setTimeout(() => setRatingVisible(true), 0);
+  };
+
+  const handleExportPhotos = async () => {
+    onClose?.();
+    try {
+      await exportAllPhotos();
+      setDialog({
+        visible: true,
+        title: "Export photos",
+        message: "Photos exported successfully",
+      });
+    } catch (e) {
+      setDialog({
+        visible: true,
+        title: "Export photos",
+        message: "Failed to export photos",
+      });
+    }
   };
 
   const handleExport = async () => {
@@ -397,6 +415,25 @@ export default function GeneralMenu({ visible, onClose }) {
                 <View style={styles.itemText}>
                   <Text style={styles.itemTitle}>Cocktail tags</Text>
                   <Text style={styles.itemSub}>Create, edit or remove cocktail tags</Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color={theme.colors.onSurfaceVariant}
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.linkRow} onPress={handleExportPhotos}>
+                <MaterialIcons
+                  name="photo-library"
+                  size={22}
+                  color={theme.colors.primary}
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Export photos</Text>
+                  <Text style={styles.itemSub}>Export all ingredient and cocktail photos</Text>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
