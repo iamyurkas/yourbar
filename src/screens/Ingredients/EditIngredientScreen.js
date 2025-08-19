@@ -17,13 +17,14 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  KeyboardAvoidingView,
   Platform,
   InteractionManager,
   ActivityIndicator,
   Pressable,
   TouchableOpacity,
   BackHandler,
+  Dimensions,
+  Keyboard,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -180,6 +181,58 @@ export default function EditIngredientScreen() {
   const [anchorWidth, setAnchorWidth] = useState(0);
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
+
+  // scrolling helpers
+  const scrollRef = useRef(null);
+  const viewportRef = useRef(null);
+  const descRef = useRef(null);
+  const [viewportH, setViewportH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const [kbHeight, setKbHeight] = useState(0);
+
+  useEffect(() => {
+    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
+      setKbHeight(e?.endCoordinates?.height || 0)
+    );
+    const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
+    return () => {
+      sh.remove();
+      hd.remove();
+    };
+  }, []);
+
+  const requestScrollIntoView = useCallback(
+    (nodeRef) => {
+      if (!nodeRef?.current || !scrollRef.current) return;
+      if (contentH <= viewportH) return;
+
+      const viewportHeight =
+        viewportH || Dimensions.get("window").height;
+      const visibleHeight = viewportHeight - kbHeight;
+      const targetCenter = visibleHeight / 2;
+      const DEAD = 10;
+
+      const tryOnce = () => {
+        if (!nodeRef?.current) return;
+        nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
+          const inputCenter = iy + ih / 2;
+          const delta = inputCenter - targetCenter;
+          if (delta > DEAD || kbHeight === 0) {
+            const maxY = Math.max(0, contentH - viewportH);
+            const targetY = Math.min(scrollY + delta + DEAD, maxY);
+            if (targetY > scrollY) {
+              scrollRef.current.scrollTo({ y: targetY, animated: true });
+            }
+          }
+        });
+      };
+
+      tryOnce();
+      setTimeout(tryOnce, 80);
+    },
+    [viewportH, kbHeight, contentH, scrollY]
+  );
 
   // search in base menu (debounced + deferred)
   const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
@@ -510,14 +563,22 @@ export default function EditIngredientScreen() {
   const ripple = { color: theme.colors.outlineVariant };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
+    <>
+      <View
+        ref={viewportRef}
+        collapsable={false}
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
+        onLayout={(e) => setViewportH(e.nativeEvent.layout.height)}
       >
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={[styles.container, { paddingBottom: 60 + kbHeight }]}
+          keyboardShouldPersistTaps="handled"
+          onContentSizeChange={(_, h) => setContentH(h)}
+          onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
+          scrollEventThrottle={16}
+          scrollIndicatorInsets={{ bottom: kbHeight }}
+        >
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>
           Name:
         </Text>
@@ -766,6 +827,9 @@ export default function EditIngredientScreen() {
           Description:
         </Text>
         <TextInput
+          ref={descRef}
+          collapsable={false}
+          onFocus={() => requestScrollIntoView(descRef)}
           placeholder="Optional description"
           placeholderTextColor={theme.colors.onSurfaceVariant}
           value={description}
@@ -794,6 +858,7 @@ export default function EditIngredientScreen() {
         </Pressable>
 
       </ScrollView>
+    </View>
       <IngredientTagsModal
         visible={tagsModalVisible}
         onClose={closeTagsModal}
@@ -874,7 +939,7 @@ export default function EditIngredientScreen() {
         ]}
         onCancel={() => setPendingNav(null)}
       />
-    </KeyboardAvoidingView>
+    </>
   );
 }
 
