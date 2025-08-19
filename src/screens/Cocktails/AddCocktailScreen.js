@@ -428,7 +428,7 @@ const IngredientRow = memo(function IngredientRow({
               { marginLeft: 8, color: theme.colors.onSurface },
             ]}
           >
-            Ingredient:
+            Ingredient
           </Text>
 
           {canRemove ? (
