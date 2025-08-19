@@ -1522,7 +1522,7 @@ export default function AddCocktailScreen() {
     [subModal.forLocalId, closeSubstituteModal]
   );
 
-  /* ---------- Простий scroll-алгоритм (z + 16) ---------- */
+  /* ---------- Центрування інпута при focus ---------- */
   const scrollRef = useRef(null);
   const viewportRef = useRef(null);
   const [viewportH, setViewportH] = useState(0);
@@ -1546,22 +1546,21 @@ export default function AddCocktailScreen() {
       if (!nodeRef?.current || !scrollRef.current) return;
       if (contentH <= viewportH) return; // нема що скролити
 
-      const x = viewportH || Dimensions.get("window").height; // висота в’юпорта
-      const y = kbHeight; // висота клавіатури
+      const viewportHeight =
+        viewportH || Dimensions.get("window").height; // висота в’юпорта
+      const visibleHeight = viewportHeight - kbHeight; // видиме поле над клавіатурою
+      const targetCenter = visibleHeight / 2; // бажаний центр інпуту
       const DEAD = 10; // додатковий відступ
+
       const tryOnce = () => {
         if (!nodeRef?.current) return;
         nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
-          const inputBottom = iy + ih;
-          const visibleLimit = x - y; // межа видимої області над клавіатурою
-
-          // 3) якщо нижній край під клавіатурою — скролимо
-          if (inputBottom - DEAD > visibleLimit || y == 0) {
-            const z = inputBottom - visibleLimit; // 4)
-            const delta = z + DEAD; // 5)
+          const inputCenter = iy + ih / 2;
+          const delta = inputCenter - targetCenter; // наскільки нижче центра
+          if (delta > DEAD || kbHeight === 0) {
             const maxY = Math.max(0, contentH - viewportH);
-            // cкролимо лише вниз: забороняємо зменшення y
-            const targetY = Math.min(scrollY + delta, maxY) + 100; // бажана позиція
+            // Скролимо лише вниз (піднімаємо контент), не опускаємо
+            const targetY = Math.min(scrollY + delta + DEAD, maxY);
             if (targetY > scrollY) {
               scrollRef.current.scrollTo({ y: targetY, animated: true });
             }
@@ -1570,7 +1569,7 @@ export default function AddCocktailScreen() {
       };
 
       // одразу + повтор після відкриття клавіатури
-      tryOnce(120);
+      tryOnce();
       setTimeout(tryOnce, 80);
     },
     [viewportH, kbHeight, contentH, scrollY]
