@@ -99,11 +99,11 @@ export default function GeneralMenu({ visible, onClose }) {
     [theme]
   );
 
-  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(true);
   const [useMetric, setUseMetric] = useState(true);
-  const [keepAwake, setKeepAwake] = useState(false);
+  const [keepAwake, setKeepAwake] = useState(true);
   const [tabsOnTop, setTabsOnTop] = useState(true);
-  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(true);
   const [tagsVisible, setTagsVisible] = useState(false);
   const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
