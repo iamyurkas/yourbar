@@ -49,7 +49,7 @@ function sanitizeIngredients(raw) {
         baseIngredientId: it?.baseIngredientId ?? null,
         usageCount: Number(it?.usageCount ?? 0),
         singleCocktailName: it?.singleCocktailName ?? null,
-        inBar: !!it?.inBar,
+        inBar: false,
       }))
     : [];
 }
