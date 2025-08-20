@@ -45,6 +45,7 @@ import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 
 
@@ -181,9 +182,9 @@ export default function AddIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = deferredQuery.trim().toLowerCase();
+    const q = normalizeSearch(deferredQuery);
     if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.nameLower.includes(q));
+    return baseOnlySorted.filter((i) => i.searchName.includes(q));
   }, [baseOnlySorted, deferredQuery]);
 
   // anchored menu
@@ -336,7 +337,7 @@ export default function AddIngredientScreen() {
           id: i.id,
           name: i.name,
           photoUri: i.photoUri || null,
-          nameLower: (i.name || "").toLowerCase(),
+          searchName: normalizeSearch(i.name || ""),
         }));
       if (!isMountedRef.current) return;
       setBaseOnlySorted(baseOnly);
@@ -406,7 +407,7 @@ export default function AddIngredientScreen() {
     };
     const enriched = {
       ...newIng,
-      searchName: newIng.name.toLowerCase(),
+      searchName: normalizeSearch(newIng.name),
       usageCount: 0,
       singleCocktailName: null,
     };

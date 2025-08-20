@@ -21,6 +21,7 @@ import {
   addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -175,7 +176,7 @@ export default function MyIngredientsScreen() {
   }, [ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes]);
 
   const filtered = useMemo(() => {
-    const q = searchDebounced.trim().toLowerCase();
+    const q = normalizeSearch(searchDebounced);
     let data = ingredients.filter((i) => i.inBar);
     if (q) data = data.filter((i) => i.searchName.includes(q));
     if (selectedTagIds.length > 0)

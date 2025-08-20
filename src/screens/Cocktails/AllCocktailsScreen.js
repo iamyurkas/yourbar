@@ -27,6 +27,7 @@ import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/CocktailRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 export default function AllCocktailsScreen() {
   const theme = useTheme();
@@ -111,9 +112,9 @@ export default function AllCocktailsScreen() {
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-    const q = searchDebounced.trim().toLowerCase();
+    const q = normalizeSearch(searchDebounced);
     let list = cocktails;
-    if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
         (c) =>

@@ -1,4 +1,5 @@
 import { TAG_COLORS } from "../theme";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 // Вшиті (builtin) теги коктейлів: стабільні numeric id + читабельні кольори під білий текст
 export const BUILTIN_COCKTAIL_TAGS = [
@@ -17,7 +18,7 @@ export const cocktailTagById = (id) =>
   BUILTIN_COCKTAIL_TAGS.find((t) => t.id === id) || null;
 
 export const searchCocktailTags = (q) => {
-  const s = (q || "").trim().toLowerCase();
+  const s = normalizeSearch(q);
   if (!s) return BUILTIN_COCKTAIL_TAGS;
-  return BUILTIN_COCKTAIL_TAGS.filter((t) => t.name.toLowerCase().includes(s));
+  return BUILTIN_COCKTAIL_TAGS.filter((t) => normalizeSearch(t.name).includes(s));
 };

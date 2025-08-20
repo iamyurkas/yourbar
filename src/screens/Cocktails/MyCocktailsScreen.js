@@ -31,6 +31,7 @@ import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -116,9 +117,9 @@ export default function MyCocktailsScreen() {
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-    const q = searchDebounced.trim().toLowerCase();
+    const q = normalizeSearch(searchDebounced);
     let list = cocktails;
-    if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
         (c) =>
