@@ -88,9 +88,21 @@ export async function exportAllPhotos() {
   const addFile = async (uri, name) => {
     if (!uri || added.has(uri)) return;
     try {
-      const base64 = await FileSystem.readAsStringAsync(uri, {
+      let readUri = uri;
+      // expo-file-system can only read local files; download remote ones first
+      if (/^https?:/.test(uri)) {
+        const tmp = `${FileSystem.cacheDirectory}${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2)}${getExt(uri)}`;
+        const res = await FileSystem.downloadAsync(uri, tmp);
+        readUri = res.uri;
+      }
+      const base64 = await FileSystem.readAsStringAsync(readUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
+      if (readUri !== uri) {
+        await FileSystem.deleteAsync(readUri, { idempotent: true });
+      }
       zip.file(name, base64, { base64: true });
       added.add(uri);
     } catch (e) {
