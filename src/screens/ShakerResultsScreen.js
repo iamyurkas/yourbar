@@ -12,6 +12,7 @@ import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
 } from "../storage/settingsStorage";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { ids = [] } = route.params || {};
@@ -52,9 +53,9 @@ export default function ShakerResultsScreen({ route, navigation }) {
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-    const q = search.trim().toLowerCase();
+    const q = normalizeSearch(search);
     let list = cocktails.filter((c) => ids.includes(c.id));
-    if (q) list = list.filter((c) => c.name.toLowerCase().includes(q));
+    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
         (c) =>

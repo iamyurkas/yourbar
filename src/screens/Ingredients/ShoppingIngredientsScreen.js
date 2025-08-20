@@ -15,6 +15,7 @@ import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 export default function ShoppingIngredientsScreen() {
   const theme = useTheme();
@@ -82,7 +83,7 @@ export default function ShoppingIngredientsScreen() {
   }, [flushPending]);
 
   const filtered = useMemo(() => {
-    const q = searchDebounced.trim().toLowerCase();
+    const q = normalizeSearch(searchDebounced);
     let data = ingredients.filter((i) => i.inShoppingList);
     if (q) data = data.filter((i) => i.searchName.includes(q));
     if (selectedTagIds.length > 0)

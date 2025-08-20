@@ -1,4 +1,5 @@
 import { TAG_COLORS } from "../theme";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 export const BUILTIN_INGREDIENT_TAGS = [
   { id: 1, name: "strong alcohol", color: TAG_COLORS[0] },
@@ -18,9 +19,9 @@ export const ingredientTagById = (id) =>
   BUILTIN_INGREDIENT_TAGS.find((t) => t.id === id) || null;
 
 export const searchIngredientTags = (q) => {
-  const s = (q || "").trim().toLowerCase();
+  const s = normalizeSearch(q);
   if (!s) return BUILTIN_INGREDIENT_TAGS;
   return BUILTIN_INGREDIENT_TAGS.filter((t) =>
-    t.name.toLowerCase().includes(s)
+    normalizeSearch(t.name).includes(s)
   );
 };

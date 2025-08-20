@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect } from "react";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
+import { normalizeSearch } from "../utils/normalizeSearch";
 import IngredientUsageContext from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
@@ -40,7 +41,7 @@ export default function useIngredientsData() {
       const singleCocktailName = usageCount === 1 ? cocktailMap.get(ids[0]) : null;
       return {
         ...item,
-        searchName: item.name.toLowerCase(),
+        searchName: normalizeSearch(item.name),
         usageCount,
         singleCocktailName,
       };

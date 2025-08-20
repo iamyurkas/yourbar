@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { GLASSWARE } from "../constants/glassware";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 const CELL = 86; // розмір картки
 const GAP = 12;
@@ -59,9 +60,9 @@ export default function GlasswarePicker({
   const [query, setQuery] = useState("");
 
   const data = useMemo(() => {
-    const s = query.trim().toLowerCase();
+    const s = normalizeSearch(query);
     if (!s) return GLASSWARE;
-    return GLASSWARE.filter((g) => g.name.toLowerCase().includes(s));
+    return GLASSWARE.filter((g) => normalizeSearch(g.name).includes(s));
   }, [query]);
 
   return (

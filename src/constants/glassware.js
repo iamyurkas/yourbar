@@ -1,4 +1,5 @@
 // src/constants/glassware.js
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 // Map IDs to local JPEG assets (place files under: assets/glassware/<id>.jpg)
 const glassImages = {
@@ -82,7 +83,7 @@ export const GLASSWARE = [
 // Утиліти (зручно мати під рукою)
 export const getGlassById = (id) => GLASSWARE.find((g) => g.id === id) || null;
 export const searchGlass = (q) => {
-  const s = (q || "").trim().toLowerCase();
+  const s = normalizeSearch(q);
   if (!s) return GLASSWARE;
-  return GLASSWARE.filter((g) => g.name.toLowerCase().includes(s));
+  return GLASSWARE.filter((g) => normalizeSearch(g.name).includes(s));
 };

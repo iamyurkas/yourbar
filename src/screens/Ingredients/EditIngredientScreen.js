@@ -48,6 +48,7 @@ import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import { normalizeSearch } from "../../utils/normalizeSearch";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -163,8 +164,8 @@ export default function EditIngredientScreen() {
     setTagsModalVisible(true);
   };
 
-  // base list (lazy) — кешуємо nameLower для швидкого фільтру
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,nameLower}
+  // base list (lazy) — кешуємо searchName для швидкого фільтру
+  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,searchName}
   const [basesLoaded, setBasesLoaded] = useState(false);
   const [loadingBases, setLoadingBases] = useState(false);
 
@@ -239,9 +240,9 @@ export default function EditIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = deferredQuery.trim().toLowerCase();
+    const q = normalizeSearch(deferredQuery);
     if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.nameLower.includes(q));
+    return baseOnlySorted.filter((i) => i.searchName.includes(q));
   }, [baseOnlySorted, deferredQuery]);
 
   // --- dirty tracking (як в EditCocktailScreen) ---
@@ -387,7 +388,7 @@ export default function EditIngredientScreen() {
             id: i.id,
             name: i.name,
             photoUri: i.photoUri || null,
-            nameLower: (i.name || "").toLowerCase(),
+            searchName: normalizeSearch(i.name || ""),
           }));
         if (!isMountedRef.current) return;
         setBaseOnlySorted(baseOnly);
@@ -459,7 +460,7 @@ export default function EditIngredientScreen() {
       setGlobalIngredients((list) => {
         const next = updateIngredientById(list, {
           ...updated,
-          searchName: updated.name.toLowerCase(),
+          searchName: normalizeSearch(updated.name),
         }).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );

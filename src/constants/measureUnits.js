@@ -1,4 +1,5 @@
 // src/constants/measureUnits.js
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 export const MEASURE_UNITS = [
   { id: 1, name: " ", plural: " " }, // пустий пункт
@@ -66,9 +67,9 @@ export const getUnitById = (id) =>
   MEASURE_UNITS.find((u) => u.id === id) || null;
 
 export const searchUnits = (q) => {
-  const s = (q || "").trim().toLowerCase();
+  const s = normalizeSearch(q);
   if (!s) return MEASURE_UNITS;
-  return MEASURE_UNITS.filter((u) => u.name.toLowerCase().includes(s));
+  return MEASURE_UNITS.filter((u) => normalizeSearch(u.name).includes(s));
 };
 
 // Return singular or plural unit name based on quantity

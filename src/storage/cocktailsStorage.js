@@ -1,5 +1,6 @@
 // src/storage/cocktailsStorage.js
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 const STORAGE_KEY = "cocktails_v1";
 
@@ -127,10 +128,8 @@ export async function replaceAllCocktails(cocktails) {
 
 /** Simple search by name substring (case-insensitive) */
 export async function searchCocktails(query) {
-  const q = String(query || "")
-    .trim()
-    .toLowerCase();
+  const q = normalizeSearch(String(query || "").trim());
   if (!q) return getAllCocktails();
   const list = await readAll();
-  return list.filter((c) => c.name.toLowerCase().includes(q));
+  return list.filter((c) => normalizeSearch(c.name).includes(q));
 }

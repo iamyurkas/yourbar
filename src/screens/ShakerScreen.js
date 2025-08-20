@@ -16,6 +16,7 @@ import IngredientRow from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
@@ -56,7 +57,7 @@ export default function ShakerScreen({ navigation }) {
   }, [allTags, ingredients]);
 
   const filteredGrouped = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = normalizeSearch(search);
     if (!q) return grouped;
     const map = new Map();
     grouped.forEach((items, id) => {
