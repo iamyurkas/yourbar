@@ -134,7 +134,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "ale",
-      "photoUri": "assets/ingredients/1755200244973-767999-ale.jpg"
+      "photoUri": "assets/ingredients/1755200244973-767999-ale.jpeg"
     },
     {
       "id": "1755200244973-73154",
@@ -185,7 +185,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "almond syrup",
-      "photoUri": "assets/ingredients/1755441997878-860438-almond-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-728860",
@@ -236,7 +236,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "amaro nonino",
-      "photoUri": "assets/ingredients/1755441997878-272707-amaro-nonino.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-677547",
@@ -304,7 +304,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "anise",
-      "photoUri": "assets/ingredients/1755522272938-anise.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-933976",
@@ -406,7 +406,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "apple cider",
-      "photoUri": "assets/ingredients/1755200244973-496948-apple-cider.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-252791",
@@ -423,7 +423,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "apple juice",
-      "photoUri": "assets/ingredients/1755200244973-252791-apple-juice.jpg"
+      "photoUri": "assets/ingredients/1755200244973-252791-apple-juice.png"
     },
     {
       "id": "1755441997878-797544",
@@ -440,7 +440,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "apple liqueur",
-      "photoUri": "assets/ingredients/1755441997878-797544-apple-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-150452",
@@ -457,7 +457,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "apple schnapps",
-      "photoUri": "assets/ingredients/1755441997878-150452-apple-schnapps.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-337536",
@@ -525,7 +525,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "ardbeg",
-      "photoUri": "assets/ingredients/1755646290471-ardbeg.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-24290",
@@ -559,7 +559,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "bacardi 151 proof rum",
-      "photoUri": "assets/ingredients/1755200244973-298320-bacardi-151-proof-rum.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-156894",
@@ -593,7 +593,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "baileys",
-      "photoUri": "assets/ingredients/1755200244973-436447-baileys.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-609552",
@@ -644,7 +644,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "basil",
-      "photoUri": "assets/ingredients/1755441997878-742663-basil.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-126511",
@@ -661,7 +661,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "beef bouillon",
-      "photoUri": "assets/ingredients/1755441997878-126511-beef-bouillon.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-900535",
@@ -780,7 +780,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "black tea",
-      "photoUri": "assets/ingredients/1755441997878-457437-black-tea.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-367696",
@@ -797,7 +797,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "blackberry",
-      "photoUri": "assets/ingredients/1755200244973-367696-blackberry.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-769096",
@@ -831,7 +831,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "blackberry liqueur",
-      "photoUri": "assets/ingredients/1755441997878-784845-blackberry-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-767055",
@@ -1001,7 +1001,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "butterscotch liqueur",
-      "photoUri": "assets/ingredients/1755441997878-940010-butterscotch-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-246271",
@@ -1052,7 +1052,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "calvados",
-      "photoUri": "assets/ingredients/1755441997878-260102-calvados.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-705866",
@@ -1103,7 +1103,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "caramel syrup",
-      "photoUri": "assets/ingredients/1755441997878-422971-caramel-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-813081",
@@ -1171,7 +1171,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "celery",
-      "photoUri": "assets/ingredients/1755441997878-146921-celery.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-520181",
@@ -1222,7 +1222,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "chamomile cordial",
-      "photoUri": "assets/ingredients/1755441997878-335120-chamomile-cordial.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-435337",
@@ -1341,7 +1341,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "chestnut liqueur",
-      "photoUri": "assets/ingredients/1755452588747-chestnut-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-287813",
@@ -1358,7 +1358,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "chili flakes",
-      "photoUri": "assets/ingredients/1755200244973-287813-chili-flakes.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-468139",
@@ -1375,7 +1375,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "chili powder",
-      "photoUri": "assets/ingredients/1755441997878-468139-chili-powder.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-499545",
@@ -1409,7 +1409,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "chocolate bitters",
-      "photoUri": "assets/ingredients/1755441997878-312005-chocolate-bitters.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-794666",
@@ -1477,7 +1477,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cinnamon sticks",
-      "photoUri": "assets/ingredients/1755441997878-331650-cinnamon-sticks.jpg"
+      "photoUri": null
     },
     {
       "id": "1755450448103",
@@ -1494,7 +1494,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cinnamon syrup",
-      "photoUri": "assets/ingredients/1755450448103-cinnamon-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-214731",
@@ -1562,7 +1562,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "coconut cream",
-      "photoUri": "assets/ingredients/1755441997878-808918-coconut-cream.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-718499",
@@ -1613,7 +1613,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "coconut rum",
-      "photoUri": "assets/ingredients/1755441997878-783639-coconut-rum.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-219375",
@@ -1647,7 +1647,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "coffee beans",
-      "photoUri": "assets/ingredients/1755441997878-128442-coffee-beans.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-406487",
@@ -1732,7 +1732,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cola",
-      "photoUri": "assets/ingredients/1755441997878-358227-cola.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-707157",
@@ -1817,7 +1817,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cranberry",
-      "photoUri": "assets/ingredients/1755200244973-617773-cranberry.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-81569",
@@ -1902,7 +1902,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "creme de cacao brown",
-      "photoUri": "assets/ingredients/1755441997878-519309-creme-de-cacao-brown.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-838213",
@@ -1919,7 +1919,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "creme de cacao white",
-      "photoUri": "assets/ingredients/1755200244973-838213-creme-de-cacao-white.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-389154",
@@ -1953,7 +1953,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "creme de menthe green",
-      "photoUri": "assets/ingredients/1755441997878-393722-creme-de-menthe-green.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-596123",
@@ -1970,7 +1970,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "creme de menthe white",
-      "photoUri": "assets/ingredients/1755441997878-596123-creme-de-menthe-white.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-752419",
@@ -2004,7 +2004,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "creme de violette",
-      "photoUri": "assets/ingredients/1755441997878-844318-creme-de-violette.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-783515",
@@ -2055,7 +2055,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cumin",
-      "photoUri": "assets/ingredients/1755200244973-867324-cumin.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-186397",
@@ -2072,7 +2072,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "cynar",
-      "photoUri": "assets/ingredients/1755441997878-186397-cynar.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-962705",
@@ -2123,7 +2123,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "demerara sugar syrup",
-      "photoUri": "assets/ingredients/1755453836546-demerara-sugar-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-478041",
@@ -2174,7 +2174,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "dry sherry",
-      "photoUri": "assets/ingredients/1755441997878-218380-dry-sherry.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-569330",
@@ -2208,7 +2208,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "dubonnet",
-      "photoUri": "assets/ingredients/1755441997878-775302-dubonnet.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-368774",
@@ -2242,7 +2242,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "egg liqueur",
-      "photoUri": "assets/ingredients/1755441997878-438075-egg-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-450591",
@@ -2361,7 +2361,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "fernet branca",
-      "photoUri": "assets/ingredients/1755441997878-173236-fernet-branca.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-972818",
@@ -2599,7 +2599,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "gran classico",
-      "photoUri": "assets/ingredients/1755441997878-63905-gran-classico.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-392135",
@@ -2667,7 +2667,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "grapefruit",
-      "photoUri": "assets/ingredients/1755441997878-769178-grapefruit.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-131206",
@@ -2701,7 +2701,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "grapefruit soda",
-      "photoUri": "assets/ingredients/1755441997878-326697-grapefruit-soda.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-925081",
@@ -2735,7 +2735,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "grappa",
-      "photoUri": "assets/ingredients/1755441997878-423761-grappa.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-399740",
@@ -2786,7 +2786,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "guinness",
-      "photoUri": "assets/ingredients/1755200244973-60960-guinness.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-754486",
@@ -2820,7 +2820,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "hazelnut liqueur",
-      "photoUri": "assets/ingredients/1755511153175-hazelnut-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-945886",
@@ -2854,7 +2854,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "hennessy",
-      "photoUri": "assets/ingredients/1755441997878-383508-hennessy.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-63524",
@@ -2922,7 +2922,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "hpnotiq",
-      "photoUri": "assets/ingredients/1755441997878-535129-hpnotiq.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-346304",
@@ -2956,7 +2956,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "ice cream",
-      "photoUri": "assets/ingredients/1755441997878-175777-ice-cream.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-626592",
@@ -2990,7 +2990,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "irish whisky",
-      "photoUri": "assets/ingredients/1755200244973-489584-irish-whisky.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-563527",
@@ -3007,7 +3007,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "islay scotch whiskey",
-      "photoUri": "assets/ingredients/1755200244973-563527-islay-scotch-whiskey.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-279646",
@@ -3058,7 +3058,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "jamaican rum",
-      "photoUri": "assets/ingredients/1755681623932-jamaican-rum.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-445390",
@@ -3126,7 +3126,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "kirsch",
-      "photoUri": "assets/ingredients/1755441997878-255521-kirsch.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-91481",
@@ -3194,7 +3194,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "laphroaig",
-      "photoUri": "assets/ingredients/1755350605072-laphroaig.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-452462",
@@ -3267,7 +3267,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "lemon tonic",
-      "photoUri": "assets/ingredients/1755200244973-972300-lemon-tonic.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-73931",
@@ -3357,7 +3357,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "lime cordial",
-      "photoUri": "assets/ingredients/1755299957935-lime-cordial.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-525624",
@@ -3391,7 +3391,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "limoncello",
-      "photoUri": "assets/ingredients/1755441997878-533027-limoncello.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-803457",
@@ -3646,7 +3646,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "old tom gin",
-      "photoUri": "assets/ingredients/1755441997878-289771-old-tom-gin.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-898828",
@@ -3765,7 +3765,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "orange liqueur",
-      "photoUri": "assets/ingredients/1755441997878-421867-orange-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-738590",
@@ -3816,7 +3816,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "overproof rum",
-      "photoUri": "assets/ingredients/1755441997878-669831-overproof-rum.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-220503",
@@ -3850,7 +3850,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "papaya juice",
-      "photoUri": "assets/ingredients/1755441997878-153252-papaya-juice.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-41869",
@@ -3867,7 +3867,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "passion fruit",
-      "photoUri": "assets/ingredients/1755441997878-41869-passion-fruit.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-41068",
@@ -3901,7 +3901,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "passion fruit liqueur",
-      "photoUri": "assets/ingredients/1755441997878-65926-passion-fruit-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-623211",
@@ -3952,7 +3952,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "peach",
-      "photoUri": "assets/ingredients/1755441997878-5992-peach.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-950849",
@@ -4003,7 +4003,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "peach liqueur",
-      "photoUri": "assets/ingredients/1755441997878-733523-peach-liqueur.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-669094",
@@ -4037,7 +4037,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "pedro ximenez",
-      "photoUri": "assets/ingredients/1755441997878-78703-pedro-ximenez.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-879799",
@@ -4105,7 +4105,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "peychaud's bittersb",
-      "photoUri": "assets/ingredients/1755441997878-803521-peychauds-bittersb.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-991368",
@@ -4122,7 +4122,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "pimm's no. 1",
-      "photoUri": "assets/ingredients/1755441997878-991368-pimms-no-1.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-932849",
@@ -4292,7 +4292,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "punt e mes",
-      "photoUri": "assets/ingredients/1755441997878-949163-punt-e-mes.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-515915",
@@ -4309,7 +4309,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "raspberry",
-      "photoUri": "assets/ingredients/1755441997878-515915-raspberry.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-15058",
@@ -4394,7 +4394,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "rich simple syrup",
-      "photoUri": "assets/ingredients/1755441997878-429018-rich-simple-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-122449",
@@ -4445,7 +4445,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "rose syrup",
-      "photoUri": "assets/ingredients/1755200244973-889197-rose-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-443213",
@@ -4615,7 +4615,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "scotch whiskey",
-      "photoUri": "assets/ingredients/1755200244973-140867-scotch-whiskey.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-702409",
@@ -4632,7 +4632,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "seagram's 7 crown",
-      "photoUri": "assets/ingredients/1755441997878-702409-seagrams-7-crown.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-134824",
@@ -4666,7 +4666,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "silver onion",
-      "photoUri": "assets/ingredients/1755441997878-297740-silver-onion.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-150490",
@@ -4683,7 +4683,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "simple syrup",
-      "photoUri": "assets/ingredients/1755200244973-150490-simple-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-706556",
@@ -4768,7 +4768,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "sparkling wine",
-      "photoUri": "assets/ingredients/1755441997878-756362-sparkling-wine.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-908571",
@@ -4836,7 +4836,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "strawberry",
-      "photoUri": "assets/ingredients/1755200244973-969224-strawberry.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-896547",
@@ -4887,7 +4887,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "strawberry syrup",
-      "photoUri": "assets/ingredients/1755441997878-981872-strawberry-syrup.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-217733",
@@ -4921,7 +4921,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "suze",
-      "photoUri": "assets/ingredients/1755441997878-759169-suze.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-898334",
@@ -4938,7 +4938,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "sweet red vermouth",
-      "photoUri": "assets/ingredients/1755441997878-898334-sweet-red-vermouth.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-384922",
@@ -4955,7 +4955,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "tabasco",
-      "photoUri": "assets/ingredients/1755441997878-384922-tabasco.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-888500",
@@ -4972,7 +4972,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "tawny port",
-      "photoUri": "assets/ingredients/1755441997878-888500-tawny-port.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-97568",
@@ -5006,7 +5006,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "tequila blanco",
-      "photoUri": "assets/ingredients/1755441997878-266182-tequila-blanco.jpg"
+      "photoUri": null
     },
     {
       "id": "1755441997878-787067",
@@ -5023,7 +5023,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "tequila gold",
-      "photoUri": "assets/ingredients/1755441997878-787067-tequila-gold.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-960222",
@@ -5108,7 +5108,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "tonic",
-      "photoUri": "assets/ingredients/1755200244973-676673-tonic.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-38880",
@@ -5227,7 +5227,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "vodka citron",
-      "photoUri": "assets/ingredients/1755300138380-vodka-citron.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-118165",
@@ -5244,7 +5244,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "vodka vanilla",
-      "photoUri": "assets/ingredients/1755200244973-118165-vodka-vanilla.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-752336",
@@ -5312,7 +5312,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "white rum",
-      "photoUri": "assets/ingredients/1755200244973-861551-white-rum.jpg"
+      "photoUri": null
     },
     {
       "id": "1755200244973-540275",
@@ -5448,7 +5448,7 @@
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "zubrowka",
-      "photoUri": "assets/ingredients/1755441997878-284294-zubrowka.jpg"
+      "photoUri": null
     }
   ],
   "cocktails": []
