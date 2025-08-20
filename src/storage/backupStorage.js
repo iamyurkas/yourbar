@@ -11,10 +11,14 @@ import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
  * Returns the URI of the created file.
  */
 export async function exportAllData() {
-  const [ingredients, cocktails] = await Promise.all([
+  const [allIngredients, allCocktails] = await Promise.all([
     getAllIngredients(),
     getAllCocktails(),
   ]);
+  const ingredients = allIngredients.map(
+    ({ inBar, inShoppingList, ...rest }) => rest
+  );
+  const cocktails = allCocktails.map(({ rating, ...rest }) => rest);
   const data = { ingredients, cocktails };
   const json = JSON.stringify(data, null, 2);
   const fileName = `yourbar-backup-${Date.now()}.json`;
@@ -109,10 +113,18 @@ export async function importAllData() {
     });
     const data = JSON.parse(contents);
     if (Array.isArray(data.ingredients)) {
-      await saveAllIngredients(data.ingredients);
+      const ingredients = data.ingredients.map(
+        ({ inBar, inShoppingList, ...rest }) => ({
+          ...rest,
+          inBar: false,
+          inShoppingList: false,
+        })
+      );
+      await saveAllIngredients(ingredients);
     }
     if (Array.isArray(data.cocktails)) {
-      await replaceAllCocktails(data.cocktails);
+      const cocktails = data.cocktails.map(({ rating, ...rest }) => rest);
+      await replaceAllCocktails(cocktails);
     }
     return true;
   } catch (e) {

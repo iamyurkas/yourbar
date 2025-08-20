@@ -50,6 +50,7 @@ function sanitizeIngredients(raw) {
         usageCount: Number(it?.usageCount ?? 0),
         singleCocktailName: it?.singleCocktailName ?? null,
         inBar: false,
+        inShoppingList: false,
       }))
     : [];
 }
@@ -58,6 +59,7 @@ function sanitizeCocktails(raw) {
   return Array.isArray(raw)
     ? raw.map((c) => ({
         ...c,
+        rating: 0,
         photoUri: resolvePhoto(c?.photoUri || c?.image),
         tags: mapTags(c?.tags, COCKTAIL_TAG_BY_ID),
         ingredients: Array.isArray(c?.ingredients) ? c.ingredients : [],
