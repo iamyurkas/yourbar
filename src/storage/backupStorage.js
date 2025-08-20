@@ -2,9 +2,36 @@ import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 import JSZip from 'jszip';
+import slugify from 'slugify';
+import { Image } from 'react-native';
 
+import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
 import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
+
+const getExt = (uri) => {
+  const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri || '');
+  return match ? `.${match[1]}` : '.jpg';
+};
+
+function serializePhotoUri(uri, type, { id, name }) {
+  if (!uri) return null;
+  const slug = slugify(String(name || ''), { lower: true, strict: true });
+  return `assets/${type}/${id}-${slug}${getExt(uri)}`;
+}
+
+function resolvePhoto(path) {
+  if (!path) return null;
+  const str = String(path);
+  if (/^(https?:|file:)/.test(str)) return str;
+  const mod = ASSET_MAP[str];
+  if (mod) {
+    const resolved = Image.resolveAssetSource(mod);
+    return resolved?.uri ?? null;
+  }
+  console.warn('Missing asset', str);
+  return null;
+}
 
 /**
  * Export all ingredients and cocktails to a JSON file and open share dialog.
@@ -16,9 +43,15 @@ export async function exportAllData() {
     getAllCocktails(),
   ]);
   const ingredients = allIngredients.map(
-    ({ inBar, inShoppingList, ...rest }) => rest
+    ({ inBar, inShoppingList, photoUri, ...rest }) => ({
+      ...rest,
+      photoUri: serializePhotoUri(photoUri, 'ingredients', rest),
+    })
   );
-  const cocktails = allCocktails.map(({ rating, ...rest }) => rest);
+  const cocktails = allCocktails.map(({ rating, photoUri, ...rest }) => ({
+    ...rest,
+    photoUri: serializePhotoUri(photoUri, 'cocktails', rest),
+  }));
   const data = { ingredients, cocktails };
   const json = JSON.stringify(data, null, 2);
   const fileName = `yourbar-backup-${Date.now()}.json`;
@@ -52,11 +85,6 @@ export async function exportAllPhotos() {
   const zip = new JSZip();
   const added = new Set();
 
-  const getExt = (uri) => {
-    const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri);
-    return match ? `.${match[1]}` : '.jpg';
-  };
-
   const addFile = async (uri, name) => {
     if (!uri || added.has(uri)) return;
     try {
@@ -71,10 +99,12 @@ export async function exportAllPhotos() {
   };
 
   for (const ing of ingredients) {
-    await addFile(ing.photoUri, `ingredient-${ing.id}${getExt(ing.photoUri || '')}`);
+    const path = serializePhotoUri(ing.photoUri, 'ingredients', ing);
+    if (path) await addFile(ing.photoUri, path.replace(/^assets\//, ''));
   }
   for (const c of cocktails) {
-    await addFile(c.photoUri, `cocktail-${c.id}${getExt(c.photoUri || '')}`);
+    const path = serializePhotoUri(c.photoUri, 'cocktails', c);
+    if (path) await addFile(c.photoUri, path.replace(/^assets\//, ''));
   }
 
   const base64Zip = await zip.generateAsync({ type: 'base64' });
@@ -114,8 +144,9 @@ export async function importAllData() {
     const data = JSON.parse(contents);
     if (Array.isArray(data.ingredients)) {
       const ingredients = data.ingredients.map(
-        ({ inBar, inShoppingList, ...rest }) => ({
+        ({ inBar, inShoppingList, photoUri, ...rest }) => ({
           ...rest,
+          photoUri: resolvePhoto(photoUri),
           inBar: false,
           inShoppingList: false,
         })
@@ -123,7 +154,12 @@ export async function importAllData() {
       await saveAllIngredients(ingredients);
     }
     if (Array.isArray(data.cocktails)) {
-      const cocktails = data.cocktails.map(({ rating, ...rest }) => rest);
+      const cocktails = data.cocktails.map(
+        ({ rating, photoUri, ...rest }) => ({
+          ...rest,
+          photoUri: resolvePhoto(photoUri),
+        })
+      );
       await replaceAllCocktails(cocktails);
     }
     return true;
