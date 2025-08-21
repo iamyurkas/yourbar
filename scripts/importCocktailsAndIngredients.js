@@ -67,7 +67,7 @@ function sanitizeCocktails(raw) {
     : [];
 }
 
-export async function importCocktailsAndIngredients({ force = true } = {}) {
+export async function importCocktailsAndIngredients({ force = false } = {}) {
   try {
     if (!force) {
       const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
