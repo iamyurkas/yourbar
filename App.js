@@ -24,12 +24,22 @@ import ShakerResultsScreen from "./src/screens/ShakerResultsScreen";
 
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
+import useIngredientsData from "./src/hooks/useIngredientsData";
 
-import { importCocktailsAndIngredients } from "./scripts/importCocktailsAndIngredients";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
 const ShakerStack = createNativeStackNavigator();
+
+function InitialDataLoader({ children }) {
+  const { loading, refresh } = useIngredientsData();
+  useEffect(() => {
+    if (loading) {
+      refresh();
+    }
+  }, [loading, refresh]);
+  return children;
+}
 
 function ShakerStackScreen() {
   return (
@@ -142,31 +152,29 @@ function Tabs() {
 }
 
 export default function App() {
-  useEffect(() => {
-    importCocktailsAndIngredients();
-  }, []);
-
   return (
     <PaperProvider theme={AppTheme}>
       <MenuProvider>
         <SafeAreaProvider>
           <IngredientUsageProvider>
-            <TabMemoryProvider>
-              <NavigationContainer>
-                <RootStack.Navigator>
-                  <RootStack.Screen
-                    name="Tabs"
-                    component={Tabs}
-                    options={{ headerShown: false }}
-                  />
-                  <RootStack.Screen
-                    name="EditCustomTags"
-                    component={EditCustomTagsScreen}
-                    options={{ title: "Custom tags" }}
-                  />
-                </RootStack.Navigator>
-              </NavigationContainer>
-            </TabMemoryProvider>
+            <InitialDataLoader>
+              <TabMemoryProvider>
+                <NavigationContainer>
+                  <RootStack.Navigator>
+                    <RootStack.Screen
+                      name="Tabs"
+                      component={Tabs}
+                      options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                      name="EditCustomTags"
+                      component={EditCustomTagsScreen}
+                      options={{ title: "Custom tags" }}
+                    />
+                  </RootStack.Navigator>
+                </NavigationContainer>
+              </TabMemoryProvider>
+            </InitialDataLoader>
           </IngredientUsageProvider>
         </SafeAreaProvider>
       </MenuProvider>
