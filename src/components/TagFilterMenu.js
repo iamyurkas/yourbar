@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   TouchableOpacity,
   View,
@@ -17,6 +17,13 @@ export default function TagFilterMenu({
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
 
+  const iconColor = useMemo(() => {
+    if (selected.length === 0) return theme.colors.onSurface;
+    const last = selected[selected.length - 1];
+    const tag = tags.find((t) => t.id === last);
+    return tag?.color ?? theme.colors.onSurface;
+  }, [selected, tags, theme]);
+
   const toggle = (id) => {
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -33,11 +40,7 @@ export default function TagFilterMenu({
           style={{ paddingVertical: 4, paddingHorizontal: 2 }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8, borderRadius: 16 }}
         >
-          <MaterialIcons
-            name="filter-list"
-            size={28}
-            color={theme.colors.onSurface}
-          />
+          <MaterialIcons name="filter-list" size={28} color={iconColor} />
         </TouchableOpacity>
       }
       anchorPosition="bottom"
