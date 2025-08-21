@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect } from "react";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
+import { importCocktailsAndIngredients } from "../../scripts/importCocktailsAndIngredients";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import IngredientUsageContext from "../context/IngredientUsageContext";
@@ -23,6 +24,7 @@ export default function useIngredientsData() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    await importCocktailsAndIngredients({ force: false });
     const [ing, cocks, allowSubs] = await Promise.all([
       getAllIngredients(),
       getAllCocktails(),
