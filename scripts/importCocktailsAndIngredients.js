@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RAW_DATA from "../assets/data/open-cocktails.json";
+import RAW_DATA from "../assets/data/data.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
@@ -67,7 +67,7 @@ function sanitizeCocktails(raw) {
     : [];
 }
 
-export async function importCocktailsAndIngredients({ force = false } = {}) {
+export async function importCocktailsAndIngredients({ force = true } = {}) {
   try {
     if (!force) {
       const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
