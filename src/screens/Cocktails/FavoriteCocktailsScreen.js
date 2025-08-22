@@ -24,6 +24,7 @@ import {
   addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import SortMenu from "../../components/SortMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
@@ -38,6 +39,7 @@ export default function FavoriteCocktailsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
+  const insets = useSafeAreaInsets();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
 
@@ -283,6 +285,9 @@ export default function FavoriteCocktailsScreen() {
             </Text>
           </View>
         }
+        contentContainerStyle={{
+          paddingBottom: 56 + (tabsOnTop ? 0 : 64) + insets.bottom,
+        }}
       />
     </View>
   );

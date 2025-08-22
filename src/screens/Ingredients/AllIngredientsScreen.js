@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import TagFilterMenu from "../../components/TagFilterMenu";
@@ -23,6 +24,7 @@ export default function AllIngredientsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
+  const insets = useSafeAreaInsets();
 
   const { ingredients, loading, setIngredients } = useIngredientsData();
   const [search, setSearch] = useState("");
@@ -181,6 +183,9 @@ export default function AllIngredientsScreen() {
             </Text>
           </View>
         }
+        contentContainerStyle={{
+          paddingBottom: 56 + (tabsOnTop ? 0 : 64) + insets.bottom,
+        }}
       />
     </View>
   );

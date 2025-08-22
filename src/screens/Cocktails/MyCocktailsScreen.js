@@ -25,6 +25,7 @@ import {
   addAllowSubstitutesListener,
 } from "../../storage/settingsStorage";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
@@ -41,6 +42,7 @@ export default function MyCocktailsScreen() {
   const isFocused = useIsFocused();
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
+  const insets = useSafeAreaInsets();
 
   const [cocktails, setCocktails] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -376,6 +378,9 @@ export default function MyCocktailsScreen() {
             </Text>
           </View>
         }
+        contentContainerStyle={{
+          paddingBottom: 56 + (tabsOnTop ? 0 : 64) + insets.bottom,
+        }}
       />
     </View>
   );
