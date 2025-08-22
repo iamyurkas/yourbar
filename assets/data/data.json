@@ -10378,6 +10378,640 @@
         {"order": 7, "ingredientId": "1755200244973-401724", "name": "Angostura Bitters", "amount": "1", "unitId": 6, "garnish": false, "optional": false},
         {"order": 8, "ingredientId": "1755200244973-607153", "name": "Maraschino cherry", "amount": "3", "unitId": 1, "garnish": true, "optional": false}
       ]
+    },
+    {
+      "id": 1755800000112,
+      "name": "Tipperary",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Irish whiskey stirred with green Chartreuse and sweet vermouth.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-489584",
+          "name": "Irish Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-399740",
+          "name": "Green Chartreuse",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-552212",
+          "name": "Orange Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000113,
+      "name": "Tommy's Margarita",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "A simplified margarita using agave syrup instead of orange liqueur.",
+      "instructions": "Add tequila, lime juice, and agave syrup into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with ice.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-97568",
+          "name": "Tequila",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-773514",
+          "name": "Agave Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000114,
+      "name": "Trinidad Sour",
+      "glassId": "coupe",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Bitters-heavy sour with rye and orgeat for balance.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled coupe glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-738590",
+          "name": "Orgeat Syrup",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-160433",
+          "name": "Rye Whisky",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000115,
+      "name": "Tuxedo",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Dry gin martini variant with maraschino and absinthe.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.\nGarnish with a cherry and a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-569330",
+          "name": "Dry Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "5",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-440131",
+          "name": "Absinthe",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-552212",
+          "name": "Orange Bitters",
+          "amount": "3",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000116,
+      "name": "Ve.n.to",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Grappa sour sweetened with honey and chamomile cordial.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with ice.\nGarnish with a lemon twist and grapes.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755441997878-423761",
+          "name": "Grappa",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-42279",
+          "name": "Honey Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755441997878-335120",
+          "name": "Chamomile Cordial",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-925081",
+          "name": "Grapes",
+          "amount": "3",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000117,
+      "name": "Vesper",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "James Bond's martini with gin, vodka, and Lillet Blanc.",
+      "instructions": "Add gin, vodka, and Lillet Blanc into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-797737",
+          "name": "Lillet Blanc",
+          "amount": "7.5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000118,
+      "name": "Vieux Carre",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "New Orleans classic combining rye, cognac, vermouth, and Benedictine.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a rocks glass filled with ice.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-160433",
+          "name": "Rye Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-502166",
+          "name": "Cognac",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-166341",
+          "name": "Benedictine",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755441997878-803521",
+          "name": "Peychaud's Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000119,
+      "name": "Whiskey Sour",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Classic bourbon sour optionally enriched with egg white.",
+      "instructions": "Add bourbon, lemon juice, simple syrup, and egg white into a shaker without ice.\nDry shake.\nAdd ice and shake again.\nStrain into a rocks glass filled with ice.\nGarnish with an orange slice and a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-342124",
+          "name": "Bourbon",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-450591",
+          "name": "Egg White",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000120,
+      "name": "White Lady",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Gin sour sweetened with triple sec and balanced with lemon.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000121,
+      "name": "Zombie",
+      "glassId": "tiki",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Potent tiki classic blending multiple rums, citrus, and spice.",
+      "instructions": "Add all ingredients except the overproof rum into a blender with ice and blend briefly.\nPour into a tall glass.\nFloat the overproof rum on top.\nGarnish with a mint sprig and a cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-123517",
+          "name": "Aged rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-888089",
+          "name": "Falernum",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-803536",
+          "name": "Grenadine",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-440131",
+          "name": "Absinthe",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": true
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755441997878-669831",
+          "name": "Overproof Rum",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true
+        },
+        {
+          "order": 9,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 10,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
     }
   ]
 }
