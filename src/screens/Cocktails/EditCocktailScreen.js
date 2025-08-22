@@ -1599,6 +1599,7 @@ export default function EditCocktailScreen() {
       const visibleHeight = viewportHeight - kbHeight; // видиме поле над клавіатурою
       const targetCenter = visibleHeight / 2; // бажаний центр інпуту
       const DEAD = 10; // додатковий відступ
+      const EXTRA_SCROLL = 10; // підкручуємо трохи вище
 
       const tryOnce = () => {
         if (!nodeRef?.current) return;
@@ -1610,7 +1611,8 @@ export default function EditCocktailScreen() {
             // Скролимо лише вниз (піднімаємо контент), не опускаємо
             const targetY = Math.min(scrollY + delta + DEAD, maxY);
             if (targetY > scrollY) {
-              scrollRef.current.scrollTo({ y: targetY, animated: true });
+              const adjustedY = Math.min(targetY + EXTRA_SCROLL, maxY);
+              scrollRef.current.scrollTo({ y: adjustedY, animated: true });
             }
           }
         });
