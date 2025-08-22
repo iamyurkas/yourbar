@@ -981,7 +981,7 @@
           "color": "#a8a8a8"
         }
       ],
-      "baseIngredientId": "1755200244973-217733",
+      "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "brown sugar",
@@ -2121,7 +2121,7 @@
           "color": "#a8a8a8"
         }
       ],
-      "baseIngredientId": "1755200244973-217733",
+      "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "demerara sugar",
@@ -2138,7 +2138,7 @@
           "color": "#FFB74D"
         }
       ],
-      "baseIngredientId": "1755200244973-217733",
+      "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "demerara sugar syrup",
@@ -4461,7 +4461,7 @@
           "color": "#FFB74D"
         }
       ],
-      "baseIngredientId": "1755200244973-217733",
+      "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "rich simple syrup",
@@ -4734,7 +4734,7 @@
           "color": "#FFB74D"
         }
       ],
-      "baseIngredientId": "1755200244973-217733",
+      "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
       "searchName": "simple syrup",
@@ -5555,8 +5555,8 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-945886",
-          "name": "Heavy Cream",
+          "ingredientId": "1755200244973-564821",
+          "name": "Cream",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -7544,8 +7544,8 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-945886",
-          "name": "Heavy Cream",
+          "ingredientId": "1755200244973-564821",
+          "name": "Cream",
           "amount": "20",
           "unitId": 11,
           "garnish": false,
@@ -7907,8 +7907,8 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-945886",
-          "name": "Heavy Cream",
+          "ingredientId": "1755200244973-564821",
+          "name": "Cream",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -9976,8 +9976,8 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-945886",
-          "name": "Heavy Cream",
+          "ingredientId": "1755200244973-564821",
+          "name": "Cream",
           "amount": "60",
           "unitId": 11,
           "garnish": false,
