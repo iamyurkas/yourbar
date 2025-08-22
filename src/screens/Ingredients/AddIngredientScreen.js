@@ -225,6 +225,7 @@ export default function AddIngredientScreen() {
       const visibleHeight = viewportHeight - kbHeight;
       const targetCenter = visibleHeight / 2;
       const DEAD = 10;
+      const EXTRA_SCROLL = 10; // scroll a bit higher when moving up
 
       const tryOnce = () => {
         if (!nodeRef?.current) return;
@@ -235,7 +236,8 @@ export default function AddIngredientScreen() {
             const maxY = Math.max(0, contentH - viewportH);
             const targetY = Math.min(scrollY + delta + DEAD, maxY);
             if (targetY > scrollY) {
-              scrollRef.current.scrollTo({ y: targetY, animated: true });
+              const adjustedY = Math.min(targetY + EXTRA_SCROLL, maxY);
+              scrollRef.current.scrollTo({ y: adjustedY, animated: true });
             }
           }
         });
