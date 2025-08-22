@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Text, Animated } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import CocktailIcon from "../../assets/cocktail.svg";
 import ShakerIcon from "../../assets/shaker.svg";
 import IngredientIcon from "../../assets/lemon.svg";
 
@@ -21,7 +21,7 @@ export default function SplashScreen() {
     <View style={styles.container}>
       <View style={styles.iconsRow}>
         <Animated.View style={{ transform: [{ scale: cocktailScale }] }}>
-          <MaterialIcons name="local-bar" size={64} color="#333" />
+          <CocktailIcon width={64} height={64} fill="#333" />
         </Animated.View>
         <Animated.View style={{ transform: [{ scale: shakerScale }] }}>
           <ShakerIcon width={64} height={64} fill="#333" />
