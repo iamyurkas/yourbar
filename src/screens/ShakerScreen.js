@@ -173,7 +173,9 @@ export default function ShakerScreen({ navigation }) {
                       id={ing.id}
                       name={ing.name}
                       photoUri={ing.photoUri}
-                      usageCount={0}
+                      usageCount={ing.usageCount}
+                      singleCocktailName={ing.singleCocktailName}
+                      showMake
                       inBar={ing.inBar}
                       inShoppingList={ing.inShoppingList}
                       onPress={toggleIngredient}
