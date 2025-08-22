@@ -49,7 +49,7 @@ export default function SplashScreen() {
         <Icon2 width={64} height={64} style={styles.centerIcon} />
         <Icon3 width={64} height={64} />
       </View>
-      <Text style={styles.title}>Your bar</Text>
+      <Text style={styles.title}>YourBar</Text>
       <Text style={styles.slogan}>Your rules</Text>
     </View>
   );
