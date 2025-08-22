@@ -5473,6 +5473,581 @@
   ],
   "cocktails": [
     {
+      "id": 1755800000049,
+      "name": "Alexander",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "A creamy blend of cognac and chocolate liqueur.",
+      "instructions": "Add all ingredients into a cocktail shaker filled with ice.\nShake well.\nStrain into a chilled cocktail glass.\nSprinkle nutmeg on top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-502166",
+          "name": "Cognac",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-519309",
+          "name": "Creme de Cacao Brown",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-945886",
+          "name": "Heavy Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-591435",
+          "name": "Nutmeg",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000050,
+      "name": "Americano",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Bitter Campari and sweet vermouth lengthened with fizzy soda.",
+      "instructions": "Pour Campari and red vermouth over ice in a rocks glass.\nTop with soda water and briefly stir.\nGarnish with an orange slice and a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-705866",
+          "name": "Campari",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-807431",
+          "name": "Soda Water",
+          "amount": "1",
+          "unitId": 20,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000051,
+      "name": "Angel Face",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Equal-parts mix of gin, apricot brandy, and Calvados.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-975435",
+          "name": "Apricot Brandy",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755441997878-260102",
+          "name": "Calvados",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000052,
+      "name": "Aviation",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "A floral gin sour with maraschino and lemon, tinted by crème de violette.",
+      "instructions": "Add all ingredients into a cocktail shaker filled with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755441997878-844318",
+          "name": "Creme de Violette",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000053,
+      "name": "Bee's Knees",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "A Prohibition-era mix of gin, lemon, and honey for a bright, silky sour.",
+      "instructions": "Add gin, lemon juice, and honey syrup into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-42279",
+          "name": "Honey Syrup",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000054,
+      "name": "Bellini",
+      "glassId": "champagne_flute",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Italian sparkling wine mixed with peach purée for a light, fruity spritz.",
+      "instructions": "Pour peach purée into a chilled champagne flute.\nTop with chilled prosecco.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755441997878-5992",
+          "name": "Peach",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-588255",
+          "name": "Prosecco",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000055,
+      "name": "Between the Sheets",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "A citrus-forward variation on the Sidecar with cognac, rum, and triple sec.",
+      "instructions": "Add all ingredients into a cocktail shaker filled with ice.\nShake well.\nStrain into a chilled cocktail glass.\nServe without garnish.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-502166",
+          "name": "Cognac",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000056,
+      "name": "Black Russian",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Simple and spirit-forward blend of vodka and coffee liqueur.",
+      "instructions": "Fill a rocks glass with ice.\nPour vodka and coffee liqueur over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-705618",
+          "name": "Coffee Liqueur",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000057,
+      "name": "Bloody Mary",
+      "glassId": "highball_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "A savory vodka cocktail with tomato juice, spices, and a peppery bite.",
+      "instructions": "Pour all ingredients into a highball glass filled with ice.\nStir gently.\nGarnish with a celery stalk and a lemon wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-306059",
+          "name": "Tomato Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-312841",
+          "name": "Worcestershire Sauce",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755441997878-384922",
+          "name": "Tabasco",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-520181",
+          "name": "Celery Salt",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-220504",
+          "name": "Black Pepper",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755441997878-146921",
+          "name": "Celery",
+          "amount": "1",
+          "unitId": 22,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 9,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000058,
+      "name": "Boulevardier",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "A whiskey-based Negroni with bourbon, sweet vermouth, and Campari.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.\nGarnish with an orange twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-342124",
+          "name": "Bourbon",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-705866",
+          "name": "Campari",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000059,
+      "name": "Bramble",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "A modern gin sour swirled with blackberry liqueur.",
+      "instructions": "Add gin, lemon juice, and simple syrup into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with crushed ice.\nPour creme de mure over the top.\nGarnish with a lemon slice and two blackberries.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-752419",
+          "name": "Creme de Mure",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-367696",
+          "name": "Blackberry",
+          "amount": "2",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
       "id": 1755800000019,
       "name": "Brandy Crusta",
       "glassId": "cocktail_glass",
