@@ -1919,7 +1919,7 @@ export default function EditCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
-              marginTop: headerHeight,
+              marginTop: -150,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },

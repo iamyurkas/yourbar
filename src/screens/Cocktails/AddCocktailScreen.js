@@ -1163,8 +1163,8 @@ export default function AddCocktailScreen() {
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState(() => {
-    const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 8);
-    return custom ? [custom] : [{ id: 8, name: "custom", color: TAG_COLORS[15] }];
+    const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 11);
+    return custom ? [custom] : [{ id: 11, name: "custom", color: TAG_COLORS[15] }];
   });
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
@@ -1870,7 +1870,7 @@ export default function AddCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
-              marginTop: headerHeight,
+              marginTop: -150,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },
