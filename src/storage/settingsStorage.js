@@ -7,6 +7,7 @@ const KEEP_AWAKE_KEY = "keepAwake";
 const FAVORITES_MIN_RATING_KEY = "favoritesMinRating";
 const TABS_ON_TOP_KEY = "tabsOnTop";
 const ALLOW_SUBSTITUTES_KEY = "allowSubstitutes";
+const START_SCREEN_KEY = "startScreen"; // format: "cocktails:All"
 
 export const IGNORE_GARNISH_EVENT = "ignoreGarnishChanged";
 export const KEEP_AWAKE_EVENT = "keepAwakeChanged";
@@ -140,4 +141,19 @@ export function addFavoritesMinRatingListener(listener) {
     FAVORITES_MIN_RATING_EVENT,
     listener
   );
+}
+
+export async function getStartScreen() {
+  try {
+    const value = await AsyncStorage.getItem(START_SCREEN_KEY);
+    return value || "cocktails:All";
+  } catch {
+    return "cocktails:All";
+  }
+}
+
+export async function setStartScreen(value) {
+  try {
+    await AsyncStorage.setItem(START_SCREEN_KEY, value);
+  } catch {}
 }

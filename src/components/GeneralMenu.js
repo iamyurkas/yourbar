@@ -18,6 +18,7 @@ import CocktailIcon from "../../assets/cocktail.svg";
 import IngredientTagsModal from "./IngredientTagsModal";
 import CocktailTagsModal from "./CocktailTagsModal";
 import FavoritesRatingModal from "./FavoritesRatingModal";
+import StartScreenModal from "./StartScreenModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { exportAllData, importAllData, exportAllPhotos } from "../storage/backupStorage";
@@ -37,6 +38,8 @@ import {
   addTabsOnTopListener,
   getAllowSubstitutes,
   setAllowSubstitutes as saveAllowSubstitutes,
+  getStartScreen,
+  setStartScreen as saveStartScreen,
 } from "../storage/settingsStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -109,9 +112,20 @@ export default function GeneralMenu({ visible, onClose }) {
   const [cocktailTagsVisible, setCocktailTagsVisible] = useState(false);
   const [ratingVisible, setRatingVisible] = useState(false);
   const [favRating, setFavRating] = useState(0);
+  const [startScreen, setStartScreen] = useState("cocktails:All");
+  const [startVisible, setStartVisible] = useState(false);
   const [dialog, setDialog] = useState({ visible: false, title: "", message: "" });
 
   const { refresh } = useIngredientsData();
+
+  const startLabels = {
+    "cocktails:All": "Cocktails - All",
+    "cocktails:My": "Cocktails - My",
+    "cocktails:Favorite": "Cocktails - Favorites",
+    "ingredients:All": "Ingredients - All",
+    "ingredients:My": "Ingredients - My",
+    "ingredients:Shopping": "Ingredients - Shopping",
+  };
 
   useEffect(() => {
     if (visible) {
@@ -142,6 +156,11 @@ export default function GeneralMenu({ visible, onClose }) {
   const openRatingModal = () => {
     onClose?.();
     setTimeout(() => setRatingVisible(true), 0);
+  };
+
+  const openStartScreenModal = () => {
+    onClose?.();
+    setTimeout(() => setStartVisible(true), 0);
   };
 
   const handleExportPhotos = async () => {
@@ -216,6 +235,12 @@ export default function GeneralMenu({ visible, onClose }) {
         setFavRating(stored);
       } catch {}
     })();
+    (async () => {
+      try {
+        const stored = await getStartScreen();
+        setStartScreen(stored || "cocktails:All");
+      } catch {}
+    })();
   }, []);
 
   useEffect(() => {
@@ -274,6 +299,11 @@ export default function GeneralMenu({ visible, onClose }) {
   const handleSelectRating = (value) => {
     setFavRating(value);
     saveFavoritesMinRating(value);
+  };
+
+  const handleSelectStart = (value) => {
+    setStartScreen(value);
+    saveStartScreen(value);
   };
 
   const closeTagsModal = () => setTagsVisible(false);
@@ -378,6 +408,28 @@ export default function GeneralMenu({ visible, onClose }) {
                   ) : (
                     <Text style={styles.itemSub}>Show all favorite cocktails</Text>
                   )}
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color={theme.colors.onSurfaceVariant}
+                  style={styles.chevron}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.linkRow}
+                onPress={openStartScreenModal}
+              >
+                <MaterialIcons
+                  name="home"
+                  size={22}
+                  color={theme.colors.primary}
+                  style={styles.linkIcon}
+                />
+                <View style={styles.itemText}>
+                  <Text style={styles.itemTitle}>Start screen</Text>
+                  <Text style={styles.itemSub}>{startLabels[startScreen]}</Text>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
@@ -495,6 +547,12 @@ export default function GeneralMenu({ visible, onClose }) {
         rating={favRating}
         onSelect={handleSelectRating}
         onClose={() => setRatingVisible(false)}
+      />
+      <StartScreenModal
+        visible={startVisible}
+        value={startScreen}
+        onSelect={handleSelectStart}
+        onClose={() => setStartVisible(false)}
       />
       <ConfirmationDialog
         visible={dialog.visible}
