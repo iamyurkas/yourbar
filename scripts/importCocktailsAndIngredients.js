@@ -76,21 +76,47 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
         return;
       }
     }
+    const [existingIngredientsRaw, existingCocktailsRaw] = await Promise.all([
+      AsyncStorage.getItem(INGREDIENTS_KEY),
+      AsyncStorage.getItem(COCKTAILS_KEY),
+    ]);
 
-    if (!force) {
-      const [existingIngredients, existingCocktails] = await Promise.all([
-        AsyncStorage.getItem(INGREDIENTS_KEY),
-        AsyncStorage.getItem(COCKTAILS_KEY),
-      ]);
-      if (existingIngredients && existingCocktails) {
-        console.log("ℹ️ Data present — skip import");
-        await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
-        return;
+    const existingIngredients = existingIngredientsRaw
+      ? JSON.parse(existingIngredientsRaw)
+      : [];
+    const existingCocktails = existingCocktailsRaw
+      ? JSON.parse(existingCocktailsRaw)
+      : [];
+
+    const existingIngredientsMap = Object.fromEntries(
+      existingIngredients.map((it) => [it.id, it])
+    );
+    const existingCocktailsMap = Object.fromEntries(
+      existingCocktails.map((c) => [c.id, c])
+    );
+
+    const ingredients = sanitizeIngredients(RAW_DATA.ingredients).map((it) => {
+      const existing = existingIngredientsMap[it.id];
+      if (existing) {
+        return {
+          ...it,
+          inBar: existing.inBar,
+          inShoppingList: existing.inShoppingList,
+        };
       }
-    }
+      return it;
+    });
 
-    const ingredients = sanitizeIngredients(RAW_DATA.ingredients);
-    const cocktails = sanitizeCocktails(RAW_DATA.cocktails);
+    const cocktails = sanitizeCocktails(RAW_DATA.cocktails).map((c) => {
+      const existing = existingCocktailsMap[c.id];
+      if (existing) {
+        return {
+          ...c,
+          rating: existing.rating,
+        };
+      }
+      return c;
+    });
 
     await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
     await replaceAllCocktails(cocktails);
