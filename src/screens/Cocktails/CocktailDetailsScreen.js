@@ -69,6 +69,9 @@ const IngredientRow = memo(function IngredientRow({
   garnish,
   optional,
   substituteFor,
+  declaredSubstitutes = [],
+  baseSubstitutes = [],
+  brandedSubstitutes = [],
   isBranded,
   onPress,
 }) {
@@ -132,27 +135,30 @@ const IngredientRow = memo(function IngredientRow({
             {name}
           </Text>
           {(() => {
-            const meta = [];
-            
-            
-            if (substituteFor)
-              meta.push(`Substitute for: ${substituteFor}`);
-            if (garnish) meta.push("(garnish)");
-            if (optional) meta.push("(optional)");
-            const metaText = meta.join(" ");
-            return (
-              metaText && (
-                <Text
-                  numberOfLines={2}
-                  style={[
-                    styles.meta,
-                    { color: theme.colors.onSurfaceVariant },
-                  ]}
-                >
-                  {metaText}
-                </Text>
-              )
-            );
+            const lines = [];
+            const propLine = [
+              garnish && "(garnish)",
+              optional && "(optional)",
+            ]
+              .filter(Boolean)
+              .join(" ");
+            if (propLine) lines.push(propLine);
+            if (substituteFor) lines.push(`Substitute for: ${substituteFor}`);
+            declaredSubstitutes.forEach((s) => lines.push(s));
+            baseSubstitutes.forEach((s) => lines.push(s));
+            brandedSubstitutes.forEach((s) => lines.push(s));
+            return lines.map((line, idx) => (
+              <Text
+                key={idx}
+                numberOfLines={1}
+                style={[
+                  styles.meta,
+                  { color: theme.colors.onSurfaceVariant },
+                ]}
+              >
+                {line}
+              </Text>
+            ));
           })()}
         </View>
 
@@ -337,15 +343,34 @@ export default function CocktailDetailsScreen() {
       const originalName = ing?.name || r.name;
       const inBar = ing?.inBar;
       let substitute = null;
+      let declaredSubstitutes = [];
+      let baseSubstitutes = [];
+      let brandedSubstitutes = [];
+      const baseId = ing?.baseIngredientId ?? ing?.id;
+      const isBaseIngredient = ing?.baseIngredientId == null;
+      if (ing) {
+        if (Array.isArray(r.substitutes)) {
+          declaredSubstitutes = r.substitutes.map((s) => {
+            const candidate = ingMap.get(s.id);
+            return candidate?.name || s.name;
+          });
+        }
+        if (allowSubstitutes || r.allowBaseSubstitution) {
+          const base = allIngs.find((i) => i.id === baseId && i.id !== ing.id);
+          if (base) baseSubstitutes.push(base.name);
+        }
+        if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+          brandedSubstitutes = allIngs
+            .filter((i) => i.baseIngredientId === baseId && i.id !== ing.id)
+            .map((i) => i.name);
+        }
+      }
       if (!inBar && ing) {
-        const baseId = ing.baseIngredientId ?? ing.id;
-
         if (allowSubstitutes || r.allowBaseSubstitution) {
           const base = allIngs.find((i) => i.id === baseId && i.inBar);
           if (base) substitute = base;
         }
 
-        const isBaseIngredient = ing.baseIngredientId == null;
         if (
           !substitute &&
           (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
@@ -396,6 +421,9 @@ export default function CocktailDetailsScreen() {
         optional: !!r.optional,
         substituteFor: substitute ? originalName : null,
         isBranded: display.baseIngredientId != null,
+        declaredSubstitutes,
+        baseSubstitutes,
+        brandedSubstitutes,
       };
     });
   }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish, allowSubstitutes]);
