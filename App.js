@@ -9,6 +9,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
+import SplashScreen from "./src/screens/SplashScreen";
 
 import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
@@ -38,6 +39,9 @@ function InitialDataLoader({ children }) {
       refresh();
     }
   }, [loading, refresh]);
+  if (loading) {
+    return <SplashScreen />;
+  }
   return children;
 }
 
