@@ -26,6 +26,7 @@ import CocktailIcon from "./assets/cocktail.svg";
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 import useIngredientsData from "./src/hooks/useIngredientsData";
+import { getStartScreen } from "./src/storage/settingsStorage";
 
 
 const Tab = createBottomTabNavigator();
@@ -79,11 +80,13 @@ function ShakerStackScreen() {
   );
 }
 
-function Tabs() {
+function Tabs({ startScreen }) {
   const theme = useTheme();
   const { getTab } = useTabMemory();
+  const [startTab, startSub] = (startScreen || "cocktails:All").split(":");
   return (
     <Tab.Navigator
+      initialRouteName={startTab === "ingredients" ? "Ingredients" : "Cocktails"}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
@@ -110,6 +113,7 @@ function Tabs() {
         name="Cocktails"
         component={CocktailsTabsScreen}
         options={{ unmountOnBlur: true }}
+        initialParams={{ screen: startTab === "cocktails" ? startSub : "All" }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
@@ -136,6 +140,7 @@ function Tabs() {
         name="Ingredients"
         component={IngredientsTabsScreen}
         options={{ unmountOnBlur: true }}
+        initialParams={{ screen: startTab === "ingredients" ? startSub : "All" }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
@@ -154,13 +159,15 @@ function Tabs() {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [startScreen, setStartScreen] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
+    getStartScreen().then((v) => setStartScreen(v));
     return () => clearTimeout(timer);
   }, []);
 
-  if (showSplash) {
+  if (showSplash || !startScreen) {
     return <SplashScreen />;
   }
 
@@ -173,11 +180,9 @@ export default function App() {
               <TabMemoryProvider>
                 <NavigationContainer>
                   <RootStack.Navigator>
-                    <RootStack.Screen
-                      name="Tabs"
-                      component={Tabs}
-                      options={{ headerShown: false }}
-                    />
+                    <RootStack.Screen name="Tabs" options={{ headerShown: false }}>
+                      {() => <Tabs startScreen={startScreen} />}
+                    </RootStack.Screen>
                     <RootStack.Screen
                       name="EditCustomTags"
                       component={EditCustomTagsScreen}

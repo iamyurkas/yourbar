@@ -21,13 +21,15 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function CocktailTabs() {
+function CocktailTabs({ route }) {
   const theme = useTheme();
   const navigation = useNavigation();
   const tabsOnTop = useTabsOnTop();
+  const initial = route?.params?.screen || "All";
   return (
     <>
       <Tab.Navigator
+        initialRouteName={initial}
         screenOptions={({ route }) => {
           const options = {
             headerShown: false,
@@ -72,13 +74,14 @@ function CocktailTabs() {
   );
 }
 
-export default function CocktailsTabsScreen() {
+export default function CocktailsTabsScreen({ route }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="CocktailsMain"
         component={CocktailTabs}
         options={{ headerShown: false }}
+        initialParams={{ screen: route?.params?.screen }}
       />
       <Stack.Screen
         name="CocktailDetails"
