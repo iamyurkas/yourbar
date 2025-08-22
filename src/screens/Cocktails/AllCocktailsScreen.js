@@ -262,7 +262,7 @@ export default function AllCocktailsScreen() {
           </View>
         }
         contentContainerStyle={{
-          paddingBottom: 56 + (tabsOnTop ? 0 : 64) + insets.bottom,
+          paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
         }}
       />
     </View>
