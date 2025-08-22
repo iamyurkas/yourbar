@@ -46,6 +46,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 
 export default function GeneralMenu({ visible, onClose }) {
+  const showExportItems = false;
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
 
   const theme = useTheme();
@@ -477,62 +478,68 @@ export default function GeneralMenu({ visible, onClose }) {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.linkRow} onPress={handleExportPhotos}>
-                <MaterialIcons
-                  name="photo-library"
-                  size={22}
-                  color={theme.colors.primary}
-                  style={styles.linkIcon}
-                />
-                <View style={styles.itemText}>
-                  <Text style={styles.itemTitle}>Export photos</Text>
-                  <Text style={styles.itemSub}>Export all ingredient and cocktail photos</Text>
-                </View>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={24}
-                  color={theme.colors.onSurfaceVariant}
-                  style={styles.chevron}
-                />
-              </TouchableOpacity>
+              {showExportItems && (
+                <TouchableOpacity style={styles.linkRow} onPress={handleExportPhotos}>
+                  <MaterialIcons
+                    name="photo-library"
+                    size={22}
+                    color={theme.colors.primary}
+                    style={styles.linkIcon}
+                  />
+                  <View style={styles.itemText}>
+                    <Text style={styles.itemTitle}>Export photos</Text>
+                    <Text style={styles.itemSub}>Export all ingredient and cocktail photos</Text>
+                  </View>
+                  <MaterialIcons
+                    name="chevron-right"
+                    size={24}
+                    color={theme.colors.onSurfaceVariant}
+                    style={styles.chevron}
+                  />
+                </TouchableOpacity>
+              )}
 
-              <TouchableOpacity style={styles.linkRow} onPress={handleExport}>
-                <MaterialIcons
-                  name="file-download"
-                  size={22}
-                  color={theme.colors.primary}
-                  style={styles.linkIcon}
-                />
-                <View style={styles.itemText}>
-                  <Text style={styles.itemTitle}>Export data</Text>
-                  <Text style={styles.itemSub}>Export all ingredients and cocktails</Text>
-                </View>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={24}
-                  color={theme.colors.onSurfaceVariant}
-                  style={styles.chevron}
-                />
-              </TouchableOpacity>
+              {showExportItems && (
+                <TouchableOpacity style={styles.linkRow} onPress={handleExport}>
+                  <MaterialIcons
+                    name="file-download"
+                    size={22}
+                    color={theme.colors.primary}
+                    style={styles.linkIcon}
+                  />
+                  <View style={styles.itemText}>
+                    <Text style={styles.itemTitle}>Export data</Text>
+                    <Text style={styles.itemSub}>Export all ingredients and cocktails</Text>
+                  </View>
+                  <MaterialIcons
+                    name="chevron-right"
+                    size={24}
+                    color={theme.colors.onSurfaceVariant}
+                    style={styles.chevron}
+                  />
+                </TouchableOpacity>
+              )}
 
-              <TouchableOpacity style={styles.linkRow} onPress={handleImport}>
-                <MaterialIcons
-                  name="file-upload"
-                  size={22}
-                  color={theme.colors.primary}
-                  style={styles.linkIcon}
-                />
-                <View style={styles.itemText}>
-                  <Text style={styles.itemTitle}>Import data</Text>
-                  <Text style={styles.itemSub}>Import ingredients and cocktails</Text>
-                </View>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={24}
-                  color={theme.colors.onSurfaceVariant}
-                  style={styles.chevron}
-                />
-              </TouchableOpacity>
+              {showExportItems && (
+                <TouchableOpacity style={styles.linkRow} onPress={handleImport}>
+                  <MaterialIcons
+                    name="file-upload"
+                    size={22}
+                    color={theme.colors.primary}
+                    style={styles.linkIcon}
+                  />
+                  <View style={styles.itemText}>
+                    <Text style={styles.itemTitle}>Import data</Text>
+                    <Text style={styles.itemSub}>Import ingredients and cocktails</Text>
+                  </View>
+                  <MaterialIcons
+                    name="chevron-right"
+                    size={24}
+                    color={theme.colors.onSurfaceVariant}
+                    style={styles.chevron}
+                  />
+                </TouchableOpacity>
+              )}
             </ScrollView>
           </Animated.View>
         </Pressable>
