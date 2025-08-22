@@ -104,8 +104,8 @@ export default function ShakerScreen({ navigation }) {
     };
   }, []);
 
-  const { count: recipesCount, ids: availableCocktailIds } = useMemo(() => {
-    if (selectedIds.length === 0) return { count: 0, ids: [] };
+  const recipesCount = useMemo(() => {
+    if (selectedIds.length === 0) return 0;
 
     // group selected ingredients by tag
     const groups = new Map();
@@ -116,7 +116,7 @@ export default function ShakerScreen({ navigation }) {
       if (selected.length > 0) groups.set(tagId, selected);
     });
 
-    if (groups.size === 0) return { count: 0, ids: [] };
+    if (groups.size === 0) return 0;
 
     let intersection;
     groups.forEach((ids) => {
@@ -133,66 +133,93 @@ export default function ShakerScreen({ navigation }) {
       }
     });
 
-    return {
-      count: intersection ? intersection.size : 0,
-      ids: intersection ? Array.from(intersection) : [],
-    };
+    return intersection ? intersection.size : 0;
   }, [selectedIds, usageMap, grouped]);
 
-  const availableCount = useMemo(() => {
-    if (availableCocktailIds.length === 0) return 0;
+  const { availableCount, availableCocktailIds } = useMemo(() => {
+    if (selectedIds.length === 0)
+      return { availableCount: 0, availableCocktailIds: [] };
+
     const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
+    const selectedSet = new Set(selectedIds.map((id) => String(id)));
     const findBrand = (baseId) =>
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-    const cocktailMap = new Map(
-      (cocktails || []).map((c) => [String(c.id), c])
-    );
-    let count = 0;
-    availableCocktailIds.forEach((cid) => {
-      const c = cocktailMap.get(cid);
-      if (!c) return;
-      const required = (c.ingredients || []).filter((r) => !r.optional);
-      let allAvail = required.length > 0;
-      for (const r of required) {
-        const ing = ingMap.get(String(r.ingredientId));
-        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-        let used = null;
-        if ( ing?.inBar ) {
-          used = ing;
-        } else {
-          if (allowSubstitutes || r.allowBaseSubstitution) {
-            const base = ingMap.get(baseId);
-            if (base?.inBar) used = base;
-          }
-          const isBaseIngredient = ing?.baseIngredientId == null;
-          if (
-            !used &&
-            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
-          ) {
-            const brand = findBrand(baseId);
-            if (brand) used = brand;
-          }
-          if (!used && Array.isArray(r.substitutes)) {
-            for (const s of r.substitutes) {
-              const candidate = ingMap.get(String(s.id));
-              if (candidate?.inBar) {
-                used = candidate;
-                break;
-              }
-            }
-          }
-        }
-        if (!used) {
-          allAvail = false;
-          break;
+
+    const canUseSelected = (sid, r) => {
+      if (String(r.ingredientId) === sid) return true;
+      const candidate = ingMap.get(sid);
+      if (!candidate) return false;
+      const requiredIng = ingMap.get(String(r.ingredientId));
+      const baseId = String(requiredIng?.baseIngredientId ?? r.ingredientId);
+      const candidateBaseId = String(
+        candidate.baseIngredientId ?? candidate.id
+      );
+
+      if (allowSubstitutes || r.allowBaseSubstitution) {
+        if (candidateBaseId === baseId || sid === baseId) return true;
+      }
+
+      const isBaseIngredient = requiredIng?.baseIngredientId == null;
+      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+        if (candidate.baseIngredientId != null && candidateBaseId === baseId)
+          return true;
+      }
+
+      if (Array.isArray(r.substitutes)) {
+        if (r.substitutes.some((s) => String(s.id) === sid)) return true;
+      }
+      return false;
+    };
+
+    const isSatisfied = (r) => {
+      const ing = ingMap.get(String(r.ingredientId));
+      if (ing?.inBar) return true;
+      const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+      if (allowSubstitutes || r.allowBaseSubstitution) {
+        const base = ingMap.get(baseId);
+        if (base?.inBar) return true;
+      }
+      const isBaseIngredient = ing?.baseIngredientId == null;
+      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+        const brand = findBrand(baseId);
+        if (brand) return true;
+      }
+      if (Array.isArray(r.substitutes)) {
+        for (const s of r.substitutes) {
+          const candidate = ingMap.get(String(s.id));
+          if (candidate?.inBar) return true;
         }
       }
-      if (allAvail) count++;
+      return false;
+    };
+
+    const ids = [];
+    (cocktails || []).forEach((c) => {
+      const required = (c.ingredients || []).filter((r) => !r.optional);
+      if (required.length === 0) return;
+
+      for (const sid of selectedSet) {
+        let matched = false;
+        for (const r of required) {
+          if (canUseSelected(sid, r)) {
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) return;
+      }
+
+      for (const r of required) {
+        if (!isSatisfied(r)) return;
+      }
+
+      ids.push(c.id);
     });
-    return count;
-  }, [availableCocktailIds, cocktails, ingredients, allowSubstitutes]);
+
+    return { availableCount: ids.length, availableCocktailIds: ids };
+  }, [selectedIds, cocktails, ingredients, allowSubstitutes]);
 
   const handleClear = () => setSelectedIds([]);
 
