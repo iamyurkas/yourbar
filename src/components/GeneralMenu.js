@@ -13,6 +13,7 @@ import {
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientIcon from "../../assets/lemon.svg";
+import CocktailIcon from "../../assets/cocktail.svg";
 
 import IngredientTagsModal from "./IngredientTagsModal";
 import CocktailTagsModal from "./CocktailTagsModal";
@@ -406,10 +407,10 @@ export default function GeneralMenu({ visible, onClose }) {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.linkRow} onPress={openCocktailTagsModal}>
-                <MaterialIcons
-                  name="local-bar"
-                  size={22}
-                  color={theme.colors.primary}
+                <CocktailIcon
+                  width={22}
+                  height={22}
+                  fill={theme.colors.primary}
                   style={styles.linkIcon}
                 />
                 <View style={styles.itemText}>
