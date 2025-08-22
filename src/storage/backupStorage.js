@@ -63,7 +63,7 @@ export async function exportAllData() {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(fileUri, {
         mimeType: 'application/json',
-        dialogTitle: 'Share yourbar backup',
+        dialogTitle: 'Share YourBar backup',
       });
     }
   } catch (e) {
@@ -129,7 +129,7 @@ export async function exportAllPhotos() {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(fileUri, {
         mimeType: 'application/zip',
-        dialogTitle: 'Share yourbar photos',
+        dialogTitle: 'Share YourBar photos',
       });
     }
   } catch (e) {

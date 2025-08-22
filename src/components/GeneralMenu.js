@@ -346,7 +346,7 @@ export default function GeneralMenu({ visible, onClose }) {
                   style={styles.itemText}
                   onPress={toggleAllowSubstitutes}
                 >
-                  <Text style={styles.itemTitle}>Allways allow substitutes</Text>
+                  <Text style={styles.itemTitle}>Always allow substitutes</Text>
                   <Text style={styles.itemSub}>
                     Use base or branded alternatives regardless of recipe
                   </Text>
