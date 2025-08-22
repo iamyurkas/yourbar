@@ -276,6 +276,8 @@ export const ASSET_MAP = {
   'assets/ingredients/1755200244973-728001-salt.jpg': require('../assets/ingredients/1755200244973-728001-salt.jpg'),
   'assets/ingredients/1755200244973-728860-amaretto.jpg': require('../assets/ingredients/1755200244973-728860-amaretto.jpg'),
   'assets/ingredients/1755200244973-73154-allspice.jpg': require('../assets/ingredients/1755200244973-73154-allspice.jpg'),
+  'assets/ingredients/1755200244973-281512-red-chili-pepper.jpg': require('../assets/ingredients/1755200244973-281512-red-chili-pepper.jpg'),
+  'assets/ingredients/1755200244973-276385-orange-flower-water.jpg': require('../assets/ingredients/1755200244973-276385-orange-flower-water.jpg'),
   'assets/ingredients/1755200244973-732204-absolut-vodka.jpg': require('../assets/ingredients/1755200244973-732204-absolut-vodka.jpg'),
   'assets/ingredients/1755200244973-734220-lemon-juice.jpg': require('../assets/ingredients/1755200244973-734220-lemon-juice.jpg'),
   'assets/ingredients/1755200244973-738590-orgeat-syrup.jpg': require('../assets/ingredients/1755200244973-738590-orgeat-syrup.jpg'),
