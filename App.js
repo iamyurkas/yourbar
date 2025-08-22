@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -20,6 +20,7 @@ import IngredientsTabsScreen from "./src/screens/Ingredients/IngredientsTabsScre
 import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsScreen";
 import { AppTheme } from "./src/theme";
 import ShakerResultsScreen from "./src/screens/ShakerResultsScreen";
+import SplashScreen from "./src/screens/SplashScreen";
 
 import CocktailIcon from "./assets/cocktail.svg";
 import ShakerIcon from "./assets/shaker.svg";
@@ -152,6 +153,17 @@ function Tabs() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
   return (
     <PaperProvider theme={AppTheme}>
       <MenuProvider>
