@@ -37,7 +37,7 @@ import {
 } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { HeaderBackButton } from "@react-navigation/elements";
+import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import {
   Menu,
@@ -905,24 +905,28 @@ const IngredientRow = memo(function IngredientRow({
             Substitutes
           </Text>
           <View style={styles.subList}>
-            {row.substitutes.map((s) => (
-              <View
-                key={s.id}
-                style={[
-                  styles.subItem,
-                  {
-                    borderColor: theme.colors.outline,
-                    backgroundColor:
-                      theme.colors.surfaceVariant ??
-                      withAlpha(theme.colors.onSurface, 0.04),
-                  },
-                ]}
-              >
-                <Text
-                  style={{ color: theme.colors.onSurface, flex: 1 }}
-                  numberOfLines={1}
+              {row.substitutes.map((s) => (
+                <View
+                  key={s.id}
+                  style={[
+                    styles.subItem,
+                    s.baseIngredientId != null && {
+                      ...styles.brandedStripe,
+                      borderLeftColor: theme.colors.primary,
+                    },
+                    {
+                      borderColor: theme.colors.outline,
+                      backgroundColor:
+                        theme.colors.surfaceVariant ??
+                        withAlpha(theme.colors.onSurface, 0.04),
+                    },
+                  ]}
                 >
-                  {s.name}
+                  <Text
+                    style={{ color: theme.colors.onSurface, flex: 1 }}
+                    numberOfLines={1}
+                  >
+                    {s.name}
                 </Text>
                 <Pressable
                   onPress={() =>
@@ -1094,6 +1098,9 @@ export default function EditCocktailScreen() {
     setUsageMap,
     setIngredients,
   } = useIngredientUsage();
+
+  const headerHeight = useHeaderHeight();
+  const subSearchRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -1392,6 +1399,12 @@ export default function EditCocktailScreen() {
   });
   const debouncedSubQuery = useDebounced(subModal.query, 150);
 
+  useEffect(() => {
+    if (subModal.visible) {
+      setTimeout(() => subSearchRef.current?.focus(), 0);
+    }
+  }, [subModal.visible]);
+
   const openSubstituteModal = useCallback((localId) => {
     setSubModal({ visible: true, forLocalId: localId, query: "" });
   }, []);
@@ -1548,7 +1561,7 @@ export default function EditCocktailScreen() {
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
 
-  // Додавання сабституту з модалки + закриття модалки
+  // Додавання сабституту з модалки без її закриття
   const addSubstituteToTarget = useCallback(
     (ingredient) => {
       setIngs((prev) =>
@@ -1565,9 +1578,8 @@ export default function EditCocktailScreen() {
           };
         })
       );
-      closeSubstituteModal();
     },
-    [subModal.forLocalId, closeSubstituteModal]
+    [subModal.forLocalId]
   );
 
   /* ---------- Центрування інпута при focus ---------- */
@@ -1907,6 +1919,7 @@ export default function EditCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
+              marginTop: headerHeight,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },
@@ -1917,6 +1930,8 @@ export default function EditCocktailScreen() {
           </Text>
 
           <TextInput
+            ref={subSearchRef}
+            autoFocus
             placeholder="Search ingredient..."
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={subModal.query}
@@ -1958,20 +1973,30 @@ export default function EditCocktailScreen() {
                   {index > 0 ? (
                     <Divider color={theme.colors.outlineVariant} />
                   ) : null}
-                  <View style={styles.modalItemRow}>
-                    {item.photoUri ? (
-                      <Image
-                        source={{ uri: item.photoUri }}
-                        style={styles.modalItemAvatar}
-                      />
-                    ) : (
-                      <View
-                        style={[
-                          styles.modalItemAvatar,
-                          { backgroundColor: theme.colors.outlineVariant },
-                        ]}
-                      />
-                    )}
+                    <View
+                      style={[
+                        styles.modalItemRow,
+                        item.baseIngredientId != null && {
+                          ...styles.brandedStripe,
+                          borderLeftColor: theme.colors.primary,
+                        },
+                      ]}
+                    >
+                      <View style={styles.modalItemAvatar}>
+                        {item.photoUri ? (
+                          <Image
+                            source={{ uri: item.photoUri }}
+                            style={styles.modalItemImg}
+                            resizeMode="contain"
+                          />
+                      ) : (
+                        <MaterialIcons
+                          name="local-drink"
+                          size={20}
+                          color={withAlpha(theme.colors.onSurface, 0.5)}
+                        />
+                      )}
+                    </View>
                     <Text
                       style={{ color: theme.colors.onSurface, flex: 1 }}
                       numberOfLines={1}
@@ -2314,7 +2339,14 @@ const styles = StyleSheet.create({
   modalItemAvatar: {
     width: 32,
     height: 32,
-    aspectRatio: 1,
     borderRadius: 6,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
+  modalItemImg: {
+    width: "100%",
+    height: "100%",
+  },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
