@@ -5,7 +5,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TabMemoryProvider, useTabMemory } from "./src/context/TabMemoryContext";
 import { IngredientUsageProvider } from "./src/context/IngredientUsageContext";
-import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
@@ -22,6 +21,7 @@ import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsSc
 import { AppTheme } from "./src/theme";
 import ShakerResultsScreen from "./src/screens/ShakerResultsScreen";
 
+import CocktailIcon from "./assets/cocktail.svg";
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 import useIngredientsData from "./src/hooks/useIngredientsData";
@@ -87,7 +87,7 @@ function Tabs() {
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
           if (route.name === "Cocktails") {
-            return <MaterialIcons name="local-bar" size={size} color={color} />;
+            return <CocktailIcon width={size} height={size} fill={color} />;
           } else if (route.name === "Shaker") {
             return <ShakerIcon width={size} height={size} fill={color} />;
           } else if (route.name === "Ingredients") {
