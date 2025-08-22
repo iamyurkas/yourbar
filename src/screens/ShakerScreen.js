@@ -29,7 +29,7 @@ export default function ShakerScreen({ navigation }) {
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
-  const [inStockOnly, setInStockOnly] = useState(false);
+  const [inStockOnly, setInStockOnly] = useState(true);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
 
   useEffect(() => {
@@ -80,6 +80,8 @@ export default function ShakerScreen({ navigation }) {
     });
     return map;
   }, [filteredGrouped, inStockOnly]);
+
+  const isEmpty = displayGrouped.size === 0;
 
   const toggleTag = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -224,51 +226,61 @@ export default function ShakerScreen({ navigation }) {
         }
       />
       <ScrollView contentContainerStyle={styles.scroll}>
-        {allTags.map((tag) => {
-          const items = displayGrouped.get(tag.id) || [];
-          if (items.length === 0) return null;
-          const isOpen = expanded[tag.id];
-          return (
-            <View key={tag.id} style={styles.section}>
-              <TouchableOpacity
-                onPress={() => toggleTag(tag.id)}
-                style={[styles.tagHeader, { backgroundColor: tag.color }]}
-              >
-                <Text style={styles.tagTitle}>{tag.name}</Text>
-                <MaterialIcons
-                  name={isOpen ? "expand-less" : "expand-more"}
-                  size={24}
-                  color={theme.colors.onPrimary}
-                />
-              </TouchableOpacity>
-              {isOpen &&
-                items.map((ing) => {
-                  const active = selectedIds.includes(ing.id);
-                  return (
-                    <IngredientRow
-                      key={ing.id}
-                      id={ing.id}
-                      name={ing.name}
-                      photoUri={ing.photoUri}
-                      usageCount={ing.usageCount}
-                      singleCocktailName={ing.singleCocktailName}
-                      showMake
-                      inBar={ing.inBar}
-                      inShoppingList={ing.inShoppingList}
-                      baseIngredientId={ing.baseIngredientId}
-                      onPress={toggleIngredient}
-                      onDetails={(id) =>
-                        navigation.push("IngredientDetails", { id })
-                      }
-                      highlightColor={
-                        active ? theme.colors.secondaryContainer : undefined
-                      }
+        {isEmpty ? (
+          <View style={{ padding: 24 }}>
+            <Text style={{ color: theme.colors.onSurfaceVariant }}>
+              Mark which ingredients are in stock first
+            </Text>
+          </View>
+        ) : (
+          <>
+            {allTags.map((tag) => {
+              const items = displayGrouped.get(tag.id) || [];
+              if (items.length === 0) return null;
+              const isOpen = expanded[tag.id];
+              return (
+                <View key={tag.id} style={styles.section}>
+                  <TouchableOpacity
+                    onPress={() => toggleTag(tag.id)}
+                    style={[styles.tagHeader, { backgroundColor: tag.color }]}
+                  >
+                    <Text style={styles.tagTitle}>{tag.name}</Text>
+                    <MaterialIcons
+                      name={isOpen ? "expand-less" : "expand-more"}
+                      size={24}
+                      color={theme.colors.onPrimary}
                     />
-                  );
-                })}
-            </View>
-          );
-        })}
+                  </TouchableOpacity>
+                  {isOpen &&
+                    items.map((ing) => {
+                      const active = selectedIds.includes(ing.id);
+                      return (
+                        <IngredientRow
+                          key={ing.id}
+                          id={ing.id}
+                          name={ing.name}
+                          photoUri={ing.photoUri}
+                          usageCount={ing.usageCount}
+                          singleCocktailName={ing.singleCocktailName}
+                          showMake
+                          inBar={ing.inBar}
+                          inShoppingList={ing.inShoppingList}
+                          baseIngredientId={ing.baseIngredientId}
+                          onPress={toggleIngredient}
+                          onDetails={(id) =>
+                            navigation.push("IngredientDetails", { id })
+                          }
+                          highlightColor={
+                            active ? theme.colors.secondaryContainer : undefined
+                          }
+                        />
+                      );
+                    })}
+                </View>
+              );
+            })}
+          </>
+        )}
       </ScrollView>
       <View style={styles.counter}>
         <TouchableOpacity
