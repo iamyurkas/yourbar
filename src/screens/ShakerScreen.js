@@ -178,6 +178,7 @@ export default function ShakerScreen({ navigation }) {
                       showMake
                       inBar={ing.inBar}
                       inShoppingList={ing.inShoppingList}
+                      baseIngredientId={ing.baseIngredientId}
                       onPress={toggleIngredient}
                       onDetails={(id) =>
                         navigation.push("IngredientDetails", { id })
