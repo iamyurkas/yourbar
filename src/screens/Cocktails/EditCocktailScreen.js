@@ -38,6 +38,7 @@ import {
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Menu,
@@ -1090,7 +1091,7 @@ export default function EditCocktailScreen() {
   const route = useRoute();
   const params = route.params || {};
   const cocktailId = params?.id;
-  const {
+  const { 
     ingredients,
     cocktails,
     setCocktails,
@@ -1098,6 +1099,9 @@ export default function EditCocktailScreen() {
     setUsageMap,
     setIngredients,
   } = useIngredientUsage();
+
+  const insets = useSafeAreaInsets();
+  const subSearchRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -1395,6 +1399,12 @@ export default function EditCocktailScreen() {
     query: "",
   });
   const debouncedSubQuery = useDebounced(subModal.query, 150);
+
+  useEffect(() => {
+    if (subModal.visible) {
+      setTimeout(() => subSearchRef.current?.focus(), 0);
+    }
+  }, [subModal.visible]);
 
   const openSubstituteModal = useCallback((localId) => {
     setSubModal({ visible: true, forLocalId: localId, query: "" });
@@ -1910,6 +1920,7 @@ export default function EditCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
+              marginTop: insets.top + 50,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },
@@ -1920,6 +1931,8 @@ export default function EditCocktailScreen() {
           </Text>
 
           <TextInput
+            ref={subSearchRef}
+            autoFocus
             placeholder="Search ingredient..."
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={subModal.query}

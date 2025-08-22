@@ -40,6 +40,7 @@ import { TAG_COLORS } from "../../theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Menu,
@@ -1095,6 +1096,8 @@ export default function AddCocktailScreen() {
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
     (typeof getTab === "function" && getTab("cocktails")) || "All";
+  const insets = useSafeAreaInsets();
+  const subSearchRef = useRef(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -1247,6 +1250,12 @@ export default function AddCocktailScreen() {
     query: "",
   });
   const debouncedSubQuery = useDebounced(subModal.query, 150);
+
+  useEffect(() => {
+    if (subModal.visible) {
+      setTimeout(() => subSearchRef.current?.focus(), 0);
+    }
+  }, [subModal.visible]);
 
   const openSubstituteModal = useCallback((localId) => {
     setSubModal({ visible: true, forLocalId: localId, query: "" });
@@ -1862,6 +1871,7 @@ export default function AddCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
+              marginTop: insets.top + 50,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },
@@ -1872,6 +1882,8 @@ export default function AddCocktailScreen() {
           </Text>
 
           <TextInput
+            ref={subSearchRef}
+            autoFocus
             placeholder="Search ingredient..."
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={subModal.query}
