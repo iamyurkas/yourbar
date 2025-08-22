@@ -597,24 +597,20 @@ const IngredientRow = memo(function IngredientRow({
                     <Divider color={theme.colors.outlineVariant} />
                   ) : null}
                   <View
-                    style={{
-                      height: SUGGEST_ROW_H,
-                      paddingHorizontal: 12,
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
+                    style={[
+                      {
+                        height: SUGGEST_ROW_H,
+                        paddingHorizontal: 12,
+                        flexDirection: "row",
+                        alignItems: "center",
+                      },
+                      item.baseIngredientId && {
+                        borderLeftWidth: 4,
+                        borderLeftColor: theme.colors.primary,
+                        paddingLeft: 8,
+                      },
+                    ]}
                   >
-                    <View
-                      style={{
-                        width: 4,
-                        height: 28,
-                        borderRadius: 2,
-                        marginRight: 8,
-                        backgroundColor: item.baseIngredientId
-                          ? theme.colors.onSurfaceVariant
-                          : "transparent",
-                      }}
-                    />
                     {item.photoUri ? (
                       <Image
                         source={{ uri: item.photoUri }}
@@ -625,6 +621,7 @@ const IngredientRow = memo(function IngredientRow({
                           marginRight: 10,
                           backgroundColor: theme.colors.background,
                         }}
+                        resizeMode="contain"
                       />
                     ) : (
                       <View
