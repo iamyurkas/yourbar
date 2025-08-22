@@ -16,16 +16,21 @@ import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import {
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
+} from "../storage/settingsStorage";
 
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { ingredients, usageMap, loading } = useIngredientsData();
+  const { ingredients, cocktails, usageMap, loading } = useIngredientsData();
   const [allTags, setAllTags] = useState([]);
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,7 +91,20 @@ export default function ShakerScreen({ navigation }) {
     );
   };
 
-  const { count: cocktailsCount, ids: availableCocktailIds } = useMemo(() => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const allow = await getAllowSubstitutes();
+      if (!cancelled) setAllowSubstitutes(!!allow);
+    })();
+    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    return () => {
+      cancelled = true;
+      sub.remove();
+    };
+  }, []);
+
+  const { count: recipesCount, ids: availableCocktailIds } = useMemo(() => {
     if (selectedIds.length === 0) return { count: 0, ids: [] };
 
     // group selected ingredients by tag
@@ -120,6 +138,61 @@ export default function ShakerScreen({ navigation }) {
       ids: intersection ? Array.from(intersection) : [],
     };
   }, [selectedIds, usageMap, grouped]);
+
+  const availableCount = useMemo(() => {
+    if (availableCocktailIds.length === 0) return 0;
+    const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
+    const findBrand = (baseId) =>
+      ingredients.find(
+        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
+      );
+    const cocktailMap = new Map(
+      (cocktails || []).map((c) => [String(c.id), c])
+    );
+    let count = 0;
+    availableCocktailIds.forEach((cid) => {
+      const c = cocktailMap.get(cid);
+      if (!c) return;
+      const required = (c.ingredients || []).filter((r) => !r.optional);
+      let allAvail = required.length > 0;
+      for (const r of required) {
+        const ing = ingMap.get(String(r.ingredientId));
+        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+        let used = null;
+        if ( ing?.inBar ) {
+          used = ing;
+        } else {
+          if (allowSubstitutes || r.allowBaseSubstitution) {
+            const base = ingMap.get(baseId);
+            if (base?.inBar) used = base;
+          }
+          const isBaseIngredient = ing?.baseIngredientId == null;
+          if (
+            !used &&
+            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+          ) {
+            const brand = findBrand(baseId);
+            if (brand) used = brand;
+          }
+          if (!used && Array.isArray(r.substitutes)) {
+            for (const s of r.substitutes) {
+              const candidate = ingMap.get(String(s.id));
+              if (candidate?.inBar) {
+                used = candidate;
+                break;
+              }
+            }
+          }
+        }
+        if (!used) {
+          allAvail = false;
+          break;
+        }
+      }
+      if (allAvail) count++;
+    });
+    return count;
+  }, [availableCocktailIds, cocktails, ingredients, allowSubstitutes]);
 
   const handleClear = () => setSelectedIds([]);
 
@@ -224,9 +297,14 @@ export default function ShakerScreen({ navigation }) {
             Clear
           </Text>
         </TouchableOpacity>
-        <Text style={styles.counterText}>
-          Cocktails available: {cocktailsCount}
-        </Text>
+        <View style={styles.counterCenter}>
+          <Text style={styles.counterText}>
+            Cocktails available: {availableCount}
+          </Text>
+          <Text style={styles.counterSubText}>
+            (recipes available: {recipesCount})
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={handleShow}
           style={[styles.counterButton, { backgroundColor: theme.colors.primary }]}
@@ -272,7 +350,12 @@ const createStyles = (theme) =>
       flexDirection: "row",
       justifyContent: "center",
     },
-    counterText: { fontWeight: "bold", flex: 1, textAlign: "center" },
+    counterCenter: { flex: 1, alignItems: "center" },
+    counterText: { fontWeight: "bold", textAlign: "center" },
+    counterSubText: {
+      color: theme.colors.onSurfaceVariant,
+      textAlign: "center",
+    },
     counterButton: {
       paddingHorizontal: 12,
       paddingVertical: 8,
