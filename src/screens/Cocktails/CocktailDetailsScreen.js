@@ -392,6 +392,19 @@ export default function CocktailDetailsScreen() {
         }
       }
 
+      // If we don't use a substitute, don't show substitutes list at all.
+      // If we do use one, omit it from the substitutes list to avoid duplicates.
+      if (substitute) {
+        const subName = substitute.name;
+        declaredSubstitutes = declaredSubstitutes.filter((s) => s !== subName);
+        baseSubstitutes = baseSubstitutes.filter((s) => s !== subName);
+        brandedSubstitutes = brandedSubstitutes.filter((s) => s !== subName);
+      } else {
+        declaredSubstitutes = [];
+        baseSubstitutes = [];
+        brandedSubstitutes = [];
+      }
+
       const display = substitute || ing || {};
       const finalInBar = substitute ? substitute.inBar : inBar;
       const ignored = ignoreGarnish && r.garnish && !finalInBar;
