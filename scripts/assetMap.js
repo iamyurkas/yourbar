@@ -311,7 +311,7 @@ export const ASSET_MAP = {
   'assets/ingredients/1755200244973-804376-bitters.jpg': require('../assets/ingredients/1755200244973-804376-bitters.jpg'),
   'assets/ingredients/1755200244973-807431-soda-water.jpg': require('../assets/ingredients/1755200244973-807431-soda-water.jpg'),
   'assets/ingredients/1755200244973-811139-gold-rum.jpg': require('../assets/ingredients/1755200244973-811139-gold-rum.jpg'),
-  'assets/ingredients/1755200244973-813081-cardamom.jpg': require('../assets/ingredients/1755200244973-813081-cardamom.jpg'),
+  'assets/ingredients/1755200244973-813081-cardamon.jpg': require('../assets/ingredients/1755200244973-813081-cardamon.jpg'),
   'assets/ingredients/1755200244973-81569-cranberry-juice.jpg': require('../assets/ingredients/1755200244973-81569-cranberry-juice.jpg'),
   'assets/ingredients/1755200244973-829460-cherry-brandy.jpg': require('../assets/ingredients/1755200244973-829460-cherry-brandy.jpg'),
   'assets/ingredients/1755200244973-830162-whisky.jpg': require('../assets/ingredients/1755200244973-830162-whisky.jpg'),

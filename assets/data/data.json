@@ -1125,7 +1125,7 @@
     },
     {
       "id": "1755200244973-813081",
-      "name": "Cardamom",
+      "name": "Cardamon",
       "description": "",
       "tags": [
         {
@@ -1137,8 +1137,8 @@
       "baseIngredientId": null,
       "usageCount": 0,
       "singleCocktailName": null,
-      "searchName": "cardamom",
-      "photoUri": "assets/ingredients/1755200244973-813081-cardamom.jpg"
+      "searchName": "cardamon",
+      "photoUri": "assets/ingredients/1755200244973-813081-cardamon.jpg"
     },
     {
       "id": "1755297329761",
