@@ -1651,6 +1651,23 @@
       "photoUri": "assets/ingredients/1755200244973-219375-coconut-syrup.jpg"
     },
     {
+      "id": "1755200244973-915841",
+      "name": "Coffee",
+      "description": "",
+      "tags": [
+        {
+          "id": 3,
+          "name": "beverage",
+          "color": "#9575CD"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "coffee",
+      "photoUri": "assets/ingredients/1755200244973-915841-coffee.jpg"
+    },
+    {
       "id": "1755441997878-128442",
       "name": "Coffee Beans",
       "description": "Coffee beans are used to infuse spirits or garnish coffee-flavored cocktails. They release aroma without adding sweetness. A single bean is often floated on drinks for decoration.",
@@ -7719,6 +7736,488 @@
           "name": "Pineapple",
           "amount": "1",
           "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000049,
+      "name": "Illegal",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Smoky mezcal balanced with herbal Chartreuse and lime.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-50977",
+          "name": "Mezcal",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-366531",
+          "name": "Yellow Chartreuse",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-773514",
+          "name": "Agave Syrup",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000050,
+      "name": "Irish Coffee",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Warm blend of Irish whiskey, hot coffee, and cream.",
+      "instructions": "Add brown sugar to a heatproof glass.\nPour in hot coffee and stir until dissolved.\nAdd Irish whisky and stir.\nFloat lightly whipped cream on top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-409677",
+          "name": "Brown Sugar",
+          "amount": "2",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-915841",
+          "name": "Coffee",
+          "amount": "80",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-489584",
+          "name": "Irish Whisky",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-945886",
+          "name": "Heavy Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000051,
+      "name": "John Collins",
+      "glassId": "collins_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Refreshing gin highball with lemon, sugar, and soda.",
+      "instructions": "Add gin, lemon juice, and simple syrup into a collins glass filled with ice.\nTop with soda water and stir gently.\nGarnish with a lemon slice and a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755441997878-289771",
+          "name": "Old Tom Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-807431",
+          "name": "Soda Water",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000052,
+      "name": "Jungle Bird",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Tiki favorite blending dark rum, Campari, and pineapple.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with ice.\nGarnish with a pineapple wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-962705",
+          "name": "Dark Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-705866",
+          "name": "Campari",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-494177",
+          "name": "Pineapple Juice",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755453836546",
+          "name": "Demerara Sugar Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-932849",
+          "name": "Pineapple",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000053,
+      "name": "Kir",
+      "glassId": "wine_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Simple mix of white wine and blackcurrant liqueur.",
+      "instructions": "Pour creme de cassis into a wine glass.\nTop with white wine.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-389154",
+          "name": "Creme de Cassis",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-540275",
+          "name": "White Wine",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000054,
+      "name": "Last Word",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Equal-parts gin, Chartreuse, maraschino, and lime.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-399740",
+          "name": "Green Chartreuse",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000055,
+      "name": "Lemon Drop Martini",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Vodka citrus martini with triple sec and sugar rim.",
+      "instructions": "Rim a cocktail glass with sugar.\nAdd vodka, triple sec, lemon juice, and simple syrup into a shaker with ice.\nShake well.\nStrain into the prepared glass.\nGarnish with a lemon slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-217733",
+          "name": "Sugar",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000056,
+      "name": "Long Island Iced Tea",
+      "glassId": "highball_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Five-spirit sour lengthened with cola.",
+      "instructions": "Add all spirits, lemon juice, and simple syrup into a shaker with ice.\nShake briefly.\nPour into a highball glass filled with ice.\nTop with cola and stir.\nGarnish with a lemon slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-97568",
+          "name": "Tequila",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755200244973-767607",
+          "name": "Coca-Cola",
+          "amount": "1",
+          "unitId": 20,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 9,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
           "garnish": true,
           "optional": false
         }
