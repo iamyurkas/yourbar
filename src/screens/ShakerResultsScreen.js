@@ -15,7 +15,7 @@ import {
 import { normalizeSearch } from "../utils/normalizeSearch";
 
 export default function ShakerResultsScreen({ route, navigation }) {
-  const { ids = [] } = route.params || {};
+  const { availableIds = [], recipeIds = [] } = route.params || {};
   const theme = useTheme();
   const { cocktails, ingredients, loading } = useIngredientsData();
   const [search, setSearch] = useState("");
@@ -53,8 +53,9 @@ export default function ShakerResultsScreen({ route, navigation }) {
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
+    const availableSet = new Set(availableIds);
     const q = normalizeSearch(search);
-    let list = cocktails.filter((c) => ids.includes(c.id));
+    let list = cocktails.filter((c) => recipeIds.includes(c.id));
     if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
@@ -62,69 +63,79 @@ export default function ShakerResultsScreen({ route, navigation }) {
           Array.isArray(c.tags) &&
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return list.map((c) => {
-        const required = (c.ingredients || []).filter((r) => !r.optional);
-        const missing = [];
-        const ingredientNames = [];
-        let allAvail = required.length > 0;
-        let branded = false;
-        for (const r of required) {
-          const ing = ingMap.get(String(r.ingredientId));
-          const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-          let used = null;
-          if (ing?.inBar) {
-            used = ing;
-          } else {
-            if (allowSubstitutes || r.allowBaseSubstitution) {
-              const base = ingMap.get(baseId);
-              if (base?.inBar) used = base;
-            }
-            const isBaseIngredient = ing?.baseIngredientId == null;
-            if (
-              !used &&
-              (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
-            ) {
-              const brand = findBrand(baseId);
-              if (brand) used = brand;
-            }
-            if (!used && Array.isArray(r.substitutes)) {
-              for (const s of r.substitutes) {
-                const candidate = ingMap.get(String(s.id));
-                if (candidate?.inBar) {
-                  used = candidate;
-                  break;
-                }
+    const mapped = list.map((c) => {
+      const required = (c.ingredients || []).filter((r) => !r.optional);
+      const missing = [];
+      const ingredientNames = [];
+      let branded = false;
+      for (const r of required) {
+        const ing = ingMap.get(String(r.ingredientId));
+        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+        let used = null;
+        if (ing?.inBar) {
+          used = ing;
+        } else {
+          if (allowSubstitutes || r.allowBaseSubstitution) {
+            const base = ingMap.get(baseId);
+            if (base?.inBar) used = base;
+          }
+          const isBaseIngredient = ing?.baseIngredientId == null;
+          if (
+            !used &&
+            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+          ) {
+            const brand = findBrand(baseId);
+            if (brand) used = brand;
+          }
+          if (!used && Array.isArray(r.substitutes)) {
+            for (const s of r.substitutes) {
+              const candidate = ingMap.get(String(s.id));
+              if (candidate?.inBar) {
+                used = candidate;
+                break;
               }
             }
           }
-          if (used) {
-            ingredientNames.push(used.name);
-            if (used.baseIngredientId != null) branded = true;
-          } else {
-            if (ing?.baseIngredientId != null) branded = true;
-            const missingName = ing?.name || r.name || "";
-            if (missingName) missing.push(missingName);
-            allAvail = false;
-          }
         }
-        let ingredientLine = ingredientNames.join(", ");
-        if (!allAvail) {
-          if (missing.length > 0 && missing.length <= 2) {
-            ingredientLine = `Missing: ${missing.join(", ")}`;
-          } else if (missing.length >= 3 || missing.length === 0) {
-            ingredientLine = `Missing: ${
-              missing.length || required.length
-            } ingredients`;
-          }
+        if (used) {
+          ingredientNames.push(used.name);
+          if (used.baseIngredientId != null) branded = true;
+        } else {
+          if (ing?.baseIngredientId != null) branded = true;
+          const missingName = ing?.name || r.name || "";
+          if (missingName) missing.push(missingName);
         }
-        return {
-          ...c,
-          ingredientLine,
-          isAllAvailable: allAvail,
-          hasBranded: branded,
-        };
-      });
-  }, [cocktails, ingredients, ids, search, selectedTagIds, allowSubstitutes]);
+      }
+      const allAvail = missing.length === 0;
+      let ingredientLine = ingredientNames.join(", ");
+      if (!allAvail) {
+        if (missing.length > 0 && missing.length <= 2) {
+          ingredientLine = `Missing: ${missing.join(", ")}`;
+        } else if (missing.length >= 3 || missing.length === 0) {
+          ingredientLine = `Missing: ${missing.length || required.length} ingredients`;
+        }
+      }
+      return {
+        ...c,
+        ingredientLine,
+        isAllAvailable: availableSet.has(c.id),
+        hasBranded: branded,
+      };
+    });
+    return mapped.sort((a, b) => {
+      if (a.isAllAvailable && !b.isAllAvailable) return -1;
+      if (!a.isAllAvailable && b.isAllAvailable) return 1;
+      return a.name.localeCompare(b.name);
+    });
+  }, [
+    cocktails,
+    ingredients,
+    recipeIds,
+    availableIds,
+    search,
+    selectedTagIds,
+    allowSubstitutes,
+  ]);
 
   if (loading) {
     return (

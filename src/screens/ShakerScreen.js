@@ -16,16 +16,21 @@ import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import {
+  getAllowSubstitutes,
+  addAllowSubstitutesListener,
+} from "../storage/settingsStorage";
 
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { ingredients, usageMap, loading } = useIngredientsData();
+  const { ingredients, cocktails, usageMap, loading } = useIngredientsData();
   const [allTags, setAllTags] = useState([]);
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,10 +91,22 @@ export default function ShakerScreen({ navigation }) {
     );
   };
 
-  const { count: cocktailsCount, ids: availableCocktailIds } = useMemo(() => {
-    if (selectedIds.length === 0) return { count: 0, ids: [] };
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const allow = await getAllowSubstitutes();
+      if (!cancelled) setAllowSubstitutes(!!allow);
+    })();
+    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    return () => {
+      cancelled = true;
+      sub.remove();
+    };
+  }, []);
 
-    // group selected ingredients by tag
+  const { recipesCount, recipeIds } = useMemo(() => {
+    if (selectedIds.length === 0) return { recipesCount: 0, recipeIds: [] };
+
     const groups = new Map();
     grouped.forEach((items, tagId) => {
       const selected = items
@@ -98,7 +115,7 @@ export default function ShakerScreen({ navigation }) {
       if (selected.length > 0) groups.set(tagId, selected);
     });
 
-    if (groups.size === 0) return { count: 0, ids: [] };
+    if (groups.size === 0) return { recipesCount: 0, recipeIds: [] };
 
     let intersection;
     groups.forEach((ids) => {
@@ -115,17 +132,64 @@ export default function ShakerScreen({ navigation }) {
       }
     });
 
-    return {
-      count: intersection ? intersection.size : 0,
-      ids: intersection ? Array.from(intersection) : [],
-    };
+    const result = intersection ? [...intersection] : [];
+    return { recipesCount: result.length, recipeIds: result };
   }, [selectedIds, usageMap, grouped]);
+
+  const { availableCount, availableCocktailIds } = useMemo(() => {
+    if (recipeIds.length === 0)
+      return { availableCount: 0, availableCocktailIds: [] };
+
+    const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
+    const findBrand = (baseId) =>
+      ingredients.find(
+        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
+      );
+
+    const isSatisfied = (r) => {
+      const ing = ingMap.get(String(r.ingredientId));
+      if (ing?.inBar) return true;
+      const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
+      if (allowSubstitutes || r.allowBaseSubstitution) {
+        const base = ingMap.get(baseId);
+        if (base?.inBar) return true;
+      }
+      const isBaseIngredient = ing?.baseIngredientId == null;
+      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+        const brand = findBrand(baseId);
+        if (brand) return true;
+      }
+      if (Array.isArray(r.substitutes)) {
+        for (const s of r.substitutes) {
+          const candidate = ingMap.get(String(s.id));
+          if (candidate?.inBar) return true;
+        }
+      }
+      return false;
+    };
+
+    const ids = [];
+    (cocktails || []).forEach((c) => {
+      if (!recipeIds.includes(c.id)) return;
+      const required = (c.ingredients || []).filter((r) => !r.optional);
+      if (required.length === 0) return;
+      for (const r of required) {
+        if (!isSatisfied(r)) return;
+      }
+      ids.push(c.id);
+    });
+
+    return { availableCount: ids.length, availableCocktailIds: ids };
+  }, [recipeIds, cocktails, ingredients, allowSubstitutes]);
 
   const handleClear = () => setSelectedIds([]);
 
   const handleShow = () => {
-    if (availableCocktailIds.length === 0) return;
-    navigation.navigate("ShakerResults", { ids: availableCocktailIds });
+    if (recipeIds.length === 0) return;
+    navigation.navigate("ShakerResults", {
+      availableIds: availableCocktailIds,
+      recipeIds,
+    });
   };
 
   if (loading) {
@@ -224,17 +288,37 @@ export default function ShakerScreen({ navigation }) {
             Clear
           </Text>
         </TouchableOpacity>
-        <Text style={styles.counterText}>
-          Cocktails available: {cocktailsCount}
-        </Text>
+        <View style={styles.counterCenter}>
+          <Text style={styles.counterText}>
+            Cocktails available: {availableCount}
+          </Text>
+          <Text style={styles.counterSubText}>
+            (recipes available: {recipesCount})
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={handleShow}
-          style={[styles.counterButton, { backgroundColor: theme.colors.primary }]}
+          disabled={recipesCount === 0}
+          style={[
+            styles.counterButton,
+            recipesCount === 0
+              ? {
+                  backgroundColor: theme.colors.surfaceVariant,
+                  borderWidth: 1,
+                  borderColor: theme.colors.primary,
+                }
+              : { backgroundColor: theme.colors.primary },
+          ]}
         >
           <Text
             style={[
               styles.counterButtonText,
-              { color: theme.colors.onPrimary },
+              {
+                color:
+                  recipesCount === 0
+                    ? theme.colors.primary
+                    : theme.colors.onPrimary,
+              },
             ]}
           >
             Show
@@ -272,7 +356,12 @@ const createStyles = (theme) =>
       flexDirection: "row",
       justifyContent: "center",
     },
-    counterText: { fontWeight: "bold", flex: 1, textAlign: "center" },
+    counterCenter: { flex: 1, alignItems: "center" },
+    counterText: { fontWeight: "bold", textAlign: "center" },
+    counterSubText: {
+      color: theme.colors.onSurfaceVariant,
+      textAlign: "center",
+    },
     counterButton: {
       paddingHorizontal: 12,
       paddingVertical: 8,
