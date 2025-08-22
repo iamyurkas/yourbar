@@ -38,9 +38,8 @@ import {
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { TAG_COLORS } from "../../theme";
 import { MaterialIcons } from "@expo/vector-icons";
-import { HeaderBackButton } from "@react-navigation/elements";
+import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Menu,
@@ -1096,7 +1095,7 @@ export default function AddCocktailScreen() {
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
     (typeof getTab === "function" && getTab("cocktails")) || "All";
-  const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -1871,7 +1870,7 @@ export default function AddCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
-              marginTop: insets.top + 50,
+              marginTop: headerHeight,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },

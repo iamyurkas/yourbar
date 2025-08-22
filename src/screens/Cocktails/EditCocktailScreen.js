@@ -37,8 +37,7 @@ import {
 } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { HeaderBackButton } from "@react-navigation/elements";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import {
   Menu,
@@ -1091,7 +1090,7 @@ export default function EditCocktailScreen() {
   const route = useRoute();
   const params = route.params || {};
   const cocktailId = params?.id;
-  const { 
+  const {
     ingredients,
     cocktails,
     setCocktails,
@@ -1100,7 +1099,7 @@ export default function EditCocktailScreen() {
     setIngredients,
   } = useIngredientUsage();
 
-  const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -1920,7 +1919,7 @@ export default function EditCocktailScreen() {
           contentContainerStyle={[
             styles.modalContainer,
             {
-              marginTop: insets.top + 50,
+              marginTop: headerHeight,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.outline,
             },
