@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Switch,
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -143,7 +142,21 @@ export default function ShakerScreen({ navigation }) {
         searchValue={search}
         setSearchValue={setSearch}
         filterComponent={
-          <Switch value={inStockOnly} onValueChange={setInStockOnly} />
+          <TouchableOpacity
+            onPress={() => setInStockOnly((prev) => !prev)}
+            style={{ paddingVertical: 4, paddingHorizontal: 2 }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <MaterialIcons
+              name={inStockOnly ? "check-circle" : "radio-button-unchecked"}
+              size={22}
+              color={
+                inStockOnly
+                  ? theme.colors.primary
+                  : theme.colors.onSurfaceVariant
+              }
+            />
+          </TouchableOpacity>
         }
       />
       <ScrollView contentContainerStyle={styles.scroll}>
