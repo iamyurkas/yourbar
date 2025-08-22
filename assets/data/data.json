@@ -1650,23 +1650,7 @@
       "searchName": "coconut syrup",
       "photoUri": "assets/ingredients/1755200244973-219375-coconut-syrup.jpg"
     },
-    {
-      "id": "1755200244973-915841",
-      "name": "Coffee",
-      "description": "",
-      "tags": [
-        {
-          "id": 3,
-          "name": "beverage",
-          "color": "#9575CD"
-        }
-      ],
-      "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
-      "searchName": "coffee",
-      "photoUri": "assets/ingredients/1755200244973-915841-coffee.jpg"
-    },
+    
     {
       "id": "1755441997878-128442",
       "name": "Coffee Beans",
@@ -6259,7 +6243,8 @@
           "garnish": true,
           "optional": false
         }
-      ]
+      ],
+      "photoUri": "assets/cocktails/1755800000020-bronx.jpg"
     },
     {
       "id": 1755800000021,
@@ -7525,7 +7510,8 @@
           "garnish": true,
           "optional": false
         }
-      ]
+      ],
+      "photoUri": "assets/cocktails/1755800000043-grand-margarita.jpg"
     },
     {
       "id": 1755800000044,
@@ -7903,8 +7889,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-915841",
-          "name": "Coffee",
+          "ingredientId": "1755200244973-750837",
+          "name": "Espresso",
           "amount": "80",
           "unitId": 11,
           "garnish": false,
@@ -11140,7 +11126,8 @@
           "garnish": true,
           "optional": false
         }
-      ]
+      ],
+      "photoUri": "assets/cocktails/1755800000113-tommys-margarita.jpg"
     },
     {
       "id": 1755800000114,
