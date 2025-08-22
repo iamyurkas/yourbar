@@ -5503,6 +5503,40 @@
       "singleCocktailName": null,
       "searchName": "zubrowka",
       "photoUri": "assets/ingredients/1755441997878-284294-zubrowka.jpg"
+    },
+    {
+      "id": "1755200244973-621594",
+      "name": "Allspice Dram",
+      "description": "Allspice-flavored liqueur around 22% ABV used in tiki cocktails.",
+      "tags": [
+        {
+          "id": 2,
+          "name": "soft alcohol",
+          "color": "#F06292"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "allspice dram",
+      "photoUri": "assets/ingredients/1755200244973-621594-allspice-dram.jpg"
+    },
+    {
+      "id": "1755200244973-281512",
+      "name": "Red Chili Pepper",
+      "description": "Fresh red chili pepper adds bright heat to cocktails.",
+      "tags": [
+        {
+          "id": 8,
+          "name": "spice",
+          "color": "#FF8A65"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "red chili pepper",
+      "photoUri": "assets/ingredients/1755200244973-281512-red-chili-pepper.jpg"
     }
   ],
   "cocktails": [
@@ -10157,6 +10191,192 @@
           "garnish": true,
           "optional": false
         }
+      ]
+    },
+    {
+      "id": 1755800000100,
+      "name": "Sea Breeze",
+      "glassId": "highball_glass",
+      "tags": [1, 3],
+      "description": "Cranberry and grapefruit highball spiked with vodka.",
+      "instructions": "Fill a highball glass with ice.\nAdd vodka, cranberry juice, and grapefruit juice.\nStir briefly.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-16862", "name": "Vodka", "amount": "45", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-81569", "name": "Cranberry Juice", "amount": "120", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-131206", "name": "Grapefruit Juice", "amount": "60", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-336572", "name": "Lime", "amount": "1", "unitId": 27, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000101,
+      "name": "Sex on the Beach",
+      "glassId": "highball_glass",
+      "tags": [1, 3],
+      "description": "Fruity vodka highball with peach, orange, and cranberry.",
+      "instructions": "Fill a highball glass with ice.\nPour vodka, peach schnapps, orange juice, and cranberry juice over the ice.\nStir gently.\nGarnish with an orange slice.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-16862", "name": "Vodka", "amount": "40", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-669094", "name": "Peach Schnapps", "amount": "20", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-38131", "name": "Orange Juice", "amount": "40", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-81569", "name": "Cranberry Juice", "amount": "40", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 19, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000102,
+      "name": "Sherry Cobbler",
+      "glassId": "wine_glass",
+      "tags": [1, 2],
+      "description": "Classic sherry cooler muddled with citrus and berries.",
+      "instructions": "Muddle orange slices and sugar in a wine glass.\nAdd sherry and fill the glass with crushed ice.\nStir well.\nGarnish with orange slices and berries.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "2", "unitId": 19, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-217733", "name": "Sugar", "amount": "1", "unitId": 24, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-134824", "name": "Sherry", "amount": "90", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 19, "garnish": true, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-941927", "name": "Berries", "amount": "4", "unitId": 1, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000103,
+      "name": "Sidecar",
+      "glassId": "cocktail_glass",
+      "tags": [1, 2],
+      "description": "Cognac sour sweetened with orange liqueur.",
+      "instructions": "Add cognac, Cointreau, and lemon juice into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with an orange twist.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-502166", "name": "Cognac", "amount": "50", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-354943", "name": "Cointreau", "amount": "20", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-734220", "name": "Lemon Juice", "amount": "20", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 26, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000104,
+      "name": "Singapore Sling",
+      "glassId": "highball_glass",
+      "tags": [1, 2],
+      "description": "Tropical gin punch with cherry, pineapple, and bitters.",
+      "instructions": "Add gin, cherry heering, Cointreau, Benedictine, pineapple juice, lime juice, grenadine, and bitters into a shaker with ice.\nShake well.\nStrain into a highball glass filled with ice.\nTop with soda water.\nGarnish with a pineapple slice and a maraschino cherry.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-863081", "name": "Gin", "amount": "30", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-325668", "name": "Cherry Heering", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-354943", "name": "Cointreau", "amount": "7.5", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-166341", "name": "Benedictine", "amount": "7.5", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-494177", "name": "Pineapple Juice", "amount": "120", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 6, "ingredientId": "1755200244973-734220", "name": "Lime Juice", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 7, "ingredientId": "1755200244973-803536", "name": "Grenadine", "amount": "10", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 8, "ingredientId": "1755200244973-401724", "name": "Angostura Bitters", "amount": "1", "unitId": 6, "garnish": false, "optional": false},
+        {"order": 9, "ingredientId": "1755200244973-807431", "name": "Soda Water", "amount": "1", "unitId": 20, "garnish": false, "optional": false},
+        {"order": 10, "ingredientId": "1755200244973-932849", "name": "Pineapple", "amount": "1", "unitId": 19, "garnish": true, "optional": false},
+        {"order": 11, "ingredientId": "1755200244973-607153", "name": "Maraschino cherry", "amount": "1", "unitId": 1, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000105,
+      "name": "South Side",
+      "glassId": "cocktail_glass",
+      "tags": [1, 3],
+      "description": "Herbal gin sour brightened with mint.",
+      "instructions": "Add gin, lemon juice, simple syrup, and mint leaves into a shaker with ice.\nShake well.\nFine strain into a chilled cocktail glass.\nGarnish with a mint leaf.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-863081", "name": "Gin", "amount": "60", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-734220", "name": "Lemon Juice", "amount": "30", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-150490", "name": "Simple Syrup", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-304217", "name": "Mint", "amount": "8", "unitId": 10, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-304217", "name": "Mint", "amount": "1", "unitId": 10, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000106,
+      "name": "Spicy Fifty",
+      "glassId": "cocktail_glass",
+      "tags": [1, 4],
+      "description": "Vanilla vodka sour shaken with elderflower, honey, and chili heat.",
+      "instructions": "Muddle a slice of red chili pepper in a shaker.\nAdd vanilla vodka, elderflower liqueur, lime juice, and honey syrup with ice.\nShake well and fine strain into a chilled cocktail glass.\nGarnish with a red chili slice.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-118165", "name": "Vodka Vanilla", "amount": "50", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-121379", "name": "St. Germain", "amount": "20", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-734220", "name": "Lime Juice", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-42279", "name": "Honey Syrup", "amount": "10", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-281512", "name": "Red Chili Pepper", "amount": "1", "unitId": 19, "garnish": false, "optional": false},
+        {"order": 6, "ingredientId": "1755200244973-281512", "name": "Red Chili Pepper", "amount": "1", "unitId": 19, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000107,
+      "name": "Spritz",
+      "glassId": "wine_glass",
+      "tags": [1, 3],
+      "description": "Bittersweet aperitif of Aperol, prosecco, and soda.",
+      "instructions": "Fill a wine glass with ice.\nAdd prosecco and Aperol.\nTop with soda water.\nStir gently.\nGarnish with an orange slice.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-588255", "name": "Prosecco", "amount": "90", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-167992", "name": "Aperol", "amount": "60", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-807431", "name": "Soda Water", "amount": "30", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 19, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000108,
+      "name": "Stinger",
+      "glassId": "cocktail_glass",
+      "tags": [1, 2],
+      "description": "Brandy and crème de menthe served straight up.",
+      "instructions": "Add cognac and white crème de menthe into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-502166", "name": "Cognac", "amount": "50", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755441997878-596123", "name": "Creme de Menthe White", "amount": "20", "unitId": 11, "garnish": false, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000109,
+      "name": "Suffering Bastard",
+      "glassId": "highball_glass",
+      "tags": [1, 4],
+      "description": "Brandy and gin highball lengthened with ginger beer.",
+      "instructions": "Add gin, brandy, lime juice, and bitters into a shaker with ice.\nShake and strain into a highball glass filled with ice.\nTop with ginger beer.\nGarnish with a mint sprig and an orange slice.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-863081", "name": "Gin", "amount": "30", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-435165", "name": "Brandy", "amount": "30", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-734220", "name": "Lime Juice", "amount": "20", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-401724", "name": "Angostura Bitters", "amount": "2", "unitId": 6, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-353113", "name": "Ginger Beer", "amount": "90", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 6, "ingredientId": "1755200244973-304217", "name": "Mint", "amount": "1", "unitId": 21, "garnish": true, "optional": false},
+        {"order": 7, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 19, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000110,
+      "name": "Tequila Sunrise",
+      "glassId": "highball_glass",
+      "tags": [1, 3],
+      "description": "Tequila and orange highball layered with grenadine.",
+      "instructions": "Fill a highball glass with ice.\nAdd tequila and orange juice and stir.\nSlowly pour grenadine to create a sunrise effect.\nGarnish with an orange slice and a cherry.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-97568", "name": "Tequila", "amount": "45", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-38131", "name": "Orange Juice", "amount": "90", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-803536", "name": "Grenadine", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-454059", "name": "Orange", "amount": "1", "unitId": 19, "garnish": true, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-791672", "name": "Cherry", "amount": "1", "unitId": 1, "garnish": true, "optional": false}
+      ]
+    },
+    {
+      "id": 1755800000111,
+      "name": "Three Dots and a Dash",
+      "glassId": "tiki",
+      "tags": [1, 4],
+      "description": "Tiki mix of rum, spice, citrus, and honey, garnished with cherries.",
+      "instructions": "Add aged rum, lime juice, orange juice, honey syrup, falernum, allspice dram, and bitters into a shaker with ice.\nShake well.\nStrain into a tiki glass filled with crushed ice.\nGarnish with three maraschino cherries.",
+      "ingredients": [
+        {"order": 1, "ingredientId": "1755200244973-123517", "name": "Aged rum", "amount": "45", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 2, "ingredientId": "1755200244973-734220", "name": "Lime Juice", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 3, "ingredientId": "1755200244973-38131", "name": "Orange Juice", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 4, "ingredientId": "1755200244973-42279", "name": "Honey Syrup", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 5, "ingredientId": "1755200244973-888089", "name": "Falernum", "amount": "15", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 6, "ingredientId": "1755200244973-621594", "name": "Allspice Dram", "amount": "7.5", "unitId": 11, "garnish": false, "optional": false},
+        {"order": 7, "ingredientId": "1755200244973-401724", "name": "Angostura Bitters", "amount": "1", "unitId": 6, "garnish": false, "optional": false},
+        {"order": 8, "ingredientId": "1755200244973-607153", "name": "Maraschino cherry", "amount": "3", "unitId": 1, "garnish": true, "optional": false}
       ]
     }
   ]
