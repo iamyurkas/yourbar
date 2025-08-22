@@ -8222,6 +8222,693 @@
           "optional": false
         }
       ]
+    },
+    {
+      "id": 1755800000060,
+      "name": "Mai Tai",
+      "glassId": "highball_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Rum-forward tiki classic with orange curaçao, lime, and orgeat.",
+      "instructions": "Add rums, orange curaçao, lime juice, and orgeat into a shaker with ice.\nShake well.\nStrain into a highball glass filled with crushed ice.\nGarnish with a mint sprig.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-962705",
+          "name": "Dark Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-587125",
+          "name": "Orange Curaçao",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-738590",
+          "name": "Orgeat Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000061,
+      "name": "Manhattan",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Spirit-forward mix of rye whisky, sweet vermouth, and bitters.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.\nGarnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-160433",
+          "name": "Rye Whisky",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000062,
+      "name": "Margarita",
+      "glassId": "margarita_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Classic tequila sour balanced with triple sec and lime.",
+      "instructions": "Rim a margarita glass with salt.\nAdd tequila, triple sec, and lime juice into a shaker with ice.\nShake well.\nStrain into the prepared glass.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-97568",
+          "name": "Tequila",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-728001",
+          "name": "Salt",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000063,
+      "name": "Martinez",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Historic gin and vermouth cocktail accented by maraschino and orange bitters.",
+      "instructions": "Add all ingredients into a mixing glass with ice.\nStir well.\nStrain into a chilled cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "1",
+          "unitId": 2,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-552212",
+          "name": "Orange Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000064,
+      "name": "Mary Pickford",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Tropical rum and pineapple cocktail sweetened with maraschino and grenadine.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-494177",
+          "name": "Pineapple Juice",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "7.5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-803536",
+          "name": "Grenadine",
+          "amount": "7.5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000065,
+      "name": "Mimosa",
+      "glassId": "champagne_flute",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Brunch favorite combining sparkling wine and fresh orange juice.",
+      "instructions": "Pour orange juice into a chilled champagne flute.\nTop with champagne.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-38131",
+          "name": "Orange Juice",
+          "amount": "75",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-435337",
+          "name": "Champagne",
+          "amount": "75",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000066,
+      "name": "Mint Julep",
+      "glassId": "rocks_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Bourbon refresher with muddled mint and sugar over crushed ice.",
+      "instructions": "Muddle mint leaves, sugar, and water in a rocks glass.\nFill the glass with crushed ice.\nAdd bourbon and stir until chilled.\nGarnish with a mint sprig.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "4",
+          "unitId": 10,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-217733",
+          "name": "Sugar",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-752336",
+          "name": "Water",
+          "amount": "2",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-342124",
+          "name": "Bourbon",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000067,
+      "name": "Missionary's Downfall",
+      "glassId": "highball_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Blended tiki mix of rum, peach liqueur, pineapple, mint, and honey.",
+      "instructions": "Add all ingredients to a blender with ice.\nBlend until smooth.\nPour into a highball glass.\nGarnish with a mint sprig.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755441997878-733523",
+          "name": "Peach Liqueur",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-42279",
+          "name": "Honey Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-932849",
+          "name": "Pineapple",
+          "amount": "60",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "8",
+          "unitId": 10,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000068,
+      "name": "Mojito",
+      "glassId": "highball_glass",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Cuban highball with rum, lime, mint, sugar, and sparkling soda.",
+      "instructions": "Muddle mint leaves and sugar with lime juice in a highball glass.\nAdd rum and fill the glass with crushed ice.\nTop with soda water and gently stir.\nGarnish with a mint sprig and lime slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "6",
+          "unitId": 10,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-217733",
+          "name": "Sugar",
+          "amount": "2",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-807431",
+          "name": "Soda Water",
+          "amount": "1",
+          "unitId": 20,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000069,
+      "name": "Monkey Gland",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        2
+      ],
+      "description": "Gin and orange cocktail with a hint of absinthe and grenadine.",
+      "instructions": "Add gin, orange juice, absinthe, and grenadine into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with an orange peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-38131",
+          "name": "Orange Juice",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-440131",
+          "name": "Absinthe",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-803536",
+          "name": "Grenadine",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 14,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000070,
+      "name": "Moscow Mule",
+      "glassId": "copper_mug",
+      "tags": [
+        1,
+        3
+      ],
+      "description": "Vodka and ginger beer built over ice with a bright lime kick.",
+      "instructions": "Fill a copper mug with ice.\nAdd vodka and lime juice.\nTop with ginger beer and gently stir.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-16862",
+          "name": "Vodka",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-353113",
+          "name": "Ginger Beer",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": 1755800000071,
+      "name": "Naked and Famous",
+      "glassId": "cocktail_glass",
+      "tags": [
+        1,
+        4
+      ],
+      "description": "Equal parts mezcal, Aperol, yellow chartreuse, and lime for a smoky, bittersweet sour.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-50977",
+          "name": "Mezcal",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-167992",
+          "name": "Aperol",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-366531",
+          "name": "Yellow Chartreuse",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false
+        }
+      ]
     }
   ]
 }
