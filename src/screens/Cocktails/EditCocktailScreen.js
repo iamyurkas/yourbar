@@ -905,24 +905,28 @@ const IngredientRow = memo(function IngredientRow({
             Substitutes
           </Text>
           <View style={styles.subList}>
-            {row.substitutes.map((s) => (
-              <View
-                key={s.id}
-                style={[
-                  styles.subItem,
-                  {
-                    borderColor: theme.colors.outline,
-                    backgroundColor:
-                      theme.colors.surfaceVariant ??
-                      withAlpha(theme.colors.onSurface, 0.04),
-                  },
-                ]}
-              >
-                <Text
-                  style={{ color: theme.colors.onSurface, flex: 1 }}
-                  numberOfLines={1}
+              {row.substitutes.map((s) => (
+                <View
+                  key={s.id}
+                  style={[
+                    styles.subItem,
+                    s.baseIngredientId != null && {
+                      ...styles.brandedStripe,
+                      borderLeftColor: theme.colors.primary,
+                    },
+                    {
+                      borderColor: theme.colors.outline,
+                      backgroundColor:
+                        theme.colors.surfaceVariant ??
+                        withAlpha(theme.colors.onSurface, 0.04),
+                    },
+                  ]}
                 >
-                  {s.name}
+                  <Text
+                    style={{ color: theme.colors.onSurface, flex: 1 }}
+                    numberOfLines={1}
+                  >
+                    {s.name}
                 </Text>
                 <Pressable
                   onPress={() =>
@@ -1957,14 +1961,22 @@ export default function EditCocktailScreen() {
                   {index > 0 ? (
                     <Divider color={theme.colors.outlineVariant} />
                   ) : null}
-                  <View style={styles.modalItemRow}>
-                    <View style={styles.modalItemAvatar}>
-                      {item.photoUri ? (
-                        <Image
-                          source={{ uri: item.photoUri }}
-                          style={styles.modalItemImg}
-                          resizeMode="contain"
-                        />
+                    <View
+                      style={[
+                        styles.modalItemRow,
+                        item.baseIngredientId != null && {
+                          ...styles.brandedStripe,
+                          borderLeftColor: theme.colors.primary,
+                        },
+                      ]}
+                    >
+                      <View style={styles.modalItemAvatar}>
+                        {item.photoUri ? (
+                          <Image
+                            source={{ uri: item.photoUri }}
+                            style={styles.modalItemImg}
+                            resizeMode="contain"
+                          />
                       ) : (
                         <MaterialIcons
                           name="local-drink"
@@ -2324,4 +2336,5 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
