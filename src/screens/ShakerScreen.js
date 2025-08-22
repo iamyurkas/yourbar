@@ -104,10 +104,9 @@ export default function ShakerScreen({ navigation }) {
     };
   }, []);
 
-  const recipesCount = useMemo(() => {
-    if (selectedIds.length === 0) return 0;
+  const { recipesCount, recipeIds } = useMemo(() => {
+    if (selectedIds.length === 0) return { recipesCount: 0, recipeIds: [] };
 
-    // group selected ingredients by tag
     const groups = new Map();
     grouped.forEach((items, tagId) => {
       const selected = items
@@ -116,7 +115,7 @@ export default function ShakerScreen({ navigation }) {
       if (selected.length > 0) groups.set(tagId, selected);
     });
 
-    if (groups.size === 0) return 0;
+    if (groups.size === 0) return { recipesCount: 0, recipeIds: [] };
 
     let intersection;
     groups.forEach((ids) => {
@@ -133,45 +132,19 @@ export default function ShakerScreen({ navigation }) {
       }
     });
 
-    return intersection ? intersection.size : 0;
+    const result = intersection ? [...intersection] : [];
+    return { recipesCount: result.length, recipeIds: result };
   }, [selectedIds, usageMap, grouped]);
 
   const { availableCount, availableCocktailIds } = useMemo(() => {
-    if (selectedIds.length === 0)
+    if (recipeIds.length === 0)
       return { availableCount: 0, availableCocktailIds: [] };
 
     const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
-    const selectedSet = new Set(selectedIds.map((id) => String(id)));
     const findBrand = (baseId) =>
       ingredients.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
-
-    const canUseSelected = (sid, r) => {
-      if (String(r.ingredientId) === sid) return true;
-      const candidate = ingMap.get(sid);
-      if (!candidate) return false;
-      const requiredIng = ingMap.get(String(r.ingredientId));
-      const baseId = String(requiredIng?.baseIngredientId ?? r.ingredientId);
-      const candidateBaseId = String(
-        candidate.baseIngredientId ?? candidate.id
-      );
-
-      if (allowSubstitutes || r.allowBaseSubstitution) {
-        if (candidateBaseId === baseId || sid === baseId) return true;
-      }
-
-      const isBaseIngredient = requiredIng?.baseIngredientId == null;
-      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
-        if (candidate.baseIngredientId != null && candidateBaseId === baseId)
-          return true;
-      }
-
-      if (Array.isArray(r.substitutes)) {
-        if (r.substitutes.some((s) => String(s.id) === sid)) return true;
-      }
-      return false;
-    };
 
     const isSatisfied = (r) => {
       const ing = ingMap.get(String(r.ingredientId));
@@ -197,35 +170,26 @@ export default function ShakerScreen({ navigation }) {
 
     const ids = [];
     (cocktails || []).forEach((c) => {
+      if (!recipeIds.includes(c.id)) return;
       const required = (c.ingredients || []).filter((r) => !r.optional);
       if (required.length === 0) return;
-
-      for (const sid of selectedSet) {
-        let matched = false;
-        for (const r of required) {
-          if (canUseSelected(sid, r)) {
-            matched = true;
-            break;
-          }
-        }
-        if (!matched) return;
-      }
-
       for (const r of required) {
         if (!isSatisfied(r)) return;
       }
-
       ids.push(c.id);
     });
 
     return { availableCount: ids.length, availableCocktailIds: ids };
-  }, [selectedIds, cocktails, ingredients, allowSubstitutes]);
+  }, [recipeIds, cocktails, ingredients, allowSubstitutes]);
 
   const handleClear = () => setSelectedIds([]);
 
   const handleShow = () => {
-    if (availableCocktailIds.length === 0) return;
-    navigation.navigate("ShakerResults", { ids: availableCocktailIds });
+    if (recipeIds.length === 0) return;
+    navigation.navigate("ShakerResults", {
+      availableIds: availableCocktailIds,
+      recipeIds,
+    });
   };
 
   if (loading) {
@@ -334,12 +298,27 @@ export default function ShakerScreen({ navigation }) {
         </View>
         <TouchableOpacity
           onPress={handleShow}
-          style={[styles.counterButton, { backgroundColor: theme.colors.primary }]}
+          disabled={recipesCount === 0}
+          style={[
+            styles.counterButton,
+            recipesCount === 0
+              ? {
+                  backgroundColor: theme.colors.surfaceVariant,
+                  borderWidth: 1,
+                  borderColor: theme.colors.primary,
+                }
+              : { backgroundColor: theme.colors.primary },
+          ]}
         >
           <Text
             style={[
               styles.counterButtonText,
-              { color: theme.colors.onPrimary },
+              {
+                color:
+                  recipesCount === 0
+                    ? theme.colors.primary
+                    : theme.colors.onPrimary,
+              },
             ]}
           >
             Show
