@@ -68,13 +68,13 @@ function CocktailRow({
         {photoUri ? (
           <Image
             source={{ uri: photoUri }}
-            style={[styles.image, { backgroundColor: theme.colors.surface }]}
+            style={[styles.image, { backgroundColor: theme.colors.background }]}
             resizeMode="contain"
           />
         ) : glassImage ? (
           <Image
             source={glassImage}
-            style={[styles.image, { backgroundColor: theme.colors.surface }]}
+            style={[styles.image, { backgroundColor: theme.colors.background }]}
             resizeMode="contain"
           />
         ) : (
@@ -82,7 +82,7 @@ function CocktailRow({
             style={[
               styles.image,
               styles.placeholder,
-              { backgroundColor: theme.colors.surface },
+              { backgroundColor: theme.colors.background },
             ]}
           >
             <Text
