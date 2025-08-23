@@ -3,9 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  SectionList,
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -44,7 +44,9 @@ export default function ShakerScreen({ navigation }) {
     };
   }, []);
 
-  const grouped = useMemo(() => {
+  const [grouped, setGrouped] = useState(new Map());
+
+  useEffect(() => {
     const map = new Map();
     allTags.forEach((t) => map.set(t.id, []));
     ingredients.forEach((ing) => {
@@ -57,7 +59,7 @@ export default function ShakerScreen({ navigation }) {
     for (const arr of map.values()) {
       arr.sort((a, b) => a.name.localeCompare(b.name));
     }
-    return map;
+    setGrouped(map);
   }, [allTags, ingredients]);
 
   const filteredGrouped = useMemo(() => {
@@ -81,7 +83,18 @@ export default function ShakerScreen({ navigation }) {
     return map;
   }, [filteredGrouped, inStockOnly]);
 
-  const isEmpty = displayGrouped.size === 0;
+  const sections = useMemo(() => {
+    return allTags
+      .map((tag) => {
+        const items = displayGrouped.get(tag.id) || [];
+        if (items.length === 0) return null;
+        const isOpen = expanded[tag.id];
+        return { tag, data: isOpen ? items : [], isOpen };
+      })
+      .filter(Boolean);
+  }, [allTags, displayGrouped, expanded]);
+
+  const isEmpty = sections.length === 0;
 
   const toggleTag = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -225,63 +238,60 @@ export default function ShakerScreen({ navigation }) {
           </TouchableOpacity>
         }
       />
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {isEmpty ? (
-          <View style={{ padding: 24 }}>
-            <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              Mark which ingredients are in stock first
-            </Text>
-          </View>
-        ) : (
-          <>
-            {allTags.map((tag) => {
-              const items = displayGrouped.get(tag.id) || [];
-              if (items.length === 0) return null;
-              const isOpen = expanded[tag.id];
-              return (
-                <View key={tag.id} style={styles.section}>
-                  <TouchableOpacity
-                    onPress={() => toggleTag(tag.id)}
-                    style={[styles.tagHeader, { backgroundColor: tag.color }]}
-                  >
-                    <Text style={styles.tagTitle}>{tag.name}</Text>
-                    <MaterialIcons
-                      name={isOpen ? "expand-less" : "expand-more"}
-                      size={24}
-                      color={theme.colors.onPrimary}
-                    />
-                  </TouchableOpacity>
-                  {isOpen &&
-                    items.map((ing) => {
-                      const active = selectedIds.includes(ing.id);
-                      return (
-                        <IngredientRow
-                          key={ing.id}
-                          id={ing.id}
-                          name={ing.name}
-                          photoUri={ing.photoUri}
-                          usageCount={ing.usageCount}
-                          singleCocktailName={ing.singleCocktailName}
-                          showMake
-                          inBar={ing.inBar}
-                          inShoppingList={ing.inShoppingList}
-                          baseIngredientId={ing.baseIngredientId}
-                          onPress={toggleIngredient}
-                          onDetails={(id) =>
-                            navigation.push("IngredientDetails", { id })
-                          }
-                          highlightColor={
-                            active ? theme.colors.secondaryContainer : undefined
-                          }
-                        />
-                      );
-                    })}
-                </View>
-              );
-            })}
-          </>
-        )}
-      </ScrollView>
+      {isEmpty ? (
+        <View style={{ padding: 24 }}>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>
+            Mark which ingredients are in stock first
+          </Text>
+        </View>
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => {
+            const active = selectedIds.includes(item.id);
+            return (
+              <IngredientRow
+                id={item.id}
+                name={item.name}
+                photoUri={item.photoUri}
+                usageCount={item.usageCount}
+                singleCocktailName={item.singleCocktailName}
+                showMake
+                inBar={item.inBar}
+                inShoppingList={item.inShoppingList}
+                baseIngredientId={item.baseIngredientId}
+                onPress={toggleIngredient}
+                onDetails={(id) =>
+                  navigation.push("IngredientDetails", { id })
+                }
+                highlightColor={
+                  active ? theme.colors.secondaryContainer : undefined
+                }
+              />
+            );
+          }}
+          renderSectionHeader={({ section: { tag } }) => {
+            const isOpen = expanded[tag.id];
+            return (
+              <View style={styles.section}>
+                <TouchableOpacity
+                  onPress={() => toggleTag(tag.id)}
+                  style={[styles.tagHeader, { backgroundColor: tag.color }]}
+                >
+                  <Text style={styles.tagTitle}>{tag.name}</Text>
+                  <MaterialIcons
+                    name={isOpen ? "expand-less" : "expand-more"}
+                    size={24}
+                    color={theme.colors.onPrimary}
+                  />
+                </TouchableOpacity>
+              </View>
+            );
+          }}
+          contentContainerStyle={styles.scroll}
+        />
+      )}
       <View style={styles.counter}>
         <TouchableOpacity
           onPress={handleClear}

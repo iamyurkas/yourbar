@@ -3,6 +3,7 @@ import RAW_DATA from "../assets/data/data.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
+import { normalizeSearch } from "../src/utils/normalizeSearch";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
 
@@ -63,6 +64,7 @@ function sanitizeCocktails(raw) {
         photoUri: resolvePhoto(c?.photoUri || c?.image),
         tags: mapTags(c?.tags, COCKTAIL_TAG_BY_ID),
         ingredients: Array.isArray(c?.ingredients) ? c.ingredients : [],
+        searchName: normalizeSearch(String(c?.name ?? "")),
       }))
     : [];
 }

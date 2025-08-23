@@ -2,25 +2,24 @@ import { useCallback, useContext, useEffect } from "react";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
 import { importCocktailsAndIngredients } from "../../scripts/importCocktailsAndIngredients";
-import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
+import { mapCocktailsByIngredientAsync } from "../utils/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
-import IngredientUsageContext from "../context/IngredientUsageContext";
+import {
+  useIngredientsContext,
+  useCocktailsContext,
+  useUsageMapContext,
+  useLoadingContext,
+} from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
 } from "../storage/settingsStorage";
 
 export default function useIngredientsData() {
-  const {
-    ingredients,
-    setIngredients,
-    cocktails,
-    setCocktails,
-    usageMap,
-    setUsageMap,
-    loading,
-    setLoading,
-  } = useContext(IngredientUsageContext);
+  const { ingredients, setIngredients } = useIngredientsContext();
+  const { cocktails, setCocktails } = useCocktailsContext();
+  const { usageMap, setUsageMap } = useUsageMapContext();
+  const { loading, setLoading } = useLoadingContext();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -33,7 +32,7 @@ export default function useIngredientsData() {
     const sorted = [...ing].sort((a, b) =>
       a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
     );
-    const map = mapCocktailsByIngredient(sorted, cocks, {
+    const map = await mapCocktailsByIngredientAsync(sorted, cocks, {
       allowSubstitutes: !!allowSubs,
     });
     const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));

@@ -4,6 +4,10 @@ import { normalizeSearch } from "../utils/normalizeSearch";
 
 const STORAGE_KEY = "cocktails_v1";
 
+let cache = null;
+let flushTimer = null;
+const FLUSH_DELAY = 500;
+
 // --- utils ---
 const safeParse = (raw) => {
   if (!raw) return [];
@@ -40,10 +44,12 @@ const sanitizeIngredient = (r, idx) => ({
 const sanitizeCocktail = (c) => {
   const t = now();
   const id = Number(c?.id ?? genId());
+  const name = String(c?.name ?? "").trim();
   const ingredients = Array.isArray(c?.ingredients) ? c.ingredients : [];
   return {
     id,
-    name: String(c?.name ?? "").trim(),
+    name,
+    searchName: normalizeSearch(name),
     photoUri: c?.photoUri ?? null,
     // зберігаємо ідентифікатор ємності (склянки) в якій подається коктейль
     glassId: c?.glassId ? String(c.glassId).trim() : null,
@@ -60,14 +66,37 @@ const sanitizeCocktail = (c) => {
 };
 
 // --- low-level IO ---
-async function readAll() {
+async function loadCache() {
+  if (cache) return cache;
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
-  return safeParse(raw).sort(sortByName);
+  cache = safeParse(raw).map((c) => ({
+    ...c,
+    searchName: c.searchName || normalizeSearch(c.name),
+  }));
+  cache.sort(sortByName);
+  return cache;
+}
+
+function scheduleFlush() {
+  if (flushTimer) return;
+  flushTimer = setTimeout(async () => {
+    flushTimer = null;
+    try {
+      const sorted = [...cache].sort(sortByName);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
+    } catch (e) {
+      console.warn("Failed to flush cocktails", e);
+    }
+  }, FLUSH_DELAY);
+}
+
+async function readAll() {
+  return await loadCache();
 }
 async function writeAll(list) {
-  const sorted = [...list].sort(sortByName);
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
-  return sorted;
+  cache = [...list];
+  scheduleFlush();
+  return cache;
 }
 
 // --- API ---
@@ -131,5 +160,5 @@ export async function searchCocktails(query) {
   const q = normalizeSearch(String(query || "").trim());
   if (!q) return getAllCocktails();
   const list = await readAll();
-  return list.filter((c) => normalizeSearch(c.name).includes(q));
+  return list.filter((c) => c.searchName.includes(q));
 }

@@ -61,6 +61,14 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
   return result;
 }
 
+export function mapCocktailsByIngredientAsync(ingredients, cocktails, options = {}) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mapCocktailsByIngredient(ingredients, cocktails, options));
+    }, 0);
+  });
+}
+
 export function calculateIngredientUsage(ingredients, cocktails, options = {}) {
   const map = mapCocktailsByIngredient(ingredients, cocktails, options);
   const result = {};

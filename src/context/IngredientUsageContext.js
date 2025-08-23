@@ -1,19 +1,25 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { buildIndex } from "../storage/ingredientsStorage";
 
-const IngredientUsageContext = createContext({
-  usageMap: {},
-  setUsageMap: () => {},
-  updateUsageMap: () => {},
+const IngredientsContext = createContext({
   ingredients: [],
   ingredientsById: {},
   setIngredients: () => {},
+});
+
+const CocktailsContext = createContext({
   cocktails: [],
   setCocktails: () => {},
-  loading: true,
-  setLoading: () => {},
 });
+
+const UsageMapContext = createContext({
+  usageMap: {},
+  setUsageMap: () => {},
+  updateUsageMap: () => {},
+});
+
+const LoadingContext = createContext([true, () => {}]);
 
 export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
@@ -39,28 +45,67 @@ export function IngredientUsageProvider({ children }) {
     []
   );
 
+  const ingredientsValue = useMemo(
+    () => ({ ingredients, ingredientsById, setIngredients }),
+    [ingredients, ingredientsById, setIngredients]
+  );
+  const cocktailsValue = useMemo(
+    () => ({ cocktails, setCocktails }),
+    [cocktails, setCocktails]
+  );
+  const usageMapValue = useMemo(
+    () => ({ usageMap, setUsageMap, updateUsageMap }),
+    [usageMap, updateUsageMap]
+  );
+  const loadingValue = useMemo(() => [loading, setLoading], [loading, setLoading]);
+
   return (
-    <IngredientUsageContext.Provider
-      value={{
-        usageMap,
-        setUsageMap,
-        updateUsageMap,
-        ingredients,
-        ingredientsById,
-        setIngredients,
-        cocktails,
-        setCocktails,
-        loading,
-        setLoading,
-      }}
-    >
-      {children}
-    </IngredientUsageContext.Provider>
+    <LoadingContext.Provider value={loadingValue}>
+      <IngredientsContext.Provider value={ingredientsValue}>
+        <CocktailsContext.Provider value={cocktailsValue}>
+          <UsageMapContext.Provider value={usageMapValue}>
+            {children}
+          </UsageMapContext.Provider>
+        </CocktailsContext.Provider>
+      </IngredientsContext.Provider>
+    </LoadingContext.Provider>
   );
 }
 
-export function useIngredientUsage() {
-  return useContext(IngredientUsageContext);
+export function useIngredientsContext() {
+  return useContext(IngredientsContext);
 }
 
-export default IngredientUsageContext;
+export function useCocktailsContext() {
+  return useContext(CocktailsContext);
+}
+
+export function useUsageMapContext() {
+  return useContext(UsageMapContext);
+}
+
+export function useLoadingContext() {
+  const [loading, setLoading] = useContext(LoadingContext);
+  return { loading, setLoading };
+}
+
+export function useIngredientUsage() {
+  const ingredientsData = useIngredientsContext();
+  const cocktailsData = useCocktailsContext();
+  const usageMapData = useUsageMapContext();
+  const { loading, setLoading } = useLoadingContext();
+  return {
+    ...ingredientsData,
+    ...cocktailsData,
+    ...usageMapData,
+    loading,
+    setLoading,
+  };
+}
+
+export default {
+  IngredientsContext,
+  CocktailsContext,
+  UsageMapContext,
+  LoadingContext,
+};
