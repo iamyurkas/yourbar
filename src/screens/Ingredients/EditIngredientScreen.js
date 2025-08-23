@@ -16,6 +16,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  FlatList,
   Alert,
   Platform,
   InteractionManager,
@@ -742,28 +743,31 @@ export default function EditIngredientScreen() {
               ),
             }}
           >
-            <ScrollView keyboardShouldPersistTaps="handled">
-              <Pressable
-                onPress={() => {
-                  setBaseIngredientId(null);
-                  setMenuVisible(false);
-                }}
-                android_ripple={ripple}
-                style={({ pressed }) => [
-                  styles.menuRow,
-                  pressed && { opacity: 0.9 },
-                ]}
-              >
-                <View style={styles.menuRowInner}>
-                  <PaperText style={{ color: theme.colors.onSurface }}>
-                    None
-                  </PaperText>
-                </View>
-              </Pressable>
-
-              {filteredBase.map((item) => (
+            <FlatList
+              keyboardShouldPersistTaps="handled"
+              data={filteredBase}
+              keyExtractor={(item) => item.id.toString()}
+              ListHeaderComponent={
+                <Pressable
+                  onPress={() => {
+                    setBaseIngredientId(null);
+                    setMenuVisible(false);
+                  }}
+                  android_ripple={ripple}
+                  style={({ pressed }) => [
+                    styles.menuRow,
+                    pressed && { opacity: 0.9 },
+                  ]}
+                >
+                  <View style={styles.menuRowInner}>
+                    <PaperText style={{ color: theme.colors.onSurface }}>
+                      None
+                    </PaperText>
+                  </View>
+                </Pressable>
+              }
+              renderItem={({ item }) => (
                 <BaseRow
-                  key={item.id}
                   id={item.id}
                   name={item.name}
                   photoUri={item.photoUri}
@@ -772,8 +776,8 @@ export default function EditIngredientScreen() {
                     setMenuVisible(false);
                   }}
                 />
-              ))}
-            </ScrollView>
+              )}
+            />
           </View>
         </Menu>
 
