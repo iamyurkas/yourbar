@@ -49,6 +49,7 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -240,9 +241,13 @@ export default function EditIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = normalizeSearch(deferredQuery);
-    if (!q) return baseList;
-    return baseList.filter((i) => i.searchName.includes(q));
+    const tokens = normalizeSearch(deferredQuery)
+      .split(WORD_SPLIT_RE)
+      .filter(Boolean);
+    if (tokens.length === 0) return baseList;
+    return baseList.filter((i) =>
+      wordPrefixMatch(i.searchTokens || [], tokens)
+    );
   }, [baseList, deferredQuery]);
 
   // --- dirty tracking (як в EditCocktailScreen) ---
@@ -421,9 +426,12 @@ export default function EditIngredientScreen() {
       };
       // оптимістично оновити глобальний список і зберегти оновлені дані
       setGlobalIngredients((list) => {
+        const searchName = normalizeSearch(updated.name);
+        const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
         const next = updateIngredientById(list, {
           ...updated,
-          searchName: normalizeSearch(updated.name),
+          searchName,
+          searchTokens,
         }).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );

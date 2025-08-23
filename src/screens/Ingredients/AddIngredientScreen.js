@@ -42,6 +42,7 @@ import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 
 
 
@@ -177,9 +178,13 @@ export default function AddIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = normalizeSearch(deferredQuery);
-    if (!q) return baseIngredients;
-    return baseIngredients.filter((i) => i.searchName.includes(q));
+    const tokens = normalizeSearch(deferredQuery)
+      .split(WORD_SPLIT_RE)
+      .filter(Boolean);
+    if (tokens.length === 0) return baseIngredients;
+    return baseIngredients.filter((i) =>
+      wordPrefixMatch(i.searchTokens || [], tokens)
+    );
     // Note: baseIngredients already sorted
   }, [baseIngredients, deferredQuery]);
 
@@ -357,9 +362,12 @@ export default function AddIngredientScreen() {
       createdAt: Date.now(),
       inBar: false,
     };
+    const searchName = normalizeSearch(newIng.name);
+    const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
     const enriched = {
       ...newIng,
-      searchName: normalizeSearch(newIng.name),
+      searchName,
+      searchTokens,
       usageCount: 0,
       singleCocktailName: null,
     };
