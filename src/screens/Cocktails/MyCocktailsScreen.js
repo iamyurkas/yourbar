@@ -253,20 +253,22 @@ export default function MyCocktailsScreen() {
 
   const toggleShoppingList = useCallback(
     (id) => {
+      let newValue = false;
       setIngredients((prev) => {
         const item = prev.find((i) => String(i.id) === String(id));
         if (!item) return prev;
-        const updated = { ...item, inShoppingList: !item.inShoppingList };
+        newValue = !item.inShoppingList;
+        const updated = { ...item, inShoppingList: newValue };
         const next = updateIngredientById(prev, updated);
         saveIngredient(next).catch(() => {});
-        setGlobalIngredients((list) =>
-          updateIngredientById(list, {
-            id,
-            inShoppingList: updated.inShoppingList,
-          })
-        );
         return next;
       });
+      setGlobalIngredients((list) =>
+        updateIngredientById(list, {
+          id,
+          inShoppingList: newValue,
+        })
+      );
     },
     [setGlobalIngredients]
   );
