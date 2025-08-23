@@ -2046,6 +2046,7 @@ const styles = StyleSheet.create({
   mediaImg: {
     width: "100%",
     height: "100%",
+    backgroundColor: "#fff",
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },

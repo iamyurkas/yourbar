@@ -2181,6 +2181,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "contain",
+    backgroundColor: "#fff",
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },

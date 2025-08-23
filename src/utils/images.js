@@ -7,7 +7,7 @@ export async function resizeImage(uri, maxSize = 150) {
     const result = await ImageManipulator.manipulateAsync(
       uri,
       [resizeAction],
-      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      { compress: 0.7, format: ImageManipulator.SaveFormat.PNG }
     );
     return result.uri;
   } catch (e) {
