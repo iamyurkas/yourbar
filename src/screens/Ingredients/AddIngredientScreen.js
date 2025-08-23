@@ -32,7 +32,7 @@ import {
   CommonActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
-import { HeaderBackButton } from "@react-navigation/elements";
+import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
@@ -120,6 +120,7 @@ export default function AddIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const headerHeight = useHeaderHeight();
   const { getTab } = useTabMemory();
   const {
     ingredients: globalIngredients = [],
@@ -436,13 +437,13 @@ export default function AddIngredientScreen() {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
       setAnchorWidth(w);
-      setMenuAnchor({ x, y: y + h });
+      setMenuAnchor({ x, y: headerHeight });
       setMenuVisible(true);
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
     });
-  }, []);
+  }, [headerHeight]);
 
   /* ---------- Render ---------- */
   return (
