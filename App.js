@@ -34,12 +34,7 @@ const RootStack = createNativeStackNavigator();
 const ShakerStack = createNativeStackNavigator();
 
 function InitialDataLoader({ children }) {
-  const { loading, refresh } = useIngredientsData();
-  useEffect(() => {
-    if (loading) {
-      refresh();
-    }
-  }, [loading, refresh]);
+  useIngredientsData();
   return children;
 }
 
