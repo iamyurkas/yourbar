@@ -181,7 +181,8 @@ export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
   const { id, backToIngredientId } = useRoute().params;
   const theme = useTheme();
-  const { ingredients: globalIngredients = [] } = useIngredientUsage();
+  const { ingredients: globalIngredients = [], setCocktails } =
+    useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(null);
   const [ingMap, setIngMap] = useState(new Map());
@@ -213,10 +214,13 @@ export default function CocktailDetailsScreen() {
       if (!cocktail) return;
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
-      setCocktail(updated);
-      await saveCocktail(updated);
+      const saved = await saveCocktail(updated);
+      setCocktail(saved);
+      setCocktails((prev) =>
+        prev.map((c) => (c.id === saved.id ? saved : c))
+      );
     },
-    [cocktail]
+    [cocktail, setCocktails]
   );
 
   useLayoutEffect(() => {

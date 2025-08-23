@@ -2,9 +2,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const INGREDIENTS_KEY = "ingredients";
 
-export async function getAllIngredients() {
+let cache = null;
+let flushTimer = null;
+const FLUSH_DELAY = 500;
+
+async function loadCache() {
+  if (cache) return cache;
   const json = await AsyncStorage.getItem(INGREDIENTS_KEY);
-  return json ? JSON.parse(json) : [];
+  cache = json ? JSON.parse(json) : [];
+  return cache;
+}
+
+function scheduleFlush() {
+  if (flushTimer) return;
+  flushTimer = setTimeout(async () => {
+    flushTimer = null;
+    try {
+      await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(cache));
+    } catch (e) {
+      console.warn("Failed to flush ingredients", e);
+    }
+  }, FLUSH_DELAY);
+}
+
+export async function getAllIngredients() {
+  return await loadCache();
 }
 
 export function buildIndex(list) {
@@ -15,7 +37,8 @@ export function buildIndex(list) {
 }
 
 export async function saveAllIngredients(ingredients) {
-  await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
+  cache = [...ingredients];
+  scheduleFlush();
 }
 
 export function updateIngredientById(list, updated) {
@@ -27,7 +50,8 @@ export function updateIngredientById(list, updated) {
 }
 
 export async function saveIngredient(updatedList) {
-  await saveAllIngredients(updatedList);
+  cache = [...updatedList];
+  scheduleFlush();
 }
 
 export function addIngredient(list, ingredient) {

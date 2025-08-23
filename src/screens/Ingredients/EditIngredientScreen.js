@@ -132,6 +132,7 @@ export default function EditIngredientScreen() {
     setUsageMap,
     ingredientsById,
     ingredients: globalIngredients = [],
+    baseIngredients = [],
   } = useIngredientUsage();
   const currentId = route.params?.id;
 
@@ -371,17 +372,16 @@ export default function EditIngredientScreen() {
   }, [isFocused, currentId, loadAvailableTags, ingredientsById]);
 
   // lazy-load bases (exclude current ingredient)
-  const loadBases = useCallback(
-    async (refresh = false) => {
-      if (basesLoaded || loadingBases) return;
-      setLoadingBases(true);
-      try {
-        await InteractionManager.runAfterInteractions();
+  const loadBases = useCallback(async () => {
+    if (basesLoaded || loadingBases) return;
+    setLoadingBases(true);
+    try {
+      await InteractionManager.runAfterInteractions();
+      let list = baseIngredients.filter((i) => i.id !== currentId);
+      if (!list.length) {
         const ingredients =
-          !refresh && globalIngredients.length
-            ? globalIngredients
-            : await getAllIngredients();
-        const baseOnly = ingredients
+          globalIngredients.length ? globalIngredients : await getAllIngredients();
+        list = ingredients
           .filter((i) => i.baseIngredientId == null && i.id !== currentId)
           .sort((a, b) =>
             a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
@@ -392,15 +392,14 @@ export default function EditIngredientScreen() {
             photoUri: i.photoUri || null,
             searchName: normalizeSearch(i.name || ""),
           }));
-        if (!isMountedRef.current) return;
-        setBaseOnlySorted(baseOnly);
-        setBasesLoaded(true);
-      } finally {
-        if (isMountedRef.current) setLoadingBases(false);
       }
-    },
-    [basesLoaded, loadingBases, currentId, globalIngredients]
-  );
+      if (!isMountedRef.current) return;
+      setBaseOnlySorted(list);
+      setBasesLoaded(true);
+    } finally {
+      if (isMountedRef.current) setLoadingBases(false);
+    }
+  }, [basesLoaded, loadingBases, baseIngredients, globalIngredients, currentId]);
 
   // префетч баз
   useEffect(() => {

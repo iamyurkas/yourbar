@@ -27,7 +27,10 @@ import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/CocktailRow";
-import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import {
+  useIngredientsContext,
+  useCocktailsContext,
+} from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 
 export default function AllCocktailsScreen() {
@@ -48,8 +51,8 @@ export default function AllCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
-    useIngredientUsage();
+  const { ingredients: globalIngredients = [] } = useIngredientsContext();
+  const { cocktails: globalCocktails = [] } = useCocktailsContext();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "All");
@@ -116,7 +119,7 @@ export default function AllCocktailsScreen() {
       );
     const q = normalizeSearch(searchDebounced);
     let list = cocktails;
-    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
+    if (q) list = list.filter((c) => c.searchName.includes(q));
     if (selectedTagIds.length > 0)
       list = list.filter(
         (c) =>

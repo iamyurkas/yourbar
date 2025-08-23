@@ -11,6 +11,8 @@ import { getAllCocktailTags } from "../storage/cocktailTagsStorage";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
 } from "../storage/settingsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 
@@ -22,6 +24,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,13 +40,21 @@ export default function ShakerResultsScreen({ route, navigation }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const allow = await getAllowSubstitutes();
-      if (!cancelled) setAllowSubstitutes(!!allow);
+      const [allow, ig] = await Promise.all([
+        getAllowSubstitutes(),
+        getIgnoreGarnish(),
+      ]);
+      if (!cancelled) {
+        setAllowSubstitutes(!!allow);
+        setIgnoreGarnish(!!ig);
+      }
     })();
-    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    const subAllow = addAllowSubstitutesListener(setAllowSubstitutes);
+    const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     return () => {
       cancelled = true;
-      sub.remove();
+      subAllow.remove();
+      subIg.remove();
     };
   }, []);
 
@@ -64,7 +75,9 @@ export default function ShakerResultsScreen({ route, navigation }) {
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
     const mapped = list.map((c) => {
-      const required = (c.ingredients || []).filter((r) => !r.optional);
+      const required = (c.ingredients || []).filter(
+        (r) => !r.optional && !(ignoreGarnish && r.garnish)
+      );
       const missing = [];
       const ingredientNames = [];
       let branded = false;
@@ -135,6 +148,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
     search,
     selectedTagIds,
     allowSubstitutes,
+    ignoreGarnish,
   ]);
 
   if (loading) {
