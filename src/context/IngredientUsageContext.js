@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import { InteractionManager } from "react-native";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { buildIndex } from "../storage/ingredientsStorage";
 
@@ -13,6 +21,7 @@ const IngredientUsageContext = createContext({
   setCocktails: () => {},
   loading: true,
   setLoading: () => {},
+  baseIngredients: [],
 });
 
 export function IngredientUsageProvider({ children }) {
@@ -21,6 +30,7 @@ export function IngredientUsageProvider({ children }) {
   const [ingredientsById, setIngredientsById] = useState({});
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [baseIngredients, setBaseIngredients] = useState([]);
 
   const setIngredients = useCallback((next) => {
     setIngredientsState((prev) => {
@@ -39,6 +49,41 @@ export function IngredientUsageProvider({ children }) {
     []
   );
 
+  const baseRef = useRef([]);
+
+  useEffect(() => {
+    const nextBaseList = ingredients.filter(
+      (i) => i.baseIngredientId == null
+    );
+    const prev = baseRef.current;
+    let changed = prev.length !== nextBaseList.length;
+    if (!changed) {
+      for (let idx = 0; idx < nextBaseList.length; idx++) {
+        const p = prev[idx];
+        const n = nextBaseList[idx];
+        if (p.id !== n.id || p.name !== n.name) {
+          changed = true;
+          break;
+        }
+      }
+    }
+    if (!changed) return;
+    baseRef.current = nextBaseList.map(({ id, name }) => ({ id, name }));
+    let cancelled = false;
+    InteractionManager.runAfterInteractions(() => {
+      if (cancelled) return;
+      const sorted = [...nextBaseList].sort((a, b) =>
+        (a.name || "").localeCompare(b.name || "", "uk", {
+          sensitivity: "base",
+        })
+      );
+      setBaseIngredients(sorted);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [ingredients]);
+
   return (
     <IngredientUsageContext.Provider
       value={{
@@ -52,6 +97,7 @@ export function IngredientUsageProvider({ children }) {
         setCocktails,
         loading,
         setLoading,
+        baseIngredients,
       }}
     >
       {children}

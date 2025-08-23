@@ -40,7 +40,6 @@ import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   deleteIngredient,
-  getAllIngredients,
   updateIngredientById,
   saveAllIngredients,
 } from "../../storage/ingredientsStorage";
@@ -50,6 +49,7 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -128,12 +128,11 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
-  const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const {
-    setUsageMap,
-    ingredientsById,
-    ingredients: globalIngredients = [],
-  } = useIngredientUsage();
+    setIngredients: setGlobalIngredients,
+    baseIngredients = [],
+  } = useIngredientsData();
+  const { setUsageMap, ingredientsById } = useIngredientUsage();
   const currentId = route.params?.id;
 
   // entity + form state
@@ -165,16 +164,15 @@ export default function EditIngredientScreen() {
     setTagsModalVisible(true);
   };
 
-  // base list (lazy) — кешуємо searchName для швидкого фільтру
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]); // {id,name,photoUri,searchName}
-  const [basesLoaded, setBasesLoaded] = useState(false);
-  const [loadingBases, setLoadingBases] = useState(false);
-
   // base link
   const [baseIngredientId, setBaseIngredientId] = useState(null);
+  const baseList = useMemo(
+    () => baseIngredients.filter((i) => i.id !== currentId),
+    [baseIngredients, currentId]
+  );
   const selectedBase = useMemo(
-    () => baseOnlySorted.find((i) => i.id === baseIngredientId),
-    [baseOnlySorted, baseIngredientId]
+    () => baseList.find((i) => i.id === baseIngredientId),
+    [baseList, baseIngredientId]
   );
 
   // anchored menu
@@ -243,10 +241,14 @@ export default function EditIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = normalizeSearch(deferredQuery);
-    if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.searchName.includes(q));
-  }, [baseOnlySorted, deferredQuery]);
+    const tokens = normalizeSearch(deferredQuery)
+      .split(WORD_SPLIT_RE)
+      .filter(Boolean);
+    if (tokens.length === 0) return baseList;
+    return baseList.filter((i) =>
+      wordPrefixMatch(i.searchTokens || [], tokens)
+    );
+  }, [baseList, deferredQuery]);
 
   // --- dirty tracking (як в EditCocktailScreen) ---
   const [dirty, setDirty] = useState(false);
@@ -371,46 +373,6 @@ export default function EditIngredientScreen() {
     };
   }, [isFocused, currentId, loadAvailableTags, ingredientsById]);
 
-  // lazy-load bases (exclude current ingredient)
-  const loadBases = useCallback(
-    async (refresh = false) => {
-      if (basesLoaded || loadingBases) return;
-      setLoadingBases(true);
-      try {
-        await InteractionManager.runAfterInteractions();
-        const ingredients =
-          !refresh && globalIngredients.length
-            ? globalIngredients
-            : await getAllIngredients();
-        const baseOnly = ingredients
-          .filter((i) => i.baseIngredientId == null && i.id !== currentId)
-          .sort((a, b) =>
-            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-          )
-          .map((i) => ({
-            id: i.id,
-            name: i.name,
-            photoUri: i.photoUri || null,
-            searchName: normalizeSearch(i.name || ""),
-          }));
-        if (!isMountedRef.current) return;
-        setBaseOnlySorted(baseOnly);
-        setBasesLoaded(true);
-      } finally {
-        if (isMountedRef.current) setLoadingBases(false);
-      }
-    },
-    [basesLoaded, loadingBases, currentId, globalIngredients]
-  );
-
-  // префетч баз
-  useEffect(() => {
-    if (!isFocused) return;
-    const t = setTimeout(() => {
-      if (!basesLoaded && !loadingBases) loadBases().catch(() => {});
-    }, 500);
-    return () => clearTimeout(t);
-  }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
   // toggleTag через id
   const toggleTagById = useCallback(
@@ -464,9 +426,12 @@ export default function EditIngredientScreen() {
       };
       // оптимістично оновити глобальний список і зберегти оновлені дані
       setGlobalIngredients((list) => {
+        const searchName = normalizeSearch(updated.name);
+        const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
         const next = updateIngredientById(list, {
           ...updated,
-          searchName: normalizeSearch(updated.name),
+          searchName,
+          searchTokens,
         }).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );
@@ -535,12 +500,11 @@ export default function EditIngredientScreen() {
       setAnchorWidth(w);
       setMenuAnchor({ x, y: y + h });
       setMenuVisible(true);
-      loadBases();
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
     });
-  }, [loadBases]);
+  }, []);
 
   // позначати dirty при будь-якій зміні полів (після ініціалізації)
   useEffect(() => {
@@ -731,11 +695,7 @@ export default function EditIngredientScreen() {
                     : theme.colors.onSurfaceVariant,
                 }}
               >
-                {selectedBase
-                  ? selectedBase.name
-                  : basesLoaded
-                  ? "None"
-                  : "(loading...)"}
+                {selectedBase ? selectedBase.name : "None"}
               </PaperText>
             </View>
           </Pressable>
@@ -770,64 +730,47 @@ export default function EditIngredientScreen() {
           </View>
           <Divider />
 
-          {loadingBases ? (
-            <View
-              style={{
-                height: 120,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator color={theme.colors.primary} />
-              <Text
-                style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}
+          <View
+            style={{
+              maxHeight: Math.min(
+                300,
+                MENU_ROW_HEIGHT * (filteredBase.length + 1)
+              ),
+            }}
+          >
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Pressable
+                onPress={() => {
+                  setBaseIngredientId(null);
+                  setMenuVisible(false);
+                }}
+                android_ripple={ripple}
+                style={({ pressed }) => [
+                  styles.menuRow,
+                  pressed && { opacity: 0.9 },
+                ]}
               >
-                Loading...
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                maxHeight: Math.min(
-                  300,
-                  MENU_ROW_HEIGHT * (filteredBase.length + 1)
-                ),
-              }}
-            >
-              <ScrollView keyboardShouldPersistTaps="handled">
-                <Pressable
-                  onPress={() => {
-                    setBaseIngredientId(null);
+                <View style={styles.menuRowInner}>
+                  <PaperText style={{ color: theme.colors.onSurface }}>
+                    None
+                  </PaperText>
+                </View>
+              </Pressable>
+
+              {filteredBase.map((item) => (
+                <BaseRow
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  photoUri={item.photoUri}
+                  onSelect={(id) => {
+                    setBaseIngredientId(id);
                     setMenuVisible(false);
                   }}
-                  android_ripple={ripple}
-                  style={({ pressed }) => [
-                    styles.menuRow,
-                    pressed && { opacity: 0.9 },
-                  ]}
-                >
-                  <View style={styles.menuRowInner}>
-                    <PaperText style={{ color: theme.colors.onSurface }}>
-                      None
-                    </PaperText>
-                  </View>
-                </Pressable>
-
-                {filteredBase.map((item) => (
-                  <BaseRow
-                    key={item.id}
-                    id={item.id}
-                    name={item.name}
-                    photoUri={item.photoUri}
-                    onSelect={(id) => {
-                      setBaseIngredientId(id);
-                      setMenuVisible(false);
-                    }}
-                  />
-                ))}
-              </ScrollView>
-            </View>
-          )}
+                />
+              ))}
+            </ScrollView>
+          </View>
         </Menu>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>

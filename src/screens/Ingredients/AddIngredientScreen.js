@@ -18,7 +18,6 @@ import {
   ScrollView,
   Alert,
   InteractionManager,
-  ActivityIndicator,
   Pressable,
   BackHandler,
   Dimensions,
@@ -37,16 +36,13 @@ import { HeaderBackButton } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
-import {
-  addIngredient,
-  getAllIngredients,
-  saveAllIngredients,
-} from "../../storage/ingredientsStorage";
+import { addIngredient, saveAllIngredients } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 
 
 
@@ -125,8 +121,11 @@ export default function AddIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { ingredients: globalIngredients = [], setIngredients: setGlobalIngredients } =
-    useIngredientsData();
+  const {
+    ingredients: globalIngredients = [],
+    setIngredients: setGlobalIngredients,
+    baseIngredients = [],
+  } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
 
   // read incoming params
@@ -167,15 +166,11 @@ export default function AddIngredientScreen() {
     setTagsModalVisible(true);
   };
 
-  // base list
-  const [baseOnlySorted, setBaseOnlySorted] = useState([]);
-  const [basesLoaded, setBasesLoaded] = useState(false);
-  const [loadingBases, setLoadingBases] = useState(false);
-
+  // base ingredient link
   const [baseIngredientId, setBaseIngredientId] = useState(null);
   const selectedBase = useMemo(
-    () => baseOnlySorted.find((i) => i.id === baseIngredientId),
-    [baseOnlySorted, baseIngredientId]
+    () => baseIngredients.find((i) => i.id === baseIngredientId),
+    [baseIngredients, baseIngredientId]
   );
 
   // search in base menu
@@ -183,10 +178,15 @@ export default function AddIngredientScreen() {
   const debouncedQuery = useDebounced(baseIngredientSearch, 250);
   const deferredQuery = useDeferredValue(debouncedQuery);
   const filteredBase = useMemo(() => {
-    const q = normalizeSearch(deferredQuery);
-    if (!q) return baseOnlySorted;
-    return baseOnlySorted.filter((i) => i.searchName.includes(q));
-  }, [baseOnlySorted, deferredQuery]);
+    const tokens = normalizeSearch(deferredQuery)
+      .split(WORD_SPLIT_RE)
+      .filter(Boolean);
+    if (tokens.length === 0) return baseIngredients;
+    return baseIngredients.filter((i) =>
+      wordPrefixMatch(i.searchTokens || [], tokens)
+    );
+    // Note: baseIngredients already sorted
+  }, [baseIngredients, deferredQuery]);
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -194,7 +194,6 @@ export default function AddIngredientScreen() {
   const [anchorWidth, setAnchorWidth] = useState(0);
   const anchorRef = useRef(null);
   const searchInputRef = useRef(null);
-  const isMountedRef = useRef(true);
 
   // scrolling helpers
   const scrollRef = useRef(null);
@@ -304,13 +303,6 @@ export default function AddIngredientScreen() {
 
   /* ---------- Lifecycle ---------- */
   useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
     if (isFocused) {
       setName(initialNameParam);
     }
@@ -320,47 +312,6 @@ export default function AddIngredientScreen() {
     if (!isFocused) return;
     loadAvailableTags();
   }, [isFocused, loadAvailableTags]);
-
-  const loadBases = useCallback(
-    async (refresh = false) => {
-      if (basesLoaded || loadingBases) return;
-      setLoadingBases(true);
-      try {
-        await InteractionManager.runAfterInteractions();
-        const ingredients =
-          !refresh && globalIngredients.length
-            ? globalIngredients
-            : await getAllIngredients();
-        const baseOnly = ingredients
-        .filter((i) => i.baseIngredientId == null)
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-        )
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          photoUri: i.photoUri || null,
-          searchName: normalizeSearch(i.name || ""),
-        }));
-      if (!isMountedRef.current) return;
-      setBaseOnlySorted(baseOnly);
-      setBasesLoaded(true);
-      } finally {
-        if (isMountedRef.current) setLoadingBases(false);
-      }
-    },
-    [basesLoaded, loadingBases, globalIngredients]
-  );
-
-  useEffect(() => {
-    if (!isFocused) return;
-    const t = setTimeout(() => {
-      if (!basesLoaded && !loadingBases) {
-        loadBases().catch(() => {});
-      }
-    }, 500);
-    return () => clearTimeout(t);
-  }, [isFocused, basesLoaded, loadingBases, loadBases]);
 
   /* ---------- UI handlers ---------- */
   const toggleTagById = useCallback(
@@ -411,9 +362,12 @@ export default function AddIngredientScreen() {
       createdAt: Date.now(),
       inBar: false,
     };
+    const searchName = normalizeSearch(newIng.name);
+    const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
     const enriched = {
       ...newIng,
-      searchName: normalizeSearch(newIng.name),
+      searchName,
+      searchTokens,
       usageCount: 0,
       singleCocktailName: null,
     };
@@ -484,12 +438,11 @@ export default function AddIngredientScreen() {
       setAnchorWidth(w);
       setMenuAnchor({ x, y: y + h });
       setMenuVisible(true);
-      loadBases();
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
     });
-  }, [loadBases]);
+  }, []);
 
   /* ---------- Render ---------- */
   return (
@@ -652,11 +605,7 @@ export default function AddIngredientScreen() {
                     : theme.colors.onSurfaceVariant,
                 }}
               >
-                {selectedBase
-                  ? selectedBase.name
-                  : basesLoaded
-                  ? "None"
-                  : "(loading...)"}
+                {selectedBase ? selectedBase.name : "None"}
               </PaperText>
             </View>
           </Pressable>
@@ -691,62 +640,45 @@ export default function AddIngredientScreen() {
           </View>
           <Divider />
 
-          {loadingBases ? (
-            <View
-              style={{
-                height: 120,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator />
-              <Text
-                style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}
+          <View
+            style={{
+              maxHeight: Math.min(
+                300,
+                MENU_ROW_HEIGHT * (filteredBase.length + 1)
+              ),
+            }}
+          >
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Pressable
+                onPress={() => {
+                  setBaseIngredientId(null);
+                  setMenuVisible(false);
+                }}
+                android_ripple={RIPPLE}
+                style={({ pressed }) => [
+                  styles.menuRow,
+                  pressed && { opacity: 0.96 },
+                ]}
               >
-                Loading...
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                maxHeight: Math.min(
-                  300,
-                  MENU_ROW_HEIGHT * (filteredBase.length + 1)
-                ),
-              }}
-            >
-              <ScrollView keyboardShouldPersistTaps="handled">
-                <Pressable
-                  onPress={() => {
-                    setBaseIngredientId(null);
+                <View style={styles.menuRowInner}>
+                  <PaperText>None</PaperText>
+                </View>
+              </Pressable>
+
+              {filteredBase.map((item) => (
+                <BaseRow
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  photoUri={item.photoUri}
+                  onSelect={(id) => {
+                    setBaseIngredientId(id);
                     setMenuVisible(false);
                   }}
-                  android_ripple={RIPPLE}
-                  style={({ pressed }) => [
-                    styles.menuRow,
-                    pressed && { opacity: 0.96 },
-                  ]}
-                >
-                  <View style={styles.menuRowInner}>
-                    <PaperText>None</PaperText>
-                  </View>
-                </Pressable>
-
-                {filteredBase.map((item) => (
-                  <BaseRow
-                    key={item.id}
-                    id={item.id}
-                    name={item.name}
-                    photoUri={item.photoUri}
-                    onSelect={(id) => {
-                      setBaseIngredientId(id);
-                      setMenuVisible(false);
-                    }}
-                  />
-                ))}
-              </ScrollView>
-            </View>
-          )}
+                />
+              ))}
+            </ScrollView>
+          </View>
         </Menu>
 
         <Text style={[styles.label, { color: theme.colors.onBackground }]}>

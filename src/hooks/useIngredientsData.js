@@ -4,6 +4,7 @@ import { getAllCocktails } from "../storage/cocktailsStorage";
 import { importCocktailsAndIngredients } from "../../scripts/importCocktailsAndIngredients";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import IngredientUsageContext from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
@@ -20,6 +21,7 @@ export default function useIngredientsData() {
     setUsageMap,
     loading,
     setLoading,
+    baseIngredients,
   } = useContext(IngredientUsageContext);
 
   const load = useCallback(async () => {
@@ -40,10 +42,14 @@ export default function useIngredientsData() {
     const withUsage = sorted.map((item) => {
       const ids = map[item.id] || [];
       const usageCount = ids.length;
-      const singleCocktailName = usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+      const singleCocktailName =
+        usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+      const searchName = normalizeSearch(item.name);
+      const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
       return {
         ...item,
-        searchName: normalizeSearch(item.name),
+        searchName,
+        searchTokens,
         usageCount,
         singleCocktailName,
       };
@@ -71,5 +77,13 @@ export default function useIngredientsData() {
     await load();
   }, [load]);
 
-  return { ingredients, cocktails, usageMap, refresh, loading, setIngredients };
+  return {
+    ingredients,
+    baseIngredients,
+    cocktails,
+    usageMap,
+    refresh,
+    loading,
+    setIngredients,
+  };
 }
