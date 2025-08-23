@@ -46,7 +46,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 
 export default function GeneralMenu({ visible, onClose }) {
-  const showExportItems = false;
+  const showExportItems = true;
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
 
   const theme = useTheme();
