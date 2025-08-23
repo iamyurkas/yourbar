@@ -921,7 +921,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-start",
   },
-  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, aspectRatio: 1, resizeMode: "contain" },
+  image: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    aspectRatio: 1,
+    resizeMode: "contain",
+    backgroundColor: "#fff",
+  },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
   tag: {
