@@ -29,6 +29,7 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
+import { resizeImage } from "../../utils/images";
 import {
   useNavigation,
   useRoute,
@@ -1295,7 +1296,10 @@ export default function AddCocktailScreen() {
       allowsEditing: true,
       quality: 0.7,
     });
-    if (!result.canceled) setPhotoUri(result.assets[0].uri);
+    if (!result.canceled) {
+      const resized = await resizeImage(result.assets[0].uri);
+      setPhotoUri(resized);
+    }
   }, []);
 
   const toggleTagById = useCallback(
