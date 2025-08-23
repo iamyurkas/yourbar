@@ -58,6 +58,7 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 150;
 const MENU_ROW_HEIGHT = 56;
+const MENU_TOP_OFFSET = 150;
 
 const withAlpha = (hex, alpha) => {
   if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 9)) return hex;
@@ -437,7 +438,8 @@ export default function AddIngredientScreen() {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
       setAnchorWidth(w);
-      setMenuAnchor({ x, y: headerHeight });
+      const top = Math.max(0, headerHeight - MENU_TOP_OFFSET);
+      setMenuAnchor({ x, y: top });
       setMenuVisible(true);
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
