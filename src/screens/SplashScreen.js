@@ -15,7 +15,7 @@ function getRandomOtherIndex(current) {
   return next;
 }
 
-export default function SplashScreen() {
+export default function SplashScreen({ message }) {
   const [index1, setIndex1] = useState(0);
   const [index2, setIndex2] = useState(1);
   const [index3, setIndex3] = useState(2);
@@ -51,6 +51,7 @@ export default function SplashScreen() {
       </View>
       <Text style={styles.title}>YourBar</Text>
       <Text style={styles.slogan}>Your rules</Text>
+      {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
 }
@@ -78,5 +79,12 @@ const styles = StyleSheet.create({
   slogan: {
     fontSize: 16,
     color: '#555',
+  },
+  message: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    paddingHorizontal: 16,
   },
 });

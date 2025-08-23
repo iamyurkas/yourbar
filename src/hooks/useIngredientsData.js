@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect } from "react";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
-import { importCocktailsAndIngredients } from "../../scripts/importCocktailsAndIngredients";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
@@ -26,6 +25,13 @@ export default function useIngredientsData() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    // Lazy-load heavy default data only when needed
+    console.log(
+      "Importing default data… This one-time operation may take a moment"
+    );
+    const { importCocktailsAndIngredients } = await import(
+      "../../scripts/importCocktailsAndIngredients"
+    );
     await importCocktailsAndIngredients({ force: false });
     const [ing, cocks, allowSubs] = await Promise.all([
       getAllIngredients(),

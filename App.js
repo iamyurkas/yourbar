@@ -4,7 +4,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TabMemoryProvider, useTabMemory } from "./src/context/TabMemoryContext";
-import { IngredientUsageProvider } from "./src/context/IngredientUsageContext";
+import {
+  IngredientUsageProvider,
+  useIngredientUsage,
+} from "./src/context/IngredientUsageContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
@@ -35,6 +38,12 @@ const ShakerStack = createNativeStackNavigator();
 
 function InitialDataLoader({ children }) {
   useIngredientsData();
+  const { loading } = useIngredientUsage();
+  if (loading) {
+    return (
+      <SplashScreen message="Importing default data… This may take a moment" />
+    );
+  }
   return children;
 }
 
