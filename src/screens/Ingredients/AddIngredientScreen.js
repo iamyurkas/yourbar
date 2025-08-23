@@ -195,7 +195,8 @@ export default function AddIngredientScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      setName(route.params?.initialName || "");
+      const initName = route.params?.initialName;
+      setName(initName || "");
       setDescription("");
       setPhotoUri(null);
       setTags(() => {
@@ -204,10 +205,10 @@ export default function AddIngredientScreen() {
       });
       setBaseIngredientId(null);
       setBaseIngredientSearch("");
-      if (route.params?.initialName !== undefined) {
+      if (initName !== undefined) {
         navigation.setParams({ initialName: undefined });
       }
-    }, [navigation, route.params?.initialName])
+    }, [navigation])
   );
 
   // anchored menu
