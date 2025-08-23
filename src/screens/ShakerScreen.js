@@ -19,6 +19,8 @@ import { normalizeSearch } from "../utils/normalizeSearch";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
 } from "../storage/settingsStorage";
 
 export default function ShakerScreen({ navigation }) {
@@ -31,6 +33,7 @@ export default function ShakerScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const [inStockOnly, setInStockOnly] = useState(true);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,13 +112,21 @@ export default function ShakerScreen({ navigation }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const allow = await getAllowSubstitutes();
-      if (!cancelled) setAllowSubstitutes(!!allow);
+      const [allow, ig] = await Promise.all([
+        getAllowSubstitutes(),
+        getIgnoreGarnish(),
+      ]);
+      if (!cancelled) {
+        setAllowSubstitutes(!!allow);
+        setIgnoreGarnish(!!ig);
+      }
     })();
-    const sub = addAllowSubstitutesListener(setAllowSubstitutes);
+    const subAllow = addAllowSubstitutesListener(setAllowSubstitutes);
+    const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     return () => {
       cancelled = true;
-      sub.remove();
+      subAllow.remove();
+      subIg.remove();
     };
   }, []);
 
@@ -186,7 +197,9 @@ export default function ShakerScreen({ navigation }) {
     const ids = [];
     (cocktails || []).forEach((c) => {
       if (!recipeIds.includes(c.id)) return;
-      const required = (c.ingredients || []).filter((r) => !r.optional);
+      const required = (c.ingredients || []).filter(
+        (r) => !r.optional && !(ignoreGarnish && r.garnish)
+      );
       if (required.length === 0) return;
       for (const r of required) {
         if (!isSatisfied(r)) return;
@@ -195,7 +208,7 @@ export default function ShakerScreen({ navigation }) {
     });
 
     return { availableCount: ids.length, availableCocktailIds: ids };
-  }, [recipeIds, cocktails, ingredients, allowSubstitutes]);
+  }, [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]);
 
   const handleClear = () => setSelectedIds([]);
 
