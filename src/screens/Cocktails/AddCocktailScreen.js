@@ -50,8 +50,6 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-
-import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
@@ -60,6 +58,7 @@ import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import useIngredientsData from "../../hooks/useIngredientsData";
 import {
   addCocktailToUsageMap,
   applyUsageMapToIngredients,
@@ -1084,14 +1083,10 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const {
-    ingredients,
-    cocktails,
-    setCocktails,
-    usageMap,
-    setUsageMap,
-    setIngredients,
-  } = useIngredientUsage();
+  const { cocktails, setCocktails, usageMap, setUsageMap } =
+    useIngredientUsage();
+  const { ingredients: globalIngredients = [], setIngredients } =
+    useIngredientsData();
   const initialIngredient = route.params?.initialIngredient;
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
@@ -1227,21 +1222,10 @@ export default function AddCocktailScreen() {
   });
 
   // ingredients for suggestions
-  const [allIngredients, setAllIngredients] = useState([]);
+  const [allIngredients, setAllIngredients] = useState(globalIngredients);
   useEffect(() => {
-    let cancel = false;
-    (async () => {
-      if (ingredients.length) {
-        if (!cancel) setAllIngredients(ingredients);
-      } else {
-        const list = await getAllIngredients();
-        if (!cancel) setAllIngredients(Array.isArray(list) ? list : []);
-      }
-    })();
-    return () => {
-      cancel = true;
-    };
-  }, [ingredients]);
+    setAllIngredients(globalIngredients);
+  }, [globalIngredients]);
 
   // SUBSTITUTE MODAL STATE
   const [subModal, setSubModal] = useState({
@@ -1451,7 +1435,7 @@ export default function AddCocktailScreen() {
       })
     );
 
-    const cocktail = {
+  const cocktail = {
       id: Date.now(),
       name: title,
       photoUri: photoUri || null,
@@ -1478,11 +1462,18 @@ export default function AddCocktailScreen() {
     const nextCocktails = [...cocktails, created];
     setCocktails(nextCocktails);
     const allowSubs = await getAllowSubstitutes();
-    const nextUsage = addCocktailToUsageMap(usageMap, ingredients, created, {
-      allowSubstitutes: !!allowSubs,
-    });
+    const nextUsage = addCocktailToUsageMap(
+      usageMap,
+      globalIngredients,
+      created,
+      {
+        allowSubstitutes: !!allowSubs,
+      }
+    );
     setUsageMap(nextUsage);
-    setIngredients(applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails));
+    setIngredients(
+      applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
+    );
     if (fromIngredientFlow) {
       navigation.replace("CocktailDetails", {
         id: created.id,
@@ -1501,7 +1492,7 @@ export default function AddCocktailScreen() {
     ings,
     cocktails,
     usageMap,
-    ingredients,
+    globalIngredients,
     setCocktails,
     setUsageMap,
     setIngredients,

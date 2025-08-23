@@ -48,8 +48,6 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-
-import { getAllIngredients } from "../../storage/ingredientsStorage";
 import {
   getCocktailById,
   saveCocktail,
@@ -63,6 +61,7 @@ import { GLASSWARE, getGlassById } from "../../constants/glassware";
 import CocktailTagsModal from "../../components/CocktailTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import useIngredientsData from "../../hooks/useIngredientsData";
 import {
   addCocktailToUsageMap,
   removeCocktailFromUsageMap,
@@ -1091,14 +1090,10 @@ export default function EditCocktailScreen() {
   const route = useRoute();
   const params = route.params || {};
   const cocktailId = params?.id;
-  const {
-    ingredients,
-    cocktails,
-    setCocktails,
-    usageMap,
-    setUsageMap,
-    setIngredients,
-  } = useIngredientUsage();
+  const { cocktails, setCocktails, usageMap, setUsageMap } =
+    useIngredientUsage();
+  const { ingredients: globalIngredients = [], setIngredients } =
+    useIngredientsData();
 
   const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
@@ -1136,7 +1131,7 @@ export default function EditCocktailScreen() {
   const [instructions, setInstructions] = useState("");
   const [glassId, setGlassId] = useState("cocktail_glass");
   const [ings, setIngs] = useState([]);
-  const [allIngredients, setAllIngredients] = useState([]);
+  const [allIngredients, setAllIngredients] = useState(globalIngredients);
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [pendingNav, setPendingNav] = useState(null);
@@ -1228,15 +1223,29 @@ export default function EditCocktailScreen() {
       );
       setCocktails(nextCocktails);
       const allowSubs = await getAllowSubstitutes();
-      let nextUsage = removeCocktailFromUsageMap(usageMap, ingredients, prev, {
-        allowSubstitutes: !!allowSubs,
-      });
-      nextUsage = addCocktailToUsageMap(nextUsage, ingredients, updated, {
-        allowSubstitutes: !!allowSubs,
-      });
+      let nextUsage = removeCocktailFromUsageMap(
+        usageMap,
+        globalIngredients,
+        prev,
+        {
+          allowSubstitutes: !!allowSubs,
+        }
+      );
+      nextUsage = addCocktailToUsageMap(
+        nextUsage,
+        globalIngredients,
+        updated,
+        {
+          allowSubstitutes: !!allowSubs,
+        }
+      );
       setUsageMap(nextUsage);
       setIngredients(
-        applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
+        applyUsageMapToIngredients(
+          globalIngredients,
+          nextUsage,
+          nextCocktails
+        )
       );
       initialHashRef.current = serialize();
       setDirty(false);
@@ -1259,7 +1268,7 @@ export default function EditCocktailScreen() {
       serialize,
       cocktails,
       usageMap,
-      ingredients,
+      globalIngredients,
       setCocktails,
       setUsageMap,
       setIngredients,
@@ -1301,19 +1310,8 @@ export default function EditCocktailScreen() {
   }, [navigation, handleDelete, theme.colors.onSurface]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (ingredients.length) {
-        if (mounted) setAllIngredients(ingredients);
-      } else {
-        const list = await getAllIngredients();
-        if (mounted) setAllIngredients(Array.isArray(list) ? list : []);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [ingredients]);
+    setAllIngredients(globalIngredients);
+  }, [globalIngredients]);
 
   useEffect(() => {
     const hw = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -1537,10 +1535,6 @@ export default function EditCocktailScreen() {
       const created = params?.createdIngredient;
       const targetLocalId = params?.targetLocalId;
       if (!created || targetLocalId == null) return;
-
-      setAllIngredients((prev) =>
-        prev.some((i) => i.id === created.id) ? prev : [...prev, created]
-      );
 
       setIngs((prev) =>
         prev.map((r) =>
@@ -2053,13 +2047,17 @@ export default function EditCocktailScreen() {
           const allowSubs = await getAllowSubstitutes();
           const nextUsage = removeCocktailFromUsageMap(
             usageMap,
-            ingredients,
+            globalIngredients,
             prev,
             { allowSubstitutes: !!allowSubs }
           );
           setUsageMap(nextUsage);
           setIngredients(
-            applyUsageMapToIngredients(ingredients, nextUsage, nextCocktails)
+            applyUsageMapToIngredients(
+              globalIngredients,
+              nextUsage,
+              nextCocktails
+            )
           );
           navigation.popToTop();
           setConfirmDelete(false);
