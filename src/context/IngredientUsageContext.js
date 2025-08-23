@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { InteractionManager } from "react-native";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { buildIndex } from "../storage/ingredientsStorage";
 
@@ -13,6 +20,7 @@ const IngredientUsageContext = createContext({
   setCocktails: () => {},
   loading: true,
   setLoading: () => {},
+  baseIngredients: [],
 });
 
 export function IngredientUsageProvider({ children }) {
@@ -21,6 +29,7 @@ export function IngredientUsageProvider({ children }) {
   const [ingredientsById, setIngredientsById] = useState({});
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [baseIngredients, setBaseIngredients] = useState([]);
 
   const setIngredients = useCallback((next) => {
     setIngredientsState((prev) => {
@@ -39,6 +48,24 @@ export function IngredientUsageProvider({ children }) {
     []
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    InteractionManager.runAfterInteractions(() => {
+      if (cancelled) return;
+      const baseList = ingredients
+        .filter((i) => i.baseIngredientId == null)
+        .sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "", "uk", {
+            sensitivity: "base",
+          })
+        );
+      setBaseIngredients(baseList);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [ingredients]);
+
   return (
     <IngredientUsageContext.Provider
       value={{
@@ -52,6 +79,7 @@ export function IngredientUsageProvider({ children }) {
         setCocktails,
         loading,
         setLoading,
+        baseIngredients,
       }}
     >
       {children}

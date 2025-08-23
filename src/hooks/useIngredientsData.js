@@ -20,6 +20,7 @@ export default function useIngredientsData() {
     setUsageMap,
     loading,
     setLoading,
+    baseIngredients,
   } = useContext(IngredientUsageContext);
 
   const load = useCallback(async () => {
@@ -71,5 +72,13 @@ export default function useIngredientsData() {
     await load();
   }, [load]);
 
-  return { ingredients, cocktails, usageMap, refresh, loading, setIngredients };
+  return {
+    ingredients,
+    baseIngredients,
+    cocktails,
+    usageMap,
+    refresh,
+    loading,
+    setIngredients,
+  };
 }
