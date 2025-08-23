@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { InteractionManager } from "react-native";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { buildIndex } from "../storage/ingredientsStorage";
 
@@ -69,19 +68,12 @@ export function IngredientUsageProvider({ children }) {
     }
     if (!changed) return;
     baseRef.current = nextBaseList.map(({ id, name }) => ({ id, name }));
-    let cancelled = false;
-    InteractionManager.runAfterInteractions(() => {
-      if (cancelled) return;
-      const sorted = [...nextBaseList].sort((a, b) =>
-        (a.name || "").localeCompare(b.name || "", "uk", {
-          sensitivity: "base",
-        })
-      );
-      setBaseIngredients(sorted);
-    });
-    return () => {
-      cancelled = true;
-    };
+    const sorted = [...nextBaseList].sort((a, b) =>
+      (a.name || "").localeCompare(b.name || "", "uk", {
+        sensitivity: "base",
+      })
+    );
+    setBaseIngredients(sorted);
   }, [ingredients]);
 
   return (
