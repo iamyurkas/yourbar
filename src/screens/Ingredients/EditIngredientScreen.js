@@ -16,6 +16,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  FlatList,
   Alert,
   Platform,
   InteractionManager,
@@ -35,6 +36,7 @@ import {
   CommonActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
@@ -63,6 +65,7 @@ const useDebounced = (value, delay = 300) => {
 
 const IMAGE_SIZE = 150;
 const MENU_ROW_HEIGHT = 56;
+const MENU_TOP_OFFSET = 150;
 
 // pills for tags (memo, стабільний onPress через id)
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
@@ -128,6 +131,7 @@ export default function EditIngredientScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const headerHeight = useHeaderHeight();
   const {
     setIngredients: setGlobalIngredients,
     baseIngredients = [],
@@ -498,13 +502,14 @@ export default function EditIngredientScreen() {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
       setAnchorWidth(w);
-      setMenuAnchor({ x, y: y + h });
+      const top = Math.max(0, headerHeight - MENU_TOP_OFFSET);
+      setMenuAnchor({ x, y: top });
       setMenuVisible(true);
       requestAnimationFrame(() =>
         setTimeout(() => searchInputRef.current?.focus(), 0)
       );
     });
-  }, []);
+  }, [headerHeight]);
 
   // позначати dirty при будь-якій зміні полів (після ініціалізації)
   useEffect(() => {
@@ -738,28 +743,31 @@ export default function EditIngredientScreen() {
               ),
             }}
           >
-            <ScrollView keyboardShouldPersistTaps="handled">
-              <Pressable
-                onPress={() => {
-                  setBaseIngredientId(null);
-                  setMenuVisible(false);
-                }}
-                android_ripple={ripple}
-                style={({ pressed }) => [
-                  styles.menuRow,
-                  pressed && { opacity: 0.9 },
-                ]}
-              >
-                <View style={styles.menuRowInner}>
-                  <PaperText style={{ color: theme.colors.onSurface }}>
-                    None
-                  </PaperText>
-                </View>
-              </Pressable>
-
-              {filteredBase.map((item) => (
+            <FlatList
+              keyboardShouldPersistTaps="handled"
+              data={filteredBase}
+              keyExtractor={(item) => item.id.toString()}
+              ListHeaderComponent={
+                <Pressable
+                  onPress={() => {
+                    setBaseIngredientId(null);
+                    setMenuVisible(false);
+                  }}
+                  android_ripple={ripple}
+                  style={({ pressed }) => [
+                    styles.menuRow,
+                    pressed && { opacity: 0.9 },
+                  ]}
+                >
+                  <View style={styles.menuRowInner}>
+                    <PaperText style={{ color: theme.colors.onSurface }}>
+                      None
+                    </PaperText>
+                  </View>
+                </Pressable>
+              }
+              renderItem={({ item }) => (
                 <BaseRow
-                  key={item.id}
                   id={item.id}
                   name={item.name}
                   photoUri={item.photoUri}
@@ -768,8 +776,8 @@ export default function EditIngredientScreen() {
                     setMenuVisible(false);
                   }}
                 />
-              ))}
-            </ScrollView>
+              )}
+            />
           </View>
         </Menu>
 
