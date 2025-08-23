@@ -16,7 +16,7 @@ import {
 } from "../storage/settingsStorage";
 
 export default function useIngredientsData() {
-  const { ingredients, setIngredients } = useIngredientsContext();
+  const { ingredients, baseIngredients, setIngredients } = useIngredientsContext();
   const { cocktails, setCocktails } = useCocktailsContext();
   const { usageMap, setUsageMap } = useUsageMapContext();
   const { loading, setLoading } = useLoadingContext();
@@ -70,5 +70,13 @@ export default function useIngredientsData() {
     await load();
   }, [load]);
 
-  return { ingredients, cocktails, usageMap, refresh, loading, setIngredients };
+  return {
+    ingredients,
+    baseIngredients,
+    cocktails,
+    usageMap,
+    refresh,
+    loading,
+    setIngredients,
+  };
 }

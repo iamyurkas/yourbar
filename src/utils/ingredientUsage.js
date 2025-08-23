@@ -1,3 +1,5 @@
+import { InteractionManager } from "react-native";
+
 export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
   const { allowSubstitutes = false } = options;
   const byId = new Map(ingredients.map((i) => [i.id, i]));
@@ -63,9 +65,9 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
 
 export function mapCocktailsByIngredientAsync(ingredients, cocktails, options = {}) {
   return new Promise((resolve) => {
-    setTimeout(() => {
+    InteractionManager.runAfterInteractions(() => {
       resolve(mapCocktailsByIngredient(ingredients, cocktails, options));
-    }, 0);
+    });
   });
 }
 

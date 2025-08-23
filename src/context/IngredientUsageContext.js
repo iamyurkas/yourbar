@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { buildIndex } from "../storage/ingredientsStorage";
+import { normalizeSearch } from "../utils/normalizeSearch";
 
 const IngredientsContext = createContext({
   ingredients: [],
   ingredientsById: {},
+  baseIngredients: [],
   setIngredients: () => {},
 });
 
@@ -25,6 +27,7 @@ export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
   const [ingredients, setIngredientsState] = useState([]);
   const [ingredientsById, setIngredientsById] = useState({});
+  const [baseIngredients, setBaseIngredients] = useState([]);
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,6 +35,19 @@ export function IngredientUsageProvider({ children }) {
     setIngredientsState((prev) => {
       const value = typeof next === "function" ? next(prev) : next;
       setIngredientsById(buildIndex(value));
+      setBaseIngredients(
+        value
+          .filter((i) => i.baseIngredientId == null)
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+          )
+          .map((i) => ({
+            id: i.id,
+            name: i.name,
+            photoUri: i.photoUri || null,
+            searchName: normalizeSearch(i.name || ""),
+          }))
+      );
       return value;
     });
   }, []);
@@ -46,8 +62,8 @@ export function IngredientUsageProvider({ children }) {
   );
 
   const ingredientsValue = useMemo(
-    () => ({ ingredients, ingredientsById, setIngredients }),
-    [ingredients, ingredientsById, setIngredients]
+    () => ({ ingredients, ingredientsById, baseIngredients, setIngredients }),
+    [ingredients, ingredientsById, baseIngredients, setIngredients]
   );
   const cocktailsValue = useMemo(
     () => ({ cocktails, setCocktails }),

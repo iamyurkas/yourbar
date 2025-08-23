@@ -124,8 +124,11 @@ export default function AddIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { ingredients: globalIngredients = [], setIngredients: setGlobalIngredients } =
-    useIngredientsData();
+  const {
+    ingredients: globalIngredients = [],
+    baseIngredients = [],
+    setIngredients: setGlobalIngredients,
+  } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
 
   // read incoming params
@@ -320,36 +323,34 @@ export default function AddIngredientScreen() {
     loadAvailableTags();
   }, [isFocused, loadAvailableTags]);
 
-  const loadBases = useCallback(
-    async (refresh = false) => {
-      if (basesLoaded || loadingBases) return;
-      setLoadingBases(true);
-      try {
-        await InteractionManager.runAfterInteractions();
+  const loadBases = useCallback(async () => {
+    if (basesLoaded || loadingBases) return;
+    setLoadingBases(true);
+    try {
+      await InteractionManager.runAfterInteractions();
+      let list = baseIngredients;
+      if (!list.length) {
         const ingredients =
-          !refresh && globalIngredients.length
-            ? globalIngredients
-            : await getAllIngredients();
-        const baseOnly = ingredients
-        .filter((i) => i.baseIngredientId == null)
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-        )
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          photoUri: i.photoUri || null,
-          searchName: normalizeSearch(i.name || ""),
-        }));
-      if (!isMountedRef.current) return;
-      setBaseOnlySorted(baseOnly);
-      setBasesLoaded(true);
-      } finally {
-        if (isMountedRef.current) setLoadingBases(false);
+          globalIngredients.length ? globalIngredients : await getAllIngredients();
+        list = ingredients
+          .filter((i) => i.baseIngredientId == null)
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+          )
+          .map((i) => ({
+            id: i.id,
+            name: i.name,
+            photoUri: i.photoUri || null,
+            searchName: normalizeSearch(i.name || ""),
+          }));
       }
-    },
-    [basesLoaded, loadingBases, globalIngredients]
-  );
+      if (!isMountedRef.current) return;
+      setBaseOnlySorted(list);
+      setBasesLoaded(true);
+    } finally {
+      if (isMountedRef.current) setLoadingBases(false);
+    }
+  }, [basesLoaded, loadingBases, baseIngredients, globalIngredients]);
 
   useEffect(() => {
     if (!isFocused) return;
