@@ -41,7 +41,7 @@ function InitialDataLoader({ children }) {
   const { loading } = useIngredientUsage();
   if (loading) {
     return (
-      <SplashScreen message="Importing default data… This may take a moment" />
+      <SplashScreen message={'Importing default data…\nThis may take a moment'} />
     );
   }
   return children;
