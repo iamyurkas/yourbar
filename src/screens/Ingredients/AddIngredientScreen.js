@@ -29,10 +29,12 @@ import { resizeImage } from "../../utils/images";
 import {
   useNavigation,
   useRoute,
+  useFocusEffect,
   useIsFocused,
   CommonActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
+import { TAG_COLORS } from "../../theme";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
@@ -191,6 +193,23 @@ export default function AddIngredientScreen() {
     // Note: baseIngredients already sorted
   }, [baseIngredients, deferredQuery]);
 
+  useFocusEffect(
+    useCallback(() => {
+      setName(route.params?.initialName || "");
+      setDescription("");
+      setPhotoUri(null);
+      setTags(() => {
+        const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
+        return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
+      });
+      setBaseIngredientId(null);
+      setBaseIngredientSearch("");
+      if (route.params?.initialName !== undefined) {
+        navigation.setParams({ initialName: undefined });
+      }
+    }, [navigation, route.params?.initialName])
+  );
+
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -305,12 +324,6 @@ export default function AddIngredientScreen() {
   }, [isFocused, navigation, fromCocktailFlow, returnTo, lastIngredientsTab]);
 
   /* ---------- Lifecycle ---------- */
-  useEffect(() => {
-    if (isFocused) {
-      setName(initialNameParam);
-    }
-  }, [isFocused, initialNameParam]);
-
   useEffect(() => {
     if (!isFocused) return;
     loadAvailableTags();
