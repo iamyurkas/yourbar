@@ -29,7 +29,7 @@ import { goBack } from "../../utils/navigation";
 
 import {
   getAllIngredients,
-  saveAllIngredients,
+  saveIngredient,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
 
@@ -379,12 +379,12 @@ export default function IngredientDetailsScreen() {
           id: updated.id,
           inBar: updated.inBar,
         });
-        saveAllIngredients(nextList);
+        saveIngredient(updated);
         return nextList;
       });
       return updated;
     });
-  }, [setIngredients, saveAllIngredients]);
+  }, [setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
@@ -398,12 +398,12 @@ export default function IngredientDetailsScreen() {
           id: updated.id,
           inShoppingList: updated.inShoppingList,
         });
-        saveAllIngredients(nextList);
+        saveIngredient(updated);
         return nextList;
       });
       return updated;
     });
-  }, [setIngredients, saveAllIngredients]);
+  }, [setIngredients]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -653,7 +653,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updated);
             return nextList;
           });
-          await saveAllIngredients(nextList);
+          await saveIngredient(updated);
           setIngredient(updated);
           setBaseIngredient(null);
           setUnlinkBaseVisible(false);
@@ -678,7 +678,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updatedChild);
             return nextList;
           });
-          await saveAllIngredients(nextList);
+          await saveIngredient(updatedChild);
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           setUnlinkChildTarget(null);
         }}

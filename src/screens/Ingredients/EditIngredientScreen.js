@@ -34,6 +34,7 @@ import {
   useRoute,
   useIsFocused,
   CommonActions,
+  StackActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -42,8 +43,8 @@ import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   deleteIngredient,
-  updateIngredientById,
-  saveAllIngredients,
+  saveIngredient,
+  removeIngredient,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -137,6 +138,10 @@ export default function EditIngredientScreen() {
     baseIngredients = [],
   } = useIngredientsData();
   const { setUsageMap, ingredientsById } = useIngredientUsage();
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
   const currentId = route.params?.id;
 
   // entity + form state
@@ -412,7 +417,7 @@ export default function EditIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(
-    async (stay = false) => {
+    (stay = false) => {
       const trimmed = name.trim();
       if (!trimmed) {
         Alert.alert("Please enter a name for the ingredient.");
@@ -428,21 +433,6 @@ export default function EditIngredientScreen() {
         tags,
         baseIngredientId: baseIngredientId ?? null,
       };
-      // оптимістично оновити глобальний список і зберегти оновлені дані
-      setGlobalIngredients((list) => {
-        const searchName = normalizeSearch(updated.name);
-        const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-        const next = updateIngredientById(list, {
-          ...updated,
-          searchName,
-          searchTokens,
-        }).sort((a, b) =>
-          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-        );
-        saveAllIngredients(next).catch(() => {});
-        return next;
-      });
-
       // зберегти локально baseline і зняти dirty
       initialHashRef.current = serialize();
       setDirty(false);
@@ -464,21 +454,30 @@ export default function EditIngredientScreen() {
           };
           detailParams.targetLocalId = route.params.targetLocalId;
         }
-        navigation.dispatch((state) => {
-          const routes = state.routes.filter((r) => r.name !== "IngredientDetails");
-          routes[routes.length - 1] = {
-            name: "IngredientDetails",
-            params: detailParams,
-          };
-          return CommonActions.reset({
-            ...state,
-            routes,
-            index: routes.length - 1,
-          });
-        });
+        navigation.dispatch(StackActions.pop(1));
+        navigation.dispatch(
+          StackActions.replace("IngredientDetails", detailParams)
+        );
       } else {
         setIngredient(updated);
       }
+
+      InteractionManager.runAfterInteractions(() => {
+        setGlobalIngredients((list) => {
+          const searchName = normalizeSearch(updated.name);
+          const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
+          const newItem = { ...updated, searchName, searchTokens };
+          const rest = list.filter((i) => i.id !== newItem.id);
+          const idx = rest.findIndex(
+            (i) => collator.compare(i.name, newItem.name) > 0
+          );
+          const next = [...rest];
+          if (idx === -1) next.push(newItem);
+          else next.splice(idx, 0, newItem);
+          return next;
+        });
+        saveIngredient(updated).catch(() => {});
+      });
 
       return updated;
     },
@@ -494,7 +493,8 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
-      saveAllIngredients,
+      saveIngredient,
+      collator,
     ]
   );
 
@@ -828,22 +828,20 @@ export default function EditIngredientScreen() {
         message="Are you sure?"
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (!ingredient) return;
           skipPromptRef.current = true;
-          let updatedList;
-          setGlobalIngredients((list) => {
-            updatedList = deleteIngredient(list, ingredient.id);
-            return updatedList;
-          });
+          setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
           setUsageMap((prev) => {
             const next = { ...prev };
             delete next[ingredient.id];
             return next;
           });
-          await saveAllIngredients(updatedList);
           navigation.popToTop();
           setConfirmDelete(false);
+          InteractionManager.runAfterInteractions(() => {
+            deleteIngredient(ingredient.id).catch(() => {});
+          });
         }}
       />
       <ConfirmationDialog
@@ -871,25 +869,18 @@ export default function EditIngredientScreen() {
             onPress: async () => {
               skipPromptRef.current = true;
               const updated = await handleSave(true);
-              navigation.dispatch((state) => {
-                const routes = [...state.routes];
-                const prevIndex = routes.length - 2;
-                if (prevIndex >= 0) {
-                  routes[prevIndex] = {
-                    ...routes[prevIndex],
+              const prevRoute = navigation.getState().routes.slice(-2)[0];
+              if (prevRoute) {
+                navigation.dispatch(
+                  CommonActions.setParams({
+                    source: prevRoute.key,
                     params: {
-                      ...routes[prevIndex].params,
                       id: updated.id,
                       initialIngredient: updated,
                     },
-                  };
-                }
-                return CommonActions.reset({
-                  ...state,
-                  routes,
-                  index: state.index,
-                });
-              });
+                  })
+                );
+              }
               navigation.dispatch(pendingNav);
               setPendingNav(null);
             },

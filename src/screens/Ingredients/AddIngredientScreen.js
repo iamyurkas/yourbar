@@ -30,7 +30,7 @@ import {
   useNavigation,
   useRoute,
   useIsFocused,
-  CommonActions,
+  StackActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
@@ -38,7 +38,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
-import { addIngredient, saveAllIngredients } from "../../storage/ingredientsStorage";
+import { addIngredient } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -131,6 +131,11 @@ export default function AddIngredientScreen() {
     baseIngredients = [],
   } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
+
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
 
   // read incoming params
   const initialNameParam = route.params?.initialName;
@@ -361,75 +366,50 @@ export default function AddIngredientScreen() {
     }
   }, []);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
       Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    const newIng = {
-      id: Date.now(),
+
+    const id = Date.now();
+    const created = {
+      id,
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId ?? null,
-      createdAt: Date.now(),
-      inBar: false,
-    };
-    const searchName = normalizeSearch(newIng.name);
-    const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-    const enriched = {
-      ...newIng,
-      searchName,
-      searchTokens,
-      usageCount: 0,
-      singleCocktailName: null,
-    };
-    let updatedList;
-    setGlobalIngredients((list) => {
-      const next = addIngredient(list, enriched).sort((a, b) =>
-        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-      );
-      updatedList = next;
-      return next;
-    });
-    await saveAllIngredients(updatedList).catch(() => {});
-    setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
-
-    const createdPayload = {
-      id: newIng.id,
-      name: newIng.name,
-      photoUri: newIng.photoUri || null,
-      baseIngredientId: newIng.baseIngredientId ?? null,
-      tags: newIng.tags || [],
     };
 
+    const detailParams = { id, initialIngredient: created };
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
-          createdIngredient: createdPayload,
+          createdIngredient: detailParams.initialIngredient,
           targetLocalId,
         },
         merge: true,
       });
-      return;
+    } else {
+      navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
 
-    const detailParams = {
-      id: newIng.id,
-      initialIngredient: newIng,
-    };
-
-    navigation.dispatch((state) => {
-      const routes = state.routes.slice(0, -1);
-      routes.push({ name: "IngredientDetails", params: detailParams });
-      return CommonActions.reset({
-        ...state,
-        routes,
-        index: routes.length - 1,
+    InteractionManager.runAfterInteractions(async () => {
+      const saved = await addIngredient(created).catch(() => null);
+      if (!saved) return;
+      setGlobalIngredients((list) => {
+        const idx = list.findIndex(
+          (i) => collator.compare(i.name, saved.name) > 0
+        );
+        const next = [...list];
+        if (idx === -1) next.push(saved);
+        else next.splice(idx, 0, saved);
+        return next;
       });
+      setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
     });
   }, [
     name,
@@ -444,7 +424,7 @@ export default function AddIngredientScreen() {
     addIngredient,
     setGlobalIngredients,
     setUsageMap,
-    saveAllIngredients,
+    collator,
   ]);
 
   const openMenu = useCallback(() => {

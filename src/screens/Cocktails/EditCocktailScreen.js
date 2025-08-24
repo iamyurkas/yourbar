@@ -22,6 +22,7 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -54,6 +55,8 @@ import {
   getCocktailById,
   saveCocktail,
   deleteCocktail,
+  updateCocktailById,
+  removeCocktail,
 } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
@@ -1147,7 +1150,7 @@ export default function EditCocktailScreen() {
   );
 
   const handleSave = useCallback(
-    async (stay = false) => {
+    (stay = false) => {
       const title = name.trim();
       if (!title) {
         Alert.alert("Validation", "Please enter a cocktail name.");
@@ -1209,43 +1212,42 @@ export default function EditCocktailScreen() {
       };
 
       const prev = cocktails.find((c) => c.id === cocktailId);
-      const updated = await saveCocktail(cocktail);
-      const nextCocktails = cocktails.map((c) =>
-        c.id === updated.id ? updated : c
-      );
-      setCocktails(nextCocktails);
-      const allowSubs = await getAllowSubstitutes();
-      let nextUsage = removeCocktailFromUsageMap(
-        usageMap,
-        globalIngredients,
-        prev,
-        {
-          allowSubstitutes: !!allowSubs,
-        }
-      );
-      nextUsage = addCocktailToUsageMap(
-        nextUsage,
-        globalIngredients,
-        updated,
-        {
-          allowSubstitutes: !!allowSubs,
-        }
-      );
-      setUsageMap(nextUsage);
-      setIngredients(
-        applyUsageMapToIngredients(
-          globalIngredients,
-          nextUsage,
-          nextCocktails
-        )
-      );
+
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
         navigation.goBack();
       }
-      return updated;
+
+      InteractionManager.runAfterInteractions(async () => {
+        const updated = await saveCocktail(cocktail);
+        const nextCocktails = updateCocktailById(cocktails, updated);
+        setCocktails(nextCocktails);
+        const allowSubs = await getAllowSubstitutes();
+        let nextUsage = removeCocktailFromUsageMap(
+          usageMap,
+          globalIngredients,
+          prev,
+          { allowSubstitutes: !!allowSubs }
+        );
+        nextUsage = addCocktailToUsageMap(
+          nextUsage,
+          globalIngredients,
+          updated,
+          { allowSubstitutes: !!allowSubs }
+        );
+        setUsageMap(nextUsage);
+        setIngredients(
+          applyUsageMapToIngredients(
+            globalIngredients,
+            nextUsage,
+            nextCocktails
+          )
+        );
+      });
+
+      return cocktail;
     },
     [
       name,
@@ -2041,29 +2043,31 @@ export default function EditCocktailScreen() {
         message="Delete this cocktail?"
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           skipPromptRef.current = true;
           const prev = cocktails.find((c) => c.id === cocktailId);
-          await deleteCocktail(cocktailId);
-          const nextCocktails = cocktails.filter((c) => c.id !== cocktailId);
+          const nextCocktails = removeCocktail(cocktails, cocktailId);
           setCocktails(nextCocktails);
-          const allowSubs = await getAllowSubstitutes();
-          const nextUsage = removeCocktailFromUsageMap(
-            usageMap,
-            globalIngredients,
-            prev,
-            { allowSubstitutes: !!allowSubs }
-          );
-          setUsageMap(nextUsage);
-          setIngredients(
-            applyUsageMapToIngredients(
-              globalIngredients,
-              nextUsage,
-              nextCocktails
-            )
-          );
           navigation.popToTop();
           setConfirmDelete(false);
+          InteractionManager.runAfterInteractions(async () => {
+            await deleteCocktail(cocktailId);
+            const allowSubs = await getAllowSubstitutes();
+            const nextUsage = removeCocktailFromUsageMap(
+              usageMap,
+              globalIngredients,
+              prev,
+              { allowSubstitutes: !!allowSubs }
+            );
+            setUsageMap(nextUsage);
+            setIngredients(
+              applyUsageMapToIngredients(
+                globalIngredients,
+                nextUsage,
+                nextCocktails
+              )
+            );
+          });
         }}
       />
       <ConfirmationDialog
@@ -2091,25 +2095,18 @@ export default function EditCocktailScreen() {
             onPress: async () => {
               skipPromptRef.current = true;
               const updated = await handleSave(true);
-              navigation.dispatch((state) => {
-                const routes = [...state.routes];
-                const prevIndex = routes.length - 2;
-                if (prevIndex >= 0) {
-                  routes[prevIndex] = {
-                    ...routes[prevIndex],
+              const prevRoute = navigation.getState().routes.slice(-2)[0];
+              if (prevRoute) {
+                navigation.dispatch(
+                  CommonActions.setParams({
+                    source: prevRoute.key,
                     params: {
-                      ...routes[prevIndex].params,
                       id: updated.id,
                       initialCocktail: updated,
                     },
-                  };
-                }
-                return CommonActions.reset({
-                  ...state,
-                  routes,
-                  index: state.index,
-                });
-              });
+                  })
+                );
+              }
               navigation.dispatch(pendingNav);
               setPendingNav(null);
             },

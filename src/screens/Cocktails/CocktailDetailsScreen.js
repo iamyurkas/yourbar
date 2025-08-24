@@ -26,7 +26,11 @@ import {
 import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getCocktailById, saveCocktail } from "../../storage/cocktailsStorage";
+import {
+  getCocktailById,
+  saveCocktail,
+  updateCocktailById,
+} from "../../storage/cocktailsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -231,9 +235,7 @@ export default function CocktailDetailsScreen() {
       setCocktail(updated);
       const saved = await saveCocktail(updated);
       setGlobalCocktails((prev) =>
-        Array.isArray(prev)
-          ? prev.map((c) => (c.id === saved.id ? saved : c))
-          : prev
+        Array.isArray(prev) ? updateCocktailById(prev, saved) : prev
       );
     },
     [cocktail, setGlobalCocktails]

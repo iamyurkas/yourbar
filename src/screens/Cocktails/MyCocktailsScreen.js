@@ -258,7 +258,7 @@ export default function MyCocktailsScreen() {
         if (!item) return prev;
         const updated = { ...item, inShoppingList: !item.inShoppingList };
         const next = updateIngredientById(prev, updated);
-        saveIngredient(next).catch(() => {});
+        saveIngredient(updated).catch(() => {});
         setGlobalIngredients((list) =>
           updateIngredientById(list, {
             id,

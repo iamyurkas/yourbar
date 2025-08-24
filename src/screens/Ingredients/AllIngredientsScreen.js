@@ -11,7 +11,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveAllIngredients, updateIngredientById } from "../../storage/ingredientsStorage";
+import { saveIngredient, updateIngredientById } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -59,10 +59,10 @@ export default function AllIngredientsScreen() {
 
   const flushPending = useCallback(() => {
     if (pendingUpdates.length) {
-      saveAllIngredients(ingredients).catch(() => {});
+      pendingUpdates.forEach((u) => saveIngredient(u).catch(() => {}));
       setPendingUpdates([]);
     }
-  }, [pendingUpdates, ingredients]);
+  }, [pendingUpdates]);
 
   useEffect(() => {
     if (!pendingUpdates.length) return;
