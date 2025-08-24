@@ -115,7 +115,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 3,
+      "usageCount": 4,
       "singleCocktailName": null,
       "searchName": "agave syrup",
       "searchTokens": [
@@ -136,7 +136,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
+      "usageCount": 3,
       "singleCocktailName": null,
       "searchName": "aged rum",
       "searchTokens": [
@@ -260,8 +260,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "French Connection",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "amaretto",
       "searchTokens": [
         "amaretto"
@@ -311,6 +311,28 @@
       "photoUri": "assets/ingredients/1755441997878-272707-amaro-nonino.jpg"
     },
     {
+      "id": 1756049159383,
+      "name": "Amontillado Sherry",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": "1755441997878-218380",
+      "createdAt": 1756049159383,
+      "searchName": "amontillado sherry",
+      "searchTokens": [
+        "amontillado",
+        "sherry"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": "Sherry Cobbler",
+      "photoUri": "assets/ingredients/1756049159383-amontillado-sherry.png"
+    },
+    {
       "id": "1755200244973-677547",
       "name": "Angelica root",
       "description": "",
@@ -343,7 +365,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-804376",
-      "usageCount": 17,
+      "usageCount": 18,
       "singleCocktailName": null,
       "searchName": "angostura bitters",
       "searchTokens": [
@@ -364,7 +386,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
+      "usageCount": 1,
       "singleCocktailName": null,
       "searchName": "anis",
       "searchTokens": [
@@ -424,7 +446,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
+      "usageCount": 3,
       "singleCocktailName": null,
       "searchName": "aperol",
       "searchTokens": [
@@ -671,8 +693,8 @@
         }
       ],
       "baseIngredientId": "1755441997878-669831",
-      "usageCount": 1,
-      "singleCocktailName": "Zombie",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "bacardi 151 proof rum",
       "searchTokens": [
         "bacardi",
@@ -899,7 +921,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 17,
+      "usageCount": 18,
       "singleCocktailName": null,
       "searchName": "bitters",
       "searchTokens": [
@@ -1023,8 +1045,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Bramble",
       "searchName": "blackberry liqueur",
       "searchTokens": [
         "blackberry",
@@ -1065,8 +1087,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Jungle Bird",
       "searchName": "blackstrap rum",
       "searchTokens": [
         "blackstrap",
@@ -1191,8 +1213,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Suffering Bastard",
+      "usageCount": 7,
+      "singleCocktailName": null,
       "searchName": "brandy",
       "searchTokens": [
         "brandy"
@@ -1334,7 +1356,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 7,
+      "usageCount": 6,
       "singleCocktailName": null,
       "searchName": "campari",
       "searchTokens": [
@@ -1580,8 +1602,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Remember the Maine",
       "searchName": "cherry brandy",
       "searchTokens": [
         "cherry",
@@ -1601,8 +1623,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Singapore Sling",
       "searchName": "cherry heering",
       "searchTokens": [
         "cherry",
@@ -1872,8 +1894,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Pisco Punch",
       "searchName": "cloves",
       "searchTokens": [
         "cloves"
@@ -1934,8 +1956,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Piña Colada",
+      "usageCount": 0,
+      "singleCocktailName": null,
       "searchName": "coconut cream",
       "searchTokens": [
         "coconut",
@@ -2018,8 +2040,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Piña Colada",
       "searchName": "coconut syrup",
       "searchTokens": [
         "coconut",
@@ -2102,7 +2124,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 10,
+      "usageCount": 12,
       "singleCocktailName": null,
       "searchName": "cognac",
       "searchTokens": [
@@ -2516,6 +2538,28 @@
       "photoUri": "assets/ingredients/1755200244973-783515-crown-royal.jpg"
     },
     {
+      "id": 1756039412725,
+      "name": "Cuban Aguardiente",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1756039412725,
+      "searchName": "cuban aguardiente",
+      "searchTokens": [
+        "cuban",
+        "aguardiente"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": "Canchanchara",
+      "photoUri": "assets/ingredients/1756039412725-cuban-aguardiente.png"
+    },
+    {
       "id": "1755200244973-910105",
       "name": "Cucumber",
       "description": "",
@@ -2587,7 +2631,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 6,
+      "usageCount": 7,
       "singleCocktailName": null,
       "searchName": "dark rum",
       "searchTokens": [
@@ -2595,6 +2639,28 @@
         "rum"
       ],
       "photoUri": "assets/ingredients/1755200244973-962705-dark-rum.jpg"
+    },
+    {
+      "id": 1756051374456,
+      "name": "Demerara Rum",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1756051374456,
+      "searchName": "demerara rum",
+      "searchTokens": [
+        "demerara",
+        "rum"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1756051374456-demerara-rum.png"
     },
     {
       "id": "1755200244973-832354",
@@ -2638,6 +2704,29 @@
         "syrup"
       ],
       "photoUri": "assets/ingredients/1755453836546-demerara-sugar-syrup.jpg"
+    },
+    {
+      "id": 1756051617185,
+      "name": "Don's Mix",
+      "description": "2 parts of fresh yellow grapefruit and 1 part of cinnamon syrup ",
+      "tags": [
+        {
+          "id": 4,
+          "name": "syrup",
+          "color": "#FFB74D"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1756051617185,
+      "searchName": "don's mix",
+      "searchTokens": [
+        "don",
+        "s",
+        "mix"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1756051617185-dons-mix.png"
     },
     {
       "id": "1755200244973-478041",
@@ -2692,8 +2781,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Sherry Cobbler",
       "searchName": "dry sherry",
       "searchTokens": [
         "dry",
@@ -2754,7 +2843,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 6,
+      "usageCount": 8,
       "singleCocktailName": null,
       "searchName": "egg",
       "searchTokens": [
@@ -2795,7 +2884,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-368774",
-      "usageCount": 6,
+      "usageCount": 8,
       "singleCocktailName": null,
       "searchName": "egg white",
       "searchTokens": [
@@ -2816,7 +2905,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-368774",
-      "usageCount": 6,
+      "usageCount": 8,
       "singleCocktailName": null,
       "searchName": "egg yolk",
       "searchTokens": [
@@ -2837,8 +2926,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Spicy Fifty",
       "searchName": "elderflower cordial",
       "searchTokens": [
         "elderflower",
@@ -2898,7 +2987,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 4,
+      "usageCount": 5,
       "singleCocktailName": null,
       "searchName": "falernum",
       "searchTokens": [
@@ -2979,8 +3068,8 @@
         }
       ],
       "baseIngredientId": "1755511153175",
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "IBA Tiki",
       "searchName": "frangelico",
       "searchTokens": [
         "frangelico"
@@ -3059,8 +3148,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Penicillin",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "ginger",
       "searchTokens": [
         "ginger"
@@ -3110,6 +3199,28 @@
       "photoUri": "assets/ingredients/1755200244973-353113-ginger-beer.jpg"
     },
     {
+      "id": 1756047088093,
+      "name": "Ginger Candy",
+      "description": "",
+      "tags": [
+        {
+          "id": 10,
+          "name": "other",
+          "color": "#a8a8a8"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1756047088093,
+      "searchName": "ginger candy",
+      "searchTokens": [
+        "ginger",
+        "candy"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": "Penicillin",
+      "photoUri": "assets/ingredients/1756047088093-ginger-candy.png"
+    },
+    {
       "id": "1755200244973-109858",
       "name": "Ginger Syrup",
       "description": "",
@@ -3121,8 +3232,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Penicillin",
+      "usageCount": 0,
+      "singleCocktailName": null,
       "searchName": "ginger syrup",
       "searchTokens": [
         "ginger",
@@ -3152,6 +3263,30 @@
       "photoUri": "assets/ingredients/1755200244973-698510-godiva-liqueur.jpg"
     },
     {
+      "id": 1755989023035,
+      "name": "Gold Puerto Rican Rum",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": "1755200244973-811139",
+      "createdAt": 1755989023035,
+      "searchName": "gold puerto rican rum",
+      "searchTokens": [
+        "gold",
+        "puerto",
+        "rican",
+        "rum"
+      ],
+      "usageCount": 2,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1755989023035-gold-puerto-rican-rum.png"
+    },
+    {
       "id": "1755200244973-811139",
       "name": "Gold Rum",
       "description": "Gold rum and spiced rum are distinct types of rum, differing primarily in their production and flavour profiles.\n\nGold rum features a smooth, rich flavour with notes of caramel, vanilla, and spice, often with hints of oak.\nAged in oak barrels, with the ageing process contributing to both colour and flavour.",
@@ -3163,8 +3298,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Don's Special Daiquiri",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "gold rum",
       "searchTokens": [
         "gold",
@@ -3191,6 +3326,28 @@
         "goldschlager"
       ],
       "photoUri": "assets/ingredients/1755200244973-961666-goldschlager.jpg"
+    },
+    {
+      "id": 1756042019647,
+      "name": "Goslings Rum",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": "1755200244973-962705",
+      "createdAt": 1756042019647,
+      "searchName": "goslings rum",
+      "searchTokens": [
+        "goslings",
+        "rum"
+      ],
+      "usageCount": 3,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1756042019647-goslings-rum.png"
     },
     {
       "id": "1755441997878-63905",
@@ -3225,8 +3382,8 @@
         }
       ],
       "baseIngredientId": "1755441997878-421867",
-      "usageCount": 1,
-      "singleCocktailName": "Grand Margarita",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "grand marnier",
       "searchTokens": [
         "grand",
@@ -3308,7 +3465,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 3,
+      "usageCount": 2,
       "singleCocktailName": null,
       "searchName": "grapefruit juice",
       "searchTokens": [
@@ -3411,7 +3568,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 6,
+      "usageCount": 7,
       "singleCocktailName": null,
       "searchName": "grenadine",
       "searchTokens": [
@@ -3473,8 +3630,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "IBA Tiki",
       "searchName": "hazelnut liqueur",
       "searchTokens": [
         "hazelnut",
@@ -3515,7 +3672,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-502166",
-      "usageCount": 10,
+      "usageCount": 12,
       "singleCocktailName": null,
       "searchName": "hennessy xo",
       "searchTokens": [
@@ -3536,8 +3693,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Canchanchara",
       "searchName": "honey",
       "searchTokens": [
         "honey"
@@ -3753,6 +3910,29 @@
       "photoUri": "assets/ingredients/1755200244973-579784-jagermeister.jpg"
     },
     {
+      "id": 1756051163896,
+      "name": "Jamaican Dark Rum",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1756051163896,
+      "searchName": "jamaican dark rum",
+      "searchTokens": [
+        "jamaican",
+        "dark",
+        "rum"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1756051163896-jamaican-dark-rum.png"
+    },
+    {
       "id": "1755681623932",
       "name": "Jamaican Rum",
       "description": "",
@@ -3764,8 +3944,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Planter's Punch",
       "searchName": "jamaican rum",
       "searchTokens": [
         "jamaican",
@@ -3918,6 +4098,29 @@
       "photoUri": "assets/ingredients/1755200244973-639722-kiwi-liqueur.jpg"
     },
     {
+      "id": 1756047218887,
+      "name": "Lagavulin 16 years",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": "1755200244973-563527",
+      "createdAt": 1756047218887,
+      "searchName": "lagavulin 16 years",
+      "searchTokens": [
+        "lagavulin",
+        "16",
+        "years"
+      ],
+      "usageCount": 1,
+      "singleCocktailName": "Penicillin",
+      "photoUri": "assets/ingredients/1756047218887-lagavulin-16-years.png"
+    },
+    {
       "id": "1755200244973-49368",
       "name": "Lager",
       "description": "Lager is a crisp bottom-fermented beer around 4–5% ABV. Use it in a Shandy or Michelada.",
@@ -3994,7 +4197,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 24,
+      "usageCount": 28,
       "singleCocktailName": null,
       "searchName": "lemon",
       "searchTokens": [
@@ -4124,7 +4327,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 12,
+      "usageCount": 13,
       "singleCocktailName": null,
       "searchName": "lime",
       "searchTokens": [
@@ -4165,7 +4368,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 19,
+      "usageCount": 20,
       "singleCocktailName": null,
       "searchName": "lime juice",
       "searchTokens": [
@@ -4258,7 +4461,7 @@
     },
     {
       "id": "1755200244973-607153",
-      "name": "Maraschino cherry",
+      "name": "Maraschino Cherry",
       "description": "",
       "tags": [
         {
@@ -4289,7 +4492,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 8,
+      "usageCount": 10,
       "singleCocktailName": null,
       "searchName": "maraschino liqueur",
       "searchTokens": [
@@ -4413,7 +4616,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 10,
+      "usageCount": 11,
       "singleCocktailName": null,
       "searchName": "mint",
       "searchTokens": [
@@ -4557,7 +4760,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 18,
+      "usageCount": 20,
       "singleCocktailName": null,
       "searchName": "orange",
       "searchTokens": [
@@ -4577,7 +4780,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 5,
+      "usageCount": 4,
       "singleCocktailName": null,
       "searchName": "orange bitters",
       "searchTokens": [
@@ -4641,7 +4844,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 9,
+      "usageCount": 10,
       "singleCocktailName": null,
       "searchName": "orange juice",
       "searchTokens": [
@@ -4662,8 +4865,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Grand Margarita",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "orange liqueur",
       "searchTokens": [
         "orange",
@@ -4724,8 +4927,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Zombie",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "overproof rum",
       "searchTokens": [
         "overproof",
@@ -4734,7 +4937,7 @@
       "photoUri": "assets/ingredients/1755441997878-669831-overproof-rum.jpg"
     },
     {
-      "id": 1755983136771,
+      "id": "1755983136771",
       "name": "Palo Cortado",
       "description": "",
       "tags": [
@@ -4745,14 +4948,13 @@
         }
       ],
       "baseIngredientId": "1755200244973-134824",
-      "createdAt": 1755983136771,
+      "usageCount": 1,
+      "singleCocktailName": "Sherry Cobbler",
       "searchName": "palo cortado",
       "searchTokens": [
         "palo",
         "cortado"
       ],
-      "usageCount": 0,
-      "singleCocktailName": null,
       "photoUri": "assets/ingredients/1755983136771-palo-cortado.jpg"
     },
     {
@@ -4808,8 +5010,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Porn Star Martini",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "passion fruit",
       "searchTokens": [
         "passion",
@@ -4873,7 +5075,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
+      "usageCount": 3,
       "singleCocktailName": null,
       "searchName": "passion fruit syrup",
       "searchTokens": [
@@ -4956,8 +5158,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Missionary's Downfall",
       "searchName": "peach brandy",
       "searchTokens": [
         "peach",
@@ -4977,8 +5179,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Missionary's Downfall",
+      "usageCount": 0,
+      "singleCocktailName": null,
       "searchName": "peach liqueur",
       "searchTokens": [
         "peach",
@@ -5082,7 +5284,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-114858",
-      "usageCount": 0,
+      "usageCount": 1,
       "singleCocktailName": null,
       "searchName": "pernod",
       "searchTokens": [
@@ -5102,7 +5304,7 @@
         }
       ],
       "baseIngredientId": "1755200244973-804376",
-      "usageCount": 17,
+      "usageCount": 18,
       "singleCocktailName": null,
       "searchName": "peychaud's bitters",
       "searchTokens": [
@@ -5147,7 +5349,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 7,
+      "usageCount": 8,
       "singleCocktailName": null,
       "searchName": "pineapple",
       "searchTokens": [
@@ -5261,7 +5463,7 @@
     },
     {
       "id": "1755200244973-344356",
-      "name": "Pomegranate juice",
+      "name": "Pomegranate Juice",
       "description": "Pomegranate juice is made from the fruit of the pomegranate. It is used in cooking both as a fresh juice and as a concentrated syrup.",
       "tags": [
         {
@@ -5271,8 +5473,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Tintoretto",
       "searchName": "pomegranate juice",
       "searchTokens": [
         "pomegranate",
@@ -5312,7 +5514,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 3,
+      "usageCount": 5,
       "singleCocktailName": null,
       "searchName": "prosecco",
       "searchTokens": [
@@ -5354,8 +5556,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "French Martini",
+      "usageCount": 0,
+      "singleCocktailName": null,
       "searchName": "raspberry",
       "searchTokens": [
         "raspberry"
@@ -5469,6 +5671,29 @@
       "photoUri": "assets/ingredients/1755200244973-421197-red-wine.jpg"
     },
     {
+      "id": 1755989015299,
+      "name": "Rhum Martinique Agricole",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": null,
+      "createdAt": 1755989015299,
+      "searchName": "rhum martinique agricole",
+      "searchTokens": [
+        "rhum",
+        "martinique",
+        "agricole"
+      ],
+      "usageCount": 2,
+      "singleCocktailName": null,
+      "photoUri": "assets/ingredients/1755989015299-rhum-martinique-agricole.png"
+    },
+    {
       "id": "1755200244973-183722",
       "name": "Ricard",
       "description": "Ricard is a French pastis by Pernod Ricard at 45% ABV, with intense anise flavor. Enjoy it in a classic Pastis or Mauresque.",
@@ -5500,7 +5725,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
+      "usageCount": 2,
       "singleCocktailName": null,
       "searchName": "rich simple syrup",
       "searchTokens": [
@@ -5626,8 +5851,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Porto Flip",
+      "usageCount": 0,
+      "singleCocktailName": null,
       "searchName": "ruby port",
       "searchTokens": [
         "ruby",
@@ -5668,7 +5893,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 5,
+      "usageCount": 7,
       "singleCocktailName": null,
       "searchName": "rye whisky",
       "searchTokens": [
@@ -5836,7 +6061,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 19,
+      "usageCount": 17,
       "singleCocktailName": null,
       "searchName": "simple syrup",
       "searchTokens": [
@@ -5878,7 +6103,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 9,
+      "usageCount": 7,
       "singleCocktailName": null,
       "searchName": "soda water",
       "searchTokens": [
@@ -5941,8 +6166,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Russian Spring Punch",
       "searchName": "sparkling wine",
       "searchTokens": [
         "sparkling",
@@ -6107,7 +6332,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 8,
+      "usageCount": 9,
       "singleCocktailName": null,
       "searchName": "sugar",
       "searchTokens": [
@@ -6167,8 +6392,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 0,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Porto Flip",
       "searchName": "tawny port",
       "searchTokens": [
         "tawny",
@@ -6352,7 +6577,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 9,
+      "usageCount": 10,
       "singleCocktailName": null,
       "searchName": "triple sec",
       "searchTokens": [
@@ -6517,7 +6742,7 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
+      "usageCount": 3,
       "singleCocktailName": null,
       "searchName": "water",
       "searchTokens": [
@@ -6599,8 +6824,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 1,
-      "singleCocktailName": "Kir",
+      "usageCount": 2,
+      "singleCocktailName": null,
       "searchName": "white wine",
       "searchTokens": [
         "white",
@@ -6682,8 +6907,8 @@
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
-      "singleCocktailName": null,
+      "usageCount": 1,
+      "singleCocktailName": "Naked and Famous",
       "searchName": "yellow chartreuse",
       "searchTokens": [
         "yellow",
@@ -6823,7 +7048,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535729,
       "photoUri": "assets/cocktails/1755800000049-alexander.jpg"
     },
     {
@@ -6907,7 +7132,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535729,
       "photoUri": "assets/cocktails/1755800000050-americano.jpg"
     },
     {
@@ -6967,7 +7192,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535729,
       "photoUri": "assets/cocktails/1755800000051-angel-face.jpg"
     },
     {
@@ -7029,8 +7254,8 @@
           "order": 4,
           "ingredientId": "1755441997878-844318",
           "name": "Creme de Violette",
-          "amount": "10",
-          "unitId": 11,
+          "amount": "1",
+          "unitId": 2,
           "garnish": false,
           "optional": true,
           "allowBaseSubstitution": false,
@@ -7051,7 +7276,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755988568568,
       "photoUri": "assets/cocktails/1755800000052-aviation.jpg"
     },
     {
@@ -7087,9 +7312,9 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-734220",
-          "name": "Lemon Juice",
-          "amount": "20",
+          "ingredientId": "1755200244973-42279",
+          "name": "Honey Syrup",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7099,9 +7324,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-42279",
-          "name": "Honey Syrup",
-          "amount": "20",
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "25",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7111,6 +7336,18 @@
         },
         {
           "order": 4,
+          "ingredientId": "1755200244973-38131",
+          "name": "Orange Juice",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
           "ingredientId": "1755200244973-108496",
           "name": "Lemon",
           "amount": "1",
@@ -7120,10 +7357,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756040932014,
       "photoUri": "assets/cocktails/1755800000053-bees-knees.jpg"
     },
     {
@@ -7147,9 +7396,9 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755441997878-5992",
-          "name": "Peach",
-          "amount": "30",
+          "ingredientId": "1755200244973-588255",
+          "name": "Prosecco",
+          "amount": "100",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7159,9 +7408,9 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-588255",
-          "name": "Prosecco",
-          "amount": "90",
+          "ingredientId": "1755441997878-5992",
+          "name": "Peach",
+          "amount": "50",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7171,7 +7420,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756037726509,
       "photoUri": "assets/cocktails/1755800000054-bellini.jpg"
     },
     {
@@ -7243,7 +7492,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535729,
       "photoUri": "assets/cocktails/1755800000055-between-the-sheets.jpg"
     },
     {
@@ -7291,7 +7540,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535729,
       "photoUri": "assets/cocktails/1755800000056-black-russian.jpg"
     },
     {
@@ -7311,7 +7560,7 @@
         }
       ],
       "description": "A savory vodka cocktail with tomato juice, spices, and a peppery bite.",
-      "instructions": "Pour all ingredients into a highball glass filled with ice.\nStir gently.\nGarnish with a celery stalk and a lemon wedge.",
+      "instructions": "Add all ingredients into a mixing glass with ice. Stir gently.\nPour all ingredients into a highball glass filled with ice.\nGarnish with a celery stalk and a lemon wedge.",
       "ingredients": [
         {
           "order": 1,
@@ -7423,7 +7672,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756038417593,
       "photoUri": "assets/cocktails/1755800000057-bloody-mary.jpg"
     },
     {
@@ -7455,7 +7704,12 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-160433",
+              "name": "Rye Whisky"
+            }
+          ]
         },
         {
           "order": 2,
@@ -7492,10 +7746,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756038362284,
       "photoUri": "assets/cocktails/1755800000058-boulevardier.jpg"
     },
     {
@@ -7515,13 +7781,13 @@
         }
       ],
       "description": "A modern gin sour swirled with blackberry liqueur.",
-      "instructions": "Add gin, lemon juice, and simple syrup into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with crushed ice.\nPour creme de mure over the top.\nGarnish with a lemon slice and two blackberries.",
+      "instructions": "Add gin and lemon juice into a shaker with ice.\nShake well.\nStrain into a rocks glass filled with crushed ice.\nPour creme de mure over the top.\nGarnish with a lemon slice and two blackberries.",
       "ingredients": [
         {
           "order": 1,
           "ingredientId": "1755200244973-863081",
           "name": "Gin",
-          "amount": "40",
+          "amount": "50",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7533,7 +7799,7 @@
           "order": 2,
           "ingredientId": "1755200244973-734220",
           "name": "Lemon Juice",
-          "amount": "20",
+          "amount": "25",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7543,18 +7809,6 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-150490",
-          "name": "Simple Syrup",
-          "amount": "10",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 4,
           "ingredientId": "1755200244973-752419",
           "name": "Creme de Mure",
           "amount": "15",
@@ -7563,10 +7817,15 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755441997878-784845",
+              "name": "Blackberry Liqueur"
+            }
+          ]
         },
         {
-          "order": 5,
+          "order": 4,
           "ingredientId": "1755200244973-108496",
           "name": "Lemon",
           "amount": "1",
@@ -7578,7 +7837,7 @@
           "substitutes": []
         },
         {
-          "order": 6,
+          "order": 5,
           "ingredientId": "1755200244973-367696",
           "name": "Blackberry",
           "amount": "2",
@@ -7591,7 +7850,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756038567567,
       "photoUri": "assets/cocktails/1755800000059-bramble.jpg"
     },
     {
@@ -7617,19 +7876,24 @@
           "order": 1,
           "ingredientId": "1755200244973-502166",
           "name": "Cognac",
-          "amount": "60",
+          "amount": "52.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-587125",
-          "name": "Orange Curaçao",
-          "amount": "15",
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "7.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7639,15 +7903,20 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-147675",
-          "name": "Maraschino Liqueur",
-          "amount": "15",
-          "unitId": 11,
+          "ingredientId": "1755200244973-587125",
+          "name": "Orange Curaçao",
+          "amount": "1",
+          "unitId": 2,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-38880",
+              "name": "Triple Sec"
+            }
+          ]
         },
         {
           "order": 4,
@@ -7675,8 +7944,8 @@
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
+          "ingredientId": "1755200244973-804376",
+          "name": "Bitters",
           "amount": "2",
           "unitId": 6,
           "garnish": false,
@@ -7696,10 +7965,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755200244973-217733",
+          "name": "Sugar",
+          "amount": "5",
+          "unitId": 8,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756038862295,
       "photoUri": "assets/cocktails/1755800000019-brandy-crusta.jpg"
     },
     {
@@ -7783,7 +8064,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000020-bronx.jpg"
     },
     {
@@ -7821,7 +8102,7 @@
           "order": 2,
           "ingredientId": "1755200244973-217733",
           "name": "Sugar",
-          "amount": "2",
+          "amount": "4",
           "unitId": 24,
           "garnish": false,
           "optional": false,
@@ -7843,7 +8124,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756038965157,
       "photoUri": "assets/cocktails/1755800000021-caipirinha.jpg"
     },
     {
@@ -7867,15 +8148,20 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-42279",
-          "name": "Honey Syrup",
-          "amount": "25",
+          "ingredientId": 1756039412725,
+          "name": "Cuban Aguardiente",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-861551",
+              "name": "White Rum"
+            }
+          ]
         },
         {
           "order": 2,
@@ -7891,11 +8177,40 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-861551",
-          "name": "White Rum",
-          "amount": "60",
+          "ingredientId": "1755200244973-63524",
+          "name": "Honey",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": "1755200244973-42279",
+              "name": "Honey Syrup"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-752336",
+          "name": "Water",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
@@ -7903,7 +8218,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756039576902,
       "photoUri": "assets/cocktails/1755800000022-canchanchara.jpg"
     },
     {
@@ -7929,7 +8244,7 @@
           "order": 1,
           "ingredientId": "1755200244973-863081",
           "name": "Gin",
-          "amount": "30",
+          "amount": "40",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7939,9 +8254,9 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-705866",
-          "name": "Campari",
-          "amount": "30",
+          "ingredientId": "1755200244973-569330",
+          "name": "Dry Vermouth",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7951,9 +8266,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-569330",
-          "name": "Dry Vermouth",
-          "amount": "30",
+          "ingredientId": "1755200244973-705866",
+          "name": "Campari",
+          "amount": "10",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7975,7 +8290,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756039655056,
       "photoUri": "assets/cocktails/1755800000023-cardinale.jpg"
     },
     {
@@ -8001,7 +8316,7 @@
           "order": 1,
           "ingredientId": "1755441997878-289771",
           "name": "Old Tom Gin",
-          "amount": "45",
+          "amount": "40",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8071,7 +8386,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756039713330,
       "photoUri": "assets/cocktails/1755800000024-casino.jpg"
     },
     {
@@ -8143,6 +8458,18 @@
         },
         {
           "order": 5,
+          "ingredientId": "1755200244973-392135",
+          "name": "Grand Marnier",
+          "amount": "3",
+          "unitId": 7,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
           "ingredientId": "1755200244973-454059",
           "name": "Orange",
           "amount": "1",
@@ -8154,7 +8481,7 @@
           "substitutes": []
         },
         {
-          "order": 6,
+          "order": 7,
           "ingredientId": "1755200244973-607153",
           "name": "Maraschino cherry",
           "amount": "1",
@@ -8167,7 +8494,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756039817003,
       "photoUri": "assets/cocktails/1755800000025-champagne-cocktail.jpg"
     },
     {
@@ -8205,7 +8532,7 @@
           "order": 2,
           "ingredientId": "1755200244973-494177",
           "name": "Pineapple Juice",
-          "amount": "60",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8217,7 +8544,7 @@
           "order": 3,
           "ingredientId": "1755200244973-525624",
           "name": "Lime Juice",
-          "amount": "15",
+          "amount": "25.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8239,22 +8566,10 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
-          "amount": "1",
-          "unitId": 6,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 6,
           "ingredientId": "1755200244973-304217",
           "name": "Mint",
-          "amount": "1",
-          "unitId": 21,
+          "amount": "3",
+          "unitId": 10,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -8262,7 +8577,7 @@
           "substitutes": []
         },
         {
-          "order": 7,
+          "order": 6,
           "ingredientId": "1755200244973-591435",
           "name": "Nutmeg",
           "amount": "1",
@@ -8275,7 +8590,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756040131081,
       "photoUri": "assets/cocktails/1755800000026-chartreuse-swizzle.jpg"
     },
     {
@@ -8337,17 +8652,17 @@
           "order": 4,
           "ingredientId": "1755200244973-450591",
           "name": "Egg White",
-          "amount": "15",
-          "unitId": 11,
+          "amount": "1",
+          "unitId": 1,
           "garnish": false,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756040165095,
       "photoUri": "assets/cocktails/1755800000027-clover-club.jpg"
     },
     {
@@ -8367,7 +8682,7 @@
         }
       ],
       "description": "A balanced mix of gin, citrus, and aromatics traditionally taken as a morning pick-me-up.",
-      "instructions": "Rinse a chilled cocktail glass with absinthe and discard the excess.\nShake gin, Cointreau, Lillet Blanc, and lemon juice with ice.\nStrain into the prepared glass.\nGarnish with a maraschino cherry.",
+      "instructions": "Rinse a chilled cocktail glass with absinthe and discard the excess.\nShake gin, Cointreau, Lillet Blanc, and lemon juice with ice.\nStrain into the prepared glass.\nGarnish with a lemon twist.",
       "ingredients": [
         {
           "order": 1,
@@ -8431,10 +8746,10 @@
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-607153",
-          "name": "Maraschino cherry",
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
           "amount": "1",
-          "unitId": 1,
+          "unitId": 26,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -8443,7 +8758,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756040386042,
       "photoUri": "assets/cocktails/1755800000028-corpse-reviver-2.jpg"
     },
     {
@@ -8515,8 +8830,8 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-454059",
-          "name": "Orange",
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
           "amount": "1",
           "unitId": 26,
           "garnish": true,
@@ -8527,7 +8842,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756040462112,
       "photoUri": "assets/cocktails/1755800000029-cosmopolitan.jpg"
     },
     {
@@ -8599,7 +8914,7 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000030-cuba-libre.jpg"
     },
     {
@@ -8625,7 +8940,7 @@
           "order": 1,
           "ingredientId": "1755200244973-861551",
           "name": "White Rum",
-          "amount": "45",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8637,7 +8952,7 @@
           "order": 2,
           "ingredientId": "1755200244973-525624",
           "name": "Lime Juice",
-          "amount": "25",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8649,7 +8964,7 @@
           "order": 3,
           "ingredientId": "1755200244973-150490",
           "name": "Simple Syrup",
-          "amount": "15",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -8671,7 +8986,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756041751022,
       "photoUri": "assets/cocktails/1755800000031-daiquiri.jpg"
     },
     {
@@ -8695,30 +9010,18 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-962705",
-          "name": "Dark Rum",
+          "ingredientId": 1756042019647,
+          "name": "Goslings Rum",
           "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
+          "allowBaseSubstitution": true,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-525624",
-          "name": "Lime Juice",
-          "amount": "10",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 3,
           "ingredientId": "1755200244973-353113",
           "name": "Ginger Beer",
           "amount": "100",
@@ -8730,7 +9033,7 @@
           "substitutes": []
         },
         {
-          "order": 4,
+          "order": 3,
           "ingredientId": "1755200244973-336572",
           "name": "Lime",
           "amount": "1",
@@ -8743,13 +9046,13 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756042043426,
       "photoUri": "assets/cocktails/1755800000032-dark-n-stormy.jpg"
     },
     {
       "id": 1755800000033,
       "name": "Don's Special Daiquiri",
-      "glassId": "cocktail_glass",
+      "glassId": "tiki",
       "tags": [
         {
           "id": 1,
@@ -8767,8 +9070,8 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-861551",
-          "name": "White Rum",
+          "ingredientId": "1755200244973-811139",
+          "name": "Gold Rum",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
@@ -8779,8 +9082,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-811139",
-          "name": "Gold Rum",
+          "ingredientId": "1755200244973-861551",
+          "name": "White Rum",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -8791,8 +9094,8 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-131206",
-          "name": "Grapefruit Juice",
+          "ingredientId": "1755200244973-623211",
+          "name": "Passion Fruit Syrup",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -8827,10 +9130,10 @@
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-336572",
-          "name": "Lime",
+          "ingredientId": "1755441997878-41869",
+          "name": "Passion Fruit",
           "amount": "1",
-          "unitId": 19,
+          "unitId": 9,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -8839,8 +9142,8 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
-      "photoUri": "assets/cocktails/1755800000033-dons-special-daiquiri.jpg"
+      "updatedAt": 1756052205356,
+      "photoUri": "assets/cocktails/1755800000033-dons-special-daiquiri.png"
     },
     {
       "id": 1755800000034,
@@ -8923,7 +9226,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000034-dry-martini.jpg"
     },
     {
@@ -8959,13 +9262,13 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-705618",
-          "name": "Coffee Liqueur",
-          "amount": "20",
+          "ingredientId": "1755200244973-722227",
+          "name": "Kahlua",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
+          "allowBaseSubstitution": true,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
@@ -9007,7 +9310,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1756042489009,
       "photoUri": "assets/cocktails/1755800000035-espresso-martini.jpg"
     },
     {
@@ -9067,7 +9370,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737052,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000036-fernandito.jpg"
     },
     {
@@ -9117,7 +9420,7 @@
           "order": 3,
           "ingredientId": "1755200244973-150490",
           "name": "Simple Syrup",
-          "amount": "10",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9144,14 +9447,14 @@
           "amount": "1",
           "unitId": 26,
           "garnish": true,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042603925,
       "photoUri": "assets/cocktails/1755800000037-french-75.jpg"
     },
     {
@@ -9183,7 +9486,12 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
@@ -9199,7 +9507,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042646633,
       "photoUri": "assets/cocktails/1755800000038-french-connection.jpg"
     },
     {
@@ -9259,10 +9567,10 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755441997878-515915",
-          "name": "Raspberry",
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
           "amount": "1",
-          "unitId": 1,
+          "unitId": 26,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -9271,7 +9579,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042700340,
       "photoUri": "assets/cocktails/1755800000039-french-martini.jpg"
     },
     {
@@ -9309,7 +9617,7 @@
           "order": 2,
           "ingredientId": "1755200244973-38131",
           "name": "Orange Juice",
-          "amount": "90",
+          "amount": "120",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9331,7 +9639,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042735965,
       "photoUri": "assets/cocktails/1755800000040-garibaldi.jpg"
     },
     {
@@ -9367,8 +9675,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-150490",
-          "name": "Simple Syrup",
+          "ingredientId": "1755441997878-429018",
+          "name": "Rich Simple Syrup",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -9408,14 +9716,14 @@
           "amount": "1",
           "unitId": 1,
           "garnish": true,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042851622,
       "photoUri": "assets/cocktails/1755800000041-gin-basil-smash.jpg"
     },
     {
@@ -9477,7 +9785,7 @@
           "order": 4,
           "ingredientId": "1755200244973-807431",
           "name": "Soda Water",
-          "amount": "80",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9499,7 +9807,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756042937464,
       "photoUri": "assets/cocktails/1755800000042-gin-fizz.jpg"
     },
     {
@@ -9525,7 +9833,7 @@
           "order": 1,
           "ingredientId": "1755441997878-266182",
           "name": "Tequila Blanco",
-          "amount": "40",
+          "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9537,7 +9845,7 @@
           "order": 2,
           "ingredientId": "1755200244973-392135",
           "name": "Grand Marnier",
-          "amount": "20",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9549,7 +9857,7 @@
           "order": 3,
           "ingredientId": "1755200244973-525624",
           "name": "Lime Juice",
-          "amount": "20",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9595,7 +9903,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756043046686,
       "photoUri": "assets/cocktails/1755800000043-grand-margarita.jpg"
     },
     {
@@ -9655,7 +9963,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000044-grasshopper.jpg"
     },
     {
@@ -9705,7 +10013,7 @@
           "order": 3,
           "ingredientId": "1755441997878-173236",
           "name": "Fernet Branca",
-          "amount": "2",
+          "amount": "7.5",
           "unitId": 6,
           "garnish": false,
           "optional": false,
@@ -9727,7 +10035,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756043130839,
       "photoUri": "assets/cocktails/1755800000045-hanky-panky.jpg"
     },
     {
@@ -9747,7 +10055,7 @@
         }
       ],
       "description": "A tart rum sour with grapefruit and maraschino liqueur.",
-      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.\nGarnish with a maraschino cherry.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.",
       "ingredients": [
         {
           "order": 1,
@@ -9796,34 +10104,10 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
-        },
-        {
-          "order": 5,
-          "ingredientId": "1755200244973-150490",
-          "name": "Simple Syrup",
-          "amount": "10",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 6,
-          "ingredientId": "1755200244973-607153",
-          "name": "Maraschino cherry",
-          "amount": "1",
-          "unitId": 1,
-          "garnish": true,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756043194261,
       "photoUri": "assets/cocktails/1755800000046-hemingway-special.jpg"
     },
     {
@@ -9859,18 +10143,6 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
-          "amount": "2",
-          "unitId": 6,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 3,
           "ingredientId": "1755200244973-474349",
           "name": "Ginger Ale",
           "amount": "120",
@@ -9882,11 +10154,23 @@
           "substitutes": []
         },
         {
+          "order": 3,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
           "order": 4,
           "ingredientId": "1755200244973-108496",
           "name": "Lemon",
           "amount": "1",
-          "unitId": 26,
+          "unitId": 14,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -9895,7 +10179,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756043265529,
       "photoUri": "assets/cocktails/1755800000047-horses-neck.jpg"
     },
     {
@@ -9943,8 +10227,8 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-888089",
-          "name": "Falernum",
+          "ingredientId": "1755200244973-728860",
+          "name": "Amaretto",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -9955,21 +10239,21 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-525624",
-          "name": "Lime Juice",
-          "amount": "15",
+          "ingredientId": "1755200244973-241335",
+          "name": "Frangelico",
+          "amount": "5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
+          "allowBaseSubstitution": true,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-494177",
-          "name": "Pineapple Juice",
-          "amount": "30",
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -9991,6 +10275,30 @@
         },
         {
           "order": 7,
+          "ingredientId": "1755200244973-494177",
+          "name": "Pineapple Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
           "ingredientId": "1755200244973-401724",
           "name": "Angostura Bitters",
           "amount": "2",
@@ -10002,19 +10310,19 @@
           "substitutes": []
         },
         {
-          "order": 8,
-          "ingredientId": "1755200244973-304217",
-          "name": "Mint",
+          "order": 10,
+          "ingredientId": "1755200244973-830493",
+          "name": "Ginger",
           "amount": "1",
-          "unitId": 1,
-          "garnish": true,
+          "unitId": 19,
+          "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
         {
-          "order": 9,
+          "order": 11,
           "ingredientId": "1755200244973-932849",
           "name": "Pineapple",
           "amount": "1",
@@ -10027,7 +10335,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970797783,
+      "updatedAt": 1756043687726,
       "photoUri": "assets/cocktails/1755800000048-iba-tiki.jpg"
     },
     {
@@ -10053,7 +10361,7 @@
           "order": 1,
           "ingredientId": "1755200244973-50977",
           "name": "Mezcal",
-          "amount": "45",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -10063,8 +10371,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-366531",
-          "name": "Yellow Chartreuse",
+          "ingredientId": "1755441997878-669831",
+          "name": "Overproof Rum",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -10075,8 +10383,8 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-525624",
-          "name": "Lime Juice",
+          "ingredientId": "1755200244973-888089",
+          "name": "Falernum",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -10087,19 +10395,55 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-773514",
-          "name": "Agave Syrup",
-          "amount": "5",
+          "ingredientId": "1755200244973-147675",
+          "name": "Maraschino Liqueur",
+          "amount": "1",
+          "unitId": 2,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "22.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-450591",
+          "name": "Egg White",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970737053,
+      "updatedAt": 1756043925296,
       "photoUri": "assets/cocktails/1755800000072-illegal.jpg"
     },
     {
@@ -10137,7 +10481,7 @@
           "order": 2,
           "ingredientId": "1755200244973-750837",
           "name": "Espresso",
-          "amount": "80",
+          "amount": "120",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -10149,7 +10493,7 @@
           "order": 3,
           "ingredientId": "1755200244973-489584",
           "name": "Irish Whisky",
-          "amount": "40",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -10161,7 +10505,7 @@
           "order": 4,
           "ingredientId": "1755200244973-564821",
           "name": "Cream",
-          "amount": "30",
+          "amount": "50",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -10171,7 +10515,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970824170,
+      "updatedAt": 1756044029130,
       "photoUri": "assets/cocktails/1755800000073-irish-coffee.jpg"
     },
     {
@@ -10195,8 +10539,8 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755441997878-289771",
-          "name": "Old Tom Gin",
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
@@ -10267,7 +10611,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755970897533,
+      "updatedAt": 1756044090739,
       "photoUri": "assets/cocktails/1755800000074-john-collins.jpg"
     },
     {
@@ -10291,21 +10635,26 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-962705",
-          "name": "Dark Rum",
+          "ingredientId": "1755200244973-4130",
+          "name": "Blackstrap Rum",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-962705",
+              "name": "Dark Rum"
+            }
+          ]
         },
         {
           "order": 2,
           "ingredientId": "1755200244973-705866",
           "name": "Campari",
-          "amount": "15",
+          "amount": "22.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -10363,7 +10712,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1755971103571,
+      "updatedAt": 1756044190372,
       "photoUri": "assets/cocktails/1755800000075-jungle-bird.jpg"
     },
     {
@@ -10411,7 +10760,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755971374869,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000076-kir.jpg"
     },
     {
@@ -10495,7 +10844,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755972191209,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000077-last-word.jpg"
     },
     {
@@ -10555,22 +10904,10 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-150490",
-          "name": "Simple Syrup",
-          "amount": "10",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 5,
           "ingredientId": "1755200244973-217733",
           "name": "Sugar",
-          "amount": "1",
-          "unitId": 15,
+          "amount": "5",
+          "unitId": 8,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -10578,7 +10915,7 @@
           "substitutes": []
         },
         {
-          "order": 6,
+          "order": 5,
           "ingredientId": "1755200244973-108496",
           "name": "Lemon",
           "amount": "1",
@@ -10591,7 +10928,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755971711746,
+      "updatedAt": 1756044296467,
       "photoUri": "assets/cocktails/1755800000078-lemon-drop-martini.jpg"
     },
     {
@@ -10611,7 +10948,7 @@
         }
       ],
       "description": "Five-spirit sour lengthened with cola.",
-      "instructions": "Add all spirits, lemon juice, and simple syrup into a shaker with ice.\nShake briefly.\nPour into a highball glass filled with ice.\nTop with cola and stir.\nGarnish with a lemon slice.",
+      "instructions": "Add all spirits, lemon juice, and simple syrup into a highball glass filled with ice. \nTop up with cola and stir.\nGarnish with a lemon slice.",
       "ingredients": [
         {
           "order": 1,
@@ -10663,15 +11000,20 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-38880",
-          "name": "Triple Sec",
+          "ingredientId": "1755200244973-354943",
+          "name": "Cointreau",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-38880",
+              "name": "Triple Sec"
+            }
+          ]
         },
         {
           "order": 6,
@@ -10723,7 +11065,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755971889837,
+      "updatedAt": 1756044460063,
       "photoUri": "assets/cocktails/1755800000079-long-island-iced-tea.jpg"
     },
     {
@@ -10783,18 +11125,6 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-734220",
-          "name": "Lime Juice",
-          "amount": "15",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 5,
           "ingredientId": "1755200244973-738590",
           "name": "Orgeat Syrup",
           "amount": "15",
@@ -10811,7 +11141,31 @@
           ]
         },
         {
+          "order": 5,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
           "order": 6,
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "7.5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
           "ingredientId": "1755200244973-304217",
           "name": "Mint",
           "amount": "1",
@@ -10821,10 +11175,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755200244973-336572",
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973087400,
+      "updatedAt": 1756044630667,
       "photoUri": "assets/cocktails/1755800000060-mai-tai.jpg"
     },
     {
@@ -10884,8 +11250,8 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-607153",
-          "name": "Maraschino cherry",
+          "ingredientId": "1755200244973-791672",
+          "name": "Cherry",
           "amount": "1",
           "unitId": 1,
           "garnish": true,
@@ -10896,7 +11262,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755972544917,
+      "updatedAt": 1756044700348,
       "photoUri": "assets/cocktails/1755800000061-manhattan.jpg"
     },
     {
@@ -10956,6 +11322,18 @@
         },
         {
           "order": 4,
+          "ingredientId": "1755200244973-773514",
+          "name": "Agave Syrup",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
           "ingredientId": "1755200244973-728001",
           "name": "Salt",
           "amount": "1",
@@ -10967,7 +11345,7 @@
           "substitutes": []
         },
         {
-          "order": 5,
+          "order": 6,
           "ingredientId": "1755200244973-336572",
           "name": "Lime",
           "amount": "1",
@@ -10980,7 +11358,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755972592791,
+      "updatedAt": 1756044769475,
       "photoUri": "assets/cocktails/1755800000062-margarita.jpg"
     },
     {
@@ -11042,7 +11420,7 @@
           "order": 4,
           "ingredientId": "1755200244973-552212",
           "name": "Orange Bitters",
-          "amount": "1",
+          "amount": "2",
           "unitId": 6,
           "garnish": false,
           "optional": false,
@@ -11064,7 +11442,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755972663843,
+      "updatedAt": 1756044833074,
       "photoUri": "assets/cocktails/1755800000063-martinez.jpg"
     },
     {
@@ -11126,7 +11504,7 @@
           "order": 4,
           "ingredientId": "1755200244973-803536",
           "name": "Grenadine",
-          "amount": "7.5",
+          "amount": "5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11141,14 +11519,14 @@
           "amount": "1",
           "unitId": 1,
           "garnish": true,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973214419,
+      "updatedAt": 1756044870925,
       "photoUri": "assets/cocktails/1755800000064-mary-pickford.jpg"
     },
     {
@@ -11193,10 +11571,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-454059",
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973322778,
+      "updatedAt": 1756044968480,
       "photoUri": "assets/cocktails/1755800000065-mimosa.jpg"
     },
     {
@@ -11280,7 +11670,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973438311,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000066-mint-julep.jpg"
     },
     {
@@ -11316,8 +11706,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755441997878-733523",
-          "name": "Peach Liqueur",
+          "ingredientId": "1755200244973-330434",
+          "name": "Peach Brandy",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -11342,7 +11732,7 @@
           "order": 4,
           "ingredientId": "1755200244973-42279",
           "name": "Honey Syrup",
-          "amount": "15",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11354,7 +11744,7 @@
           "order": 5,
           "ingredientId": "1755200244973-932849",
           "name": "Pineapple",
-          "amount": "60",
+          "amount": "30",
           "unitId": 8,
           "garnish": false,
           "optional": false,
@@ -11388,7 +11778,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973583865,
+      "updatedAt": 1756045121375,
       "photoUri": "assets/cocktails/1755800000067-missionarys-downfall.jpg"
     },
     {
@@ -11496,7 +11886,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973658263,
+      "updatedAt": 1755987535730,
       "photoUri": "assets/cocktails/1755800000068-mojito.jpg"
     },
     {
@@ -11546,7 +11936,7 @@
           "order": 3,
           "ingredientId": "1755200244973-440131",
           "name": "Absinthe",
-          "amount": "5",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11558,7 +11948,7 @@
           "order": 4,
           "ingredientId": "1755200244973-803536",
           "name": "Grenadine",
-          "amount": "5",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11580,7 +11970,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973743250,
+      "updatedAt": 1756045195670,
       "photoUri": "assets/cocktails/1755800000069-monkey-gland.jpg"
     },
     {
@@ -11630,7 +12020,7 @@
           "order": 3,
           "ingredientId": "1755200244973-353113",
           "name": "Ginger Beer",
-          "amount": "100",
+          "amount": "120",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11652,7 +12042,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755973813395,
+      "updatedAt": 1756045237833,
       "photoUri": "assets/cocktails/1755800000070-moscow-mule.jpg"
     },
     {
@@ -11688,18 +12078,6 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-167992",
-          "name": "Aperol",
-          "amount": "20",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 3,
           "ingredientId": "1755200244973-366531",
           "name": "Yellow Chartreuse",
           "amount": "20",
@@ -11711,8 +12089,20 @@
           "substitutes": []
         },
         {
+          "order": 3,
+          "ingredientId": "1755200244973-167992",
+          "name": "Aperol",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
           "order": 4,
-          "ingredientId": "1755200244973-734220",
+          "ingredientId": "1755200244973-525624",
           "name": "Lime Juice",
           "amount": "20",
           "unitId": 11,
@@ -11724,7 +12114,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755978679576,
+      "updatedAt": 1756045301239,
       "photoUri": "assets/cocktails/1755800000071-naked-and-famous.jpg"
     },
     {
@@ -11786,8 +12176,8 @@
           "order": 4,
           "ingredientId": "1755200244973-454059",
           "name": "Orange",
-          "amount": "1",
-          "unitId": 26,
+          "amount": "0.5",
+          "unitId": 19,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -11796,7 +12186,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755979150207,
+      "updatedAt": 1756045396101,
       "photoUri": "assets/cocktails/1755800000080-negroni.jpg"
     },
     {
@@ -11829,6 +12219,10 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": [
+            {
+              "id": "1755200244973-160433",
+              "name": "Rye Whisky"
+            },
             {
               "id": "1755200244973-830162",
               "name": "Whisky"
@@ -11882,10 +12276,34 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-791672",
+          "name": "Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-108496",
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 14,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755979717508,
+      "updatedAt": 1756046432425,
       "photoUri": "assets/cocktails/1755800000081-new-york-sour.jpg"
     },
     {
@@ -11921,21 +12339,26 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-150490",
-          "name": "Simple Syrup",
-          "amount": "15",
+          "ingredientId": "1755200244973-123517",
+          "name": "Aged rum",
+          "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-962705",
+              "name": "Dark Rum"
+            }
+          ]
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-962705",
-          "name": "Dark Rum",
-          "amount": "45",
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "22.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11945,9 +12368,9 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-525624",
-          "name": "Lime Juice",
-          "amount": "22",
+          "ingredientId": "1755200244973-150490",
+          "name": "Simple Syrup",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -11977,7 +12400,12 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-588255",
+              "name": "Prosecco"
+            }
+          ]
         },
         {
           "order": 7,
@@ -11993,7 +12421,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755979595950,
+      "updatedAt": 1756046571437,
       "photoUri": "assets/cocktails/1755800000082-old-cuban.jpg"
     },
     {
@@ -12068,7 +12496,7 @@
           "ingredientId": "1755200244973-454059",
           "name": "Orange",
           "amount": "1",
-          "unitId": 26,
+          "unitId": 27,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -12089,7 +12517,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755979917512,
+      "updatedAt": 1756046689544,
       "photoUri": "assets/cocktails/1755800000083-old-fashioned.jpg"
     },
     {
@@ -12125,6 +12553,18 @@
         },
         {
           "order": 2,
+          "ingredientId": "1755200244973-773514",
+          "name": "Agave Syrup",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
           "ingredientId": "1755200244973-525624",
           "name": "Lime Juice",
           "amount": "10",
@@ -12136,10 +12576,10 @@
           "substitutes": []
         },
         {
-          "order": 3,
+          "order": 4,
           "ingredientId": "1755441997878-326697",
           "name": "Grapefruit Soda",
-          "amount": "120",
+          "amount": "100",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12148,7 +12588,7 @@
           "substitutes": []
         },
         {
-          "order": 4,
+          "order": 5,
           "ingredientId": "1755200244973-728001",
           "name": "Salt",
           "amount": "1",
@@ -12160,7 +12600,7 @@
           "substitutes": []
         },
         {
-          "order": 5,
+          "order": 6,
           "ingredientId": "1755200244973-336572",
           "name": "Lime",
           "amount": "1",
@@ -12173,7 +12613,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980031616,
+      "updatedAt": 1756046788383,
       "photoUri": "assets/cocktails/1755800000084-paloma.jpg"
     },
     {
@@ -12209,7 +12649,7 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-705866",
+          "ingredientId": "1755200244973-167992",
           "name": "Aperol",
           "amount": "30",
           "unitId": 11,
@@ -12245,7 +12685,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980148022,
+      "updatedAt": 1756046830371,
       "photoUri": "assets/cocktails/1755800000085-paper-plane.jpg"
     },
     {
@@ -12271,7 +12711,7 @@
           "order": 1,
           "ingredientId": "1755200244973-863081",
           "name": "Gin",
-          "amount": "35",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12305,7 +12745,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980251641,
+      "updatedAt": 1756046877403,
       "photoUri": "assets/cocktails/1755800000086-paradise.jpg"
     },
     {
@@ -12331,7 +12771,7 @@
           "order": 1,
           "ingredientId": "1755200244973-140867",
           "name": "Scotch Whiskey",
-          "amount": "45",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12343,7 +12783,7 @@
           "order": 2,
           "ingredientId": "1755200244973-734220",
           "name": "Lemon Juice",
-          "amount": "20",
+          "amount": "25",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12355,7 +12795,7 @@
           "order": 3,
           "ingredientId": "1755200244973-42279",
           "name": "Honey Syrup",
-          "amount": "10",
+          "amount": "25",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12365,10 +12805,10 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-109858",
-          "name": "Ginger Syrup",
-          "amount": "10",
-          "unitId": 11,
+          "ingredientId": "1755200244973-830493",
+          "name": "Ginger",
+          "amount": "3",
+          "unitId": 1,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -12377,22 +12817,22 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-563527",
-          "name": "Islay Scotch Whiskey",
-          "amount": "7",
+          "ingredientId": 1756047218887,
+          "name": "Lagavulin 16 years",
+          "amount": "7.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
           "substitutes": []
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-830493",
-          "name": "Ginger",
+          "ingredientId": 1756047088093,
+          "name": "Ginger Candy",
           "amount": "1",
-          "unitId": 19,
+          "unitId": 1,
           "garnish": true,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -12401,7 +12841,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980362164,
+      "updatedAt": 1756047349824,
       "photoUri": "assets/cocktails/1755800000087-penicillin.jpg"
     },
     {
@@ -12427,7 +12867,7 @@
           "order": 1,
           "ingredientId": "1755200244973-861551",
           "name": "White Rum",
-          "amount": "30",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12437,8 +12877,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755441997878-808918",
-          "name": "Coconut Cream",
+          "ingredientId": "1755200244973-219375",
+          "name": "Coconut Syrup",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -12461,6 +12901,18 @@
         },
         {
           "order": 4,
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
           "ingredientId": "1755200244973-932849",
           "name": "Pineapple",
           "amount": "1",
@@ -12472,7 +12924,7 @@
           "substitutes": []
         },
         {
-          "order": 5,
+          "order": 6,
           "ingredientId": "1755200244973-607153",
           "name": "Maraschino cherry",
           "amount": "1",
@@ -12485,7 +12937,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980756812,
+      "updatedAt": 1756047481395,
       "photoUri": "assets/cocktails/1755800000088-pina-colada.jpg"
     },
     {
@@ -12511,7 +12963,7 @@
           "order": 1,
           "ingredientId": "1755200244973-340461",
           "name": "Pisco",
-          "amount": "45",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12523,7 +12975,7 @@
           "order": 2,
           "ingredientId": "1755200244973-494177",
           "name": "Pineapple Juice",
-          "amount": "60",
+          "amount": "22.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12533,18 +12985,6 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-525624",
-          "name": "Lime Juice",
-          "amount": "15",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 4,
           "ingredientId": "1755200244973-150490",
           "name": "Simple Syrup",
           "amount": "15",
@@ -12556,10 +12996,22 @@
           "substitutes": []
         },
         {
+          "order": 4,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
           "order": 5,
-          "ingredientId": "1755200244973-807431",
-          "name": "Soda Water",
-          "amount": "60",
+          "ingredientId": "1755200244973-540275",
+          "name": "White Wine",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12569,6 +13021,18 @@
         },
         {
           "order": 6,
+          "ingredientId": "1755200244973-214731",
+          "name": "Cloves",
+          "amount": "3",
+          "unitId": 1,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
           "ingredientId": "1755200244973-932849",
           "name": "Pineapple",
           "amount": "1",
@@ -12581,7 +13045,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755980879117,
+      "updatedAt": 1756047624591,
       "photoUri": "assets/cocktails/1755800000089-pisco-punch.jpg"
     },
     {
@@ -12643,8 +13107,8 @@
           "order": 4,
           "ingredientId": "1755200244973-450591",
           "name": "Egg White",
-          "amount": "15",
-          "unitId": 11,
+          "amount": "1",
+          "unitId": 1,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -12653,8 +13117,8 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
+          "ingredientId": "1755200244973-804376",
+          "name": "Bitters",
           "amount": "3",
           "unitId": 6,
           "garnish": true,
@@ -12665,7 +13129,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981214593,
+      "updatedAt": 1756047687469,
       "photoUri": "assets/cocktails/1755800000090-pisco-sour.jpg"
     },
     {
@@ -12685,25 +13149,30 @@
         }
       ],
       "description": "Jamaican rum punch with citrus, grenadine, and a touch of bitters.",
-      "instructions": "Add rum, orange juice, pineapple juice, lemon juice, and grenadine into a shaker with ice.\nShake well.\nPour into a highball glass and top with soda water.\nDash bitters on top and garnish with a pineapple slice.",
+      "instructions": "Add rum, orange juice, pineapple juice, lime juice, and grenadine into a shaker with ice.\nShake well.\nPour into a highball glass and top with soda water.\nDash bitters on top and garnish with a pineapple slice.",
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-962705",
-          "name": "Dark Rum",
-          "amount": "45",
+          "ingredientId": "1755681623932",
+          "name": "Jamaican Rum",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-962705",
+              "name": "Dark Rum"
+            }
+          ]
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-38131",
-          "name": "Orange Juice",
-          "amount": "35",
+          "ingredientId": "1755200244973-525624",
+          "name": "Lime Juice",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12713,9 +13182,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-494177",
-          "name": "Pineapple Juice",
-          "amount": "35",
+          "ingredientId": "1755441997878-429018",
+          "name": "Rich Simple Syrup",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12725,9 +13194,9 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-734220",
-          "name": "Lemon Juice",
-          "amount": "20",
+          "ingredientId": "1755200244973-38131",
+          "name": "Orange Juice",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12737,9 +13206,9 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-803536",
-          "name": "Grenadine",
-          "amount": "10",
+          "ingredientId": "1755200244973-494177",
+          "name": "Pineapple Juice",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12749,22 +13218,22 @@
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-807431",
-          "name": "Soda Water",
-          "amount": "60",
+          "ingredientId": "1755200244973-803536",
+          "name": "Grenadine",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
         {
           "order": 7,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
-          "amount": "3",
-          "unitId": 6,
+          "ingredientId": "1755200244973-807431",
+          "name": "Soda Water",
+          "amount": "60",
+          "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -12785,7 +13254,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981149294,
+      "updatedAt": 1756048010523,
       "photoUri": "assets/cocktails/1755800000091-planters-punch.jpg"
     },
     {
@@ -12811,7 +13280,7 @@
           "order": 1,
           "ingredientId": "1755200244973-118165",
           "name": "Vodka Vanilla",
-          "amount": "45",
+          "amount": "50",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12823,7 +13292,7 @@
           "order": 2,
           "ingredientId": "1755441997878-65926",
           "name": "Passion Fruit Liqueur",
-          "amount": "15",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -12869,15 +13338,20 @@
         },
         {
           "order": 6,
-          "ingredientId": "1755200244973-588255",
-          "name": "Prosecco",
+          "ingredientId": "1755200244973-435337",
+          "name": "Champagne",
           "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-588255",
+              "name": "Prosecco"
+            }
+          ]
         },
         {
           "order": 7,
@@ -12893,7 +13367,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981341595,
+      "updatedAt": 1756048176737,
       "photoUri": "assets/cocktails/1755800000092-porn-star-martini.jpg"
     },
     {
@@ -12925,12 +13399,17 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-887600",
-          "name": "Ruby Port",
+          "ingredientId": "1755441997878-888500",
+          "name": "Tawny Port",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
@@ -12943,7 +13422,7 @@
           "order": 3,
           "ingredientId": "1755200244973-777131",
           "name": "Egg Yolk",
-          "amount": "1",
+          "amount": "0.5",
           "unitId": 1,
           "garnish": false,
           "optional": false,
@@ -12965,7 +13444,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981458028,
+      "updatedAt": 1756048326271,
       "photoUri": "assets/cocktails/1755800000093-porto-flip.jpg"
     },
     {
@@ -12991,7 +13470,7 @@
           "order": 1,
           "ingredientId": "1755200244973-131453",
           "name": "Cachaça",
-          "amount": "50",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13003,7 +13482,7 @@
           "order": 2,
           "ingredientId": "1755441997878-898334",
           "name": "Red Vermouth",
-          "amount": "25",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13015,7 +13494,7 @@
           "order": 3,
           "ingredientId": "1755441997878-186397",
           "name": "Cynar",
-          "amount": "25",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13025,6 +13504,18 @@
         },
         {
           "order": 4,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
           "ingredientId": "1755200244973-454059",
           "name": "Orange",
           "amount": "1",
@@ -13037,7 +13528,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981582631,
+      "updatedAt": 1756048398030,
       "photoUri": "assets/cocktails/1755800000094-rabo-de-galo.jpg"
     },
     {
@@ -13169,7 +13660,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981698566,
+      "updatedAt": 1755987535731,
       "photoUri": "assets/cocktails/1755800000095-ramos-fizz.jpg"
     },
     {
@@ -13205,9 +13696,9 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-325668",
-          "name": "Cherry Heering",
-          "amount": "10",
+          "ingredientId": "1755441997878-898334",
+          "name": "Red Vermouth",
+          "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13217,9 +13708,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755441997878-898334",
-          "name": "Red Vermouth",
-          "amount": "20",
+          "ingredientId": "1755200244973-829460",
+          "name": "Cherry Brandy",
+          "amount": "10",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13232,7 +13723,7 @@
           "ingredientId": "1755200244973-440131",
           "name": "Absinthe",
           "amount": "1",
-          "unitId": 6,
+          "unitId": 7,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -13253,7 +13744,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755981796401,
+      "updatedAt": 1756048595907,
       "photoUri": "assets/cocktails/1755800000096-remember-the-maine.jpg"
     },
     {
@@ -13279,7 +13770,7 @@
           "order": 1,
           "ingredientId": "1755200244973-16862",
           "name": "Vodka",
-          "amount": "25",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13289,8 +13780,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-389154",
-          "name": "Creme de Cassis",
+          "ingredientId": "1755200244973-734220",
+          "name": "Lemon Juice",
           "amount": "25",
           "unitId": 11,
           "garnish": false,
@@ -13301,9 +13792,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-734220",
-          "name": "Lemon Juice",
-          "amount": "25",
+          "ingredientId": "1755200244973-389154",
+          "name": "Creme de Cassis",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13325,8 +13816,8 @@
         },
         {
           "order": 5,
-          "ingredientId": "1755200244973-435337",
-          "name": "Champagne",
+          "ingredientId": "1755441997878-756362",
+          "name": "Sparkling Wine",
           "amount": "75",
           "unitId": 11,
           "garnish": false,
@@ -13361,7 +13852,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755983791352,
+      "updatedAt": 1756048676945,
       "photoUri": "assets/cocktails/1755800000097-russian-spring-punch.jpg"
     },
     {
@@ -13421,7 +13912,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755982092387,
+      "updatedAt": 1755987535731,
       "photoUri": "assets/cocktails/1755800000098-rusty-nail.jpg"
     },
     {
@@ -13445,10 +13936,27 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-160433",
-          "name": "Rye Whisky",
+          "ingredientId": "1755200244973-502166",
+          "name": "Cognac",
           "amount": "50",
           "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": "1755200244973-160433",
+              "name": "Rye Whisky"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-440131",
+          "name": "Absinthe",
+          "amount": "1",
+          "unitId": 7,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -13456,7 +13964,7 @@
           "substitutes": []
         },
         {
-          "order": 2,
+          "order": 3,
           "ingredientId": "1755200244973-217733",
           "name": "Sugar",
           "amount": "1",
@@ -13468,23 +13976,11 @@
           "substitutes": []
         },
         {
-          "order": 3,
+          "order": 4,
           "ingredientId": "1755441997878-803521",
           "name": "Peychaud's Bitters",
           "amount": "2",
           "unitId": 6,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 4,
-          "ingredientId": "1755200244973-440131",
-          "name": "Absinthe",
-          "amount": "10",
-          "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -13505,7 +14001,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755982182611,
+      "updatedAt": 1756048810653,
       "photoUri": "assets/cocktails/1755800000099-sazerac.jpg"
     },
     {
@@ -13555,7 +14051,7 @@
           "order": 3,
           "ingredientId": "1755200244973-131206",
           "name": "Grapefruit Juice",
-          "amount": "60",
+          "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -13577,7 +14073,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755982346700,
+      "updatedAt": 1756048861310,
       "photoUri": "assets/cocktails/1755800000100-sea-breeze.jpg"
     },
     {
@@ -13661,7 +14157,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755982601305,
+      "updatedAt": 1755987535731,
       "photoUri": "assets/cocktails/1755800000101-sex-on-the-beach.jpg"
     },
     {
@@ -13681,7 +14177,7 @@
         }
       ],
       "description": "Classic sherry cooler muddled with citrus and berries.",
-      "instructions": "Muddle orange slices and sugar in a wine glass.\nAdd sherry and fill the glass with crushed ice.\nStir well.\nGarnish with orange slices and berries.",
+      "instructions": "Muddle orange slices and sugar in a cup glass.\nAdd sherry and fill the cup with crushed ice.\nStir well.\nGarnish with orange slices and berries.",
       "ingredients": [
         {
           "order": 1,
@@ -13709,25 +14205,25 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755441997878-218380",
-          "name": "Dry Sherry",
+          "ingredientId": 1756049159383,
+          "name": "Amontillado Sherry",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
+          "allowBaseSubstitution": true,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
         {
           "order": 4,
-          "ingredientId": 1755983136771,
+          "ingredientId": "1755983136771",
           "name": "Palo Cortado",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
-          "allowBaseSubstitution": false,
+          "allowBaseSubstitution": true,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         },
@@ -13757,7 +14253,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755984626739,
+      "updatedAt": 1756049195686,
       "photoUri": "assets/cocktails/1755800000102-sherry-cobbler.jpg"
     },
     {
@@ -13789,19 +14285,29 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-354943",
-          "name": "Cointreau",
+          "ingredientId": "1755200244973-38880",
+          "name": "Triple Sec",
           "amount": "20",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-354943",
+              "name": "Cointreau"
+            }
+          ]
         },
         {
           "order": 3,
@@ -13829,7 +14335,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755983996497,
+      "updatedAt": 1756049265570,
       "photoUri": "assets/cocktails/1755800000103-sidecar.jpg"
     },
     {
@@ -13949,18 +14455,6 @@
         },
         {
           "order": 9,
-          "ingredientId": "1755200244973-807431",
-          "name": "Soda Water",
-          "amount": "1",
-          "unitId": 20,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 10,
           "ingredientId": "1755200244973-932849",
           "name": "Pineapple",
           "amount": "1",
@@ -13972,7 +14466,7 @@
           "substitutes": []
         },
         {
-          "order": 11,
+          "order": 10,
           "ingredientId": "1755200244973-607153",
           "name": "Maraschino cherry",
           "amount": "1",
@@ -13985,7 +14479,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1755984104813,
+      "updatedAt": 1756049348849,
       "photoUri": "assets/cocktails/1755800000104-singapore-sling.jpg"
     },
     {
@@ -14047,7 +14541,7 @@
           "order": 4,
           "ingredientId": "1755200244973-304217",
           "name": "Mint",
-          "amount": "8",
+          "amount": "6",
           "unitId": 10,
           "garnish": false,
           "optional": false,
@@ -14069,7 +14563,7 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755984759850,
+      "updatedAt": 1756049373174,
       "photoUri": "assets/cocktails/1755800000105-south-side.jpg"
     },
     {
@@ -14105,15 +14599,20 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-121379",
-          "name": "St. Germain",
-          "amount": "20",
+          "ingredientId": "1755200244973-479490",
+          "name": "Elderflower Cordial",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-121379",
+              "name": "St. Germain"
+            }
+          ]
         },
         {
           "order": 3,
@@ -14165,7 +14664,7 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755985009360,
+      "updatedAt": 1756049473718,
       "photoUri": "assets/cocktails/1755800000106-spicy-fifty.jpg"
     },
     {
@@ -14228,16 +14727,16 @@
           "ingredientId": "1755200244973-454059",
           "name": "Orange",
           "amount": "1",
-          "unitId": 19,
+          "unitId": 27,
           "garnish": true,
-          "optional": false,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755985109319,
+      "updatedAt": 1756049530998,
       "photoUri": "assets/cocktails/1755800000107-spritz.jpg"
     },
     {
@@ -14269,7 +14768,12 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
@@ -14282,10 +14786,22 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "2",
+          "unitId": 1,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755985230087,
+      "updatedAt": 1756049588220,
       "photoUri": "assets/cocktails/1755800000108-stinger.jpg"
     },
     {
@@ -14309,20 +14825,25 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-863081",
-          "name": "Gin",
+          "ingredientId": "1755200244973-502166",
+          "name": "Cognac",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-435165",
-          "name": "Brandy",
+          "ingredientId": "1755200244973-863081",
+          "name": "Gin",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -14335,7 +14856,7 @@
           "order": 3,
           "ingredientId": "1755200244973-734220",
           "name": "Lime Juice",
-          "amount": "20",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14393,7 +14914,7 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
+      "updatedAt": 1756049645272,
       "photoUri": "assets/cocktails/1755800000109-suffering-bastard.jpg"
     },
     {
@@ -14477,7 +14998,7 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755985478163,
+      "updatedAt": 1755987535731,
       "photoUri": "assets/cocktails/1755800000110-tequila-sunrise.jpg"
     },
     {
@@ -14501,8 +15022,8 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-123517",
-          "name": "Aged rum",
+          "ingredientId": 1755989015299,
+          "name": "Rhum Martinique Agricole",
           "amount": "45",
           "unitId": 11,
           "garnish": false,
@@ -14513,8 +15034,8 @@
         },
         {
           "order": 2,
-          "ingredientId": "1755200244973-734220",
-          "name": "Lime Juice",
+          "ingredientId": "1755200244973-123517",
+          "name": "Aged rum",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
@@ -14525,9 +15046,9 @@
         },
         {
           "order": 3,
-          "ingredientId": "1755200244973-38131",
-          "name": "Orange Juice",
-          "amount": "15",
+          "ingredientId": "1755200244973-888089",
+          "name": "Falernum",
+          "amount": "7.5",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14537,30 +15058,6 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-42279",
-          "name": "Honey Syrup",
-          "amount": "15",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 5,
-          "ingredientId": "1755200244973-888089",
-          "name": "Falernum",
-          "amount": "15",
-          "unitId": 11,
-          "garnish": false,
-          "optional": false,
-          "allowBaseSubstitution": false,
-          "allowBrandedSubstitutes": false,
-          "substitutes": []
-        },
-        {
-          "order": 6,
           "ingredientId": "1755200244973-621594",
           "name": "Allspice Dram",
           "amount": "7.5",
@@ -14572,11 +15069,35 @@
           "substitutes": []
         },
         {
+          "order": 5,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": "1755200244973-38131",
+          "name": "Orange Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
           "order": 7,
-          "ingredientId": "1755200244973-401724",
-          "name": "Angostura Bitters",
-          "amount": "1",
-          "unitId": 6,
+          "ingredientId": "1755200244973-42279",
+          "name": "Honey Syrup",
+          "amount": "15",
+          "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -14585,6 +15106,18 @@
         },
         {
           "order": 8,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
           "ingredientId": "1755200244973-607153",
           "name": "Maraschino cherry",
           "amount": "3",
@@ -14594,11 +15127,71 @@
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
+        },
+        {
+          "order": 10,
+          "ingredientId": "1755200244973-932849",
+          "name": "Pineapple",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000111-three-dots-and-a-dash.jpg"
+      "updatedAt": 1756049951793,
+      "photoUri": "assets/cocktails/1755800000111-three-dots-and-a-dash.png"
+    },
+    {
+      "id": 1756041427585,
+      "name": "Tintoretto",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": "1755200244973-588255",
+          "name": "Prosecco",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": "1755200244973-344356",
+          "name": "Pomegranate juice",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756041427585,
+      "updatedAt": 1756041427713,
+      "photoUri": "assets/cocktails/1756041427585-tintoretto.png"
     },
     {
       "id": 1755800000112,
@@ -14623,7 +15216,7 @@
           "order": 1,
           "ingredientId": "1755200244973-489584",
           "name": "Irish Whisky",
-          "amount": "30",
+          "amount": "50",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14635,7 +15228,7 @@
           "order": 2,
           "ingredientId": "1755441997878-898334",
           "name": "Red Vermouth",
-          "amount": "30",
+          "amount": "25",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14647,7 +15240,7 @@
           "order": 3,
           "ingredientId": "1755200244973-399740",
           "name": "Green Chartreuse",
-          "amount": "30",
+          "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14657,8 +15250,8 @@
         },
         {
           "order": 4,
-          "ingredientId": "1755200244973-552212",
-          "name": "Orange Bitters",
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
           "amount": "2",
           "unitId": 6,
           "garnish": false,
@@ -14681,8 +15274,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000112-tipperary.jpg"
+      "updatedAt": 1756050019301,
+      "photoUri": "assets/cocktails/1755800000112-tipperary.png"
     },
     {
       "id": 1755800000113,
@@ -14731,7 +15324,7 @@
           "order": 3,
           "ingredientId": "1755200244973-773514",
           "name": "Agave Syrup",
-          "amount": "15",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -14753,13 +15346,13 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
+      "updatedAt": 1756050055737,
       "photoUri": "assets/cocktails/1755800000113-tommys-margarita.jpg"
     },
     {
       "id": 1755800000114,
       "name": "Trinidad Sour",
-      "glassId": "coupe",
+      "glassId": "cocktail_glass",
       "tags": [
         {
           "id": 1,
@@ -14773,7 +15366,7 @@
         }
       ],
       "description": "Bitters-heavy sour with rye and orgeat for balance.",
-      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled coupe glass.",
+      "instructions": "Add all ingredients into a shaker with ice.\nShake well.\nStrain into a chilled cocktail glass.",
       "ingredients": [
         {
           "order": 1,
@@ -14825,8 +15418,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000114-trinidad-sour.jpg"
+      "updatedAt": 1756050127092,
+      "photoUri": "assets/cocktails/1755800000114-trinidad-sour.png"
     },
     {
       "id": 1755800000115,
@@ -14849,8 +15442,8 @@
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": "1755200244973-863081",
-          "name": "Gin",
+          "ingredientId": "1755441997878-289771",
+          "name": "Old Tom Gin",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -14875,7 +15468,7 @@
           "order": 3,
           "ingredientId": "1755200244973-147675",
           "name": "Maraschino Liqueur",
-          "amount": "5",
+          "amount": "0.5",
           "unitId": 24,
           "garnish": false,
           "optional": false,
@@ -14888,7 +15481,7 @@
           "ingredientId": "1755200244973-440131",
           "name": "Absinthe",
           "amount": "1",
-          "unitId": 24,
+          "unitId": 7,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -14933,8 +15526,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000115-tuxedo.jpg"
+      "updatedAt": 1756052587820,
+      "photoUri": "assets/cocktails/1755800000115-tuxedo.png"
     },
     {
       "id": 1755800000116,
@@ -15005,6 +15598,18 @@
         },
         {
           "order": 5,
+          "ingredientId": "1755200244973-450591",
+          "name": "Egg White",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
           "ingredientId": "1755200244973-108496",
           "name": "Lemon",
           "amount": "1",
@@ -15016,7 +15621,7 @@
           "substitutes": []
         },
         {
-          "order": 6,
+          "order": 7,
           "ingredientId": "1755200244973-925081",
           "name": "Grapes",
           "amount": "3",
@@ -15029,8 +15634,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000116-vento.jpg"
+      "updatedAt": 1756050351458,
+      "photoUri": "assets/cocktails/1755800000116-vento.png"
     },
     {
       "id": 1755800000117,
@@ -15101,8 +15706,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000117-vesper.jpg"
+      "updatedAt": 1756050395861,
+      "photoUri": "assets/cocktails/1755800000117-vesper.png"
     },
     {
       "id": 1755800000118,
@@ -15145,7 +15750,12 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": "1755200244973-435165",
+              "name": "Brandy"
+            }
+          ]
         },
         {
           "order": 3,
@@ -15163,8 +15773,8 @@
           "order": 4,
           "ingredientId": "1755200244973-166341",
           "name": "Benedictine",
-          "amount": "15",
-          "unitId": 11,
+          "amount": "1",
+          "unitId": 2,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -15209,12 +15819,12 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000118-vieux-carre.jpg"
+      "updatedAt": 1756050746202,
+      "photoUri": "assets/cocktails/1755800000118-vieux-carre.png"
     },
     {
       "id": 1755800000119,
-      "name": "Whiskey Sour",
+      "name": "Whisky Sour",
       "glassId": "rocks_glass",
       "tags": [
         {
@@ -15235,7 +15845,7 @@
           "order": 1,
           "ingredientId": "1755200244973-342124",
           "name": "Bourbon",
-          "amount": "45",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -15305,8 +15915,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000119-whiskey-sour.jpg"
+      "updatedAt": 1756051051232,
+      "photoUri": "assets/cocktails/1755800000119-whisky-sour.png"
     },
     {
       "id": 1755800000120,
@@ -15331,7 +15941,7 @@
           "order": 1,
           "ingredientId": "1755200244973-863081",
           "name": "Gin",
-          "amount": "40",
+          "amount": "45",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -15365,8 +15975,8 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
-      "photoUri": "assets/cocktails/1755800000120-white-lady.jpg"
+      "updatedAt": 1756050695823,
+      "photoUri": "assets/cocktails/1755800000120-white-lady.png"
     },
     {
       "id": 1755800000121,
@@ -15509,8 +16119,174 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1755970737054,
+      "updatedAt": 1755987535731,
       "photoUri": "assets/cocktails/1755800000121-zombie.jpg"
+    },
+    {
+      "id": 1756051666171,
+      "name": "Zombie",
+      "glassId": "tiki",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        }
+      ],
+      "description": "Potent tiki classic blending multiple rums, citrus, and spice.",
+      "instructions": "Add all ingredients except the overproof rum into a blender with ice and blend briefly.\nPour into a tall glass.\nFloat the overproof rum on top.\nGarnish with a mint sprig and a cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 1756051163896,
+          "name": "Jamaican Dark Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": "1755200244973-962705",
+              "name": "Dark Rum"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": null,
+          "name": "Gold Puerto Rican Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": "1755200244973-811139",
+              "name": "Gold Rum"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 1756051374456,
+          "name": "Demerara Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": "1755200244973-734220",
+          "name": "Lime Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": "1755200244973-888089",
+          "name": "Falernum",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 1756051617185,
+          "name": "Don's Mix",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": "1755200244973-803536",
+          "name": "Grenadine",
+          "amount": "5",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": "1755200244973-401724",
+          "name": "Angostura Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": "1755200244973-10917",
+          "name": "Pernod",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 10,
+          "ingredientId": "1755200244973-304217",
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 11,
+          "ingredientId": "1755200244973-607153",
+          "name": "Maraschino cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1755959676880,
+      "updatedAt": 1756051666171,
+      "photoUri": "assets/cocktails/1756051666171-zombie.jpg"
     }
   ]
 }
