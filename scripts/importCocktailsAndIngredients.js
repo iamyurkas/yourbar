@@ -74,17 +74,21 @@ function sanitizeCocktails(raw) {
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
   try {
-    if (!force) {
-      const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
-      if (already === "true") {
-        console.log("ℹ️ Sample data already imported — skip");
-        return;
-      }
-    }
-    const [existingIngredients, existingCocktails] = await Promise.all([
+    const [already, existingIngredients, existingCocktails] = await Promise.all([
+      force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
       getAllIngredients(),
       getAllCocktails(),
     ]);
+
+    if (
+      !force &&
+      already === "true" &&
+      existingIngredients.length > 0 &&
+      existingCocktails.length > 0
+    ) {
+      console.log("ℹ️ Sample data already imported — skip");
+      return;
+    }
 
     const existingIngredientsMap = Object.fromEntries(
       existingIngredients.map((it) => [it.id, it])
