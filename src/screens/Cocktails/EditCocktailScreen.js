@@ -54,6 +54,8 @@ import {
   getCocktailById,
   saveCocktail,
   deleteCocktail,
+  updateCocktailById,
+  removeCocktail,
 } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
@@ -1210,9 +1212,7 @@ export default function EditCocktailScreen() {
 
       const prev = cocktails.find((c) => c.id === cocktailId);
       const updated = await saveCocktail(cocktail);
-      const nextCocktails = cocktails.map((c) =>
-        c.id === updated.id ? updated : c
-      );
+      const nextCocktails = updateCocktailById(cocktails, updated);
       setCocktails(nextCocktails);
       const allowSubs = await getAllowSubstitutes();
       let nextUsage = removeCocktailFromUsageMap(
@@ -2045,7 +2045,7 @@ export default function EditCocktailScreen() {
           skipPromptRef.current = true;
           const prev = cocktails.find((c) => c.id === cocktailId);
           await deleteCocktail(cocktailId);
-          const nextCocktails = cocktails.filter((c) => c.id !== cocktailId);
+          const nextCocktails = removeCocktail(cocktails, cocktailId);
           setCocktails(nextCocktails);
           const allowSubs = await getAllowSubstitutes();
           const nextUsage = removeCocktailFromUsageMap(

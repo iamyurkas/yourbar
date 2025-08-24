@@ -40,11 +40,9 @@ export function updateIngredientById(list, updated) {
   return next;
 }
 
-export async function saveIngredient(itemOrList) {
-  if (Array.isArray(itemOrList)) {
-    await saveAllIngredients(itemOrList);
-  } else if (itemOrList && itemOrList.id != null) {
-    await upsertIngredient(itemOrList);
+export async function saveIngredient(item) {
+  if (item && item.id != null) {
+    await upsertIngredient(item);
   }
 }
 

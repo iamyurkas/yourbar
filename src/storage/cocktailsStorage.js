@@ -54,7 +54,7 @@ async function readAll() {
   return list.sort(sortByName);
 }
 
-async function upsert(item) {
+async function upsertCocktail(item) {
   await query(
     "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
     [item.id, JSON.stringify(item)]
@@ -77,20 +77,32 @@ export async function getCocktailById(id) {
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
-  await upsert(item);
+  await upsertCocktail(item);
   return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
 export async function saveCocktail(updated) {
   const item = sanitizeCocktail(updated);
-  await upsert(item);
+  await upsertCocktail(item);
   return item;
+}
+
+export function updateCocktailById(list, updated) {
+  const index = list.findIndex((c) => c.id === updated.id);
+  if (index === -1) return list;
+  const next = [...list];
+  next[index] = { ...next[index], ...updated };
+  return next;
 }
 
 /** Delete by id */
 export async function deleteCocktail(id) {
   await query("DELETE FROM cocktails WHERE id = ?", [id]);
+}
+
+export function removeCocktail(list, id) {
+  return list.filter((item) => item.id !== id);
 }
 
 /** Replace whole storage (use carefully) */
