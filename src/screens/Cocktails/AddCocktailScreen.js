@@ -22,6 +22,7 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -1401,7 +1402,7 @@ export default function AddCocktailScreen() {
     }, [route.params, navigation])
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     const title = name.trim();
     if (!title) {
       Alert.alert("Validation", "Please enter a cocktail name.");
@@ -1438,8 +1439,9 @@ export default function AddCocktailScreen() {
       })
     );
 
-  const cocktail = {
-      id: Date.now(),
+    const id = Date.now();
+    const cocktail = {
+      id,
       name: title,
       photoUri: photoUri || null,
       tags,
@@ -1461,30 +1463,33 @@ export default function AddCocktailScreen() {
       createdAt: Date.now(),
     };
 
-    const created = await addCocktail(cocktail);
-    const nextCocktails = [...cocktails, created];
-    setCocktails(nextCocktails);
-    const allowSubs = await getAllowSubstitutes();
-    const nextUsage = addCocktailToUsageMap(
-      usageMap,
-      globalIngredients,
-      created,
-      {
-        allowSubstitutes: !!allowSubs,
-      }
-    );
-    setUsageMap(nextUsage);
-    setIngredients(
-      applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
-    );
     if (fromIngredientFlow) {
       navigation.replace("CocktailDetails", {
-        id: created.id,
+        id: cocktail.id,
         backToIngredientId: initialIngredient?.id,
       });
     } else {
-      navigation.replace("CocktailDetails", { id: created.id });
+      navigation.replace("CocktailDetails", { id: cocktail.id });
     }
+
+    InteractionManager.runAfterInteractions(async () => {
+      const created = await addCocktail(cocktail);
+      const nextCocktails = [...cocktails, created];
+      setCocktails(nextCocktails);
+      const allowSubs = await getAllowSubstitutes();
+      const nextUsage = addCocktailToUsageMap(
+        usageMap,
+        globalIngredients,
+        created,
+        {
+          allowSubstitutes: !!allowSubs,
+        }
+      );
+      setUsageMap(nextUsage);
+      setIngredients(
+        applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
+      );
+    });
   }, [
     name,
     photoUri,

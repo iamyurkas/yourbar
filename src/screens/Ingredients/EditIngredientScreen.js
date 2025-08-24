@@ -417,7 +417,7 @@ export default function EditIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(
-    async (stay = false) => {
+    (stay = false) => {
       const trimmed = name.trim();
       if (!trimmed) {
         Alert.alert("Please enter a name for the ingredient.");
@@ -433,22 +433,6 @@ export default function EditIngredientScreen() {
         tags,
         baseIngredientId: baseIngredientId ?? null,
       };
-      // оптимістично оновити глобальний список і зберегти оновлені дані
-      setGlobalIngredients((list) => {
-        const searchName = normalizeSearch(updated.name);
-        const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-        const newItem = { ...updated, searchName, searchTokens };
-        const rest = list.filter((i) => i.id !== newItem.id);
-        const idx = rest.findIndex(
-          (i) => collator.compare(i.name, newItem.name) > 0
-        );
-        const next = [...rest];
-        if (idx === -1) next.push(newItem);
-        else next.splice(idx, 0, newItem);
-        saveIngredient(newItem).catch(() => {});
-        return next;
-      });
-
       // зберегти локально baseline і зняти dirty
       initialHashRef.current = serialize();
       setDirty(false);
@@ -477,6 +461,23 @@ export default function EditIngredientScreen() {
       } else {
         setIngredient(updated);
       }
+
+      InteractionManager.runAfterInteractions(() => {
+        setGlobalIngredients((list) => {
+          const searchName = normalizeSearch(updated.name);
+          const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
+          const newItem = { ...updated, searchName, searchTokens };
+          const rest = list.filter((i) => i.id !== newItem.id);
+          const idx = rest.findIndex(
+            (i) => collator.compare(i.name, newItem.name) > 0
+          );
+          const next = [...rest];
+          if (idx === -1) next.push(newItem);
+          else next.splice(idx, 0, newItem);
+          return next;
+        });
+        saveIngredient(updated).catch(() => {});
+      });
 
       return updated;
     },
@@ -827,7 +828,7 @@ export default function EditIngredientScreen() {
         message="Are you sure?"
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (!ingredient) return;
           skipPromptRef.current = true;
           setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
@@ -836,9 +837,11 @@ export default function EditIngredientScreen() {
             delete next[ingredient.id];
             return next;
           });
-          await deleteIngredient(ingredient.id);
           navigation.popToTop();
           setConfirmDelete(false);
+          InteractionManager.runAfterInteractions(() => {
+            deleteIngredient(ingredient.id).catch(() => {});
+          });
         }}
       />
       <ConfirmationDialog

@@ -22,6 +22,7 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -1149,7 +1150,7 @@ export default function EditCocktailScreen() {
   );
 
   const handleSave = useCallback(
-    async (stay = false) => {
+    (stay = false) => {
       const title = name.trim();
       if (!title) {
         Alert.alert("Validation", "Please enter a cocktail name.");
@@ -1211,41 +1212,42 @@ export default function EditCocktailScreen() {
       };
 
       const prev = cocktails.find((c) => c.id === cocktailId);
-      const updated = await saveCocktail(cocktail);
-      const nextCocktails = updateCocktailById(cocktails, updated);
-      setCocktails(nextCocktails);
-      const allowSubs = await getAllowSubstitutes();
-      let nextUsage = removeCocktailFromUsageMap(
-        usageMap,
-        globalIngredients,
-        prev,
-        {
-          allowSubstitutes: !!allowSubs,
-        }
-      );
-      nextUsage = addCocktailToUsageMap(
-        nextUsage,
-        globalIngredients,
-        updated,
-        {
-          allowSubstitutes: !!allowSubs,
-        }
-      );
-      setUsageMap(nextUsage);
-      setIngredients(
-        applyUsageMapToIngredients(
-          globalIngredients,
-          nextUsage,
-          nextCocktails
-        )
-      );
+
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
         skipPromptRef.current = true;
         navigation.goBack();
       }
-      return updated;
+
+      InteractionManager.runAfterInteractions(async () => {
+        const updated = await saveCocktail(cocktail);
+        const nextCocktails = updateCocktailById(cocktails, updated);
+        setCocktails(nextCocktails);
+        const allowSubs = await getAllowSubstitutes();
+        let nextUsage = removeCocktailFromUsageMap(
+          usageMap,
+          globalIngredients,
+          prev,
+          { allowSubstitutes: !!allowSubs }
+        );
+        nextUsage = addCocktailToUsageMap(
+          nextUsage,
+          globalIngredients,
+          updated,
+          { allowSubstitutes: !!allowSubs }
+        );
+        setUsageMap(nextUsage);
+        setIngredients(
+          applyUsageMapToIngredients(
+            globalIngredients,
+            nextUsage,
+            nextCocktails
+          )
+        );
+      });
+
+      return cocktail;
     },
     [
       name,
@@ -2041,29 +2043,31 @@ export default function EditCocktailScreen() {
         message="Delete this cocktail?"
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           skipPromptRef.current = true;
           const prev = cocktails.find((c) => c.id === cocktailId);
-          await deleteCocktail(cocktailId);
           const nextCocktails = removeCocktail(cocktails, cocktailId);
           setCocktails(nextCocktails);
-          const allowSubs = await getAllowSubstitutes();
-          const nextUsage = removeCocktailFromUsageMap(
-            usageMap,
-            globalIngredients,
-            prev,
-            { allowSubstitutes: !!allowSubs }
-          );
-          setUsageMap(nextUsage);
-          setIngredients(
-            applyUsageMapToIngredients(
-              globalIngredients,
-              nextUsage,
-              nextCocktails
-            )
-          );
           navigation.popToTop();
           setConfirmDelete(false);
+          InteractionManager.runAfterInteractions(async () => {
+            await deleteCocktail(cocktailId);
+            const allowSubs = await getAllowSubstitutes();
+            const nextUsage = removeCocktailFromUsageMap(
+              usageMap,
+              globalIngredients,
+              prev,
+              { allowSubstitutes: !!allowSubs }
+            );
+            setUsageMap(nextUsage);
+            setIngredients(
+              applyUsageMapToIngredients(
+                globalIngredients,
+                nextUsage,
+                nextCocktails
+              )
+            );
+          });
         }}
       />
       <ConfirmationDialog

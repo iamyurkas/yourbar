@@ -366,60 +366,51 @@ export default function AddIngredientScreen() {
     }
   }, []);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
       Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    const created = await addIngredient({
+
+    const id = Date.now();
+    const created = {
+      id,
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId ?? null,
-    }).catch(() => null);
-    if (!created) return;
-
-    InteractionManager.runAfterInteractions(() => {
-      setGlobalIngredients((list) => {
-        const idx = list.findIndex(
-          (i) => collator.compare(i.name, created.name) > 0
-        );
-        const next = [...list];
-        if (idx === -1) next.push(created);
-        else next.splice(idx, 0, created);
-        return next;
-      });
-      setUsageMap((prev) => ({ ...prev, [created.id]: [] }));
-    });
-
-    const createdPayload = {
-      id: created.id,
-      name: created.name,
-      photoUri: created.photoUri || null,
-      baseIngredientId: created.baseIngredientId ?? null,
-      tags: created.tags || [],
     };
 
+    const detailParams = { id, initialIngredient: created };
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
         screen: returnTo,
         params: {
-          createdIngredient: createdPayload,
+          createdIngredient: detailParams.initialIngredient,
           targetLocalId,
         },
         merge: true,
       });
-      return;
+    } else {
+      navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
 
-    const detailParams = {
-      id: created.id,
-      initialIngredient: created,
-    };
-
-    navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
+    InteractionManager.runAfterInteractions(async () => {
+      const saved = await addIngredient(created).catch(() => null);
+      if (!saved) return;
+      setGlobalIngredients((list) => {
+        const idx = list.findIndex(
+          (i) => collator.compare(i.name, saved.name) > 0
+        );
+        const next = [...list];
+        if (idx === -1) next.push(saved);
+        else next.splice(idx, 0, saved);
+        return next;
+      });
+      setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
+    });
   }, [
     name,
     description,
