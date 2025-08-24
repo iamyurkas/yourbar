@@ -34,6 +34,7 @@ import {
   useRoute,
   useIsFocused,
   CommonActions,
+  StackActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -469,18 +470,10 @@ export default function EditIngredientScreen() {
           };
           detailParams.targetLocalId = route.params.targetLocalId;
         }
-        navigation.dispatch((state) => {
-          const routes = state.routes.filter((r) => r.name !== "IngredientDetails");
-          routes[routes.length - 1] = {
-            name: "IngredientDetails",
-            params: detailParams,
-          };
-          return CommonActions.reset({
-            ...state,
-            routes,
-            index: routes.length - 1,
-          });
-        });
+        navigation.dispatch(StackActions.pop(1));
+        navigation.dispatch(
+          StackActions.replace("IngredientDetails", detailParams)
+        );
       } else {
         setIngredient(updated);
       }
@@ -873,25 +866,18 @@ export default function EditIngredientScreen() {
             onPress: async () => {
               skipPromptRef.current = true;
               const updated = await handleSave(true);
-              navigation.dispatch((state) => {
-                const routes = [...state.routes];
-                const prevIndex = routes.length - 2;
-                if (prevIndex >= 0) {
-                  routes[prevIndex] = {
-                    ...routes[prevIndex],
+              const prevRoute = navigation.getState().routes.slice(-2)[0];
+              if (prevRoute) {
+                navigation.dispatch(
+                  CommonActions.setParams({
+                    source: prevRoute.key,
                     params: {
-                      ...routes[prevIndex].params,
                       id: updated.id,
                       initialIngredient: updated,
                     },
-                  };
-                }
-                return CommonActions.reset({
-                  ...state,
-                  routes,
-                  index: state.index,
-                });
-              });
+                  })
+                );
+              }
               navigation.dispatch(pendingNav);
               setPendingNav(null);
             },

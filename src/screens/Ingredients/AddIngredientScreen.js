@@ -30,7 +30,7 @@ import {
   useNavigation,
   useRoute,
   useIsFocused,
-  CommonActions,
+  StackActions,
 } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
@@ -417,15 +417,7 @@ export default function AddIngredientScreen() {
       initialIngredient: created,
     };
 
-    navigation.dispatch((state) => {
-      const routes = state.routes.slice(0, -1);
-      routes.push({ name: "IngredientDetails", params: detailParams });
-      return CommonActions.reset({
-        ...state,
-        routes,
-        index: routes.length - 1,
-      });
-    });
+    navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
   }, [
     name,
     description,
