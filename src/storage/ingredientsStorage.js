@@ -1,8 +1,23 @@
 import db, { query } from "./sqlite";
 
 export async function getAllIngredients() {
-  const res = await query("SELECT data FROM ingredients");
-  return res.rows._array.map((r) => JSON.parse(r.data));
+  const res = await query(
+    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
+  );
+  return res.rows._array.map((r) => ({
+    id: r.id,
+    name: r.name,
+    description: r.description,
+    tags: r.tags ? JSON.parse(r.tags) : [],
+    baseIngredientId: r.baseIngredientId,
+    usageCount: r.usageCount ?? 0,
+    singleCocktailName: r.singleCocktailName,
+    searchName: r.searchName,
+    searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
+    photoUri: r.photoUri,
+    inBar: !!r.inBar,
+    inShoppingList: !!r.inShoppingList,
+  }));
 }
 
 export function buildIndex(list) {
@@ -14,8 +29,24 @@ export function buildIndex(list) {
 
 async function upsertIngredient(item) {
   await query(
-    "INSERT OR REPLACE INTO ingredients (id, data) VALUES (?, ?)",
-    [String(item.id), JSON.stringify(item)]
+    `INSERT OR REPLACE INTO ingredients (
+      id, name, description, tags, baseIngredientId, usageCount,
+      singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      String(item.id),
+      item.name ?? null,
+      item.description ?? null,
+      item.tags ? JSON.stringify(item.tags) : null,
+      item.baseIngredientId ?? null,
+      item.usageCount ?? 0,
+      item.singleCocktailName ?? null,
+      item.searchName ?? null,
+      item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+      item.photoUri ?? null,
+      item.inBar ? 1 : 0,
+      item.inShoppingList ? 1 : 0,
+    ]
   );
 }
 
@@ -25,8 +56,24 @@ export async function saveAllIngredients(ingredients) {
     await db.runAsync("DELETE FROM ingredients");
     for (const item of list) {
       await db.runAsync(
-        "INSERT OR REPLACE INTO ingredients (id, data) VALUES (?, ?)",
-        [String(item.id), JSON.stringify(item)]
+        `INSERT OR REPLACE INTO ingredients (
+          id, name, description, tags, baseIngredientId, usageCount,
+          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          String(item.id),
+          item.name ?? null,
+          item.description ?? null,
+          item.tags ? JSON.stringify(item.tags) : null,
+          item.baseIngredientId ?? null,
+          item.usageCount ?? 0,
+          item.singleCocktailName ?? null,
+          item.searchName ?? null,
+          item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+          item.photoUri ?? null,
+          item.inBar ? 1 : 0,
+          item.inShoppingList ? 1 : 0,
+        ]
       );
     }
   });

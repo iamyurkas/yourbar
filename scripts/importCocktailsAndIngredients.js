@@ -10,6 +10,9 @@ import {
   getAllIngredients,
   saveAllIngredients,
 } from "../src/storage/ingredientsStorage";
+import { initDatabase } from "../src/storage/sqlite";
+import { normalizeSearch } from "../src/utils/normalizeSearch";
+import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
 
@@ -45,18 +48,28 @@ function resolvePhoto(path) {
 
 function sanitizeIngredients(raw) {
   return Array.isArray(raw)
-    ? raw.map((it) => ({
-        id: String(it?.id ?? ""),
-        name: String(it?.name ?? "").trim(),
-        description: String(it?.description ?? "").trim(),
-        photoUri: resolvePhoto(it?.photoUri || it?.image),
-        tags: mapTags(it?.tags, ING_TAG_BY_ID),
-        baseIngredientId: it?.baseIngredientId ?? null,
-        usageCount: Number(it?.usageCount ?? 0),
-        singleCocktailName: it?.singleCocktailName ?? null,
-        inBar: false,
-        inShoppingList: false,
-      }))
+    ? raw.map((it) => {
+        const name = String(it?.name ?? "").trim();
+        const searchName =
+          it?.searchName ?? normalizeSearch(name);
+        const searchTokens = Array.isArray(it?.searchTokens)
+          ? it.searchTokens
+          : searchName.split(WORD_SPLIT_RE).filter(Boolean);
+        return {
+          id: String(it?.id ?? ""),
+          name,
+          description: String(it?.description ?? "").trim(),
+          photoUri: resolvePhoto(it?.photoUri || it?.image),
+          tags: mapTags(it?.tags, ING_TAG_BY_ID),
+          baseIngredientId: it?.baseIngredientId ?? null,
+          usageCount: Number(it?.usageCount ?? 0),
+          singleCocktailName: it?.singleCocktailName ?? null,
+          inBar: false,
+          inShoppingList: false,
+          searchName,
+          searchTokens,
+        };
+      })
     : [];
 }
 
@@ -74,6 +87,7 @@ function sanitizeCocktails(raw) {
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
   try {
+    await initDatabase();
     const [already, existingIngredients, existingCocktails] = await Promise.all([
       force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
       getAllIngredients(),
