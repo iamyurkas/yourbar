@@ -1,32 +1,33 @@
-import * as SQLite from "expo-sqlite/legacy";
+import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabase("yourbar.db");
+const db = SQLite.openDatabaseSync("yourbar.db");
+
+let initPromise;
 
 export function initDatabase() {
-  db.transaction((tx) => {
-    tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS cocktails (id INTEGER PRIMARY KEY NOT NULL, data TEXT);"
-    );
-    tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS ingredients (id TEXT PRIMARY KEY NOT NULL, data TEXT);"
-    );
-  });
+  if (!initPromise) {
+    initPromise = db.execAsync(`
+      CREATE TABLE IF NOT EXISTS cocktails (id INTEGER PRIMARY KEY NOT NULL, data TEXT);
+      CREATE TABLE IF NOT EXISTS ingredients (id TEXT PRIMARY KEY NOT NULL, data TEXT);
+    `);
+  }
+  return initPromise;
 }
 
-export function query(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        sql,
-        params,
-        (_, result) => resolve(result),
-        (_, error) => {
-          reject(error);
-          return false;
-        }
-      );
-    });
-  });
+export async function query(sql, params = []) {
+  await initDatabase();
+  const trimmed = sql.trim().toLowerCase();
+  if (trimmed.startsWith("select")) {
+    const rows = await db.getAllAsync(sql, params);
+    return {
+      rows: {
+        _array: rows,
+        length: rows.length,
+        item: (i) => rows[i],
+      },
+    };
+  }
+  return db.runAsync(sql, params);
 }
 
 export default db;

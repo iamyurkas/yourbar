@@ -1,6 +1,4 @@
-import db, { initDatabase, query } from "./sqlite";
-
-initDatabase();
+import db, { query } from "./sqlite";
 
 export async function getAllIngredients() {
   const res = await query("SELECT data FROM ingredients");
@@ -16,14 +14,14 @@ export function buildIndex(list) {
 
 export async function saveAllIngredients(ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : [];
-  db.transaction((tx) => {
-    tx.executeSql("DELETE FROM ingredients");
-    list.forEach((item) => {
-      tx.executeSql(
+  await db.withTransactionAsync(async () => {
+    await db.runAsync("DELETE FROM ingredients");
+    for (const item of list) {
+      await db.runAsync(
         "INSERT OR REPLACE INTO ingredients (id, data) VALUES (?, ?)",
         [String(item.id), JSON.stringify(item)]
       );
-    });
+    }
   });
 }
 

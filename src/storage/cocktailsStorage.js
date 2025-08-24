@@ -1,8 +1,6 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
-import db, { initDatabase, query } from "./sqlite";
-
-initDatabase();
+import db, { query } from "./sqlite";
 
 // --- utils ---
 
@@ -100,14 +98,14 @@ export async function replaceAllCocktails(cocktails) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
-  db.transaction((tx) => {
-    tx.executeSql("DELETE FROM cocktails");
-    normalized.forEach((item) => {
-      tx.executeSql(
+  await db.withTransactionAsync(async () => {
+    await db.runAsync("DELETE FROM cocktails");
+    for (const item of normalized) {
+      await db.runAsync(
         "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
         [item.id, JSON.stringify(item)]
       );
-    });
+    }
   });
   return normalized;
 }
