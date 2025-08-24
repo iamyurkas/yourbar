@@ -4,8 +4,11 @@ import RAW_INGREDIENTS from "../assets/data/ingredients.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
+import {
+  getAllIngredients,
+  saveAllIngredients,
+} from "../src/storage/ingredientsStorage";
 
-const INGREDIENTS_KEY = "ingredients";
 const IMPORT_FLAG_KEY = "ingredients_imported_flag";
 
 // Індекс тегів по id для швидкого мепінгу
@@ -59,8 +62,8 @@ export async function importIngredients({ force = false } = {}) {
 
     // якщо раптом уже є масив інгредієнтів — не перетираємо (якщо не force)
     if (!force) {
-      const existing = await AsyncStorage.getItem(INGREDIENTS_KEY);
-      if (existing) {
+      const existing = await getAllIngredients();
+      if (existing.length > 0) {
         console.log("ℹ️ Ingredients present — skip import");
         await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
         return;
@@ -68,7 +71,7 @@ export async function importIngredients({ force = false } = {}) {
     }
 
     const normalized = normalize(RAW_INGREDIENTS);
-    await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(normalized));
+    await saveAllIngredients(normalized);
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
     console.log(`✅ Ingredients imported: ${normalized.length}`);

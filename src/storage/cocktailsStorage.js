@@ -1,19 +1,10 @@
 // src/storage/cocktailsStorage.js
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import db, { initDatabase, query } from "./sqlite";
 
-const STORAGE_KEY = "cocktails_v1";
+initDatabase();
 
 // --- utils ---
-const safeParse = (raw) => {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
 
 const now = () => Date.now();
 const genId = () => now(); // сумісно з твоїми екранами (Date.now())
@@ -59,15 +50,17 @@ const sanitizeCocktail = (c) => {
   };
 };
 
-// --- low-level IO ---
 async function readAll() {
-  const raw = await AsyncStorage.getItem(STORAGE_KEY);
-  return safeParse(raw).sort(sortByName);
+  const res = await query("SELECT data FROM cocktails");
+  const list = res.rows._array.map((r) => JSON.parse(r.data));
+  return list.sort(sortByName);
 }
-async function writeAll(list) {
-  const sorted = [...list].sort(sortByName);
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
-  return sorted;
+
+async function upsert(item) {
+  await query(
+    "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
+    [item.id, JSON.stringify(item)]
+  );
 }
 
 // --- API ---
@@ -78,43 +71,28 @@ export async function getAllCocktails() {
 
 /** Get single cocktail by id (number) */
 export async function getCocktailById(id) {
-  const list = await readAll();
-  return list.find((c) => c.id === id) || null;
+  const res = await query("SELECT data FROM cocktails WHERE id = ?", [id]);
+  if (res.rows.length === 0) return null;
+  return JSON.parse(res.rows.item(0).data);
 }
 
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
-  const list = await readAll();
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
-  // уникнути дубля за id
-  const existsIdx = list.findIndex((x) => x.id === item.id);
-  if (existsIdx >= 0) {
-    list[existsIdx] = item;
-  } else {
-    list.push(item);
-  }
-  await writeAll(list);
+  await upsert(item);
   return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
 export async function saveCocktail(updated) {
-  const list = await readAll();
   const item = sanitizeCocktail(updated);
-  const idx = list.findIndex((c) => c.id === item.id);
-  if (idx >= 0) list[idx] = item;
-  else list.push(item); // upsert поведінка
-  await writeAll(list);
+  await upsert(item);
   return item;
 }
 
 /** Delete by id */
 export async function deleteCocktail(id) {
-  const list = await readAll();
-  const next = list.filter((c) => c.id !== id);
-  if (next.length !== list.length) {
-    await writeAll(next);
-  }
+  await query("DELETE FROM cocktails WHERE id = ?", [id]);
 }
 
 /** Replace whole storage (use carefully) */
@@ -122,7 +100,15 @@ export async function replaceAllCocktails(cocktails) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
-  await writeAll(normalized);
+  db.transaction((tx) => {
+    tx.executeSql("DELETE FROM cocktails");
+    normalized.forEach((item) => {
+      tx.executeSql(
+        "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
+        [item.id, JSON.stringify(item)]
+      );
+    });
+  });
   return normalized;
 }
 

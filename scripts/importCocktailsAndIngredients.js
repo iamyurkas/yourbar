@@ -2,12 +2,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RAW_DATA from "../assets/data/data.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
-import { replaceAllCocktails } from "../src/storage/cocktailsStorage";
+import {
+  replaceAllCocktails,
+  getAllCocktails,
+} from "../src/storage/cocktailsStorage";
+import {
+  getAllIngredients,
+  saveAllIngredients,
+} from "../src/storage/ingredientsStorage";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
 
-const INGREDIENTS_KEY = "ingredients";
-const COCKTAILS_KEY = "cocktails_v1";
 const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
 // Maps for quick tag lookup
@@ -76,17 +81,10 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
         return;
       }
     }
-    const [existingIngredientsRaw, existingCocktailsRaw] = await Promise.all([
-      AsyncStorage.getItem(INGREDIENTS_KEY),
-      AsyncStorage.getItem(COCKTAILS_KEY),
+    const [existingIngredients, existingCocktails] = await Promise.all([
+      getAllIngredients(),
+      getAllCocktails(),
     ]);
-
-    const existingIngredients = existingIngredientsRaw
-      ? JSON.parse(existingIngredientsRaw)
-      : [];
-    const existingCocktails = existingCocktailsRaw
-      ? JSON.parse(existingCocktailsRaw)
-      : [];
 
     const existingIngredientsMap = Object.fromEntries(
       existingIngredients.map((it) => [it.id, it])
@@ -118,7 +116,7 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       return c;
     });
 
-    await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
+    await saveAllIngredients(ingredients);
     await replaceAllCocktails(cocktails);
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 

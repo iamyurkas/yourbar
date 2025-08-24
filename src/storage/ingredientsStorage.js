@@ -1,10 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import db, { initDatabase, query } from "./sqlite";
 
-const INGREDIENTS_KEY = "ingredients";
+initDatabase();
 
 export async function getAllIngredients() {
-  const json = await AsyncStorage.getItem(INGREDIENTS_KEY);
-  return json ? JSON.parse(json) : [];
+  const res = await query("SELECT data FROM ingredients");
+  return res.rows._array.map((r) => JSON.parse(r.data));
 }
 
 export function buildIndex(list) {
@@ -15,7 +15,16 @@ export function buildIndex(list) {
 }
 
 export async function saveAllIngredients(ingredients) {
-  await AsyncStorage.setItem(INGREDIENTS_KEY, JSON.stringify(ingredients));
+  const list = Array.isArray(ingredients) ? ingredients : [];
+  db.transaction((tx) => {
+    tx.executeSql("DELETE FROM ingredients");
+    list.forEach((item) => {
+      tx.executeSql(
+        "INSERT OR REPLACE INTO ingredients (id, data) VALUES (?, ?)",
+        [String(item.id), JSON.stringify(item)]
+      );
+    });
+  });
 }
 
 export function updateIngredientById(list, updated) {
