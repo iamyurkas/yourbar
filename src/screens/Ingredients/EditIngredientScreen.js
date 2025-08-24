@@ -43,7 +43,8 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   deleteIngredient,
   updateIngredientById,
-  saveAllIngredients,
+  saveIngredient,
+  removeIngredient,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -439,7 +440,7 @@ export default function EditIngredientScreen() {
         }).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );
-        saveAllIngredients(next).catch(() => {});
+        saveIngredient(updated).catch(() => {});
         return next;
       });
 
@@ -494,7 +495,7 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
-      saveAllIngredients,
+      saveIngredient,
     ]
   );
 
@@ -831,17 +832,13 @@ export default function EditIngredientScreen() {
         onConfirm={async () => {
           if (!ingredient) return;
           skipPromptRef.current = true;
-          let updatedList;
-          setGlobalIngredients((list) => {
-            updatedList = deleteIngredient(list, ingredient.id);
-            return updatedList;
-          });
+          setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
           setUsageMap((prev) => {
             const next = { ...prev };
             delete next[ingredient.id];
             return next;
           });
-          await saveAllIngredients(updatedList);
+          await deleteIngredient(ingredient.id);
           navigation.popToTop();
           setConfirmDelete(false);
         }}

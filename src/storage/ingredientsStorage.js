@@ -12,6 +12,13 @@ export function buildIndex(list) {
   }, {});
 }
 
+async function upsertIngredient(item) {
+  await query(
+    "INSERT OR REPLACE INTO ingredients (id, data) VALUES (?, ?)",
+    [String(item.id), JSON.stringify(item)]
+  );
+}
+
 export async function saveAllIngredients(ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await db.withTransactionAsync(async () => {
@@ -33,8 +40,12 @@ export function updateIngredientById(list, updated) {
   return next;
 }
 
-export async function saveIngredient(updatedList) {
-  await saveAllIngredients(updatedList);
+export async function saveIngredient(itemOrList) {
+  if (Array.isArray(itemOrList)) {
+    await saveAllIngredients(itemOrList);
+  } else if (itemOrList && itemOrList.id != null) {
+    await upsertIngredient(itemOrList);
+  }
 }
 
 export function addIngredient(list, ingredient) {
@@ -53,6 +64,10 @@ export function getIngredientById(id, index) {
   return index ? index[id] : null;
 }
 
-export function deleteIngredient(list, id) {
+export async function deleteIngredient(id) {
+  await query("DELETE FROM ingredients WHERE id = ?", [String(id)]);
+}
+
+export function removeIngredient(list, id) {
   return list.filter((item) => item.id !== id);
 }

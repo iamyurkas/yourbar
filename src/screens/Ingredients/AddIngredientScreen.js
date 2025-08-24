@@ -38,7 +38,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
-import { addIngredient, saveAllIngredients } from "../../storage/ingredientsStorage";
+import { addIngredient, saveIngredient } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -394,7 +394,7 @@ export default function AddIngredientScreen() {
       updatedList = next;
       return next;
     });
-    await saveAllIngredients(updatedList).catch(() => {});
+    await saveIngredient(newIng).catch(() => {});
     setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
 
     const createdPayload = {
@@ -444,7 +444,7 @@ export default function AddIngredientScreen() {
     addIngredient,
     setGlobalIngredients,
     setUsageMap,
-    saveAllIngredients,
+    saveIngredient,
   ]);
 
   const openMenu = useCallback(() => {
