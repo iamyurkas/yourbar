@@ -37,6 +37,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
+import { TAG_COLORS } from "../../theme";
 import { addIngredient, saveAllIngredients } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
@@ -132,7 +133,7 @@ export default function AddIngredientScreen() {
   const { setUsageMap } = useIngredientUsage();
 
   // read incoming params
-  const initialNameParam = route.params?.initialName || "";
+  const initialNameParam = route.params?.initialName;
   const targetLocalId = route.params?.targetLocalId;
   const returnTo = route.params?.returnTo || "AddCocktail";
   const fromCocktailFlow = targetLocalId != null;
@@ -140,7 +141,7 @@ export default function AddIngredientScreen() {
     (typeof getTab === "function" && getTab("ingredients")) || "All";
 
   // form state
-  const [name, setName] = useState(initialNameParam);
+  const [name, setName] = useState(initialNameParam || "");
   const [description, setDescription] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState(() => {
@@ -306,7 +307,7 @@ export default function AddIngredientScreen() {
 
   /* ---------- Lifecycle ---------- */
   useEffect(() => {
-    if (!isFocused) return;
+    if (!isFocused || initialNameParam === undefined) return;
 
     setName(initialNameParam);
     setDescription("");
