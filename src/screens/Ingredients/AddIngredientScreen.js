@@ -366,23 +366,30 @@ export default function AddIngredientScreen() {
     }
   }, []);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
       Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
 
-    const created = {
+    const searchName = normalizeSearch(trimmed);
+    const saved = {
+      id: Date.now(),
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId ?? null,
+      usageCount: 0,
+      singleCocktailName: null,
+      searchName,
+      searchTokens: searchName.split(WORD_SPLIT_RE).filter(Boolean),
+      inBar: false,
+      inShoppingList: false,
     };
 
-    const saved = await addIngredient(created).catch(() => null);
-    if (!saved) return;
+    addIngredient(saved).catch(() => {});
 
     setGlobalIngredients((list) => {
       const idx = list.findIndex(
