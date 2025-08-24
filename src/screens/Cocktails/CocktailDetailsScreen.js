@@ -144,9 +144,20 @@ const IngredientRow = memo(function IngredientRow({
               .join(" ");
             if (propLine) lines.push(propLine);
             if (substituteFor) lines.push(`Substitute for: ${substituteFor}`);
-            declaredSubstitutes.forEach((s) => lines.push(s));
-            baseSubstitutes.forEach((s) => lines.push(s));
-            brandedSubstitutes.forEach((s) => lines.push(s));
+            const allSubs = [
+              ...declaredSubstitutes,
+              ...baseSubstitutes,
+              ...brandedSubstitutes,
+            ];
+            if (!inBar && !substituteFor && allSubs.length > 0) {
+              allSubs.forEach((s, i) =>
+                lines.push(i === 0 ? `or ${s}` : s)
+              );
+            } else {
+              declaredSubstitutes.forEach((s) => lines.push(s));
+              baseSubstitutes.forEach((s) => lines.push(s));
+              brandedSubstitutes.forEach((s) => lines.push(s));
+            }
             return lines.map((line, idx) => (
               <Text
                 key={idx}
@@ -356,7 +367,6 @@ export default function CocktailDetailsScreen() {
       let baseSubstitutes = [];
       let brandedSubstitutes = [];
       const baseId = ing?.baseIngredientId ?? ing?.id;
-      const isBaseIngredient = ing?.baseIngredientId == null;
       if (ing) {
         if (Array.isArray(r.substitutes)) {
           declaredSubstitutes = r.substitutes.map((s) => {
@@ -368,7 +378,7 @@ export default function CocktailDetailsScreen() {
           const base = allIngs.find((i) => i.id === baseId && i.id !== ing.id);
           if (base) baseSubstitutes.push(base.name);
         }
-        if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+        if (r.allowBrandedSubstitutes) {
           brandedSubstitutes = allIngs
             .filter((i) => i.baseIngredientId === baseId && i.id !== ing.id)
             .map((i) => i.name);
@@ -380,10 +390,7 @@ export default function CocktailDetailsScreen() {
           if (base) substitute = base;
         }
 
-        if (
-          !substitute &&
-          (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
-        ) {
+        if (!substitute && r.allowBrandedSubstitutes) {
           const brand = allIngs.find(
             (i) => i.inBar && i.baseIngredientId === baseId
           );
@@ -401,14 +408,13 @@ export default function CocktailDetailsScreen() {
         }
       }
 
-      // If we don't use a substitute, don't show substitutes list at all.
-      // If we do use one, omit it from the substitutes list to avoid duplicates.
+      // If we use a substitute, omit it from the substitutes list to avoid duplicates.
       if (substitute) {
         const subName = substitute.name;
         declaredSubstitutes = declaredSubstitutes.filter((s) => s !== subName);
         baseSubstitutes = baseSubstitutes.filter((s) => s !== subName);
         brandedSubstitutes = brandedSubstitutes.filter((s) => s !== subName);
-      } else {
+      } else if (inBar) {
         declaredSubstitutes = [];
         baseSubstitutes = [];
         brandedSubstitutes = [];
