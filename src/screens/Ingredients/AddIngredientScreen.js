@@ -306,10 +306,21 @@ export default function AddIngredientScreen() {
 
   /* ---------- Lifecycle ---------- */
   useEffect(() => {
-    if (isFocused) {
-      setName(initialNameParam);
-    }
-  }, [isFocused, initialNameParam]);
+    if (!isFocused) return;
+
+    setName(initialNameParam);
+    setDescription("");
+    setPhotoUri(null);
+    setTags(() => {
+      const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
+      return other
+        ? [other]
+        : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
+    });
+    setBaseIngredientId(null);
+    setBaseIngredientSearch("");
+    navigation.setParams({ initialName: undefined });
+  }, [isFocused, initialNameParam, navigation]);
 
   useEffect(() => {
     if (!isFocused) return;
