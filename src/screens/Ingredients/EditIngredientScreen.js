@@ -43,7 +43,8 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   deleteIngredient,
   updateIngredientById,
-  saveAllIngredients,
+  removeIngredientById,
+  queueIngredientSave,
 } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -432,14 +433,15 @@ export default function EditIngredientScreen() {
       setGlobalIngredients((list) => {
         const searchName = normalizeSearch(updated.name);
         const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-        const next = updateIngredientById(list, {
+        const enriched = {
           ...updated,
           searchName,
           searchTokens,
-        }).sort((a, b) =>
+        };
+        const next = updateIngredientById(list, enriched).sort((a, b) =>
           a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
         );
-        saveAllIngredients(next).catch(() => {});
+        queueIngredientSave(updated.id, enriched);
         return next;
       });
 
@@ -494,7 +496,7 @@ export default function EditIngredientScreen() {
       route.params?.targetLocalId,
       serialize,
       setGlobalIngredients,
-      saveAllIngredients,
+      queueIngredientSave,
     ]
   );
 
@@ -841,7 +843,7 @@ export default function EditIngredientScreen() {
             delete next[ingredient.id];
             return next;
           });
-          await saveAllIngredients(updatedList);
+          await removeIngredientById(ingredient.id);
           navigation.popToTop();
           setConfirmDelete(false);
         }}

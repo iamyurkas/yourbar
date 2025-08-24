@@ -15,7 +15,7 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import {
   getAllIngredients,
-  saveIngredient,
+  queueIngredientSave,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
 import {
@@ -258,7 +258,7 @@ export default function MyCocktailsScreen() {
         if (!item) return prev;
         const updated = { ...item, inShoppingList: !item.inShoppingList };
         const next = updateIngredientById(prev, updated);
-        saveIngredient(next).catch(() => {});
+        queueIngredientSave(id, updated);
         setGlobalIngredients((list) =>
           updateIngredientById(list, {
             id,
@@ -268,7 +268,7 @@ export default function MyCocktailsScreen() {
         return next;
       });
     },
-    [setGlobalIngredients]
+    [setIngredients, setGlobalIngredients]
   );
 
   const renderItem = useCallback(

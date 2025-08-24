@@ -29,7 +29,7 @@ import { goBack } from "../../utils/navigation";
 
 import {
   getAllIngredients,
-  saveAllIngredients,
+  queueIngredientSave,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
 
@@ -374,17 +374,16 @@ export default function IngredientDetailsScreen() {
     setIngredient((prev) => {
       if (!prev) return prev;
       const updated = { ...prev, inBar: !prev.inBar };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
+      setIngredients((list) =>
+        updateIngredientById(list, {
           id: updated.id,
           inBar: updated.inBar,
-        });
-        saveAllIngredients(nextList);
-        return nextList;
-      });
+        })
+      );
+      queueIngredientSave(updated.id, updated);
       return updated;
     });
-  }, [setIngredients, saveAllIngredients]);
+  }, [setIngredients, queueIngredientSave]);
 
   const toggleInShoppingList = useCallback(() => {
     setIngredient((prev) => {
@@ -393,17 +392,16 @@ export default function IngredientDetailsScreen() {
         ...prev,
         inShoppingList: !prev.inShoppingList,
       };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
+      setIngredients((list) =>
+        updateIngredientById(list, {
           id: updated.id,
           inShoppingList: updated.inShoppingList,
-        });
-        saveAllIngredients(nextList);
-        return nextList;
-      });
+        })
+      );
+      queueIngredientSave(updated.id, updated);
       return updated;
     });
-  }, [setIngredients, saveAllIngredients]);
+  }, [setIngredients, queueIngredientSave]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -653,7 +651,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updated);
             return nextList;
           });
-          await saveAllIngredients(nextList);
+          queueIngredientSave(updated.id, updated);
           setIngredient(updated);
           setBaseIngredient(null);
           setUnlinkBaseVisible(false);
@@ -678,7 +676,7 @@ export default function IngredientDetailsScreen() {
             nextList = updateIngredientById(list, updatedChild);
             return nextList;
           });
-          await saveAllIngredients(nextList);
+          queueIngredientSave(updatedChild.id, updatedChild);
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           setUnlinkChildTarget(null);
         }}
