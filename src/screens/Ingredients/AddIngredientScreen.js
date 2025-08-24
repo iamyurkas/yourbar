@@ -132,6 +132,11 @@ export default function AddIngredientScreen() {
   } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
 
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
+
   // read incoming params
   const initialNameParam = route.params?.initialName;
   const targetLocalId = route.params?.targetLocalId;
@@ -376,11 +381,15 @@ export default function AddIngredientScreen() {
     }).catch(() => null);
     if (!created) return;
 
-    setGlobalIngredients((list) =>
-      [...list, created].sort((a, b) =>
-        a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-      )
-    );
+    setGlobalIngredients((list) => {
+      const idx = list.findIndex(
+        (i) => collator.compare(i.name, created.name) > 0
+      );
+      const next = [...list];
+      if (idx === -1) next.push(created);
+      else next.splice(idx, 0, created);
+      return next;
+    });
     setUsageMap((prev) => ({ ...prev, [created.id]: [] }));
 
     const createdPayload = {
@@ -430,6 +439,7 @@ export default function AddIngredientScreen() {
     addIngredient,
     setGlobalIngredients,
     setUsageMap,
+    collator,
   ]);
 
   const openMenu = useCallback(() => {

@@ -42,7 +42,6 @@ import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import {
   deleteIngredient,
-  updateIngredientById,
   saveIngredient,
   removeIngredient,
 } from "../../storage/ingredientsStorage";
@@ -138,6 +137,10 @@ export default function EditIngredientScreen() {
     baseIngredients = [],
   } = useIngredientsData();
   const { setUsageMap, ingredientsById } = useIngredientUsage();
+  const collator = useMemo(
+    () => new Intl.Collator("uk", { sensitivity: "base" }),
+    []
+  );
   const currentId = route.params?.id;
 
   // entity + form state
@@ -433,14 +436,15 @@ export default function EditIngredientScreen() {
       setGlobalIngredients((list) => {
         const searchName = normalizeSearch(updated.name);
         const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-        const next = updateIngredientById(list, {
-          ...updated,
-          searchName,
-          searchTokens,
-        }).sort((a, b) =>
-          a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
+        const newItem = { ...updated, searchName, searchTokens };
+        const rest = list.filter((i) => i.id !== newItem.id);
+        const idx = rest.findIndex(
+          (i) => collator.compare(i.name, newItem.name) > 0
         );
-        saveIngredient(updated).catch(() => {});
+        const next = [...rest];
+        if (idx === -1) next.push(newItem);
+        else next.splice(idx, 0, newItem);
+        saveIngredient(newItem).catch(() => {});
         return next;
       });
 
@@ -496,6 +500,7 @@ export default function EditIngredientScreen() {
       serialize,
       setGlobalIngredients,
       saveIngredient,
+      collator,
     ]
   );
 
