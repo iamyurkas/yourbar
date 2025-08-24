@@ -38,7 +38,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
-import { addIngredient, saveIngredient } from "../../storage/ingredientsStorage";
+import { addIngredient } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
@@ -367,42 +367,28 @@ export default function AddIngredientScreen() {
       Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    const newIng = {
-      id: Date.now(),
+    const created = await addIngredient({
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId ?? null,
-      createdAt: Date.now(),
-      inBar: false,
-    };
-    const searchName = normalizeSearch(newIng.name);
-    const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-    const enriched = {
-      ...newIng,
-      searchName,
-      searchTokens,
-      usageCount: 0,
-      singleCocktailName: null,
-    };
-    let updatedList;
-    setGlobalIngredients((list) => {
-      const next = addIngredient(list, enriched).sort((a, b) =>
+    }).catch(() => null);
+    if (!created) return;
+
+    setGlobalIngredients((list) =>
+      [...list, created].sort((a, b) =>
         a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-      );
-      updatedList = next;
-      return next;
-    });
-    await saveIngredient(newIng).catch(() => {});
-    setUsageMap((prev) => ({ ...prev, [newIng.id]: [] }));
+      )
+    );
+    setUsageMap((prev) => ({ ...prev, [created.id]: [] }));
 
     const createdPayload = {
-      id: newIng.id,
-      name: newIng.name,
-      photoUri: newIng.photoUri || null,
-      baseIngredientId: newIng.baseIngredientId ?? null,
-      tags: newIng.tags || [],
+      id: created.id,
+      name: created.name,
+      photoUri: created.photoUri || null,
+      baseIngredientId: created.baseIngredientId ?? null,
+      tags: created.tags || [],
     };
 
     if (fromCocktailFlow) {
@@ -418,8 +404,8 @@ export default function AddIngredientScreen() {
     }
 
     const detailParams = {
-      id: newIng.id,
-      initialIngredient: newIng,
+      id: created.id,
+      initialIngredient: created,
     };
 
     navigation.dispatch((state) => {
@@ -444,7 +430,6 @@ export default function AddIngredientScreen() {
     addIngredient,
     setGlobalIngredients,
     setUsageMap,
-    saveIngredient,
   ]);
 
   const openMenu = useCallback(() => {
