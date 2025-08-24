@@ -366,16 +366,14 @@ export default function AddIngredientScreen() {
     }
   }, []);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
       Alert.alert("Validation", "Please enter a name for the ingredient.");
       return;
     }
 
-    const id = Date.now();
     const created = {
-      id,
       name: trimmed,
       description,
       photoUri,
@@ -383,7 +381,21 @@ export default function AddIngredientScreen() {
       baseIngredientId: baseIngredientId ?? null,
     };
 
-    const detailParams = { id, initialIngredient: created };
+    const saved = await addIngredient(created).catch(() => null);
+    if (!saved) return;
+
+    setGlobalIngredients((list) => {
+      const idx = list.findIndex(
+        (i) => collator.compare(i.name, saved.name) > 0
+      );
+      const next = [...list];
+      if (idx === -1) next.push(saved);
+      else next.splice(idx, 0, saved);
+      return next;
+    });
+    setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
+
+    const detailParams = { id: saved.id, initialIngredient: saved };
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
         screen: returnTo,
@@ -396,21 +408,6 @@ export default function AddIngredientScreen() {
     } else {
       navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
-
-    InteractionManager.runAfterInteractions(async () => {
-      const saved = await addIngredient(created).catch(() => null);
-      if (!saved) return;
-      setGlobalIngredients((list) => {
-        const idx = list.findIndex(
-          (i) => collator.compare(i.name, saved.name) > 0
-        );
-        const next = [...list];
-        if (idx === -1) next.push(saved);
-        else next.splice(idx, 0, saved);
-        return next;
-      });
-      setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
-    });
   }, [
     name,
     description,

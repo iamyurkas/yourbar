@@ -17,7 +17,6 @@ import {
   Platform,
   Alert,
   BackHandler,
-  InteractionManager,
 } from "react-native";
 import {
   useNavigation,
@@ -345,19 +344,15 @@ export default function IngredientDetailsScreen() {
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
-      const task = InteractionManager.runAfterInteractions(async () => {
+      (async () => {
         try {
-          if (route.params?.initialIngredient) {
-            await new Promise((res) => setTimeout(res, 500));
-          }
           if (!cancelled) await load();
         } catch {}
-      });
+      })();
       return () => {
         cancelled = true;
-        task.cancel();
       };
-    }, [load, route.params?.initialIngredient])
+    }, [load])
   );
 
   useEffect(() => {
