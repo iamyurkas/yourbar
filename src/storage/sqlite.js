@@ -1,5 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
+// Initialize and export a shared SQLite instance for the app.
 const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
