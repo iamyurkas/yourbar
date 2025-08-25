@@ -16,6 +16,7 @@ import {
   FlatList,
   Dimensions,
   Keyboard,
+  Platform,
 } from "react-native";
 import { useTheme, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -870,6 +871,107 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
       ) : null}
     </View>
   );
+});
+const styles = StyleSheet.create({
+  ingCard: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 12,
+  },
+  ingHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  headerLeft: { flexDirection: "row", alignItems: "center" },
+  iconBtn: { padding: 4, marginLeft: 4 },
+  removeBtn: { padding: 4, marginLeft: 4 },
+  inputRow: {
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+    minWidth: 0,
+  },
+  nameInputWrap: { flex: 1, minWidth: 0, position: "relative" },
+  input: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === "ios" ? 12 : 10,
+    marginTop: 8,
+  },
+  nameInput: { paddingRight: 72 },
+  addInlineBtn: {
+    position: "absolute",
+    right: 8,
+    top: "50%",
+    transform: [{ translateY: "-50%" }],
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flexShrink: 0,
+    flexWrap: "nowrap",
+  },
+  suggestBox: {
+    position: "absolute",
+    zIndex: 1000,
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  row2: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+    marginTop: 8,
+  },
+  label: { fontWeight: "bold", marginTop: 16 },
+  labelText: { fontWeight: "bold" },
+  rowWrap: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 12 },
+  checkbox: { flexDirection: "row", alignItems: "center" },
+  checkboxLabel: { marginLeft: 6, fontSize: 13 },
+  unitAnchor: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  subBtn: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  subHeader: {
+    fontWeight: "700",
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  subList: { gap: 6 },
+  subItem: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
 });
 
 export default CocktailIngredientRow;
