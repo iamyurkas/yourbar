@@ -17,6 +17,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  InteractionManager,
 } from "react-native";
 import {
   useNavigation,
@@ -31,6 +32,7 @@ import {
   saveIngredient,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
+import db from "../../storage/sqlite";
 
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
@@ -116,8 +118,12 @@ export default function IngredientDetailsScreen() {
   const { id, initialIngredient } = route.params;
   const theme = useTheme();
   const { setIngredients } = useIngredientsData();
-  const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
-    useIngredientUsage();
+  const {
+    ingredients = [],
+    cocktails: cocktailsCtx = [],
+    ingredientsById,
+    updateUsageMap,
+  } = useIngredientUsage();
 
   const [ingredient, setIngredient] = useState(initialIngredient || null);
   const [brandedChildren, setBrandedChildren] = useState([]);
@@ -400,6 +406,64 @@ export default function IngredientDetailsScreen() {
     });
   }, [setIngredients]);
 
+  const unlinkIngredients = useCallback(
+    ({ base, brandeds }) => {
+      const brandedList = Array.isArray(brandeds)
+        ? brandeds.filter(Boolean)
+        : brandeds
+        ? [brandeds]
+        : [];
+      const updates = brandedList;
+      const changedIds = [
+        ...(base ? [base.id] : []),
+        ...brandedList.map((b) => b.id),
+      ];
+      if (updates.length === 0) return;
+
+      let nextList;
+      setIngredients((list) => {
+        nextList = list;
+        updates.forEach((item) => {
+          nextList = updateIngredientById(nextList, item);
+        });
+        return nextList;
+      });
+
+      updates.forEach((item) => {
+        if (ingredient?.id === item.id) {
+          setIngredient(item);
+          setBaseIngredient(null);
+        } else {
+          setBrandedChildren((prev) => prev.filter((c) => c.id !== item.id));
+        }
+      });
+
+      getAllowSubstitutes().then((allow) => {
+        updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+          changedIngredientIds: changedIds,
+          allowSubstitutes: !!allow,
+        });
+      });
+
+      InteractionManager.runAfterInteractions(() => {
+        db.withTransactionAsync(async () => {
+          for (const item of updates) {
+            await saveIngredient(item);
+          }
+        });
+      });
+    },
+    [
+      ingredient,
+      setIngredient,
+      setBaseIngredient,
+      setBrandedChildren,
+      setIngredients,
+      updateUsageMap,
+      cocktailsCtx,
+    ]
+  );
+
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
     setUnlinkBaseVisible(true);
@@ -640,17 +704,10 @@ export default function IngredientDetailsScreen() {
         message="Remove link to base ingredient?"
         confirmLabel="Unlink"
         onCancel={() => setUnlinkBaseVisible(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (!ingredient) return;
           const updated = { ...ingredient, baseIngredientId: null };
-          let nextList;
-          setIngredients((list) => {
-            nextList = updateIngredientById(list, updated);
-            return nextList;
-          });
-          await saveIngredient(updated);
-          setIngredient(updated);
-          setBaseIngredient(null);
+          unlinkIngredients({ base: baseIngredient, brandeds: updated });
           setUnlinkBaseVisible(false);
         }}
       />
@@ -664,17 +721,11 @@ export default function IngredientDetailsScreen() {
         }
         confirmLabel="Unlink"
         onCancel={() => setUnlinkChildTarget(null)}
-        onConfirm={async () => {
+        onConfirm={() => {
           const child = unlinkChildTarget;
           if (!child) return;
           const updatedChild = { ...child, baseIngredientId: null };
-          let nextList;
-          setIngredients((list) => {
-            nextList = updateIngredientById(list, updatedChild);
-            return nextList;
-          });
-          await saveIngredient(updatedChild);
-          setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
+          unlinkIngredients({ base: ingredient, brandeds: updatedChild });
           setUnlinkChildTarget(null);
         }}
       />
