@@ -1202,6 +1202,9 @@ export default function AddCocktailScreen() {
     },
   ]);
 
+  const canSave =
+    name.trim().length > 0 && ings.some((r) => r.name.trim().length > 0);
+
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
   useEffect(() => {
@@ -1391,16 +1394,9 @@ export default function AddCocktailScreen() {
   );
 
   const handleSave = useCallback(() => {
+    if (!canSave) return;
     const title = name.trim();
-    if (!title) {
-      Alert.alert("Validation", "Please enter a cocktail name.");
-      return;
-    }
     const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
-    if (nonEmptyIngredients.length === 0) {
-      Alert.alert("Validation", "Please add at least one ingredient.");
-      return;
-    }
 
     const committed = nonEmptyIngredients.map((r) => {
       if (r.selectedId == null && r.pendingExactMatch) {
@@ -1495,6 +1491,7 @@ export default function AddCocktailScreen() {
     navigation,
     fromIngredientFlow,
     initialIngredient?.id,
+    canSave,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
@@ -1838,9 +1835,24 @@ export default function AddCocktailScreen() {
           <Pressable
             onPress={handleSave}
             android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-            style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.saveBtn,
+              {
+                backgroundColor: canSave
+                  ? theme.colors.primary
+                  : theme.colors.disabled,
+              },
+            ]}
+            disabled={!canSave}
           >
-            <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
+            <Text
+              style={{
+                color: canSave
+                  ? theme.colors.onPrimary
+                  : theme.colors.onSurface,
+                fontWeight: "700",
+              }}
+            >
               Save cocktail
             </Text>
           </Pressable>

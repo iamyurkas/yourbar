@@ -200,12 +200,19 @@ export default function IngredientDetailsScreen() {
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityRole="button"
           accessibilityLabel="Edit"
+          disabled={!ingredient}
         >
-          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
+          <MaterialIcons
+            name="edit"
+            size={24}
+            color={
+              ingredient ? theme.colors.onSurface : theme.colors.disabled
+            }
+          />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface, ingredient]);
 
   useEffect(() => {
     const returnTo = route.params?.returnTo;
@@ -693,12 +700,24 @@ export default function IngredientDetailsScreen() {
       <TouchableOpacity
         style={[
           styles.addCocktailButton,
-          { backgroundColor: theme.colors.primary },
+          {
+            backgroundColor: ingredient
+              ? theme.colors.primary
+              : theme.colors.disabled,
+          },
         ]}
         onPress={handleAddCocktail}
+        disabled={!ingredient}
       >
         <Text
-          style={[styles.addCocktailText, { color: theme.colors.onPrimary }]}
+          style={[
+            styles.addCocktailText,
+            {
+              color: ingredient
+                ? theme.colors.onPrimary
+                : theme.colors.onSurface,
+            },
+          ]}
         >
           + Add Cocktail
         </Text>
