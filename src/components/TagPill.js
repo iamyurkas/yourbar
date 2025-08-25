@@ -3,19 +3,31 @@ import { Pressable, Text, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 import { withAlpha } from "../utils/color";
 
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
+const TagPill = memo(function TagPill({
+  id,
+  name,
+  color,
+  onToggle,
+  rippleColor,
+  defaultColor,
+  textColor,
+}) {
   const theme = useTheme();
+  const effectiveRipple = rippleColor ?? withAlpha(theme.colors.primary, 0.1);
+  const background = color || defaultColor || theme.colors.surfaceVariant;
+  const foreground = textColor || theme.colors.onPrimary;
+
   return (
     <Pressable
       onPress={() => onToggle(id)}
-      android_ripple={{ color: withAlpha(theme.colors.primary, 0.1) }}
+      android_ripple={{ color: effectiveRipple }}
       style={({ pressed }) => [
         styles.tag,
-        { backgroundColor: color || theme.colors.surfaceVariant },
+        { backgroundColor: background },
         pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>{name}</Text>
+      <Text style={[styles.tagText, { color: foreground }]}>{name}</Text>
     </Pressable>
   );
 });
