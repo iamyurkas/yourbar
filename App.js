@@ -49,8 +49,17 @@ function InitialDataLoader({ children }) {
 }
 
 function ShakerStackScreen() {
+  const theme = useTheme();
   return (
-    <ShakerStack.Navigator>
+    <ShakerStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.onSurface,
+        headerTitleStyle: { color: theme.colors.onSurface },
+        headerShadowVisible: false,
+        headerStatusBarHeight: 0,
+      }}
+    >
       <ShakerStack.Screen
         name="ShakerMain"
         component={ShakerScreen}

@@ -75,8 +75,17 @@ function IngredientTabs({ route }) {
 }
 
 export default function IngredientsTabsScreen({ route }) {
+  const theme = useTheme();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.onSurface,
+        headerTitleStyle: { color: theme.colors.onSurface },
+        headerShadowVisible: false,
+        headerStatusBarHeight: 0,
+      }}
+    >
       <Stack.Screen
         name="IngredientsMain"
         component={IngredientTabs}
