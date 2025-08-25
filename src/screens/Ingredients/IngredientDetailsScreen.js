@@ -131,6 +131,13 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState([]);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const handleAddCocktail = useCallback(() => {
+    if (!ingredient) return;
+    navigation.navigate("Cocktails", {
+      screen: "AddCocktail",
+      params: { initialIngredient: ingredient },
+    });
+  }, [navigation, ingredient]);
 
   useEffect(() => {
     const initial = route.params?.initialIngredient;
@@ -688,12 +695,7 @@ export default function IngredientDetailsScreen() {
           styles.addCocktailButton,
           { backgroundColor: theme.colors.primary },
         ]}
-        onPress={() =>
-          navigation.navigate("Cocktails", {
-            screen: "AddCocktail",
-            params: { initialIngredient: ingredient },
-          })
-        }
+        onPress={handleAddCocktail}
       >
         <Text
           style={[styles.addCocktailText, { color: theme.colors.onPrimary }]}

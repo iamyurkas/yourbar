@@ -403,6 +403,7 @@ export default function AddIngredientScreen() {
       navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
 
+    // Persist the ingredient without blocking navigation.
     InteractionManager.runAfterInteractions(() => {
       addIngredient(saved).catch(() => {});
 

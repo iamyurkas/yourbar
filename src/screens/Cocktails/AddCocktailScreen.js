@@ -1185,12 +1185,12 @@ export default function AddCocktailScreen() {
   const [glassId, setGlassId] = useState("cocktail_glass");
 
   // ingredients list
-  const [ings, setIngs] = useState(() => {
-    const baseRow = {
+  const [ings, setIngs] = useState(() => [
+    {
       localId: Date.now(),
-      name: "",
-      selectedId: null,
-      selectedItem: null,
+      name: initialIngredient?.name || "",
+      selectedId: initialIngredient?.id ?? null,
+      selectedItem: initialIngredient || null,
       quantity: "",
       unitId: UNIT_ID.ML,
       garnish: false,
@@ -1199,20 +1199,8 @@ export default function AddCocktailScreen() {
       allowBrandedSubstitutes: false,
       substitutes: [],
       pendingExactMatch: null,
-    };
-    if (initialIngredient) {
-      return [
-        {
-          ...baseRow,
-          name: initialIngredient.name || "",
-          selectedId: initialIngredient.id ?? null,
-          selectedItem: initialIngredient,
-          pendingExactMatch: null,
-        },
-      ];
-    }
-    return [baseRow];
-  });
+    },
+  ]);
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
