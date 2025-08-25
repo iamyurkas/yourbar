@@ -9,6 +9,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 import GeneralMenu from "./GeneralMenu";
+import { HEADER_HEIGHT } from "../constants/layout";
 
 export default function HeaderWithSearch({
   onMenu,
@@ -98,6 +99,7 @@ const makeStyles = (theme) =>
     container: {
       flexDirection: "row",
       alignItems: "center",
+      height: HEADER_HEIGHT,
       paddingHorizontal: 16,
       backgroundColor: theme.colors.background,
       gap: 10,
