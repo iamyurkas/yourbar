@@ -437,6 +437,10 @@ export default function EditIngredientScreen() {
       initialHashRef.current = serialize();
       setDirty(false);
 
+      const searchName = normalizeSearch(updated.name);
+      const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
+      const newItem = { ...updated, searchName, searchTokens };
+
       if (!stay) {
         skipPromptRef.current = true;
         const detailParams = {
@@ -464,9 +468,6 @@ export default function EditIngredientScreen() {
 
       InteractionManager.runAfterInteractions(() => {
         setGlobalIngredients((list) => {
-          const searchName = normalizeSearch(updated.name);
-          const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-          const newItem = { ...updated, searchName, searchTokens };
           const rest = list.filter((i) => i.id !== newItem.id);
           const idx = rest.findIndex(
             (i) => collator.compare(i.name, newItem.name) > 0
@@ -831,15 +832,15 @@ export default function EditIngredientScreen() {
         onConfirm={() => {
           if (!ingredient) return;
           skipPromptRef.current = true;
-          setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
-          setUsageMap((prev) => {
-            const next = { ...prev };
-            delete next[ingredient.id];
-            return next;
-          });
           navigation.popToTop();
           setConfirmDelete(false);
           InteractionManager.runAfterInteractions(() => {
+            setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
+            setUsageMap((prev) => {
+              const next = { ...prev };
+              delete next[ingredient.id];
+              return next;
+            });
             deleteIngredient(ingredient.id).catch(() => {});
           });
         }}

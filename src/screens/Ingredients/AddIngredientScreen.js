@@ -373,17 +373,23 @@ export default function AddIngredientScreen() {
       return;
     }
 
-    const id = Date.now();
-    const created = {
-      id,
+    const searchName = normalizeSearch(trimmed);
+    const saved = {
+      id: Date.now(),
       name: trimmed,
       description,
       photoUri,
       tags,
       baseIngredientId: baseIngredientId ?? null,
+      usageCount: 0,
+      singleCocktailName: null,
+      searchName,
+      searchTokens: searchName.split(WORD_SPLIT_RE).filter(Boolean),
+      inBar: false,
+      inShoppingList: false,
     };
 
-    const detailParams = { id, initialIngredient: created };
+    const detailParams = { id: saved.id, initialIngredient: saved };
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
         screen: returnTo,
@@ -397,9 +403,9 @@ export default function AddIngredientScreen() {
       navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
 
-    InteractionManager.runAfterInteractions(async () => {
-      const saved = await addIngredient(created).catch(() => null);
-      if (!saved) return;
+    InteractionManager.runAfterInteractions(() => {
+      addIngredient(saved).catch(() => {});
+
       setGlobalIngredients((list) => {
         const idx = list.findIndex(
           (i) => collator.compare(i.name, saved.name) > 0
