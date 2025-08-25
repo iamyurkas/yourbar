@@ -32,7 +32,7 @@ import {
   useIsFocused,
   StackActions,
 } from "@react-navigation/native";
-import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
+import { useTheme, Menu, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
@@ -68,6 +68,19 @@ const withAlpha = (hex, alpha) => {
   return hex.length === 7 ? `${hex}${a}` : `${hex.slice(0, 7)}${a}`;
 };
 
+const Divider = ({ color, style }) => (
+  <View
+    style={[
+      {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: color,
+        opacity: 0.5,
+      },
+      style,
+    ]}
+  />
+);
+
 /* -------------- pills for tags (memo) -------------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
   const theme = useTheme();
@@ -96,20 +109,7 @@ const BaseRow = memo(function BaseRow({
 }) {
   const theme = useTheme();
 
-  if (id == null) {
-    return (
-      <Pressable
-        onPress={() => onSelect(null)}
-        android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-      >
-        <View style={[styles.menuRow, styles.menuRowInner]}>
-          <Text style={{ color: theme.colors.onSurface }}>None</Text>
-        </View>
-      </Pressable>
-    );
-  }
-
-  const branded = baseIngredientId != null;
+  const branded = id != null && baseIngredientId != null;
   return (
     <Pressable
       onPress={() => onSelect(id)}
@@ -118,7 +118,6 @@ const BaseRow = memo(function BaseRow({
       <View
         style={[
           styles.menuRow,
-          styles.menuRowInner,
           branded && {
             borderLeftWidth: 4,
             borderLeftColor: theme.colors.primary,
@@ -126,15 +125,19 @@ const BaseRow = memo(function BaseRow({
           },
         ]}
       >
-        {photoUri ? (
-          <Image
-            source={{ uri: photoUri }}
-            style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
-          />
+        {id != null ? (
+          photoUri ? (
+            <Image
+              source={{ uri: photoUri }}
+              style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
+            />
+          ) : (
+            <View
+              style={[styles.menuImg, { backgroundColor: theme.colors.outlineVariant }]}
+            />
+          )
         ) : (
-          <View
-            style={[styles.menuImg, { backgroundColor: theme.colors.outlineVariant }]}
-          />
+          <View style={styles.menuImgSpacer} />
         )}
         <PaperText numberOfLines={1}>{name}</PaperText>
       </View>
@@ -603,16 +606,18 @@ export default function AddIngredientScreen() {
             android_ripple={RIPPLE}
           >
             <View style={styles.anchorRow}>
-              {selectedBase?.photoUri ? (
-                <Image
-                  source={{ uri: selectedBase.photoUri }}
-                  style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
-                />
-              ) : (
-                <View
-                  style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
-                />
-              )}
+              {selectedBase ? (
+                selectedBase.photoUri ? (
+                  <Image
+                    source={{ uri: selectedBase.photoUri }}
+                    style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
+                  />
+                ) : (
+                  <View
+                    style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
+                  />
+                )
+              ) : null}
               <Text style={{ color: theme.colors.onSurface }}>
                 {selectedBase?.name || "None"}
               </Text>
@@ -663,6 +668,12 @@ export default function AddIngredientScreen() {
         onDismiss={() => setMenuVisible(false)}
         anchor={menuAnchor}
         style={{ maxHeight: 350 }}
+        contentStyle={{
+          backgroundColor: theme.colors.surface,
+          borderWidth: 1,
+          borderRadius: 8,
+          borderColor: theme.colors.outline,
+        }}
       >
         <View style={styles.menuSearchBox}>
           <TextInput
@@ -680,7 +691,7 @@ export default function AddIngredientScreen() {
             ]}
           />
         </View>
-        <Divider />
+        <Divider color={theme.colors.outlineVariant} />
         <FlatList
           data={menuData}
           keyExtractor={(item) => String(item.id ?? "none")}
@@ -695,6 +706,7 @@ export default function AddIngredientScreen() {
                 photoUri={item.photoUri}
                 baseIngredientId={item.baseIngredientId}
                 onSelect={(id) => {
+                  Keyboard.dismiss();
                   setBaseIngredientId(id);
                   setMenuVisible(false);
                 }}
@@ -702,6 +714,7 @@ export default function AddIngredientScreen() {
             </View>
           )}
           style={{ width: anchorWidth }}
+          keyboardShouldPersistTaps="handled"
           getItemLayout={(_, index) => ({
             length: MENU_ROW_HEIGHT,
             offset: MENU_ROW_HEIGHT * index,
@@ -720,7 +733,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, padding: 10, marginTop: 8, borderRadius: 8 },
   multiline: { minHeight: 80, textAlignVertical: "top" },
   anchorInput: { justifyContent: "center", minHeight: 44 },
-  anchorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  anchorRow: { flexDirection: "row", alignItems: "center" },
 
   imageButton: {
     marginTop: 8,
@@ -769,15 +782,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
-  menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
+  menuRow: {
+    height: MENU_ROW_HEIGHT,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   menuImg: {
-    width: 40,
-    height: 40,
-    aspectRatio: 1,
-    borderRadius: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    marginRight: 10,
     resizeMode: "contain",
   },
+  menuImgSpacer: { width: 32, height: 32, marginRight: 10 },
 
   saveButton: {
     marginTop: 24,
