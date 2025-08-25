@@ -17,7 +17,6 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  Alert,
   Platform,
   InteractionManager,
   ActivityIndicator,
@@ -49,6 +48,7 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
+import useInfoDialog from "../../hooks/useInfoDialog";
 
 // ----------- helpers -----------
 const useDebounced = (value, delay = 300) => {
@@ -134,6 +134,7 @@ export default function EditIngredientScreen() {
     baseIngredients = [],
   } = useIngredientsData();
   const { setUsageMap, ingredientsById } = useIngredientUsage();
+  const [showInfo, infoDialog] = useInfoDialog();
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
     []
@@ -397,7 +398,7 @@ export default function EditIngredientScreen() {
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert("Permission required", "Allow access to media library");
+      showInfo("Permission required", "Allow access to media library");
       return;
     }
     await InteractionManager.runAfterInteractions();
@@ -416,7 +417,7 @@ export default function EditIngredientScreen() {
     (stay = false) => {
       const trimmed = name.trim();
       if (!trimmed) {
-        Alert.alert("Please enter a name for the ingredient.");
+        showInfo("Validation", "Please enter a name for the ingredient.");
         return;
       }
       if (!ingredient) return;
@@ -888,6 +889,7 @@ export default function EditIngredientScreen() {
         ]}
         onCancel={() => setPendingNav(null)}
       />
+      {infoDialog}
     </>
   );
 }

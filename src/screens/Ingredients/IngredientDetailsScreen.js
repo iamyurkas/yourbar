@@ -15,7 +15,6 @@ import {
   ScrollView,
   ActivityIndicator,
   Platform,
-  Alert,
   BackHandler,
   InteractionManager,
 } from "react-native";

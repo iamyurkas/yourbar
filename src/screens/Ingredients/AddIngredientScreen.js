@@ -17,7 +17,6 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  Alert,
   InteractionManager,
   Pressable,
   BackHandler,
@@ -45,6 +44,7 @@ import IngredientTagsModal from "../../components/IngredientTagsModal";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
+import useInfoDialog from "../../hooks/useInfoDialog";
 
 
 
@@ -131,6 +131,7 @@ export default function AddIngredientScreen() {
     baseIngredients = [],
   } = useIngredientsData();
   const { setUsageMap } = useIngredientUsage();
+  const [showInfo, infoDialog] = useInfoDialog();
 
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
@@ -351,7 +352,7 @@ export default function AddIngredientScreen() {
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert("Permission required", "Allow access to media library");
+      showInfo("Permission required", "Allow access to media library");
       return;
     }
     await InteractionManager.runAfterInteractions();
@@ -369,7 +370,7 @@ export default function AddIngredientScreen() {
   const handleSave = useCallback(() => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
-      Alert.alert("Validation", "Please enter a name for the ingredient.");
+      showInfo("Validation", "Please enter a name for the ingredient.");
       return;
     }
 
@@ -726,6 +727,7 @@ export default function AddIngredientScreen() {
         onClose={closeTagsModal}
         autoAdd={tagsModalAutoAdd}
       />
+      {infoDialog}
     </>
   );
 }
