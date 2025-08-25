@@ -41,11 +41,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
-import {
-  deleteIngredient,
-  saveIngredient,
-  removeIngredient,
-} from "../../storage/ingredientsStorage";
+import { deleteIngredient, saveIngredient } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
@@ -467,15 +463,14 @@ export default function EditIngredientScreen() {
       }
 
       InteractionManager.runAfterInteractions(() => {
-        setGlobalIngredients((list) => {
-          const rest = list.filter((i) => i.id !== newItem.id);
-          const idx = rest.findIndex(
+        setGlobalIngredients((map) => {
+          const arr = Array.from(map.values()).filter((i) => i.id !== newItem.id);
+          const idx = arr.findIndex(
             (i) => collator.compare(i.name, newItem.name) > 0
           );
-          const next = [...rest];
-          if (idx === -1) next.push(newItem);
-          else next.splice(idx, 0, newItem);
-          return next;
+          if (idx === -1) arr.push(newItem);
+          else arr.splice(idx, 0, newItem);
+          return new Map(arr.map((i) => [i.id, i]));
         });
         saveIngredient(updated).catch(() => {});
       });
@@ -835,7 +830,11 @@ export default function EditIngredientScreen() {
           navigation.popToTop();
           setConfirmDelete(false);
           InteractionManager.runAfterInteractions(() => {
-            setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
+            setGlobalIngredients((map) => {
+              const next = new Map(map);
+              next.delete(ingredient.id);
+              return next;
+            });
             setUsageMap((prev) => {
               const next = { ...prev };
               delete next[ingredient.id];
