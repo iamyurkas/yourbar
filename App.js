@@ -8,7 +8,8 @@ import {
   IngredientUsageProvider,
   useIngredientUsage,
 } from "./src/context/IngredientUsageContext";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "react-native";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
 
@@ -172,31 +173,41 @@ export default function App() {
   }, []);
 
   if (showSplash || !startScreen) {
-    return <SplashScreen />;
+    return (
+      <SafeAreaProvider>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+          <SplashScreen />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
   }
 
   return (
     <PaperProvider theme={AppTheme}>
       <MenuProvider>
         <SafeAreaProvider>
-          <IngredientUsageProvider>
-            <InitialDataLoader>
-              <TabMemoryProvider>
-                <NavigationContainer>
-                  <RootStack.Navigator>
-                    <RootStack.Screen name="Tabs" options={{ headerShown: false }}>
-                      {() => <Tabs startScreen={startScreen} />}
-                    </RootStack.Screen>
-                    <RootStack.Screen
-                      name="EditCustomTags"
-                      component={EditCustomTagsScreen}
-                      options={{ title: "Custom tags" }}
-                    />
-                  </RootStack.Navigator>
-                </NavigationContainer>
-              </TabMemoryProvider>
-            </InitialDataLoader>
-          </IngredientUsageProvider>
+          <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+          <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+            <IngredientUsageProvider>
+              <InitialDataLoader>
+                <TabMemoryProvider>
+                  <NavigationContainer>
+                    <RootStack.Navigator>
+                      <RootStack.Screen name="Tabs" options={{ headerShown: false }}>
+                        {() => <Tabs startScreen={startScreen} />}
+                      </RootStack.Screen>
+                      <RootStack.Screen
+                        name="EditCustomTags"
+                        component={EditCustomTagsScreen}
+                        options={{ title: "Custom tags" }}
+                      />
+                    </RootStack.Navigator>
+                  </NavigationContainer>
+                </TabMemoryProvider>
+              </InitialDataLoader>
+            </IngredientUsageProvider>
+          </SafeAreaView>
         </SafeAreaProvider>
       </MenuProvider>
     </PaperProvider>
