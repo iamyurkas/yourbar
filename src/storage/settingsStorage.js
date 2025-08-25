@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter } from "react-native";
+import { createBooleanSetting } from "./createBooleanSetting";
 
 const USE_METRIC_KEY = "useMetric";
 const IGNORE_GARNISH_KEY = "ignoreGarnish";
@@ -15,105 +16,40 @@ export const FAVORITES_MIN_RATING_EVENT = "favoritesMinRatingChanged";
 export const TABS_ON_TOP_EVENT = "tabsOnTopChanged";
 export const ALLOW_SUBSTITUTES_EVENT = "allowSubstitutesChanged";
 
-export async function getUseMetric() {
-  try {
-    const value = await AsyncStorage.getItem(USE_METRIC_KEY);
-    if (value === null) return true;
-    return value === "true";
-  } catch {
-    return true;
-  }
-}
+export const { get: getUseMetric, set: setUseMetric } =
+  createBooleanSetting(USE_METRIC_KEY, true);
 
-export async function setUseMetric(value) {
-  try {
-    await AsyncStorage.setItem(USE_METRIC_KEY, value ? "true" : "false");
-  } catch {}
-}
+export const {
+  get: getIgnoreGarnish,
+  set: setIgnoreGarnish,
+  addListener: addIgnoreGarnishListener,
+} = createBooleanSetting(
+  IGNORE_GARNISH_KEY,
+  true,
+  IGNORE_GARNISH_EVENT
+);
 
-export async function getIgnoreGarnish() {
-  try {
-    const value = await AsyncStorage.getItem(IGNORE_GARNISH_KEY);
-    if (value === null) return true;
-    return value === "true";
-  } catch {
-    return true;
-  }
-}
+export const {
+  get: getAllowSubstitutes,
+  set: setAllowSubstitutes,
+  addListener: addAllowSubstitutesListener,
+} = createBooleanSetting(
+  ALLOW_SUBSTITUTES_KEY,
+  true,
+  ALLOW_SUBSTITUTES_EVENT
+);
 
-export async function setIgnoreGarnish(value) {
-  try {
-    await AsyncStorage.setItem(IGNORE_GARNISH_KEY, value ? "true" : "false");
-  } catch {}
-  DeviceEventEmitter.emit(IGNORE_GARNISH_EVENT, value);
-}
+export const {
+  get: getKeepAwake,
+  set: setKeepAwake,
+  addListener: addKeepAwakeListener,
+} = createBooleanSetting(KEEP_AWAKE_KEY, true, KEEP_AWAKE_EVENT);
 
-export function addIgnoreGarnishListener(listener) {
-  return DeviceEventEmitter.addListener(IGNORE_GARNISH_EVENT, listener);
-}
-
-export async function getAllowSubstitutes() {
-  try {
-    const value = await AsyncStorage.getItem(ALLOW_SUBSTITUTES_KEY);
-    if (value === null) return true;
-    return value === "true";
-  } catch {
-    return true;
-  }
-}
-
-export async function setAllowSubstitutes(value) {
-  try {
-    await AsyncStorage.setItem(ALLOW_SUBSTITUTES_KEY, value ? "true" : "false");
-  } catch {}
-  DeviceEventEmitter.emit(ALLOW_SUBSTITUTES_EVENT, value);
-}
-
-export function addAllowSubstitutesListener(listener) {
-  return DeviceEventEmitter.addListener(ALLOW_SUBSTITUTES_EVENT, listener);
-}
-
-export async function getKeepAwake() {
-  try {
-    const value = await AsyncStorage.getItem(KEEP_AWAKE_KEY);
-    if (value === null) return true;
-    return value === "true";
-  } catch {
-    return true;
-  }
-}
-
-export async function setKeepAwake(value) {
-  try {
-    await AsyncStorage.setItem(KEEP_AWAKE_KEY, value ? "true" : "false");
-  } catch {}
-  DeviceEventEmitter.emit(KEEP_AWAKE_EVENT, value);
-}
-
-export function addKeepAwakeListener(listener) {
-  return DeviceEventEmitter.addListener(KEEP_AWAKE_EVENT, listener);
-}
-
-export async function getTabsOnTop() {
-  try {
-    const value = await AsyncStorage.getItem(TABS_ON_TOP_KEY);
-    if (value === null) return true;
-    return value === "true";
-  } catch {
-    return true;
-  }
-}
-
-export async function setTabsOnTop(value) {
-  try {
-    await AsyncStorage.setItem(TABS_ON_TOP_KEY, value ? "true" : "false");
-  } catch {}
-  DeviceEventEmitter.emit(TABS_ON_TOP_EVENT, value);
-}
-
-export function addTabsOnTopListener(listener) {
-  return DeviceEventEmitter.addListener(TABS_ON_TOP_EVENT, listener);
-}
+export const {
+  get: getTabsOnTop,
+  set: setTabsOnTop,
+  addListener: addTabsOnTopListener,
+} = createBooleanSetting(TABS_ON_TOP_KEY, true, TABS_ON_TOP_EVENT);
 
 export async function getFavoritesMinRating() {
   try {
