@@ -75,8 +75,17 @@ function CocktailTabs({ route }) {
 }
 
 export default function CocktailsTabsScreen({ route }) {
+  const theme = useTheme();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.onSurface,
+        headerTitleStyle: { color: theme.colors.onSurface },
+        headerShadowVisible: false,
+        headerStatusBarHeight: 0,
+      }}
+    >
       <Stack.Screen
         name="CocktailsMain"
         component={CocktailTabs}
