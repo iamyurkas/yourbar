@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import PlainHeader from "../../components/PlainHeader";
 
 // TopTabBar is rendered within each screen
 
@@ -76,7 +77,9 @@ function CocktailTabs({ route }) {
 
 export default function CocktailsTabsScreen({ route }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{ header: (props) => <PlainHeader {...props} /> }}
+    >
       <Stack.Screen
         name="CocktailsMain"
         component={CocktailTabs}
