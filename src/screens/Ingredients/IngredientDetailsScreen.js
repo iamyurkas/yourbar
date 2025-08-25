@@ -133,10 +133,15 @@ export default function IngredientDetailsScreen() {
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
 
   useEffect(() => {
-    if (route.params?.initialIngredient) {
-      setIngredient(route.params.initialIngredient);
+    const initial = route.params?.initialIngredient;
+    if (initial) {
+      setIngredient(initial);
+      const baseId = initial.baseIngredientId;
+      setBaseIngredient(
+        baseId != null ? ingredientsById.get(baseId) || null : null
+      );
     }
-  }, [route.params?.initialIngredient]);
+  }, [route.params?.initialIngredient, ingredientsById]);
 
   const collator = useMemo(
     () => new Intl.Collator("uk", { sensitivity: "base" }),
@@ -257,10 +262,9 @@ export default function IngredientDetailsScreen() {
       .sort((a, b) => collator.compare(a.name, b.name));
     setBrandedChildren(children);
 
-    const base =
-      loaded.baseIngredientId != null
-        ? all.find((i) => i.id === loaded.baseIngredientId)
-        : null;
+    const baseId =
+      loaded.baseIngredientId ?? ingredient?.baseIngredientId ?? null;
+    const base = baseId != null ? all.find((i) => i.id === baseId) : null;
     setBaseIngredient(base || null);
 
     const map = mapCocktailsByIngredient(all, cocktails, {
