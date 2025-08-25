@@ -88,11 +88,11 @@ export async function saveAllIngredients(ingredients) {
   });
 }
 
-export function updateIngredientById(list, updated) {
-  const index = list.findIndex((i) => i.id === updated.id);
-  if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
+export function updateIngredientById(map, updated) {
+  const prev = map.get(updated.id);
+  if (!prev) return map;
+  const next = new Map(map);
+  next.set(updated.id, { ...prev, ...updated });
   return next;
 }
 

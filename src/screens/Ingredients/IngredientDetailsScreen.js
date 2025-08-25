@@ -236,7 +236,7 @@ export default function IngredientDetailsScreen() {
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
-      const loaded = ingredientsById[id] || all.find((i) => i.id === id);
+      const loaded = ingredientsById.get(id) || all.find((i) => i.id === id);
     setIngredient((prev) => (loaded ? { ...loaded, ...(prev || {}) } : prev));
 
     if (!loaded) {

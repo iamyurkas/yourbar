@@ -101,7 +101,7 @@ export default function ShoppingIngredientsScreen() {
     (id) => {
       let updated;
       setIngredients((prev) => {
-        const item = prev.find((i) => i.id === id);
+        const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inShoppingList: false };
         return updateIngredientById(prev, updated);
