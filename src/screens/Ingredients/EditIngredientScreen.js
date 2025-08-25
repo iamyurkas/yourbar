@@ -441,18 +441,6 @@ export default function EditIngredientScreen() {
       const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
       const newItem = { ...updated, searchName, searchTokens };
 
-      setGlobalIngredients((list) => {
-        const rest = list.filter((i) => i.id !== newItem.id);
-        const idx = rest.findIndex(
-          (i) => collator.compare(i.name, newItem.name) > 0
-        );
-        const next = [...rest];
-        if (idx === -1) next.push(newItem);
-        else next.splice(idx, 0, newItem);
-        return next;
-      });
-      saveIngredient(updated).catch(() => {});
-
       if (!stay) {
         skipPromptRef.current = true;
         const detailParams = {
@@ -477,6 +465,20 @@ export default function EditIngredientScreen() {
       } else {
         setIngredient(updated);
       }
+
+      InteractionManager.runAfterInteractions(() => {
+        setGlobalIngredients((list) => {
+          const rest = list.filter((i) => i.id !== newItem.id);
+          const idx = rest.findIndex(
+            (i) => collator.compare(i.name, newItem.name) > 0
+          );
+          const next = [...rest];
+          if (idx === -1) next.push(newItem);
+          else next.splice(idx, 0, newItem);
+          return next;
+        });
+        saveIngredient(updated).catch(() => {});
+      });
 
       return updated;
     },
@@ -830,15 +832,17 @@ export default function EditIngredientScreen() {
         onConfirm={() => {
           if (!ingredient) return;
           skipPromptRef.current = true;
-          setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
-          setUsageMap((prev) => {
-            const next = { ...prev };
-            delete next[ingredient.id];
-            return next;
-          });
           navigation.popToTop();
           setConfirmDelete(false);
-          deleteIngredient(ingredient.id).catch(() => {});
+          InteractionManager.runAfterInteractions(() => {
+            setGlobalIngredients((list) => removeIngredient(list, ingredient.id));
+            setUsageMap((prev) => {
+              const next = { ...prev };
+              delete next[ingredient.id];
+              return next;
+            });
+            deleteIngredient(ingredient.id).catch(() => {});
+          });
         }}
       />
       <ConfirmationDialog

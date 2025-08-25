@@ -389,19 +389,6 @@ export default function AddIngredientScreen() {
       inShoppingList: false,
     };
 
-    addIngredient(saved).catch(() => {});
-
-    setGlobalIngredients((list) => {
-      const idx = list.findIndex(
-        (i) => collator.compare(i.name, saved.name) > 0
-      );
-      const next = [...list];
-      if (idx === -1) next.push(saved);
-      else next.splice(idx, 0, saved);
-      return next;
-    });
-    setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
-
     const detailParams = { id: saved.id, initialIngredient: saved };
     if (fromCocktailFlow) {
       navigation.navigate("Cocktails", {
@@ -415,6 +402,21 @@ export default function AddIngredientScreen() {
     } else {
       navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
+
+    InteractionManager.runAfterInteractions(() => {
+      addIngredient(saved).catch(() => {});
+
+      setGlobalIngredients((list) => {
+        const idx = list.findIndex(
+          (i) => collator.compare(i.name, saved.name) > 0
+        );
+        const next = [...list];
+        if (idx === -1) next.push(saved);
+        else next.splice(idx, 0, saved);
+        return next;
+      });
+      setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
+    });
   }, [
     name,
     description,
