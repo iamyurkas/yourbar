@@ -46,8 +46,6 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 
-
-
 /* ---------------- helpers ---------------- */
 const useDebounced = (value, delay = 300) => {
   const [v, setV] = useState(value);
@@ -464,121 +462,84 @@ export default function AddIngredientScreen() {
           scrollEventThrottle={16}
           scrollIndicatorInsets={{ bottom: kbHeight }}
         >
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Name
-        </Text>
-        <TextInput
-          placeholder="e.g. Lemon juice"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={name}
-          onChangeText={setName}
-          style={[
-            styles.input,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        />
-
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Photo
-        </Text>
-        <Pressable
-          style={[
-            styles.imageButton,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.outline,
-            },
-          ]}
-          onPress={pickImage}
-          android_ripple={RIPPLE}
-        >
-          {photoUri ? (
-            <Image source={{ uri: photoUri }} style={styles.image} />
-          ) : (
-            <Text
-              style={{
-                color: theme.colors.onSurfaceVariant,
-                textAlign: "center",
-              }}
-            >
-              Tap to select image
-            </Text>
-          )}
-        </Pressable>
-
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Tags
-        </Text>
-        <View style={styles.tagContainer}>
-          {tags.map((t) => (
-            <TagPill
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              color={t.color}
-              onToggle={toggleTagById}
-            />
-          ))}
-        </View>
-
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Add Tag
-        </Text>
-        <View style={styles.tagContainer}>
-          {availableTags
-            .filter((t) => !tags.some((x) => x.id === t.id))
-            .map((t) => (
-              <TagPill
-                key={t.id}
-                id={t.id}
-                name={t.name}
-                color={t.color}
-                onToggle={toggleTagById}
-              />
-            ))}
-          <Pressable
-            onPress={openAddTagModal}
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Name</Text>
+          <TextInput
+            placeholder="e.g. Lemon juice"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={name}
+            onChangeText={setName}
             style={[
-              styles.addTagButton,
+              styles.input,
               {
-                borderColor: theme.colors.primary,
-                backgroundColor: theme.colors.background,
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
               },
             ]}
+          />
+
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Photo</Text>
+          <Pressable
+            style={[
+              styles.imageButton,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.outline,
+              },
+            ]}
+            onPress={pickImage}
+            android_ripple={RIPPLE}
           >
-            <Text
-              style={[
-                styles.addTagButtonText,
-                { color: theme.colors.primary },
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.image} />
+            ) : (
+              <Text
+                style={{
+                  color: theme.colors.onSurfaceVariant,
+                  textAlign: "center",
+                }}
+              >
+                Tap to select image
+              </Text>
+            )}
+          </Pressable>
+
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Tags</Text>
+          <View style={styles.tagContainer}>
+            {tags.map((t) => (
+              <TagPill key={t.id} id={t.id} name={t.name} color={t.color} onToggle={toggleTagById} />
+            ))}
+            <Pressable
+              onPress={openAddTagModal}
+              android_ripple={{ color: withAlpha(theme.colors.onSurface, 0.12) }}
+              style={({ pressed }) => [
+                styles.addTagButton,
+                {
+                  borderColor: theme.colors.outline,
+                  backgroundColor: theme.colors.surface,
+                  opacity: pressed ? 0.9 : 1,
+                },
               ]}
             >
-              +Add
+              <Text
+                style={[styles.addTagButtonText, { color: theme.colors.onSurfaceVariant }]}
+              >
+                +
+              </Text>
+            </Pressable>
+          </View>
+
+          <Pressable onPress={() => setTagsModalVisible(true)}>
+            <Text
+              style={[styles.manageTagsLink, { color: theme.colors.primary }]}
+            >
+              Manage tags
             </Text>
           </Pressable>
-        </View>
 
-        <Pressable
-          onPress={() => {
-            setTagsModalAutoAdd(false);
-            setTagsModalVisible(true);
-          }}
-        >
-          <Text style={[styles.manageTagsLink, { color: theme.colors.primary }]}>Manage tags</Text>
-        </Pressable>
-
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>Base Ingredient</Text>
-
-        <View
-          ref={anchorRef}
-          collapsable={false}
-          onLayout={(e) => setAnchorWidth(e.nativeEvent.layout.width)}
-        >
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Base ingredient</Text>
           <Pressable
-            onPress={openMenu}
+            ref={anchorRef}
             style={[
               styles.input,
               styles.anchorInput,
@@ -587,145 +548,110 @@ export default function AddIngredientScreen() {
                 backgroundColor: theme.colors.surface,
               },
             ]}
+            onPress={openMenu}
             android_ripple={RIPPLE}
           >
             <View style={styles.anchorRow}>
               {selectedBase?.photoUri ? (
                 <Image
                   source={{ uri: selectedBase.photoUri }}
-                  style={styles.menuImg}
+                  style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
                 />
-              ) : selectedBase ? (
+              ) : (
                 <View
                   style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
                 />
-              ) : null}
-              <PaperText
-                style={{
-                  color: selectedBase
-                    ? theme.colors.onSurface
-                    : theme.colors.onSurfaceVariant,
-                }}
-              >
-                {selectedBase ? selectedBase.name : "None"}
-              </PaperText>
+              )}
+              <Text style={{ color: theme.colors.onSurface }}>
+                {selectedBase?.name || "None"}
+              </Text>
             </View>
           </Pressable>
-        </View>
 
-        <Menu
-          visible={menuVisible}
-          onDismiss={() => setMenuVisible(false)}
-          anchor={menuAnchor || { x: 0, y: 0 }}
-          contentStyle={{
-            width: anchorWidth,
-            backgroundColor: theme.colors.surface,
-          }}
-        >
-          <View style={styles.menuSearchBox}>
-            <TextInput
-              ref={searchInputRef}
-              placeholder="Search base ingredient..."
-              placeholderTextColor={theme.colors.onSurfaceVariant}
-              value={baseIngredientSearch}
-              onChangeText={setBaseIngredientSearch}
-              style={[
-                styles.menuSearchInput,
-                {
-                  borderColor: theme.colors.outline,
-                  color: theme.colors.onSurface,
-                  backgroundColor: theme.colors.background,
-                },
-              ]}
-              returnKeyType="search"
-            />
-          </View>
-          <Divider />
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Description:</Text>
+          <TextInput
+            ref={descRef}
+            collapsable={false}
+            onFocus={() => requestScrollIntoView(descRef)}
+            placeholder="Optional description"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={description}
+            onChangeText={setDescription}
+            style={[
+              styles.input,
+              styles.multiline,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+            multiline
+          />
 
-          <View
-            style={{
-              maxHeight: Math.min(
-                300,
-                MENU_ROW_HEIGHT * (filteredBase.length + 1)
-              ),
-            }}
+          <Pressable
+            style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+            onPress={handleSave}
+            android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
+            disabled={!name.trim()}
           >
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={filteredBase}
-              keyExtractor={(item) => item.id.toString()}
-              ListHeaderComponent={
-                <Pressable
-                  onPress={() => {
-                    setBaseIngredientId(null);
-                    setMenuVisible(false);
-                  }}
-                  android_ripple={RIPPLE}
-                  style={({ pressed }) => [
-                    styles.menuRow,
-                    pressed && { opacity: 0.96 },
-                  ]}
-                >
-                  <View style={styles.menuRowInner}>
-                    <PaperText>None</PaperText>
-                  </View>
-                </Pressable>
-              }
-              renderItem={({ item }) => (
-                <BaseRow
-                  id={item.id}
-                  name={item.name}
-                  photoUri={item.photoUri}
-                  onSelect={(id) => {
-                    setBaseIngredientId(id);
-                    setMenuVisible(false);
-                  }}
-                />
-              )}
-            />
-          </View>
-        </Menu>
-
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Description:
-        </Text>
-        <TextInput
-          ref={descRef}
-          collapsable={false}
-          onFocus={() => requestScrollIntoView(descRef)}
-          placeholder="Optional description"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
-          value={description}
-          onChangeText={setDescription}
-          style={[
-            styles.input,
-            styles.multiline,
-            {
-              borderColor: theme.colors.outline,
-              color: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-          multiline
-        />
-
-        <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
-          onPress={handleSave}
-          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-          disabled={!name.trim()}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Ingredient
-          </Text>
-        </Pressable>
-      </ScrollView>
-    </View>
+            <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
+              Save Ingredient
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </View>
       <IngredientTagsModal
         visible={tagsModalVisible}
         onClose={closeTagsModal}
         autoAdd={tagsModalAutoAdd}
       />
+
+      <Menu
+        visible={menuVisible}
+        onDismiss={() => setMenuVisible(false)}
+        anchor={menuAnchor}
+        style={{ maxHeight: 350 }}
+      >
+        <View style={styles.menuSearchBox}>
+          <TextInput
+            ref={searchInputRef}
+            placeholder="Search"
+            value={baseIngredientSearch}
+            onChangeText={setBaseIngredientSearch}
+            style={[
+              styles.menuSearchInput,
+              {
+                borderColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+          />
+        </View>
+        <Divider />
+        <FlatList
+          data={filteredBase}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <BaseRow
+              id={item.id}
+              name={item.name}
+              photoUri={item.photoUri}
+              onSelect={(id) => {
+                setBaseIngredientId(id);
+                setMenuVisible(false);
+              }}
+            />
+          )}
+          style={{ width: anchorWidth }}
+          getItemLayout={(_, index) => ({
+            length: MENU_ROW_HEIGHT,
+            offset: MENU_ROW_HEIGHT * index,
+            index,
+          })}
+        />
+      </Menu>
     </>
   );
 }
@@ -803,3 +729,4 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
+
