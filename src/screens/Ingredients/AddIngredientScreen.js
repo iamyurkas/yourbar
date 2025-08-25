@@ -465,8 +465,8 @@ export default function AddIngredientScreen() {
           scrollEventThrottle={16}
           scrollIndicatorInsets={{ bottom: kbHeight }}
         >
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
-          Name
+        <Text style={[styles.label, { color: theme.colors.onBackground, marginTop: -4 }]}>
+          Name:
         </Text>
         <TextInput
           placeholder="e.g. Lemon juice"
@@ -667,7 +667,7 @@ export default function AddIngredientScreen() {
                     pressed && { opacity: 0.96 },
                   ]}
                 >
-                  <View style={styles.menuRowInner}>
+                  <View style={{ color: theme.colors.onSurface, minHeight: 40, justifyContent: "center", paddingHorizontal: 12 }}>
                     <PaperText>None</PaperText>
                   </View>
                 </Pressable>

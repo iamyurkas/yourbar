@@ -552,7 +552,7 @@ export default function EditIngredientScreen() {
           scrollEventThrottle={16}
           scrollIndicatorInsets={{ bottom: kbHeight }}
         >
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+        <Text style={[styles.label, { color: theme.colors.onBackground, marginTop: -4 }]}>
           Name:
         </Text>
         <TextInput
@@ -757,7 +757,7 @@ export default function EditIngredientScreen() {
                   ]}
                 >
                   <View style={styles.menuRowInner}>
-                    <PaperText style={{ color: theme.colors.onSurface }}>
+                    <PaperText style={{ color: theme.colors.onSurface, minHeight: 40, justifyContent: "center", paddingHorizontal: 12 }}>
                       None
                     </PaperText>
                   </View>
