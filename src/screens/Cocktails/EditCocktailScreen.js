@@ -1126,6 +1126,9 @@ export default function EditCocktailScreen() {
   const [instructions, setInstructions] = useState("");
   const [glassId, setGlassId] = useState("cocktail_glass");
   const [ings, setIngs] = useState([]);
+
+  const canSave =
+    name.trim().length > 0 && ings.some((r) => r.name.trim().length > 0);
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -1151,16 +1154,9 @@ export default function EditCocktailScreen() {
 
   const handleSave = useCallback(
     (stay = false) => {
+      if (!canSave) return;
       const title = name.trim();
-      if (!title) {
-        Alert.alert("Validation", "Please enter a cocktail name.");
-        return;
-      }
       const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
-      if (nonEmptyIngredients.length === 0) {
-        Alert.alert("Validation", "Please add at least one ingredient.");
-        return;
-      }
 
       const committed = nonEmptyIngredients.map((r) => {
         if (r.selectedId == null && r.pendingExactMatch) {
@@ -1266,6 +1262,7 @@ export default function EditCocktailScreen() {
       setCocktails,
       setUsageMap,
       setIngredients,
+      canSave,
     ]
   );
 
@@ -1899,9 +1896,24 @@ export default function EditCocktailScreen() {
           <Pressable
             onPress={() => handleSave()}
             android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-            style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.saveBtn,
+              {
+                backgroundColor: canSave
+                  ? theme.colors.primary
+                  : theme.colors.disabled,
+              },
+            ]}
+            disabled={!canSave}
           >
-            <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
+            <Text
+              style={{
+                color: canSave
+                  ? theme.colors.onPrimary
+                  : theme.colors.onSurface,
+                fontWeight: "700",
+              }}
+            >
               Save changes
             </Text>
           </Pressable>
