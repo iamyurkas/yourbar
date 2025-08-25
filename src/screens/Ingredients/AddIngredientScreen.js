@@ -33,7 +33,6 @@ import {
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
-import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
 import { addIngredient } from "../../storage/ingredientsStorage";
@@ -45,6 +44,7 @@ import IngredientBaseRow, {
   INGREDIENT_BASE_ROW_HEIGHT,
 } from "../../components/IngredientBaseRow";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import useIngredientTags from "../../hooks/useIngredientTags";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
@@ -92,26 +92,17 @@ export default function AddIngredientScreen() {
     return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
 
-  // reference lists
-  const [availableTags, setAvailableTags] = useState([]);
-  const [tagsModalVisible, setTagsModalVisible] = useState(false);
-  const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
-
-  const loadAvailableTags = useCallback(async () => {
-    const custom = await getAllTags();
-    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
-  }, []);
-
-  const closeTagsModal = () => {
-    setTagsModalVisible(false);
-    setTagsModalAutoAdd(false);
-    loadAvailableTags();
-  };
-
-  const openAddTagModal = () => {
-    setTagsModalAutoAdd(true);
-    setTagsModalVisible(true);
-  };
+  // tag helpers & modal state
+  const {
+    availableTags,
+    tagsModalVisible,
+    tagsModalAutoAdd,
+    setTagsModalVisible,
+    setTagsModalAutoAdd,
+    loadAvailableTags,
+    openAddTagModal,
+    closeTagsModal,
+  } = useIngredientTags();
 
   // base ingredient link
   const [baseIngredientId, setBaseIngredientId] = useState(null);
