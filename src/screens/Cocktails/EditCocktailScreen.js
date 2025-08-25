@@ -65,6 +65,7 @@ import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import TagPill from "../../components/TagPill";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useInfoDialog from "../../hooks/useInfoDialog";
@@ -89,26 +90,6 @@ const Divider = ({ color, style }) => (
     ]}
   />
 );
-
-/* ---------- TagPill ---------- */
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      onPress={() => onToggle(id)}
-      android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.25) }}
-      style={({ pressed }) => [
-        styles.tag,
-        { backgroundColor: color || theme.colors.secondary },
-        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-      ]}
-    >
-      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
-        {name}
-      </Text>
-    </Pressable>
-  );
-});
 
 /* ---------- IngredientRow ---------- */
 const SUGGEST_ROW_H = 56;
@@ -1732,6 +1713,8 @@ export default function EditCocktailScreen() {
                 name={t.name}
                 color={t.color}
                 onToggle={toggleTagById}
+                rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
+                defaultColor={theme.colors.secondary}
               />
             ))}
           </View>
@@ -1749,6 +1732,8 @@ export default function EditCocktailScreen() {
                   name={t.name}
                   color={t.color}
                   onToggle={toggleTagById}
+                  rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
+                  defaultColor={theme.colors.secondary}
                 />
               ))}
             <Pressable
@@ -2165,13 +2150,6 @@ const styles = StyleSheet.create({
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
-  tag: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    margin: 4,
-  },
-  tagText: { fontWeight: "bold" },
 
   addTagButton: {
     paddingHorizontal: 10,
