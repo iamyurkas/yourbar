@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { HEADER_HEIGHT } from "../../constants/layout";
 
 // TopTabBar is rendered within each screen
 
@@ -76,7 +77,9 @@ function IngredientTabs({ route }) {
 
 export default function IngredientsTabsScreen({ route }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{ headerStyle: { height: HEADER_HEIGHT } }}
+    >
       <Stack.Screen
         name="IngredientsMain"
         component={IngredientTabs}

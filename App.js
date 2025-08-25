@@ -31,6 +31,7 @@ import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 import useIngredientsData from "./src/hooks/useIngredientsData";
 import { getStartScreen } from "./src/storage/settingsStorage";
+import { HEADER_HEIGHT } from "./src/constants/layout";
 
 
 const Tab = createBottomTabNavigator();
@@ -50,7 +51,9 @@ function InitialDataLoader({ children }) {
 
 function ShakerStackScreen() {
   return (
-    <ShakerStack.Navigator>
+    <ShakerStack.Navigator
+      screenOptions={{ headerStyle: { height: HEADER_HEIGHT } }}
+    >
       <ShakerStack.Screen
         name="ShakerMain"
         component={ShakerScreen}
