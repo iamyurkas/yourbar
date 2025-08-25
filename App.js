@@ -8,7 +8,7 @@ import {
   IngredientUsageProvider,
   useIngredientUsage,
 } from "./src/context/IngredientUsageContext";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
 
@@ -172,7 +172,13 @@ export default function App() {
   }, []);
 
   if (showSplash || !startScreen) {
-    return <SplashScreen />;
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+          <SplashScreen />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
   }
 
   return (
