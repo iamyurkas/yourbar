@@ -32,6 +32,7 @@ import * as ImagePicker from "expo-image-picker";
 import { resizeImage } from "../../utils/images";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
+import { withAlpha } from "../../utils/color";
 import {
   useNavigation,
   useRoute,
@@ -74,17 +75,7 @@ import {
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
 
-
 /* ---------- helpers ---------- */
-const withAlpha = (hex, alpha) => {
-  if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 9))
-    return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return hex.length === 7 ? `${hex}${a}` : `${hex.slice(0, 7)}${a}`;
-};
-
 const useDebounced = (value, delay = 250) => {
   const [v, setV] = useState(value);
   useEffect(() => {

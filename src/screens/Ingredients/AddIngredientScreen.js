@@ -45,6 +45,7 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
+import { withAlpha } from "../../utils/color";
 
 
 
@@ -61,14 +62,6 @@ const useDebounced = (value, delay = 300) => {
 const IMAGE_SIZE = 150;
 const MENU_ROW_HEIGHT = 56;
 const MENU_TOP_OFFSET = 150;
-
-const withAlpha = (hex, alpha) => {
-  if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 9)) return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return hex.length === 7 ? `${hex}${a}` : `${hex.slice(0, 7)}${a}`;
-};
 
 /* -------------- pills for tags (memo) -------------- */
 const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
