@@ -28,6 +28,7 @@ const IngredientUsageContext = createContext({
 export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
   const ingredientsRef = useRef([]);
+  const indexRef = useRef({});
   const [ingredientsVersion, setIngredientsVersion] = useState(0);
   const [ingredientsById, setIngredientsById] = useState({});
   const [cocktails, setCocktails] = useState([]);
@@ -39,13 +40,18 @@ export function IngredientUsageProvider({ children }) {
       typeof next === "function" ? next(ingredientsRef.current) : next;
     ingredientsRef.current = Array.isArray(value) ? value : [];
     setIngredientsById(buildIndex(ingredientsRef.current));
+    const idx = {};
+    ingredientsRef.current.forEach((item, i) => {
+      idx[item.id] = i;
+    });
+    indexRef.current = idx;
     setIngredientsVersion((v) => v + 1);
   }, []);
 
   const updateIngredient = useCallback((id, changes) => {
     const list = ingredientsRef.current;
-    const idx = list.findIndex((i) => i.id === id);
-    if (idx === -1) return null;
+    const idx = indexRef.current[id];
+    if (idx == null) return null;
     const updated = { ...list[idx], ...changes };
     list[idx] = updated;
     setIngredientsById((prev) => ({ ...prev, [id]: updated }));
@@ -55,9 +61,13 @@ export function IngredientUsageProvider({ children }) {
 
   const removeIngredient = useCallback((id) => {
     const list = ingredientsRef.current;
-    const idx = list.findIndex((i) => i.id === id);
-    if (idx === -1) return;
+    const idx = indexRef.current[id];
+    if (idx == null) return;
     list.splice(idx, 1);
+    delete indexRef.current[id];
+    for (let i = idx; i < list.length; i++) {
+      indexRef.current[list[i].id] = i;
+    }
     setIngredientsById((prev) => {
       const next = { ...prev };
       delete next[id];

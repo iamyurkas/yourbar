@@ -621,12 +621,12 @@ export default function IngredientDetailsScreen() {
         message="Remove link to base ingredient?"
         confirmLabel="Unlink"
         onCancel={() => setUnlinkBaseVisible(false)}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (!ingredient) return;
           const updated = updateIngredient(ingredient.id, {
             baseIngredientId: null,
           });
-          await saveIngredient(updated);
+          saveIngredient(updated).catch(() => {});
           setIngredient(updated);
           setBaseIngredient(null);
           setUnlinkBaseVisible(false);
@@ -642,13 +642,13 @@ export default function IngredientDetailsScreen() {
         }
         confirmLabel="Unlink"
         onCancel={() => setUnlinkChildTarget(null)}
-        onConfirm={async () => {
+        onConfirm={() => {
           const child = unlinkChildTarget;
           if (!child) return;
           const updatedChild = updateIngredient(child.id, {
             baseIngredientId: null,
           });
-          await saveIngredient(updatedChild);
+          saveIngredient(updatedChild).catch(() => {});
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));
           setUnlinkChildTarget(null);
         }}
