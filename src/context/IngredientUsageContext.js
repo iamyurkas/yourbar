@@ -16,6 +16,8 @@ const IngredientUsageContext = createContext({
   ingredients: [],
   ingredientsById: {},
   setIngredients: () => {},
+  updateIngredient: () => {},
+  removeIngredient: () => {},
   cocktails: [],
   setCocktails: () => {},
   loading: true,
@@ -25,18 +27,43 @@ const IngredientUsageContext = createContext({
 
 export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
-  const [ingredients, setIngredientsState] = useState([]);
+  const ingredientsRef = useRef([]);
+  const [ingredientsVersion, setIngredientsVersion] = useState(0);
   const [ingredientsById, setIngredientsById] = useState({});
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [baseIngredients, setBaseIngredients] = useState([]);
 
   const setIngredients = useCallback((next) => {
-    setIngredientsState((prev) => {
-      const value = typeof next === "function" ? next(prev) : next;
-      setIngredientsById(buildIndex(value));
-      return value;
+    const value =
+      typeof next === "function" ? next(ingredientsRef.current) : next;
+    ingredientsRef.current = Array.isArray(value) ? value : [];
+    setIngredientsById(buildIndex(ingredientsRef.current));
+    setIngredientsVersion((v) => v + 1);
+  }, []);
+
+  const updateIngredient = useCallback((id, changes) => {
+    const list = ingredientsRef.current;
+    const idx = list.findIndex((i) => i.id === id);
+    if (idx === -1) return null;
+    const updated = { ...list[idx], ...changes };
+    list[idx] = updated;
+    setIngredientsById((prev) => ({ ...prev, [id]: updated }));
+    setIngredientsVersion((v) => v + 1);
+    return updated;
+  }, []);
+
+  const removeIngredient = useCallback((id) => {
+    const list = ingredientsRef.current;
+    const idx = list.findIndex((i) => i.id === id);
+    if (idx === -1) return;
+    list.splice(idx, 1);
+    setIngredientsById((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
     });
+    setIngredientsVersion((v) => v + 1);
   }, []);
 
   const updateUsageMap = useCallback(
@@ -51,9 +78,8 @@ export function IngredientUsageProvider({ children }) {
   const baseRef = useRef([]);
 
   useEffect(() => {
-    const nextBaseList = ingredients.filter(
-      (i) => i.baseIngredientId == null
-    );
+    const list = ingredientsRef.current;
+    const nextBaseList = list.filter((i) => i.baseIngredientId == null);
     const prev = baseRef.current;
     let changed = prev.length !== nextBaseList.length;
     if (!changed) {
@@ -74,7 +100,7 @@ export function IngredientUsageProvider({ children }) {
       })
     );
     setBaseIngredients(sorted);
-  }, [ingredients]);
+  }, [ingredientsVersion]);
 
   return (
     <IngredientUsageContext.Provider
@@ -82,9 +108,11 @@ export function IngredientUsageProvider({ children }) {
         usageMap,
         setUsageMap,
         updateUsageMap,
-        ingredients,
+        ingredients: ingredientsRef.current,
         ingredientsById,
         setIngredients,
+        updateIngredient,
+        removeIngredient,
         cocktails,
         setCocktails,
         loading,

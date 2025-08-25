@@ -26,11 +26,7 @@ import {
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
-import {
-  getAllIngredients,
-  saveIngredient,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { getAllIngredients, saveIngredient } from "../../storage/ingredientsStorage";
 
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
@@ -115,7 +111,7 @@ export default function IngredientDetailsScreen() {
   const route = useRoute();
   const { id, initialIngredient } = route.params;
   const theme = useTheme();
-  const { setIngredients } = useIngredientsData();
+  const { updateIngredient } = useIngredientsData();
   const { ingredients = [], cocktails: cocktailsCtx = [], ingredientsById } =
     useIngredientUsage();
 
@@ -366,39 +362,22 @@ export default function IngredientDetailsScreen() {
   }, [load]);
 
   const toggleInBar = useCallback(() => {
-    setIngredient((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, inBar: !prev.inBar };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        });
-        saveIngredient(updated);
-        return nextList;
-      });
-      return updated;
+    if (!ingredient) return;
+    const updated = updateIngredient(ingredient.id, {
+      inBar: !ingredient.inBar,
     });
-  }, [setIngredients]);
+    saveIngredient(updated);
+    setIngredient(updated);
+  }, [ingredient, updateIngredient]);
 
   const toggleInShoppingList = useCallback(() => {
-    setIngredient((prev) => {
-      if (!prev) return prev;
-      const updated = {
-        ...prev,
-        inShoppingList: !prev.inShoppingList,
-      };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        });
-        saveIngredient(updated);
-        return nextList;
-      });
-      return updated;
+    if (!ingredient) return;
+    const updated = updateIngredient(ingredient.id, {
+      inShoppingList: !ingredient.inShoppingList,
     });
-  }, [setIngredients]);
+    saveIngredient(updated);
+    setIngredient(updated);
+  }, [ingredient, updateIngredient]);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;
@@ -644,11 +623,8 @@ export default function IngredientDetailsScreen() {
         onCancel={() => setUnlinkBaseVisible(false)}
         onConfirm={async () => {
           if (!ingredient) return;
-          const updated = { ...ingredient, baseIngredientId: null };
-          let nextList;
-          setIngredients((list) => {
-            nextList = updateIngredientById(list, updated);
-            return nextList;
+          const updated = updateIngredient(ingredient.id, {
+            baseIngredientId: null,
           });
           await saveIngredient(updated);
           setIngredient(updated);
@@ -669,11 +645,8 @@ export default function IngredientDetailsScreen() {
         onConfirm={async () => {
           const child = unlinkChildTarget;
           if (!child) return;
-          const updatedChild = { ...child, baseIngredientId: null };
-          let nextList;
-          setIngredients((list) => {
-            nextList = updateIngredientById(list, updatedChild);
-            return nextList;
+          const updatedChild = updateIngredient(child.id, {
+            baseIngredientId: null,
           });
           await saveIngredient(updatedChild);
           setBrandedChildren((prev) => prev.filter((c) => c.id !== child.id));

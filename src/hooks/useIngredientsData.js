@@ -13,7 +13,10 @@ import {
 export default function useIngredientsData() {
   const {
     ingredients,
+    ingredientsById,
     setIngredients,
+    updateIngredient,
+    removeIngredient,
     cocktails,
     setCocktails,
     usageMap,
@@ -85,11 +88,14 @@ export default function useIngredientsData() {
 
   return {
     ingredients,
+    ingredientsById,
     baseIngredients,
     cocktails,
     usageMap,
     refresh,
     loading,
     setIngredients,
+    updateIngredient,
+    removeIngredient,
   };
 }

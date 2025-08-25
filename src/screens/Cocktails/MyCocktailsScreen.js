@@ -54,7 +54,7 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  const { updateIngredient: updateGlobalIngredient } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
 
@@ -257,18 +257,15 @@ export default function MyCocktailsScreen() {
         const item = prev.find((i) => String(i.id) === String(id));
         if (!item) return prev;
         const updated = { ...item, inShoppingList: !item.inShoppingList };
-        const next = updateIngredientById(prev, updated);
+        updateIngredientById(prev, updated);
         saveIngredient(updated).catch(() => {});
-        setGlobalIngredients((list) =>
-          updateIngredientById(list, {
-            id,
-            inShoppingList: updated.inShoppingList,
-          })
-        );
-        return next;
+        updateGlobalIngredient(id, {
+          inShoppingList: updated.inShoppingList,
+        });
+        return [...prev];
       });
     },
-    [setGlobalIngredients]
+    [updateGlobalIngredient]
   );
 
   const renderItem = useCallback(

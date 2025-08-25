@@ -91,9 +91,8 @@ export async function saveAllIngredients(ingredients) {
 export function updateIngredientById(list, updated) {
   const index = list.findIndex((i) => i.id === updated.id);
   if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
-  return next;
+  list[index] = { ...list[index], ...updated };
+  return list;
 }
 
 function sanitizeIngredient(i) {
@@ -139,5 +138,7 @@ export async function deleteIngredient(id) {
 }
 
 export function removeIngredient(list, id) {
-  return list.filter((item) => item.id !== id);
+  const index = list.findIndex((item) => item.id === id);
+  if (index !== -1) list.splice(index, 1);
+  return list;
 }

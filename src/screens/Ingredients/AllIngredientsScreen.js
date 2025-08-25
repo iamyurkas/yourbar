@@ -11,7 +11,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { saveIngredient, updateIngredientById } from "../../storage/ingredientsStorage";
+import { saveIngredient } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -26,7 +26,8 @@ export default function AllIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients } = useIngredientsData();
+  const { ingredients, ingredientsById, loading, updateIngredient } =
+    useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
@@ -99,16 +100,12 @@ export default function AllIngredientsScreen() {
 
   const toggleInBar = useCallback(
     (id) => {
-      let updated;
-      setIngredients((prev) => {
-        const item = prev.find((i) => i.id === id);
-        if (!item) return prev;
-        updated = { ...item, inBar: !item.inBar };
-        return updateIngredientById(prev, updated);
-      });
+      const item = ingredientsById[id];
+      if (!item) return;
+      const updated = updateIngredient(id, { inBar: !item.inBar });
       if (updated) setPendingUpdates((p) => [...p, updated]);
     },
-    [setIngredients]
+    [ingredientsById, updateIngredient]
   );
 
   const onItemPress = useCallback(
