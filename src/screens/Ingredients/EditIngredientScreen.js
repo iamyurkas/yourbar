@@ -37,7 +37,6 @@ import {
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 
-import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { deleteIngredient, saveIngredient } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -48,6 +47,7 @@ import IngredientBaseRow, {
 } from "../../components/IngredientBaseRow";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
+import useIngredientTags from "../../hooks/useIngredientTags";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
@@ -84,26 +84,17 @@ export default function EditIngredientScreen() {
   const [tags, setTags] = useState([]);
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
 
-  // reference lists
-  const [availableTags, setAvailableTags] = useState([]); // builtin + custom
-  const [tagsModalVisible, setTagsModalVisible] = useState(false);
-  const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
-
-  const loadAvailableTags = useCallback(async () => {
-    const custom = await getAllTags();
-    setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
-  }, []);
-
-  const closeTagsModal = () => {
-    setTagsModalVisible(false);
-    setTagsModalAutoAdd(false);
-    loadAvailableTags();
-  };
-
-  const openAddTagModal = () => {
-    setTagsModalAutoAdd(true);
-    setTagsModalVisible(true);
-  };
+  // reference lists / tags modal
+  const {
+    availableTags,
+    tagsModalVisible,
+    tagsModalAutoAdd,
+    setTagsModalVisible,
+    setTagsModalAutoAdd,
+    loadAvailableTags,
+    openAddTagModal,
+    closeTagsModal,
+  } = useIngredientTags();
 
   // base link
   const [baseIngredientId, setBaseIngredientId] = useState(null);
