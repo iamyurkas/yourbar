@@ -9,6 +9,7 @@ import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
 } from "../storage/settingsStorage";
+import { sortByName } from "../utils/sortByName";
 
 export default function useIngredientsData() {
   const {
@@ -38,9 +39,7 @@ export default function useIngredientsData() {
       getAllCocktails(),
       getAllowSubstitutes(),
     ]);
-    const sorted = [...ing].sort((a, b) =>
-      a.name.localeCompare(b.name, "uk", { sensitivity: "base" })
-    );
+    const sorted = [...ing].sort(sortByName);
     const map = mapCocktailsByIngredient(sorted, cocks, {
       allowSubstitutes: !!allowSubs,
     });

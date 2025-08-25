@@ -15,6 +15,7 @@ import {
   addIgnoreGarnishListener,
 } from "../storage/settingsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import { sortByName } from "../utils/sortByName";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { availableIds = [], recipeIds = [] } = route.params || {};
@@ -138,7 +139,7 @@ export default function ShakerResultsScreen({ route, navigation }) {
     return mapped.sort((a, b) => {
       if (a.isAllAvailable && !b.isAllAvailable) return -1;
       if (!a.isAllAvailable && b.isAllAvailable) return 1;
-      return a.name.localeCompare(b.name);
+      return sortByName(a, b);
     });
   }, [
     cocktails,
