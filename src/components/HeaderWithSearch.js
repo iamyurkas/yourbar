@@ -99,7 +99,7 @@ const makeStyles = (theme) =>
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: 16,
-      paddingTop: 8,
+      
       backgroundColor: theme.colors.background,
       gap: 10,
     },
