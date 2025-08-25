@@ -153,7 +153,7 @@ export default function AddIngredientScreen() {
   });
 
   // reference lists
-  const [availableTags, setAvailableTags] = useState([]);
+  const [availableTags, setAvailableTags] = useState(BUILTIN_INGREDIENT_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
   const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
 
@@ -170,6 +170,11 @@ export default function AddIngredientScreen() {
 
   const openAddTagModal = () => {
     setTagsModalAutoAdd(true);
+    setTagsModalVisible(true);
+  };
+
+  const openManageTags = () => {
+    setTagsModalAutoAdd(false);
     setTagsModalVisible(true);
   };
 
@@ -509,27 +514,42 @@ export default function AddIngredientScreen() {
             {tags.map((t) => (
               <TagPill key={t.id} id={t.id} name={t.name} color={t.color} onToggle={toggleTagById} />
             ))}
+          </View>
+
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}>Add Tag</Text>
+          <View style={styles.tagContainer}>
+            {availableTags
+              .filter((t) => !tags.some((x) => x.id === t.id))
+              .map((t) => (
+                <TagPill
+                  key={t.id}
+                  id={t.id}
+                  name={t.name}
+                  color={t.color}
+                  onToggle={toggleTagById}
+                />
+              ))}
             <Pressable
               onPress={openAddTagModal}
               android_ripple={{ color: withAlpha(theme.colors.onSurface, 0.12) }}
               style={({ pressed }) => [
                 styles.addTagButton,
                 {
-                  borderColor: theme.colors.outline,
-                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.primary,
+                  backgroundColor: theme.colors.background,
                   opacity: pressed ? 0.9 : 1,
                 },
               ]}
             >
               <Text
-                style={[styles.addTagButtonText, { color: theme.colors.onSurfaceVariant }]}
+                style={[styles.addTagButtonText, { color: theme.colors.primary }]}
               >
-                +
+                +Add
               </Text>
             </Pressable>
           </View>
 
-          <Pressable onPress={() => setTagsModalVisible(true)}>
+          <Pressable onPress={openManageTags}>
             <Text
               style={[styles.manageTagsLink, { color: theme.colors.primary }]}
             >
