@@ -5,18 +5,19 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getUserTags } from "../storage/ingredientTagsStorage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
+import useInfoDialog from "../../hooks/useInfoDialog";
 
 export default function TagsScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const theme = useTheme();
+  const [showInfo, infoDialog] = useInfoDialog();
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -49,7 +50,7 @@ export default function TagsScreen() {
   }, [isFocused]);
 
   const handleBuiltInTap = () => {
-    Alert.alert("Built-in Tag", "Built-in tags cannot be edited or deleted.");
+    showInfo("Built-in Tag", "Built-in tags cannot be edited or deleted.");
   };
 
   const handleUserTagTap = (tag) => {
@@ -92,6 +93,7 @@ export default function TagsScreen() {
       >
         <Text style={styles.addText}>+ Add Tag</Text>
       </TouchableOpacity>
+      {infoDialog}
     </>
   );
 }

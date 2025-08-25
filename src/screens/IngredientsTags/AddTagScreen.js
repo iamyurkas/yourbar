@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -16,16 +15,18 @@ import { useNavigation } from "@react-navigation/native";
 import WheelColorPicker from "react-native-wheel-color-picker";
 import { useTheme } from "react-native-paper";
 import { TAG_COLORS } from "../theme";
+import useInfoDialog from "../../hooks/useInfoDialog";
 
 export default function AddTagScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const [showInfo, infoDialog] = useInfoDialog();
   const [name, setName] = useState("");
   const [color, setColor] = useState(TAG_COLORS[0]);
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert("Please enter a name for the tag.");
+      showInfo("Validation", "Please enter a name for the tag.");
       return;
     }
 
@@ -43,43 +44,46 @@ export default function AddTagScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <Text style={styles.label}>Tag name:</Text>
-      <TextInput
-        placeholder="e.g. bitters"
-        value={name}
-        onChangeText={setName}
-        style={[styles.input, { borderColor: theme.colors.outline }]}
-      />
-
-      <Text style={styles.label}>Choose color:</Text>
-      <View style={styles.colorPreview}>
-        <View
-          style={[
-            styles.colorBox,
-            { backgroundColor: color, borderColor: theme.colors.onSurface },
-          ]}
-        />
-        <Text style={styles.colorCode}>{color}</Text>
-      </View>
-
-      <WheelColorPicker
-        color={color}
-        onColorChange={setColor}
-        thumbStyle={{ borderWidth: 2, borderColor: theme.colors.onSurface }}
-        style={{ height: 240, marginBottom: 16 }}
-      />
-
-      <TouchableOpacity
-        style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
-        onPress={handleSave}
+    <>
+      <KeyboardAvoidingView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <Text style={[styles.saveText, { color: theme.colors.onPrimary }]}>Save Tag</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <Text style={styles.label}>Tag name:</Text>
+        <TextInput
+          placeholder="e.g. bitters"
+          value={name}
+          onChangeText={setName}
+          style={[styles.input, { borderColor: theme.colors.outline }]}
+        />
+
+        <Text style={styles.label}>Choose color:</Text>
+        <View style={styles.colorPreview}>
+          <View
+            style={[
+              styles.colorBox,
+              { backgroundColor: color, borderColor: theme.colors.onSurface },
+            ]}
+          />
+          <Text style={styles.colorCode}>{color}</Text>
+        </View>
+
+        <WheelColorPicker
+          color={color}
+          onColorChange={setColor}
+          thumbStyle={{ borderWidth: 2, borderColor: theme.colors.onSurface }}
+          style={{ height: 240, marginBottom: 16 }}
+        />
+
+        <TouchableOpacity
+          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+          onPress={handleSave}
+        >
+          <Text style={[styles.saveText, { color: theme.colors.onPrimary }]}>Save Tag</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+      {infoDialog}
+    </>
   );
 }
 

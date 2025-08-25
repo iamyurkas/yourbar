@@ -15,7 +15,6 @@ import {
   Image,
   ScrollView,
   TextInput,
-  Alert,
   Pressable,
   Platform,
   FlatList,
@@ -44,6 +43,7 @@ import { TAG_COLORS } from "../../theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
+import useInfoDialog from "../../hooks/useInfoDialog";
 
 import {
   Menu,
@@ -803,7 +803,7 @@ const IngredientRow = memo(function IngredientRow({
             )}
             <Pressable
               onPress={() =>
-                Alert.alert(
+                showInfo(
                   "Allow base substitute",
                   `If the specified ingredient isn't available, the cocktail will be shown as available with its base ingredient.\n\nBase ingredient:\n ${
                     baseIngredientName || "—"
@@ -844,7 +844,7 @@ const IngredientRow = memo(function IngredientRow({
                         "\n- "
                       )}`
                     : "";
-                Alert.alert(
+                showInfo(
                   "Allow branded substitutes",
                   `If the specified ingredient isn't available, the cocktail will be shown as available with branded ingredients of the base.${list}`
                 );
@@ -1086,6 +1086,7 @@ export default function AddCocktailScreen() {
     (typeof getTab === "function" && getTab("cocktails")) || "All";
   const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
+  const [showInfo, infoDialog] = useInfoDialog();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -1276,7 +1277,7 @@ export default function AddCocktailScreen() {
   const pickImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert("Permission required", "Allow access to media library");
+      showInfo("Permission required", "Allow access to media library");
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -1405,12 +1406,12 @@ export default function AddCocktailScreen() {
   const handleSave = useCallback(() => {
     const title = name.trim();
     if (!title) {
-      Alert.alert("Validation", "Please enter a cocktail name.");
+      showInfo("Validation", "Please enter a cocktail name.");
       return;
     }
     const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
     if (nonEmptyIngredients.length === 0) {
-      Alert.alert("Validation", "Please add at least one ingredient.");
+      showInfo("Validation", "Please add at least one ingredient.");
       return;
     }
 
@@ -1988,6 +1989,7 @@ export default function AddCocktailScreen() {
           </Text>
         </Modal>
       </Portal>
+      {infoDialog}
     </>
   );
 }
