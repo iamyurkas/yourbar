@@ -2124,7 +2124,7 @@ export default function EditCocktailScreen() {
 const IMAGE_SIZE = 150;
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40 },
+  container: { paddingHorizontal: 24, paddingBottom: 40 },
   label: { fontWeight: "bold", marginTop: 16 },
   labelText: { fontWeight: "bold" },
 
