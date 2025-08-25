@@ -1,11 +1,10 @@
 import db, { query } from "./sqlite";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
+import { sortByName } from "../utils/sortByName";
 
 const now = () => Date.now();
 const genId = () => now();
-
-const sortByName = (a, b) => a.name.localeCompare(b.name);
 
 export async function getAllIngredients() {
   const res = await query(

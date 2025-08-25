@@ -8,6 +8,7 @@ import React, {
   useMemo,
 } from "react";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
+import { sortByName } from "../utils/sortByName";
 
 const IngredientUsageContext = createContext({
   usageMap: {},
@@ -73,11 +74,7 @@ export function IngredientUsageProvider({ children }) {
     }
     if (!changed) return;
     baseRef.current = nextBaseList.map(({ id, name }) => ({ id, name }));
-    const sorted = [...nextBaseList].sort((a, b) =>
-      (a.name || "").localeCompare(b.name || "", "uk", {
-        sensitivity: "base",
-      })
-    );
+    const sorted = [...nextBaseList].sort(sortByName);
     setBaseIngredients(sorted);
   }, [ingredients]);
 

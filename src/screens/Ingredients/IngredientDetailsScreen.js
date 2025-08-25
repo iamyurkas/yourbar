@@ -3,7 +3,6 @@ import React, {
   useState,
   useLayoutEffect,
   useCallback,
-  useMemo,
   memo,
 } from "react";
 import {
@@ -35,6 +34,7 @@ import db from "../../storage/sqlite";
 
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
+import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
 import { useTheme } from "react-native-paper";
@@ -141,11 +141,6 @@ export default function IngredientDetailsScreen() {
       );
     }
   }, [route.params?.initialIngredient, ingredientsById]);
-
-  const collator = useMemo(
-    () => new Intl.Collator("uk", { sensitivity: "base" }),
-    []
-  );
 
   const handleGoBack = useCallback(() => {
     goBack(navigation);
@@ -258,7 +253,7 @@ export default function IngredientDetailsScreen() {
 
     const children = all
       .filter((i) => i.baseIngredientId === loaded.id)
-      .sort((a, b) => collator.compare(a.name, b.name));
+      .sort(sortByName);
     setBrandedChildren(children);
 
     const baseId =
@@ -276,7 +271,7 @@ export default function IngredientDetailsScreen() {
     const list = (map[loaded.id] || [])
       .map((cid) => byId.get(cid))
       .filter(Boolean)
-      .sort((a, b) => collator.compare(a.name, b.name))
+      .sort(sortByName)
       .map((c) => {
         const required = (c.ingredients || []).filter(
           (r) => !r.optional && !(ig && r.garnish)
@@ -342,13 +337,7 @@ export default function IngredientDetailsScreen() {
         };
       });
     setUsedCocktails(list);
-  }, [
-    id,
-    collator,
-    ingredientsById,
-    ingredients,
-    cocktailsCtx,
-  ]);
+  }, [id, ingredientsById, ingredients, cocktailsCtx]);
 
   useFocusEffect(
     useCallback(() => {

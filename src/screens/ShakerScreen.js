@@ -16,6 +16,7 @@ import useIngredientsData from "../hooks/useIngredientsData";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import { sortByName } from "../utils/sortByName";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
@@ -58,7 +59,7 @@ export default function ShakerScreen({ navigation }) {
       }
     });
     for (const arr of map.values()) {
-      arr.sort((a, b) => a.name.localeCompare(b.name));
+      arr.sort(sortByName);
     }
     return map;
   }, [allTags, ingredients]);

@@ -32,6 +32,7 @@ import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/CocktailRow";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { sortByName } from "../../utils/sortByName";
 
 export default function FavoriteCocktailsScreen() {
   const theme = useTheme();
@@ -198,7 +199,7 @@ export default function FavoriteCocktailsScreen() {
     mapped.sort((a, b) => {
       const aRating = a.rating ?? 0;
       const bRating = b.rating ?? 0;
-      if (aRating === bRating) return a.name.localeCompare(b.name);
+      if (aRating === bRating) return sortByName(a, b);
       return sortOrder === "asc" ? aRating - bRating : bRating - aRating;
     });
     return mapped;

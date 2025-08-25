@@ -1,13 +1,12 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
+import { sortByName } from "../utils/sortByName";
 import db, { query } from "./sqlite";
 
 // --- utils ---
 
 const now = () => Date.now();
 const genId = () => now(); // сумісно з твоїми екранами (Date.now())
-
-const sortByName = (a, b) => a.name.localeCompare(b.name);
 
 const sanitizeIngredient = (r, idx) => ({
   order: Number(r?.order ?? idx + 1),
