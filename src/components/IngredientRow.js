@@ -2,14 +2,7 @@ import React, { memo, useMemo } from "react";
 import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-
-const withAlpha = (hex, alpha) => {
-  if (!hex || hex[0] !== "#" || hex.length !== 7) return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return `${hex}${a}`;
-};
+import { withAlpha } from "../utils/color";
 
 export const IMAGE_SIZE = 50;
 const ROW_VERTICAL = 8;

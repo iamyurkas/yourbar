@@ -36,6 +36,7 @@ import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
 import { formatAmount, toMetric, toImperial } from "../../utils/units";
+import { withAlpha } from "../../utils/color";
 import {
   getUseMetric,
   getIgnoreGarnish,
@@ -47,16 +48,6 @@ import {
 } from "../../storage/settingsStorage";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import ExpandableText from "../../components/ExpandableText";
-
-/* ---------- helpers ---------- */
-const withAlpha = (hex, alpha) => {
-  if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 9))
-    return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return hex.length === 7 ? `${hex}${a}` : `${hex.slice(0, 7)}${a}`;
-};
 
 /* ---------- Ingredient row (like AllIngredients) ---------- */
 const IMAGE_SIZE = 50;
