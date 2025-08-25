@@ -470,9 +470,11 @@ export default function IngredientDetailsScreen() {
             <Text style={{ color: theme.colors.onSurfaceVariant }}>No image</Text>
           </View>
         )}
+      </View>
+      <View style={styles.actionRow}>
         <TouchableOpacity
           onPress={toggleInShoppingList}
-          style={styles.iconButton}
+          style={[styles.iconButton, styles.firstIcon]}
         >
           <MaterialIcons
             name={
@@ -489,9 +491,7 @@ export default function IngredientDetailsScreen() {
         <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
           <MaterialIcons
             name={
-              ingredient.inBar
-                ? "check-box"
-                : "check-box-outline-blank"
+              ingredient.inBar ? "check-circle" : "radio-button-unchecked"
             }
             size={24}
             color={
@@ -694,12 +694,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     marginTop: 12,
-    marginBottom: 12,
+    marginBottom: 4,
   },
   photo: {
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
     aspectRatio: 1,
+  },
+
+  actionRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 12,
   },
 
   section: { marginTop: 16 },
@@ -750,6 +757,7 @@ const styles = StyleSheet.create({
   addCocktailText: { fontWeight: "bold" },
 
   iconButton: { marginLeft: 12, padding: 4 },
+  firstIcon: { marginLeft: 0 },
 
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
