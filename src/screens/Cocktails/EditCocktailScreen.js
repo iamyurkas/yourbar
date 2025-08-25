@@ -74,17 +74,7 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
-
-/* ---------- helpers ---------- */
-const useDebounced = (value, delay = 250) => {
-  const [v, setV] = useState(value);
-  useEffect(() => {
-    const id = setTimeout(() => setV(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return v;
-};
-
+import useDebounced from "../../hooks/useDebounced";
 
 /* ---------- Tiny Divider ---------- */
 const Divider = ({ color, style }) => (

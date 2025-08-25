@@ -45,6 +45,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useInfoDialog from "../../hooks/useInfoDialog";
+import useDebounced from "../../hooks/useDebounced";
 
 import {
   Menu,
@@ -68,17 +69,6 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
-
-/* ---------- helpers ---------- */
-const useDebounced = (value, delay = 250) => {
-  const [v, setV] = useState(value);
-  useEffect(() => {
-    const id = setTimeout(() => setV(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return v;
-};
-
 
 /* ---------- Tiny Divider ---------- */
 const Divider = ({ color, style }) => (
