@@ -45,19 +45,8 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
+import useDebounced from "../../hooks/useDebounced";
 import { withAlpha } from "../../utils/color";
-
-
-
-/* ---------------- helpers ---------------- */
-const useDebounced = (value, delay = 300) => {
-  const [v, setV] = useState(value);
-  useEffect(() => {
-    const id = setTimeout(() => setV(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return v;
-};
 
 const IMAGE_SIZE = 150;
 const MENU_ROW_HEIGHT = 56;
