@@ -1215,10 +1215,22 @@ export default function AddCocktailScreen() {
   });
 
   // ingredients for suggestions
-  const [allIngredients, setAllIngredients] = useState(globalIngredients);
+  const [allIngredients, setAllIngredients] = useState(() =>
+    initialIngredient && !globalIngredients.some((i) => i.id === initialIngredient.id)
+      ? [...globalIngredients, initialIngredient]
+      : globalIngredients
+  );
+
   useEffect(() => {
-    setAllIngredients(globalIngredients);
-  }, [globalIngredients]);
+    if (
+      initialIngredient &&
+      !globalIngredients.some((i) => i.id === initialIngredient.id)
+    ) {
+      setAllIngredients([...globalIngredients, initialIngredient]);
+    } else {
+      setAllIngredients(globalIngredients);
+    }
+  }, [globalIngredients, initialIngredient]);
 
   // SUBSTITUTE MODAL STATE
   const [subModal, setSubModal] = useState({
