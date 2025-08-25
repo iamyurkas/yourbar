@@ -714,7 +714,6 @@ export default function AddIngredientScreen() {
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSave}
           android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-          disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Ingredient

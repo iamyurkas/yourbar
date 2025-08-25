@@ -805,7 +805,6 @@ export default function EditIngredientScreen() {
           style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
           onPress={() => handleSave(false)}
           android_ripple={{ color: theme.colors.onPrimary }}
-          disabled={!name.trim()}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Changes
@@ -870,6 +869,10 @@ export default function EditIngredientScreen() {
             onPress: async () => {
               skipPromptRef.current = true;
               const updated = await handleSave(true);
+              if (!updated) {
+                skipPromptRef.current = false;
+                return;
+              }
               const prevRoute = navigation.getState().routes.slice(-2)[0];
               if (prevRoute) {
                 navigation.dispatch(
