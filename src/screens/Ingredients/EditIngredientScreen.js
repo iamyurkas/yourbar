@@ -353,7 +353,7 @@ export default function EditIngredientScreen() {
       try {
         await loadAvailableTags();
         if (cancelled || !isMountedRef.current) return;
-        const data = ingredientsById[currentId];
+        const data = ingredientsById.get(currentId);
         if (data) {
           setIngredient(data);
           setName(data.name || "");

@@ -45,7 +45,7 @@ export default function MyCocktailsScreen() {
   const insets = useSafeAreaInsets();
 
   const [cocktails, setCocktails] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState(new Map());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -96,7 +96,11 @@ export default function MyCocktailsScreen() {
       ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
-      setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
+      setIngredients(
+        new Map(
+          (Array.isArray(ingredientsList) ? ingredientsList : []).map((i) => [i.id, i])
+        )
+      );
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
       if (firstLoad.current) {
@@ -114,9 +118,10 @@ export default function MyCocktailsScreen() {
   }, [isFocused, globalCocktails, globalIngredients]);
 
   const processed = useMemo(() => {
-    const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
+    const ingMap = ingredients;
+    const ingredientArr = Array.from(ingMap.values());
     const findBrand = (baseId) =>
-      ingredients.find(
+      ingredientArr.find(
         (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
       );
     const q = normalizeSearch(searchDebounced);
@@ -138,14 +143,14 @@ export default function MyCocktailsScreen() {
       let allAvail = required.length > 0;
       let branded = false;
       for (const r of required) {
-        const ing = ingMap.get(String(r.ingredientId));
+        const ing = ingMap.get(r.ingredientId);
         const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
         let used = null;
         if (ing?.inBar) {
           used = ing;
         } else {
           if (allowSubstitutes || r.allowBaseSubstitution) {
-            const base = ingMap.get(baseId);
+            const base = ingMap.get(Number(baseId));
             if (base?.inBar) used = base;
           }
           const isBaseIngredient = ing?.baseIngredientId == null;
@@ -158,7 +163,7 @@ export default function MyCocktailsScreen() {
           }
           if (!used && Array.isArray(r.substitutes)) {
             for (const s of r.substitutes) {
-              const candidate = ingMap.get(String(s.id));
+              const candidate = ingMap.get(s.id);
               if (candidate?.inBar) {
                 used = candidate;
                 break;
@@ -215,7 +220,7 @@ export default function MyCocktailsScreen() {
     }
     const sugg = Array.from(map.entries())
       .map(([id, cocks]) => ({
-        ingredient: ingredients.find((i) => String(i.id) === String(id)),
+        ingredient: ingredients.get(Number(id)) || ingredients.get(id),
         cocktails: cocks,
       }))
       .filter((s) => s.ingredient && !s.ingredient.inBar)
@@ -254,7 +259,7 @@ export default function MyCocktailsScreen() {
   const toggleShoppingList = useCallback(
     (id) => {
       setIngredients((prev) => {
-        const item = prev.find((i) => String(i.id) === String(id));
+        const item = prev.get(id);
         if (!item) return prev;
         const updated = { ...item, inShoppingList: !item.inShoppingList };
         const next = updateIngredientById(prev, updated);

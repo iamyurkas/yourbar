@@ -5,16 +5,16 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from "react";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
-import { buildIndex } from "../storage/ingredientsStorage";
 
 const IngredientUsageContext = createContext({
   usageMap: {},
   setUsageMap: () => {},
   updateUsageMap: () => {},
   ingredients: [],
-  ingredientsById: {},
+  ingredientsById: new Map(),
   setIngredients: () => {},
   cocktails: [],
   setCocktails: () => {},
@@ -25,17 +25,22 @@ const IngredientUsageContext = createContext({
 
 export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
-  const [ingredients, setIngredientsState] = useState([]);
-  const [ingredientsById, setIngredientsById] = useState({});
+  const [ingredientsMap, setIngredientsMap] = useState(new Map());
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [baseIngredients, setBaseIngredients] = useState([]);
 
+  const ingredients = useMemo(
+    () => Array.from(ingredientsMap.values()),
+    [ingredientsMap]
+  );
+
   const setIngredients = useCallback((next) => {
-    setIngredientsState((prev) => {
+    setIngredientsMap((prev) => {
       const value = typeof next === "function" ? next(prev) : next;
-      setIngredientsById(buildIndex(value));
-      return value;
+      if (value instanceof Map) return value;
+      if (Array.isArray(value)) return new Map(value.map((i) => [i.id, i]));
+      return new Map(Object.entries(value));
     });
   }, []);
 
@@ -83,7 +88,7 @@ export function IngredientUsageProvider({ children }) {
         setUsageMap,
         updateUsageMap,
         ingredients,
-        ingredientsById,
+        ingredientsById: ingredientsMap,
         setIngredients,
         cocktails,
         setCocktails,
