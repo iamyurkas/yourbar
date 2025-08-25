@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  memo,
   useDeferredValue,
   useLayoutEffect,
 } from "react";
@@ -41,6 +40,10 @@ import { addIngredient } from "../../storage/ingredientsStorage";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
+import TagPill from "../../components/TagPill";
+import IngredientBaseRow, {
+  INGREDIENT_BASE_ROW_HEIGHT,
+} from "../../components/IngredientBaseRow";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
@@ -49,55 +52,7 @@ import useDebounced from "../../hooks/useDebounced";
 import { withAlpha } from "../../utils/color";
 
 const IMAGE_SIZE = 150;
-const MENU_ROW_HEIGHT = 56;
 const MENU_TOP_OFFSET = 150;
-
-/* -------------- pills for tags (memo) -------------- */
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      onPress={() => onToggle(id)}
-      android_ripple={{ color: withAlpha(theme.colors.primary, 0.1) }}
-      style={({ pressed }) => [
-        styles.tag,
-        { backgroundColor: color || theme.colors.surfaceVariant },
-        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-      ]}
-    >
-      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>{name}</Text>
-    </Pressable>
-  );
-});
-
-/* -------------- row in base menu (memo) -------------- */
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      onPress={() => onSelect(id)}
-      android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-      style={({ pressed }) => [
-        styles.menuRow,
-        pressed && { opacity: 0.96, transform: [{ scale: 0.997 }] },
-      ]}
-    >
-      <View style={styles.menuRowInner}>
-        {photoUri ? (
-          <Image
-            source={{ uri: photoUri }}
-            style={[styles.menuImg, { backgroundColor: theme.colors.background }]}
-          />
-        ) : (
-          <View
-            style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
-          />
-        )}
-        <PaperText numberOfLines={1}>{name}</PaperText>
-      </View>
-    </Pressable>
-  );
-});
 
 export default function AddIngredientScreen() {
   const theme = useTheme();
@@ -629,7 +584,7 @@ export default function AddIngredientScreen() {
             style={{
               maxHeight: Math.min(
                 300,
-                MENU_ROW_HEIGHT * (filteredBase.length + 1)
+                INGREDIENT_BASE_ROW_HEIGHT * (filteredBase.length + 1)
               ),
             }}
           >
@@ -645,17 +600,23 @@ export default function AddIngredientScreen() {
                   }}
                   android_ripple={RIPPLE}
                   style={({ pressed }) => [
-                    styles.menuRow,
+                    { paddingHorizontal: 12, paddingVertical: 8 },
                     pressed && { opacity: 0.96 },
                   ]}
                 >
-                  <View style={{ color: theme.colors.onSurface, minHeight: 40, justifyContent: "center", paddingHorizontal: 12 }}>
+                  <View
+                    style={{
+                      minHeight: 40,
+                      justifyContent: "center",
+                      paddingHorizontal: 12,
+                    }}
+                  >
                     <PaperText>None</PaperText>
                   </View>
                 </Pressable>
               }
               renderItem={({ item }) => (
-                <BaseRow
+                <IngredientBaseRow
                   id={item.id}
                   name={item.name}
                   photoUri={item.photoUri}
@@ -743,13 +704,6 @@ const styles = StyleSheet.create({
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
-  tag: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    margin: 4,
-  },
-  tagText: { fontWeight: "bold" },
 
   addTagButton: {
     paddingHorizontal: 10,
@@ -769,8 +723,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
-  menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
   menuImg: {
     width: 40,
     height: 40,

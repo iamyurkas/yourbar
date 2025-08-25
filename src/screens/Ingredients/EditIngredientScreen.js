@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  memo,
   useDeferredValue,
   useLayoutEffect,
 } from "react";
@@ -43,6 +42,10 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { deleteIngredient, saveIngredient } from "../../storage/ingredientsStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
+import TagPill from "../../components/TagPill";
+import IngredientBaseRow, {
+  INGREDIENT_BASE_ROW_HEIGHT,
+} from "../../components/IngredientBaseRow";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
@@ -53,67 +56,7 @@ import useDebounced from "../../hooks/useDebounced";
 
 // ----------- helpers -----------
 const IMAGE_SIZE = 150;
-const MENU_ROW_HEIGHT = 56;
 const MENU_TOP_OFFSET = 150;
-
-// pills for tags (memo, стабільний onPress через id)
-const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
-  const theme = useTheme();
-  const ripple = { color: theme.colors.outlineVariant };
-  return (
-    <Pressable
-      onPress={() => onToggle(id)}
-      android_ripple={ripple}
-      style={({ pressed }) => [
-        styles.tag,
-        { backgroundColor: color || theme.colors.disabled },
-        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-      ]}
-    >
-      <Text style={[styles.tagText, { color: theme.colors.onPrimary }]}>
-        {name}
-      </Text>
-    </Pressable>
-  );
-});
-
-// row in base menu (memo, стабільний onPress через id)
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
-  const theme = useTheme();
-  const ripple = { color: theme.colors.outlineVariant };
-  return (
-    <Pressable
-      onPress={() => onSelect(id)}
-      android_ripple={ripple}
-      style={({ pressed }) => [
-        styles.menuRow,
-        pressed && { opacity: 0.9, transform: [{ scale: 0.997 }] },
-      ]}
-    >
-      <View style={styles.menuRowInner}>
-        {photoUri ? (
-          <Image
-            source={{ uri: photoUri }}
-            style={[
-              styles.menuImg,
-              { backgroundColor: theme.colors.background },
-            ]}
-          />
-        ) : (
-          <View
-            style={[
-              styles.menuImg,
-              { backgroundColor: theme.colors.outlineVariant },
-            ]}
-          />
-        )}
-        <PaperText numberOfLines={1} style={{ color: theme.colors.onSurface }}>
-          {name}
-        </PaperText>
-      </View>
-    </Pressable>
-  );
-});
 
 export default function EditIngredientScreen() {
   const theme = useTheme();
@@ -728,7 +671,7 @@ export default function EditIngredientScreen() {
             style={{
               maxHeight: Math.min(
                 300,
-                MENU_ROW_HEIGHT * (filteredBase.length + 1)
+                INGREDIENT_BASE_ROW_HEIGHT * (filteredBase.length + 1)
               ),
             }}
           >
@@ -744,19 +687,25 @@ export default function EditIngredientScreen() {
                   }}
                   android_ripple={ripple}
                   style={({ pressed }) => [
-                    styles.menuRow,
+                    { paddingHorizontal: 12, paddingVertical: 8 },
                     pressed && { opacity: 0.9 },
                   ]}
                 >
-                  <View style={styles.menuRowInner}>
-                    <PaperText style={{ color: theme.colors.onSurface, minHeight: 40, justifyContent: "center", paddingHorizontal: 12 }}>
+                  <View
+                    style={{
+                      minHeight: 40,
+                      justifyContent: "center",
+                      paddingHorizontal: 12,
+                    }}
+                  >
+                    <PaperText style={{ color: theme.colors.onSurface }}>
                       None
                     </PaperText>
                   </View>
                 </Pressable>
               }
               renderItem={({ item }) => (
-                <BaseRow
+                <IngredientBaseRow
                   id={item.id}
                   name={item.name}
                   photoUri={item.photoUri}
@@ -918,13 +867,6 @@ const styles = StyleSheet.create({
   },
 
   tagContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
-  tag: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    margin: 4,
-  },
-  tagText: { fontWeight: "bold" },
   addTagButton: {
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -942,8 +884,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  menuRow: { paddingHorizontal: 12, paddingVertical: 8 },
-  menuRowInner: { flexDirection: "row", alignItems: "center", gap: 8 },
   menuImg: { width: 40, height: 40, aspectRatio: 1, borderRadius: 8, resizeMode: "contain" },
 
   saveButton: {
