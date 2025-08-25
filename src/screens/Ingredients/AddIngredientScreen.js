@@ -87,18 +87,45 @@ const TagPill = memo(function TagPill({ id, name, color, onToggle }) {
 });
 
 /* -------------- row in base menu (memo) -------------- */
-const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
+const BaseRow = memo(function BaseRow({
+  id,
+  name,
+  photoUri,
+  baseIngredientId,
+  onSelect,
+}) {
   const theme = useTheme();
+
+  if (id == null) {
+    return (
+      <Pressable
+        onPress={() => onSelect(null)}
+        android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
+      >
+        <View style={[styles.menuRow, styles.menuRowInner]}>
+          <Text style={{ color: theme.colors.onSurface }}>None</Text>
+        </View>
+      </Pressable>
+    );
+  }
+
+  const branded = baseIngredientId != null;
   return (
     <Pressable
       onPress={() => onSelect(id)}
       android_ripple={{ color: withAlpha(theme.colors.tertiary, 0.2) }}
-      style={({ pressed }) => [
-        styles.menuRow,
-        pressed && { opacity: 0.96, transform: [{ scale: 0.997 }] },
-      ]}
     >
-      <View style={styles.menuRowInner}>
+      <View
+        style={[
+          styles.menuRow,
+          styles.menuRowInner,
+          branded && {
+            borderLeftWidth: 4,
+            borderLeftColor: theme.colors.primary,
+            paddingLeft: 8,
+          },
+        ]}
+      >
         {photoUri ? (
           <Image
             source={{ uri: photoUri }}
@@ -106,7 +133,7 @@ const BaseRow = memo(function BaseRow({ id, name, photoUri, onSelect }) {
           />
         ) : (
           <View
-            style={[styles.menuImg, { backgroundColor: theme.colors.surfaceVariant }]}
+            style={[styles.menuImg, { backgroundColor: theme.colors.outlineVariant }]}
           />
         )}
         <PaperText numberOfLines={1}>{name}</PaperText>
@@ -199,6 +226,10 @@ export default function AddIngredientScreen() {
     );
     // Note: baseIngredients already sorted
   }, [baseIngredients, deferredQuery]);
+  const menuData = useMemo(
+    () => [{ id: null, name: "None" }, ...filteredBase],
+    [filteredBase]
+  );
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -651,18 +682,24 @@ export default function AddIngredientScreen() {
         </View>
         <Divider />
         <FlatList
-          data={filteredBase}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <BaseRow
-              id={item.id}
-              name={item.name}
-              photoUri={item.photoUri}
-              onSelect={(id) => {
-                setBaseIngredientId(id);
-                setMenuVisible(false);
-              }}
-            />
+          data={menuData}
+          keyExtractor={(item) => String(item.id ?? "none")}
+          renderItem={({ item, index }) => (
+            <View>
+              {index > 0 ? (
+                <Divider color={theme.colors.outlineVariant} />
+              ) : null}
+              <BaseRow
+                id={item.id}
+                name={item.name}
+                photoUri={item.photoUri}
+                baseIngredientId={item.baseIngredientId}
+                onSelect={(id) => {
+                  setBaseIngredientId(id);
+                  setMenuVisible(false);
+                }}
+              />
+            </View>
           )}
           style={{ width: anchorWidth }}
           getItemLayout={(_, index) => ({
