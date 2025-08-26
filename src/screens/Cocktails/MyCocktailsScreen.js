@@ -15,7 +15,7 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import {
   getAllIngredients,
-  saveIngredient,
+  flushPendingIngredients,
   updateIngredientById,
 } from "../../storage/ingredientsStorage";
 import {
@@ -54,6 +54,7 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+  const [pendingUpdates, setPendingUpdates] = useState([]);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
@@ -77,6 +78,33 @@ export default function MyCocktailsScreen() {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
+
+  const flushPending = useCallback(() => {
+    if (pendingUpdates.length) {
+      flushPendingIngredients(pendingUpdates).catch(() => {});
+      setPendingUpdates([]);
+    }
+  }, [pendingUpdates]);
+
+  useEffect(() => {
+    if (!pendingUpdates.length) return;
+    const handle = setTimeout(() => {
+      flushPending();
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [pendingUpdates, flushPending]);
+
+  useEffect(() => {
+    if (!isFocused) {
+      flushPending();
+    }
+  }, [isFocused, flushPending]);
+
+  useEffect(() => {
+    return () => {
+      flushPending();
+    };
+  }, [flushPending]);
 
   const firstLoad = useRef(true);
   useEffect(() => {
@@ -258,22 +286,24 @@ export default function MyCocktailsScreen() {
 
   const toggleShoppingList = useCallback(
     (id) => {
+      let updated;
       setIngredients((prev) => {
         const item = prev.get(id);
         if (!item) return prev;
-        const updated = { ...item, inShoppingList: !item.inShoppingList };
-        const next = updateIngredientById(prev, updated);
-        saveIngredient(updated).catch(() => {});
+        updated = { ...item, inShoppingList: !item.inShoppingList };
+        return updateIngredientById(prev, updated);
+      });
+      if (updated) {
         setGlobalIngredients((list) =>
           updateIngredientById(list, {
             id,
             inShoppingList: updated.inShoppingList,
           })
         );
-        return next;
-      });
+        setPendingUpdates((p) => [...p, updated]);
+      }
     },
-    [setGlobalIngredients]
+    [setGlobalIngredients, setIngredients]
   );
 
   const renderItem = useCallback(
