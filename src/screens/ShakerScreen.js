@@ -18,6 +18,8 @@ import {
   addIgnoreGarnishListener,
 } from "../storage/settingsStorage";
 
+const SELECTED_COLOR = "#CCFFCC"; // light green
+
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -166,9 +168,7 @@ export default function ShakerScreen({ navigation }) {
             baseIngredientId={ing.baseIngredientId}
             onPress={toggleIngredient}
             onDetails={(id) => navigation.push("IngredientDetails", { id })}
-            highlightColor={
-              active ? theme.colors.secondaryContainer : undefined
-            }
+            highlightColor={active ? SELECTED_COLOR : undefined}
           />
         </View>
       );
