@@ -11,9 +11,6 @@ export const AppTheme = {
     tertiary: "#A5D8FF",
 
     primaryContainer: "#D0EBFF",
-
-    secondaryContainer: "#E9F7DF",
-
     inversePrimary: "#E9F7DF",
 
     background: "#FFFFFF",
