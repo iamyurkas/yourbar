@@ -387,14 +387,13 @@ export default function IngredientDetailsScreen() {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inBar: updated.inBar,
-      });
-      saveIngredient(updated);
-      return nextList;
-    });
+      })
+    );
+    setTimeout(() => saveIngredient(updated).catch(() => {}), 0);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
