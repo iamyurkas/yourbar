@@ -345,6 +345,13 @@ export default function CocktailDetailsScreen() {
     return () => sub.remove();
   }, []);
 
+  useEffect(() => {
+    if (globalIngredients.length) {
+      setIngMap(new Map(globalIngredients.map((i) => [i.id, i])));
+      setIngList(globalIngredients);
+    }
+  }, [globalIngredients]);
+
   // After saving a new cocktail, the details screen may mount before
   // ingredients are written to SQLite. Once the global cocktail list
   // receives the freshly saved item (with ingredient rows), merge it

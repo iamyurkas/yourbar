@@ -10,7 +10,7 @@ const genId = () => now(); // сумісно з твоїми екранами (D
 
 const sanitizeIngredient = (r, idx) => ({
   order: Number(r?.order ?? idx + 1),
-  ingredientId: r?.ingredientId ?? null, // може бути null для фрітекасту
+  ingredientId: r?.ingredientId != null ? Number(r.ingredientId) : null, // може бути null для фрітекасту
   name: String(r?.name ?? "").trim(),
   amount: String(r?.amount ?? r?.quantity ?? "").trim(),
   unitId: Number(r?.unitId ?? 11), // ml за замовчуванням
@@ -75,7 +75,7 @@ async function readAll() {
     if (c) {
       c.ingredients.push({
         order: r.orderNum,
-        ingredientId: r.ingredientId,
+        ingredientId: r.ingredientId != null ? Number(r.ingredientId) : null,
         name: r.name,
         amount: r.amount,
         unitId: r.unitId,
@@ -121,7 +121,7 @@ async function upsertCocktail(item) {
         [
           item.id,
           ing.order,
-          ing.ingredientId ?? null,
+          ing.ingredientId != null ? String(ing.ingredientId) : null,
           ing.name ?? null,
           ing.amount ?? null,
           ing.unitId ?? null,
@@ -171,7 +171,7 @@ export async function getCocktailById(id) {
   );
   cocktail.ingredients = ingRes.rows._array.map((r) => ({
     order: r.orderNum,
-    ingredientId: r.ingredientId,
+    ingredientId: r.ingredientId != null ? Number(r.ingredientId) : null,
     name: r.name,
     amount: r.amount,
     unitId: r.unitId,
@@ -253,7 +253,7 @@ export async function replaceAllCocktails(cocktails) {
           [
             item.id,
             ing.order,
-            ing.ingredientId ?? null,
+            ing.ingredientId != null ? String(ing.ingredientId) : null,
             ing.name ?? null,
             ing.amount ?? null,
             ing.unitId ?? null,

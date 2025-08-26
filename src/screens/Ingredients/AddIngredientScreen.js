@@ -326,19 +326,19 @@ export default function AddIngredientScreen() {
       navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
     }
 
+    setGlobalIngredients((map) => {
+      const arr = Array.from(map.values()).filter((i) => i.id !== saved.id);
+      const idx = arr.findIndex(
+        (i) => collator.compare(i.name, saved.name) > 0
+      );
+      if (idx === -1) arr.push(saved);
+      else arr.splice(idx, 0, saved);
+      return new Map(arr.map((i) => [i.id, i]));
+    });
+    setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
+
     InteractionManager.runAfterInteractions(() => {
       addIngredient(saved).catch(() => {});
-
-      setGlobalIngredients((map) => {
-        const arr = Array.from(map.values()).filter((i) => i.id !== saved.id);
-        const idx = arr.findIndex(
-          (i) => collator.compare(i.name, saved.name) > 0
-        );
-        if (idx === -1) arr.push(saved);
-        else arr.splice(idx, 0, saved);
-        return new Map(arr.map((i) => [i.id, i]));
-      });
-      setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
     });
   }, [
     name,
