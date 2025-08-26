@@ -12,11 +12,11 @@ export async function getAllIngredients() {
   );
   return res.rows._array
     .map((r) => ({
-      id: r.id,
+      id: Number(r.id),
       name: r.name,
       description: r.description,
       tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId,
+      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
       usageCount: r.usageCount ?? 0,
       singleCocktailName: r.singleCocktailName,
       searchName: r.searchName,

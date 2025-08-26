@@ -185,7 +185,7 @@ const IngredientRow = memo(function IngredientRow({
 
 export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
-  const { id, backToIngredientId } = useRoute().params;
+  const { id, backToIngredientId, initialCocktail } = useRoute().params;
   const theme = useTheme();
   const {
     ingredients: globalIngredients = [],
@@ -193,10 +193,10 @@ export default function CocktailDetailsScreen() {
     setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
-  const [cocktail, setCocktail] = useState(null);
+  const [cocktail, setCocktail] = useState(initialCocktail || null);
   const [ingMap, setIngMap] = useState(new Map());
   const [ingList, setIngList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialCocktail);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
@@ -276,8 +276,8 @@ export default function CocktailDetailsScreen() {
   );
 
   const load = useCallback(
-    async (refresh = false) => {
-      setLoading(true);
+    async (refresh = false, showSpinner = true) => {
+      if (showSpinner) setLoading(true);
       const ingredientPromise =
         !refresh && globalIngredients.length
           ? Promise.resolve(globalIngredients)
@@ -290,13 +290,16 @@ export default function CocktailDetailsScreen() {
           getIgnoreGarnish(),
           getAllowSubstitutes(),
         ]);
-      setCocktail(loadedCocktail || null);
+      setCocktail((prev) => {
+        if (!loadedCocktail) return prev;
+        return prev ? { ...prev, ...loadedCocktail } : loadedCocktail;
+      });
       setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
       setIngList(allIngredients || []);
       setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     },
     [id, globalIngredients]
   );
@@ -305,10 +308,10 @@ export default function CocktailDetailsScreen() {
     useCallback(() => {
       (async () => {
         try {
-          await load();
+          await load(false, !initialCocktail);
         } catch {}
       })();
-    }, [load])
+    }, [load, initialCocktail])
   );
 
   useFocusEffect(
@@ -344,6 +347,44 @@ export default function CocktailDetailsScreen() {
     const sub = addAllowSubstitutesListener(setAllowSubstitutes);
     return () => sub.remove();
   }, []);
+
+  useEffect(() => {
+    if (globalIngredients.length) {
+      setIngMap(new Map(globalIngredients.map((i) => [i.id, i])));
+      setIngList(globalIngredients);
+    }
+  }, [globalIngredients]);
+
+  // When the global cocktail list updates, merge the item into local state.
+  // If the cocktail references ingredient ids that we don't have cached yet,
+  // perform a full reload to fetch the missing ingredient rows.
+  useEffect(() => {
+    const updated = globalCocktails.find((c) => c.id === id);
+    if (!updated) return;
+
+    const missingIngredient = (updated.ingredients || []).some(
+      (r) => r.ingredientId && !ingMap.has(r.ingredientId)
+    );
+
+    setCocktail((prev) => {
+      if (!prev) return updated;
+      if (
+        prev.updatedAt >= updated.updatedAt &&
+        (prev.ingredients?.length || 0) >= (updated.ingredients?.length || 0)
+      ) {
+        return prev;
+      }
+      return { ...prev, ...updated };
+    });
+
+    if (missingIngredient) {
+      (async () => {
+        try {
+          await load(true, false);
+        } catch {}
+      })();
+    }
+  }, [globalCocktails, id, ingMap, load]);
 
   const rows = useMemo(() => {
     if (!cocktail) return [];
