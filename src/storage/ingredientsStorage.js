@@ -155,6 +155,16 @@ export async function saveIngredient(updated) {
   return item;
 }
 
+export async function flushPendingIngredients(list) {
+  const items = Array.isArray(list) ? list : [];
+  if (!items.length) return;
+  await db.withTransactionAsync(async () => {
+    for (const u of items) {
+      await upsertIngredient(sanitizeIngredient(u));
+    }
+  });
+}
+
 export function getIngredientById(id, index) {
   return index ? index[id] : null;
 }
