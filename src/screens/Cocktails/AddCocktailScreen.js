@@ -1672,25 +1672,6 @@ export default function AddCocktailScreen() {
           </Text>
           <View style={styles.tagContainer}>
             {tags.map((t) => (
-              <TagPill
-                key={t.id}
-                id={t.id}
-                name={t.name}
-                color={t.color}
-                onToggle={toggleTagById}
-                rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
-                defaultColor={theme.colors.secondary}
-              />
-            ))}
-          </View>
-
-          <Text style={[styles.label, { color: theme.colors.onBackground }]}> 
-            Add Tag
-          </Text>
-          <View style={styles.tagContainer}>
-            {availableTags
-              .filter((t) => !tags.some((x) => x.id === t.id))
-              .map((t) => (
                 <TagPill
                   key={t.id}
                   id={t.id}
@@ -1699,8 +1680,29 @@ export default function AddCocktailScreen() {
                   onToggle={toggleTagById}
                   rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
                   defaultColor={theme.colors.secondary}
+                  textColor={theme.colors.onSecondary}
                 />
               ))}
+            </View>
+
+          <Text style={[styles.label, { color: theme.colors.onBackground }]}> 
+            Add Tag
+          </Text>
+          <View style={styles.tagContainer}>
+            {availableTags
+              .filter((t) => !tags.some((x) => x.id === t.id))
+              .map((t) => (
+                  <TagPill
+                    key={t.id}
+                    id={t.id}
+                    name={t.name}
+                    color={t.color}
+                    onToggle={toggleTagById}
+                    rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
+                    defaultColor={theme.colors.secondary}
+                    textColor={theme.colors.onSecondary}
+                  />
+                ))}
             <Pressable
               onPress={openAddTagModal}
               style={[
