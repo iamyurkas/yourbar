@@ -26,6 +26,10 @@ import {
 } from "../../storage/settingsStorage";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import {
+  initIngredientsAvailability,
+  updateIngredientAvailability,
+} from "../../utils/ingredientsAvailabilityCache";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -45,6 +49,7 @@ export default function MyIngredientsScreen() {
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [pendingUpdates, setPendingUpdates] = useState([]);
+  const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -117,68 +122,16 @@ export default function MyIngredientsScreen() {
     };
   }, [flushPending]);
 
-  const availableMap = useMemo(() => {
-    const ingMap = new Map(ingredients.map((i) => [String(i.id), i]));
-    const findBrand = (baseId) =>
-      ingredients.find(
-        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
-      );
-    const cocktailMap = new Map(cocktails.map((c) => [c.id, c]));
-    const result = new Map();
-
-    const isAvailable = (cocktail) => {
-      const required = (cocktail.ingredients || []).filter(
-        (r) => !r.optional && !(ignoreGarnish && r.garnish)
-      );
-      if (required.length === 0) return false;
-      for (const r of required) {
-        const ing = ingMap.get(String(r.ingredientId));
-        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-        let used = null;
-        if (ing?.inBar) used = ing;
-        else {
-          if (allowSubstitutes || r.allowBaseSubstitution) {
-            const base = ingMap.get(baseId);
-            if (base?.inBar) used = base;
-          }
-          if (
-            !used &&
-            (allowSubstitutes || r.allowBrandedSubstitutes || ing?.baseIngredientId != null)
-          ) {
-            const brand = findBrand(baseId);
-            if (brand) used = brand;
-          }
-          if (!used && Array.isArray(r.substitutes)) {
-            for (const s of r.substitutes) {
-              const cand = ingMap.get(String(s.id));
-              if (cand?.inBar) {
-                used = cand;
-                break;
-              }
-            }
-          }
-        }
-        if (!used) return false;
-      }
-      return true;
-    };
-
-    ingredients.forEach((ing) => {
-      const ids = usageMap[ing.id] || [];
-      let count = 0;
-      let singleName = null;
-      ids.forEach((cid) => {
-        const cocktail = cocktailMap.get(cid);
-        if (cocktail && isAvailable(cocktail)) {
-          count++;
-          singleName = cocktail.name;
-        }
-      });
-      result.set(ing.id, { count, single: count === 1 ? singleName : null });
-    });
-
-    return result;
-  }, [ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes]);
+  useEffect(() => {
+    const map = initIngredientsAvailability(
+      ingredients,
+      cocktails,
+      usageMap,
+      ignoreGarnish,
+      allowSubstitutes
+    );
+    setAvailableMap(new Map(map));
+  }, [cocktails, usageMap, ignoreGarnish, allowSubstitutes, ingredients.length]);
 
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
@@ -200,7 +153,11 @@ export default function MyIngredientsScreen() {
         const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inBar: !item.inBar };
-        return updateIngredientById(prev, updated);
+        const next = updateIngredientById(prev, updated);
+        const nextArr = Array.from(next.values());
+        const map = updateIngredientAvailability(id, nextArr);
+        setAvailableMap(new Map(map));
+        return next;
       });
       if (updated) setPendingUpdates((p) => [...p, updated]);
     },
