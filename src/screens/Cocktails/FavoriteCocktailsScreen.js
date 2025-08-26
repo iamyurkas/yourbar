@@ -58,7 +58,7 @@ export default function FavoriteCocktailsScreen() {
   const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
-    if (isFocused) setTab("cocktails", "Favorite");
+    if (isFocused) setTab("cocktails", "Favorites");
   }, [isFocused, setTab]);
 
   useEffect(() => {

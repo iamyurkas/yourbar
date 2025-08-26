@@ -13,7 +13,7 @@ import { useTheme } from "react-native-paper";
 const OPTIONS = [
   { key: "cocktails:All", label: "Cocktails - All" },
   { key: "cocktails:My", label: "Cocktails - My" },
-  { key: "cocktails:Favorite", label: "Cocktails - Favorites" },
+  { key: "cocktails:Favorites", label: "Cocktails - Favorites" },
   { key: "ingredients:All", label: "Ingredients - All" },
   { key: "ingredients:My", label: "Ingredients - My" },
   { key: "ingredients:Shopping", label: "Ingredients - Shopping" },

@@ -122,7 +122,7 @@ export default function GeneralMenu({ visible, onClose }) {
   const startLabels = {
     "cocktails:All": "Cocktails - All",
     "cocktails:My": "Cocktails - My",
-    "cocktails:Favorite": "Cocktails - Favorites",
+    "cocktails:Favorites": "Cocktails - Favorites",
     "ingredients:All": "Ingredients - All",
     "ingredients:My": "Ingredients - My",
     "ingredients:Shopping": "Ingredients - Shopping",
