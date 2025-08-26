@@ -221,7 +221,6 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
-  const [dummyChecked, setDummyChecked] = useState(false);
 
   useEffect(() => {
     const current =
@@ -385,9 +384,20 @@ export default function IngredientDetailsScreen() {
     return () => sub.remove();
   }, [load]);
 
-  const toggleDummyChecked = useCallback(() => {
-    setDummyChecked((prev) => !prev);
-  }, []);
+  const toggleInBar = useCallback(() => {
+    if (!ingredient) return;
+    const updated = { ...ingredient, inBar: !ingredient.inBar };
+    setIngredient(updated);
+    setIngredients((list) =>
+      updateIngredientById(list, {
+        id: updated.id,
+        inBar: updated.inBar,
+      })
+    );
+    setTimeout(() => {
+      updateIngredientFields(updated.id, { inBar: updated.inBar });
+    }, 0);
+  }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
@@ -538,22 +548,19 @@ export default function IngredientDetailsScreen() {
       )}
 
       <View style={styles.iconRow}>
-        <TouchableOpacity onPress={toggleDummyChecked} style={styles.iconButton}>
+        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
           <MaterialIcons
-            name={dummyChecked ? "check-circle" : "radio-button-unchecked"}
+            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
             size={24}
             color={
-              dummyChecked
+              ingredient.inBar
                 ? theme.colors.primary
                 : theme.colors.onSurfaceVariant
             }
           />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={toggleInShoppingList}
-          style={styles.iconButton}
-        >
+        <TouchableOpacity onPress={toggleInShoppingList} style={styles.iconButton}>
           <MaterialIcons
             name={
               ingredient.inShoppingList ? "shopping-cart" : "add-shopping-cart"
