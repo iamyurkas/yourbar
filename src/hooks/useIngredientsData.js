@@ -30,53 +30,64 @@ export default function useIngredientsData() {
   const load = useCallback(
     async (force = false) => {
       setLoading(true);
-      let needImport = force;
-      if (!force) {
-        try {
-          const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
-          if (already !== "true") needImport = true;
-        } catch {
-          needImport = true;
+      try {
+        const [already, ingInitial, cocksInitial, allowSubs] =
+          await Promise.all([
+            force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
+            getAllIngredients(),
+            getAllCocktails(),
+            getAllowSubstitutes(),
+          ]);
+
+        let ing = ingInitial;
+        let cocks = cocksInitial;
+
+        let needImport =
+          force ||
+          already !== "true" ||
+          ing.length === 0 ||
+          cocks.length === 0;
+
+        if (needImport) {
+          console.log(
+            "Importing default data… This one-time operation may take a moment"
+          );
+          const { importCocktailsAndIngredients } = await import(
+            "../../scripts/importCocktailsAndIngredients"
+          );
+          await importCocktailsAndIngredients({ force });
+          [ing, cocks] = await Promise.all([
+            getAllIngredients(),
+            getAllCocktails(),
+          ]);
         }
+
+        const sorted = [...ing].sort(sortByName);
+        const map = mapCocktailsByIngredient(sorted, cocks, {
+          allowSubstitutes: !!allowSubs,
+        });
+        const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));
+        const withUsage = sorted.map((item) => {
+          const ids = map[item.id] || [];
+          const usageCount = ids.length;
+          const singleCocktailName =
+            usageCount === 1 ? cocktailMap.get(ids[0]) : null;
+          const searchName = normalizeSearch(item.name);
+          const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
+          return {
+            ...item,
+            searchName,
+            searchTokens,
+            usageCount,
+            singleCocktailName,
+          };
+        });
+        setIngredients(withUsage);
+        setCocktails(cocks);
+        setUsageMap(map);
+      } finally {
+        setLoading(false);
       }
-      if (needImport) {
-        console.log(
-          "Importing default data… This one-time operation may take a moment"
-        );
-        const { importCocktailsAndIngredients } = await import(
-          "../../scripts/importCocktailsAndIngredients"
-        );
-        await importCocktailsAndIngredients({ force });
-      }
-      const [ing, cocks, allowSubs] = await Promise.all([
-        getAllIngredients(),
-        getAllCocktails(),
-        getAllowSubstitutes(),
-      ]);
-    const sorted = [...ing].sort(sortByName);
-    const map = mapCocktailsByIngredient(sorted, cocks, {
-      allowSubstitutes: !!allowSubs,
-    });
-    const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));
-    const withUsage = sorted.map((item) => {
-      const ids = map[item.id] || [];
-      const usageCount = ids.length;
-      const singleCocktailName =
-        usageCount === 1 ? cocktailMap.get(ids[0]) : null;
-      const searchName = normalizeSearch(item.name);
-      const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-      return {
-        ...item,
-        searchName,
-        searchTokens,
-        usageCount,
-        singleCocktailName,
-      };
-    });
-    setIngredients(withUsage);
-    setCocktails(cocks);
-    setUsageMap(map);
-    setLoading(false);
     },
     [setIngredients, setCocktails, setUsageMap, setLoading]
   );
