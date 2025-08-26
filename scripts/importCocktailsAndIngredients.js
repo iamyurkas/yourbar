@@ -56,12 +56,15 @@ function sanitizeIngredients(raw) {
           ? it.searchTokens
           : searchName.split(WORD_SPLIT_RE).filter(Boolean);
         return {
-          id: String(it?.id ?? ""),
+          id: Number(it?.id ?? 0),
           name,
           description: String(it?.description ?? "").trim(),
           photoUri: resolvePhoto(it?.photoUri || it?.image),
           tags: mapTags(it?.tags, ING_TAG_BY_ID),
-          baseIngredientId: it?.baseIngredientId ?? null,
+          baseIngredientId:
+            it?.baseIngredientId != null
+              ? Number(it.baseIngredientId)
+              : null,
           usageCount: Number(it?.usageCount ?? 0),
           singleCocktailName: it?.singleCocktailName ?? null,
           inBar: false,
@@ -77,10 +80,19 @@ function sanitizeCocktails(raw) {
   return Array.isArray(raw)
     ? raw.map((c) => ({
         ...c,
+        id: Number(c?.id ?? 0),
         rating: 0,
         photoUri: resolvePhoto(c?.photoUri || c?.image),
         tags: mapTags(c?.tags, COCKTAIL_TAG_BY_ID),
-        ingredients: Array.isArray(c?.ingredients) ? c.ingredients : [],
+        ingredients: Array.isArray(c?.ingredients)
+          ? c.ingredients.map((ing) => ({
+              ...ing,
+              ingredientId:
+                ing?.ingredientId != null
+                  ? Number(ing.ingredientId)
+                  : null,
+            }))
+          : [],
       }))
     : [];
 }

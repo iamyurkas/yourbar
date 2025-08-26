@@ -158,6 +158,11 @@ export async function importAllData() {
       const ingredients = data.ingredients.map(
         ({ inBar, inShoppingList, photoUri, ...rest }) => ({
           ...rest,
+          id: Number(rest?.id ?? 0),
+          baseIngredientId:
+            rest?.baseIngredientId != null
+              ? Number(rest.baseIngredientId)
+              : null,
           photoUri: resolvePhoto(photoUri),
           inBar: false,
           inShoppingList: false,
@@ -169,7 +174,17 @@ export async function importAllData() {
       const cocktails = data.cocktails.map(
         ({ rating, photoUri, ...rest }) => ({
           ...rest,
+          id: Number(rest?.id ?? 0),
           photoUri: resolvePhoto(photoUri),
+          ingredients: Array.isArray(rest?.ingredients)
+            ? rest.ingredients.map((ing) => ({
+                ...ing,
+                ingredientId:
+                  ing?.ingredientId != null
+                    ? Number(ing.ingredientId)
+                    : null,
+              }))
+            : [],
         })
       );
       await replaceAllCocktails(cocktails);
