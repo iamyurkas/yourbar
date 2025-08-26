@@ -50,6 +50,10 @@ export function initDatabase() {
         inBar INTEGER,
         inShoppingList INTEGER
       );
+      CREATE INDEX IF NOT EXISTS idx_cocktails_name ON cocktails (name);
+      CREATE INDEX IF NOT EXISTS idx_cocktail_ingredients_ingredientId ON cocktail_ingredients (ingredientId);
+      CREATE INDEX IF NOT EXISTS idx_ingredients_searchName ON ingredients (searchName);
+      CREATE INDEX IF NOT EXISTS idx_ingredients_inBar ON ingredients (inBar);
     `);
   }
   return initPromise;
