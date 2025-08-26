@@ -63,6 +63,7 @@ import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
 import CocktailTagsModal from "../../components/CocktailTagsModal";
 import TagPill from "../../components/TagPill";
+import TinyDivider from "../../components/TinyDivider";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import {
@@ -70,20 +71,6 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
-
-/* ---------- Tiny Divider ---------- */
-const Divider = ({ color, style }) => (
-  <View
-    style={[
-      {
-        height: StyleSheet.hairlineWidth,
-        backgroundColor: color,
-        opacity: 0.5,
-      },
-      style,
-    ]}
-  />
-);
 
 /* ---------- IngredientRow ---------- */
 const SUGGEST_ROW_H = 56;
@@ -542,7 +529,7 @@ const IngredientRow = memo(function IngredientRow({
                   }}
                 >
                   {index > 0 ? (
-                    <Divider color={theme.colors.outlineVariant} />
+                    <TinyDivider color={theme.colors.outlineVariant} />
                   ) : null}
                   <View
                     style={[
@@ -698,7 +685,7 @@ const IngredientRow = memo(function IngredientRow({
                 renderItem={({ item, index }) => (
                   <View>
                     {index > 0 ? (
-                      <Divider color={theme.colors.outlineVariant} />
+                      <TinyDivider color={theme.colors.outlineVariant} />
                     ) : null}
                     <MenuOption
                       closeOnSelect
@@ -980,7 +967,7 @@ const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
           renderItem={({ item, index }) => (
             <View>
               {index > 0 ? (
-                <Divider color={theme.colors.outlineVariant} />
+                <TinyDivider color={theme.colors.outlineVariant} />
               ) : null}
               <MenuOption
                 closeOnSelect
@@ -1892,7 +1879,7 @@ export default function AddCocktailScreen() {
                   style={styles.modalItemPressable}
                 >
                   {index > 0 ? (
-                    <Divider color={theme.colors.outlineVariant} />
+                    <TinyDivider color={theme.colors.outlineVariant} />
                   ) : null}
                     <View
                       style={[
