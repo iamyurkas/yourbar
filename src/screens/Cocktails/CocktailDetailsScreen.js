@@ -411,9 +411,22 @@ export default function CocktailDetailsScreen() {
     const list = Array.isArray(cocktail.ingredients)
       ? [...cocktail.ingredients].sort((a, b) => a.order - b.order)
       : [];
-    const allIngs = ingList;
+
+    const byId = new Map();
+    const byBase = new Map();
+    for (const ing of ingList) {
+      byId.set(ing.id, ing);
+      const base = ing.baseIngredientId ?? ing.id;
+      const arr = byBase.get(base);
+      if (arr) {
+        arr.push(ing);
+      } else {
+        byBase.set(base, [ing]);
+      }
+    }
+
     return list.map((r) => {
-      const ing = r.ingredientId ? ingMap.get(r.ingredientId) : null;
+      const ing = r.ingredientId ? byId.get(r.ingredientId) : null;
       const originalName = ing?.name || r.name;
       const inBar = ing?.inBar;
       let substitute = null;
@@ -424,36 +437,40 @@ export default function CocktailDetailsScreen() {
       if (ing) {
         if (Array.isArray(r.substitutes)) {
           declaredSubstitutes = r.substitutes.map((s) => {
-            const candidate = ingMap.get(s.id);
+            const candidate = byId.get(s.id);
             return candidate?.name || s.name;
           });
         }
         if (allowSubstitutes || r.allowBaseSubstitution) {
-          const base = allIngs.find((i) => i.id === baseId && i.id !== ing.id);
-          if (base) baseSubstitutes.push(base.name);
+          const base = byId.get(baseId);
+          if (base && base.id !== ing.id) baseSubstitutes.push(base.name);
         }
         if (r.allowBrandedSubstitutes) {
-          brandedSubstitutes = allIngs
-            .filter((i) => i.baseIngredientId === baseId && i.id !== ing.id)
-            .map((i) => i.name);
+          const others = (byBase.get(baseId) || []).filter(
+            (i) => i.id !== ing.id && i.baseIngredientId === baseId
+          );
+          brandedSubstitutes = others.map((i) => i.name);
         }
       }
       if (!inBar && ing) {
         if (allowSubstitutes || r.allowBaseSubstitution) {
-          const base = allIngs.find((i) => i.id === baseId && i.inBar);
-          if (base) substitute = base;
+          const base = byId.get(baseId);
+          if (base?.inBar && base.id !== ing.id) substitute = base;
         }
 
         if (!substitute && r.allowBrandedSubstitutes) {
-          const brand = allIngs.find(
-            (i) => i.inBar && i.baseIngredientId === baseId
+          const brand = (byBase.get(baseId) || []).find(
+            (i) =>
+              i.inBar &&
+              i.id !== ing.id &&
+              i.baseIngredientId === baseId
           );
           if (brand) substitute = brand;
         }
 
         if (!substitute && Array.isArray(r.substitutes)) {
           for (const s of r.substitutes) {
-            const candidate = ingMap.get(s.id);
+            const candidate = byId.get(s.id);
             if (candidate?.inBar) {
               substitute = candidate;
               break;
@@ -508,7 +525,7 @@ export default function CocktailDetailsScreen() {
         brandedSubstitutes,
       };
     });
-  }, [cocktail, ingMap, ingList, showImperial, ignoreGarnish, allowSubstitutes]);
+  }, [cocktail, ingList, showImperial, ignoreGarnish, allowSubstitutes]);
 
   if (loading)
     return (
