@@ -389,19 +389,6 @@ export default function IngredientDetailsScreen() {
     setDummyChecked((prev) => !prev);
   }, []);
 
-  const toggleInBar = useCallback(() => {
-    if (!ingredient) return;
-    const updated = { ...ingredient, inBar: !ingredient.inBar };
-    setIngredient(updated);
-    setIngredients((list) =>
-      updateIngredientById(list, { id: updated.id, inBar: updated.inBar })
-    );
-    setTimeout(
-      () => updateIngredientFields(updated.id, { inBar: updated.inBar }),
-      0
-    );
-  }, [ingredient, setIngredients]);
-
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
     const updated = {
@@ -574,18 +561,6 @@ export default function IngredientDetailsScreen() {
             size={24}
             color={
               ingredient.inShoppingList
-                ? theme.colors.primary
-                : theme.colors.onSurfaceVariant
-            }
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
-          <MaterialIcons
-            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
-            size={24}
-            color={
-              ingredient.inBar
                 ? theme.colors.primary
                 : theme.colors.onSurfaceVariant
             }
