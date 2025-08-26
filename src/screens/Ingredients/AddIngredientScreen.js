@@ -257,9 +257,16 @@ export default function AddIngredientScreen() {
     navigation.setParams({ initialName: undefined });
   }, [isFocused, initialNameParam, navigation]);
 
+  const didLoadTagsRef = useRef(false);
   useEffect(() => {
     if (!isFocused) return;
-    loadAvailableTags();
+    if (didLoadTagsRef.current) {
+      // Refresh available tags when returning to this screen.
+      loadAvailableTags();
+    } else {
+      // Skip the first run – the hook loads tags on mount.
+      didLoadTagsRef.current = true;
+    }
   }, [isFocused, loadAvailableTags]);
 
   /* ---------- UI handlers ---------- */

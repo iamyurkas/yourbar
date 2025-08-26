@@ -268,13 +268,19 @@ export default function EditIngredientScreen() {
   }, [navigation]);
 
   // load tags + entity on focus (паралельно)
+  const didLoadTagsRef = useRef(false);
   useEffect(() => {
     if (!isFocused) return;
     let cancelled = false;
 
     (async () => {
       try {
-        await loadAvailableTags();
+        if (didLoadTagsRef.current) {
+          await loadAvailableTags();
+        } else {
+          // The hook loads tags on initial mount; mark as loaded.
+          didLoadTagsRef.current = true;
+        }
         if (cancelled || !isMountedRef.current) return;
         const data = ingredientsById.get(currentId);
         if (data) {
