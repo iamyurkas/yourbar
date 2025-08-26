@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState, useEffect, useCallback } from "react";
 import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -32,6 +32,43 @@ function IngredientRow({
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
 
+  // Local state to provide immediate feedback while the parent
+  // updates its data source. This makes the UI feel snappier when
+  // toggling availability or shopping list membership.
+  const [optimisticInBar, setOptimisticInBar] = useState(inBar);
+  const [optimisticShopping, setOptimisticShopping] = useState(
+    inShoppingList
+  );
+
+  // When parent props change, sync the optimistic state.
+  useEffect(() => setOptimisticInBar(inBar), [inBar]);
+  useEffect(() => setOptimisticShopping(inShoppingList), [inShoppingList]);
+
+  const handleToggleInBar = useCallback(
+    () => {
+      setOptimisticInBar((prev) => !prev);
+      onToggleInBar && onToggleInBar(id);
+    },
+    [id, onToggleInBar]
+  );
+
+  const handleToggleShopping = useCallback(
+    () => {
+      setOptimisticShopping((prev) => !prev);
+      onToggleShoppingList && onToggleShoppingList(id);
+    },
+    [id, onToggleShoppingList]
+  );
+
+  const handleRemove = useCallback(
+    () => {
+      // Assume item will be removed from shopping list immediately.
+      setOptimisticShopping(false);
+      onRemove && onRemove(id);
+    },
+    [id, onRemove]
+  );
+
   const ripple = useMemo(
     () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
     [theme.colors.tertiary]
@@ -40,9 +77,9 @@ function IngredientRow({
   return (
     <View
       style={[
-        inBar ? styles.highlightWrapper : styles.normalWrapper,
+        optimisticInBar ? styles.highlightWrapper : styles.normalWrapper,
         { borderBottomColor: theme.colors.background },
-        inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        optimisticInBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
         highlightColor && { backgroundColor: highlightColor },
       ]}
     >
@@ -53,14 +90,14 @@ function IngredientRow({
             ...styles.brandedStripe,
             borderLeftColor: theme.colors.primary,
           },
-          !inBar && !highlightColor && styles.dimmed,
+          !optimisticInBar && !highlightColor && styles.dimmed,
           isNavigating && {
             ...styles.navigatingRow,
             backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
           },
         ]}
       >
-        {inShoppingList && !onToggleShoppingList && !onRemove && (
+        {optimisticShopping && !onToggleShoppingList && !onRemove && (
           <MaterialIcons
             name="shopping-cart"
             size={16}
@@ -152,7 +189,7 @@ function IngredientRow({
 
         {onRemove ? (
           <Pressable
-            onPress={() => onRemove(id)}
+            onPress={handleRemove}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.removeButton, pressed && styles.pressedRemove]}
@@ -165,29 +202,37 @@ function IngredientRow({
           </Pressable>
         ) : onToggleInBar ? (
           <Pressable
-            onPress={() => onToggleInBar(id)}
+            onPress={handleToggleInBar}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
           >
             <MaterialIcons
-              name={inBar ? "check-circle" : "radio-button-unchecked"}
+              name={
+                optimisticInBar ? "check-circle" : "radio-button-unchecked"
+              }
               size={22}
-              color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
+              color={
+                optimisticInBar
+                  ? theme.colors.primary
+                  : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         ) : onToggleShoppingList ? (
           <Pressable
-            onPress={() => onToggleShoppingList(id)}
+            onPress={handleToggleShopping}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
           >
             <MaterialIcons
-              name={inShoppingList ? "shopping-cart" : "add-shopping-cart"}
+              name={
+                optimisticShopping ? "shopping-cart" : "add-shopping-cart"
+              }
               size={22}
               color={
-                inShoppingList
+                optimisticShopping
                   ? theme.colors.primary
                   : theme.colors.onSurfaceVariant
               }
