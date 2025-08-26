@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
@@ -11,6 +11,12 @@ export default function useIngredientTags() {
     const custom = await getAllTags();
     setAvailableTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
   }, []);
+
+  // Load tag reference list on first use so screens using the hook
+  // immediately have the up‑to‑date tag collection available.
+  useEffect(() => {
+    loadAvailableTags();
+  }, [loadAvailableTags]);
 
   const closeTagsModal = useCallback(() => {
     setTagsModalVisible(false);
