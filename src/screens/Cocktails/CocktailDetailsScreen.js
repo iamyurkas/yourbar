@@ -352,14 +352,17 @@ export default function CocktailDetailsScreen() {
     }
   }, [globalIngredients]);
 
-  // After saving a new cocktail, the details screen may mount before
-  // ingredients are written to SQLite. Once the global cocktail list
-  // receives the freshly saved item (with ingredient rows), merge it
-  // into local state so new ingredient elements appear without
-  // reloading the entire screen.
+  // When the global cocktail list updates, merge the item into local state.
+  // If the cocktail references ingredient ids that we don't have cached yet,
+  // perform a full reload to fetch the missing ingredient rows.
   useEffect(() => {
     const updated = globalCocktails.find((c) => c.id === id);
     if (!updated) return;
+
+    const missingIngredient = (updated.ingredients || []).some(
+      (r) => r.ingredientId && !ingMap.has(r.ingredientId)
+    );
+
     setCocktail((prev) => {
       if (!prev) return updated;
       if (
@@ -370,7 +373,15 @@ export default function CocktailDetailsScreen() {
       }
       return { ...prev, ...updated };
     });
-  }, [globalCocktails, id]);
+
+    if (missingIngredient) {
+      (async () => {
+        try {
+          await load(true);
+        } catch {}
+      })();
+    }
+  }, [globalCocktails, id, ingMap, load]);
 
   const rows = useMemo(() => {
     if (!cocktail) return [];
