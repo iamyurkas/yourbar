@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -50,6 +56,7 @@ export default function MyIngredientsScreen() {
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [pendingUpdates, setPendingUpdates] = useState([]);
   const [availableMap, setAvailableMap] = useState(new Map());
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -149,19 +156,26 @@ export default function MyIngredientsScreen() {
   const toggleInBar = useCallback(
     (id) => {
       let updated;
+      let next;
       setIngredients((prev) => {
         const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inBar: !item.inBar };
-        const next = updateIngredientById(prev, updated);
-        const nextArr = Array.from(next.values());
-        const map = updateIngredientAvailability(id, nextArr);
-        setAvailableMap(new Map(map));
+        next = updateIngredientById(prev, updated);
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        setPendingUpdates((p) => [...p, updated]);
+        setTimeout(() => {
+          startTransition(() => {
+            const nextArr = Array.from(next.values());
+            const map = updateIngredientAvailability(id, nextArr);
+            setAvailableMap(new Map(map));
+          });
+        }, 0);
+      }
     },
-    [setIngredients]
+    [setIngredients, startTransition]
   );
 
   const onItemPress = useCallback(
