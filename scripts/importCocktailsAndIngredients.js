@@ -46,6 +46,17 @@ function resolvePhoto(path) {
   return null;
 }
 
+function toNumberId(value) {
+  if (value == null) return null;
+  const direct = Number(value);
+  if (!Number.isNaN(direct)) return direct;
+  const str = String(value);
+  const parts = str.split("-");
+  const last = parts[parts.length - 1];
+  const num = Number(last);
+  return Number.isNaN(num) ? null : num;
+}
+
 function sanitizeIngredients(raw) {
   return Array.isArray(raw)
     ? raw.map((it) => {
@@ -56,14 +67,14 @@ function sanitizeIngredients(raw) {
           ? it.searchTokens
           : searchName.split(WORD_SPLIT_RE).filter(Boolean);
         return {
-          id: Number(it?.id ?? 0),
+          id: toNumberId(it?.id) ?? 0,
           name,
           description: String(it?.description ?? "").trim(),
           photoUri: resolvePhoto(it?.photoUri || it?.image),
           tags: mapTags(it?.tags, ING_TAG_BY_ID),
           baseIngredientId:
             it?.baseIngredientId != null
-              ? Number(it.baseIngredientId)
+              ? toNumberId(it.baseIngredientId)
               : null,
           usageCount: Number(it?.usageCount ?? 0),
           singleCocktailName: it?.singleCocktailName ?? null,
@@ -80,7 +91,7 @@ function sanitizeCocktails(raw) {
   return Array.isArray(raw)
     ? raw.map((c) => ({
         ...c,
-        id: Number(c?.id ?? 0),
+        id: toNumberId(c?.id) ?? 0,
         rating: 0,
         photoUri: resolvePhoto(c?.photoUri || c?.image),
         tags: mapTags(c?.tags, COCKTAIL_TAG_BY_ID),
@@ -89,8 +100,14 @@ function sanitizeCocktails(raw) {
               ...ing,
               ingredientId:
                 ing?.ingredientId != null
-                  ? Number(ing.ingredientId)
+                  ? toNumberId(ing.ingredientId)
                   : null,
+              substitutes: Array.isArray(ing?.substitutes)
+                ? ing.substitutes.map((s) => ({
+                    ...s,
+                    id: toNumberId(s?.id),
+                  }))
+                : [],
             }))
           : [],
       }))
