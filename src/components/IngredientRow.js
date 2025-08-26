@@ -1,5 +1,13 @@
 import React, { memo, useMemo } from "react";
-import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { withAlpha } from "../utils/color";
@@ -28,6 +36,7 @@ function IngredientRow({
   onRemove,
   isNavigating,
   highlightColor,
+  saving,
 }) {
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
@@ -194,6 +203,13 @@ function IngredientRow({
             />
           </Pressable>
         ) : null}
+        {saving && (
+          <ActivityIndicator
+            size="small"
+            color={theme.colors.primary}
+            style={styles.saving}
+          />
+        )}
       </View>
     </View>
   );
@@ -246,4 +262,5 @@ const styles = StyleSheet.create({
   pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },
   removeButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
   pressedRemove: { opacity: 0.7, transform: [{ scale: 0.92 }] },
+  saving: { marginLeft: 4 },
 });

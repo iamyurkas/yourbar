@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
@@ -41,7 +41,7 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
+  const [savingIds, setSavingIds] = useState(new Set());
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -87,32 +87,28 @@ export default function MyIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      pendingUpdates.forEach((u) => saveIngredient(u).catch(() => {}));
-      setPendingUpdates([]);
-    }
-  }, [pendingUpdates]);
-
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending();
-    };
-  }, [flushPending]);
+  const saveWithRetry = useCallback((item) => {
+    setSavingIds((s) => new Set(s).add(item.id));
+    saveIngredient(item)
+      .then(() => {
+        setSavingIds((s) => {
+          const next = new Set(s);
+          next.delete(item.id);
+          return next;
+        });
+      })
+      .catch(() => {
+        setSavingIds((s) => {
+          const next = new Set(s);
+          next.delete(item.id);
+          return next;
+        });
+        Alert.alert("Save failed", "Could not save ingredient", [
+          { text: "Retry", onPress: () => saveWithRetry(item) },
+          { text: "Dismiss", style: "cancel" },
+        ]);
+      });
+  }, []);
 
   const availableMap = useMemo(() => {
     const ingMap = new Map(ingredients.map((i) => [String(i.id), i]));
@@ -199,9 +195,9 @@ export default function MyIngredientsScreen() {
         updated = { ...item, inBar: !item.inBar };
         return updateIngredientById(prev, updated);
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) saveWithRetry(updated);
     },
-    [setIngredients]
+    [setIngredients, saveWithRetry]
   );
 
   const onItemPress = useCallback(
@@ -231,10 +227,11 @@ export default function MyIngredientsScreen() {
           onPress={onItemPress}
           onToggleInBar={toggleInBar}
           isNavigating={navigatingId === item.id}
+          saving={savingIds.has(item.id)}
         />
       );
     },
-    [onItemPress, toggleInBar, navigatingId, availableMap]
+    [onItemPress, toggleInBar, navigatingId, availableMap, savingIds]
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);
