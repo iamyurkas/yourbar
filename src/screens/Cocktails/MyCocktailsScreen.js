@@ -13,11 +13,7 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../storage/cocktailsStorage";
-import {
-  getAllIngredients,
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { getAllIngredients, updateIngredientById, updateIngredientFields } from "../../storage/ingredientsStorage";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -54,7 +50,6 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
@@ -78,33 +73,6 @@ export default function MyCocktailsScreen() {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
-
-  const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
-    }
-  }, [pendingUpdates]);
-
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending();
-    };
-  }, [flushPending]);
 
   const firstLoad = useRef(true);
   useEffect(() => {
@@ -300,7 +268,7 @@ export default function MyCocktailsScreen() {
             inShoppingList: updated.inShoppingList,
           })
         );
-        setPendingUpdates((p) => [...p, updated]);
+        updateIngredientFields(id, { inShoppingList: updated.inShoppingList });
       }
     },
     [setGlobalIngredients, setIngredients]

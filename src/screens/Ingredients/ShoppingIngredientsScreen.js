@@ -11,10 +11,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { updateIngredientById, updateIngredientFields } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -35,7 +32,6 @@ export default function ShoppingIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "Shopping");
@@ -60,33 +56,6 @@ export default function ShoppingIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
-    }
-  }, [pendingUpdates]);
-
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending();
-    };
-  }, [flushPending]);
-
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
     let data = ingredients.filter((i) => i.inShoppingList);
@@ -109,7 +78,9 @@ export default function ShoppingIngredientsScreen() {
         updated = { ...item, inShoppingList: false };
         return updateIngredientById(prev, updated);
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        updateIngredientFields(id, { inShoppingList: false });
+      }
     },
     [setIngredients]
   );

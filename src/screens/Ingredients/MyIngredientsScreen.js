@@ -11,10 +11,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { updateIngredientById, updateIngredientFields } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -48,7 +45,6 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -95,33 +91,6 @@ export default function MyIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
-    }
-  }, [pendingUpdates]);
-
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending();
-    };
-  }, [flushPending]);
-
   useEffect(() => {
     const map = initIngredientsAvailability(
       ingredients,
@@ -159,7 +128,9 @@ export default function MyIngredientsScreen() {
         setAvailableMap(new Map(map));
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        updateIngredientFields(updated.id, { inBar: updated.inBar });
+      }
     },
     [setIngredients]
   );
