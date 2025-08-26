@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  useDeferredValue,
   useLayoutEffect,
 } from "react";
 import {
@@ -46,9 +45,9 @@ import IngredientBaseRow, {
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
 import { normalizeSearch } from "../../utils/normalizeSearch";
-import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
+import { WORD_SPLIT_RE } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
-import useDebounced from "../../hooks/useDebounced";
+import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
 import { withAlpha } from "../../utils/color";
 
 const IMAGE_SIZE = 150;
@@ -104,27 +103,15 @@ export default function AddIngredientScreen() {
     closeTagsModal,
   } = useIngredientTags();
 
-  // base ingredient link
-  const [baseIngredientId, setBaseIngredientId] = useState(null);
-  const selectedBase = useMemo(
-    () => baseIngredients.find((i) => i.id === baseIngredientId),
-    [baseIngredients, baseIngredientId]
-  );
-
-  // search in base menu
-  const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
-  const debouncedQuery = useDebounced(baseIngredientSearch, 250);
-  const deferredQuery = useDeferredValue(debouncedQuery);
-  const filteredBase = useMemo(() => {
-    const tokens = normalizeSearch(deferredQuery)
-      .split(WORD_SPLIT_RE)
-      .filter(Boolean);
-    if (tokens.length === 0) return baseIngredients;
-    return baseIngredients.filter((i) =>
-      wordPrefixMatch(i.searchTokens || [], tokens)
-    );
-    // Note: baseIngredients already sorted
-  }, [baseIngredients, deferredQuery]);
+  // base ingredient picker
+  const {
+    baseIngredientId,
+    setBaseIngredientId,
+    baseIngredientSearch,
+    setBaseIngredientSearch,
+    filteredBase,
+    selectedBase,
+  } = useBaseIngredientPicker(baseIngredients);
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);

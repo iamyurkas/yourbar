@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  useDeferredValue,
   useLayoutEffect,
 } from "react";
 import {
@@ -50,9 +49,9 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
-import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
+import { WORD_SPLIT_RE } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
-import useDebounced from "../../hooks/useDebounced";
+import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
 
 // ----------- helpers -----------
 const IMAGE_SIZE = 150;
@@ -96,16 +95,19 @@ export default function EditIngredientScreen() {
     closeTagsModal,
   } = useIngredientTags();
 
-  // base link
-  const [baseIngredientId, setBaseIngredientId] = useState(null);
+  // base ingredient picker
   const baseList = useMemo(
     () => baseIngredients.filter((i) => i.id !== currentId),
     [baseIngredients, currentId]
   );
-  const selectedBase = useMemo(
-    () => baseList.find((i) => i.id === baseIngredientId),
-    [baseList, baseIngredientId]
-  );
+  const {
+    baseIngredientId,
+    setBaseIngredientId,
+    baseIngredientSearch,
+    setBaseIngredientSearch,
+    filteredBase,
+    selectedBase,
+  } = useBaseIngredientPicker(baseList);
 
   // anchored menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -167,20 +169,6 @@ export default function EditIngredientScreen() {
     },
     [viewportH, kbHeight, contentH, scrollY]
   );
-
-  // search in base menu (debounced + deferred)
-  const [baseIngredientSearch, setBaseIngredientSearch] = useState("");
-  const debouncedQuery = useDebounced(baseIngredientSearch, 250);
-  const deferredQuery = useDeferredValue(debouncedQuery);
-  const filteredBase = useMemo(() => {
-    const tokens = normalizeSearch(deferredQuery)
-      .split(WORD_SPLIT_RE)
-      .filter(Boolean);
-    if (tokens.length === 0) return baseList;
-    return baseList.filter((i) =>
-      wordPrefixMatch(i.searchTokens || [], tokens)
-    );
-  }, [baseList, deferredQuery]);
 
   // --- dirty tracking (як в EditCocktailScreen) ---
   const [dirty, setDirty] = useState(false);
