@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useCallback,
   memo,
+  startTransition,
 } from "react";
 import {
   View,
@@ -388,32 +389,34 @@ export default function IngredientDetailsScreen() {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
-        id: updated.id,
-        inBar: updated.inBar,
-      });
+    startTransition(() => {
+      setIngredients((list) =>
+        updateIngredientById(list, {
+          id: updated.id,
+          inBar: updated.inBar,
+        })
+      );
+    });
+    InteractionManager.runAfterInteractions(() => {
       updateIngredientFields(updated.id, { inBar: updated.inBar });
-      return nextList;
     });
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
-    console.log("Shopping icon tapped");
     const updated = {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
-    console.log("Prepared updated ingredient", updated);
-    console.log("Updating ingredient state");
     setIngredient(updated);
-    setIngredients((list) =>
-      updateIngredientById(list, {
-        id: updated.id,
-        inShoppingList: updated.inShoppingList,
-      })
-    );
+    startTransition(() => {
+      setIngredients((list) =>
+        updateIngredientById(list, {
+          id: updated.id,
+          inShoppingList: updated.inShoppingList,
+        })
+      );
+    });
     InteractionManager.runAfterInteractions(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
