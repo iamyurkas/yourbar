@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useCallback,
   memo,
+  startTransition,
 } from "react";
 import {
   View,
@@ -408,12 +409,14 @@ export default function IngredientDetailsScreen() {
     console.log("Prepared updated ingredient", updated);
     console.log("Updating ingredient state");
     setIngredient(updated);
-    setIngredients((list) =>
-      updateIngredientById(list, {
-        id: updated.id,
-        inShoppingList: updated.inShoppingList,
-      })
-    );
+    startTransition(() => {
+      setIngredients((list) =>
+        updateIngredientById(list, {
+          id: updated.id,
+          inShoppingList: updated.inShoppingList,
+        })
+      );
+    });
     InteractionManager.runAfterInteractions(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
