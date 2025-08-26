@@ -1112,12 +1112,14 @@ export default function AddCocktailScreen() {
   ]);
 
   // base fields
-  const [name, setName] = useState("");
-  const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState(() => {
+  const defaultTags = useMemo(() => {
     const custom = BUILTIN_COCKTAIL_TAGS.find((t) => t.id === 11);
     return custom ? [custom] : [{ id: 11, name: "custom", color: TAG_COLORS[15] }];
-  });
+  }, []);
+
+  const [name, setName] = useState("");
+  const [photoUri, setPhotoUri] = useState(null);
+  const [tags, setTags] = useState(defaultTags);
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
   const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
@@ -1147,35 +1149,47 @@ export default function AddCocktailScreen() {
 
   const [glassId, setGlassId] = useState("cocktail_glass");
 
-  // ingredients list
-  const [ings, setIngs] = useState(() => {
-    const baseRow = {
-      localId: Date.now(),
-      name: "",
-      selectedId: null,
-      selectedItem: null,
-      quantity: "",
-      unitId: UNIT_ID.ML,
-      garnish: false,
-      optional: false,
-      allowBaseSubstitute: false,
-      allowBrandedSubstitutes: false,
-      substitutes: [],
-      pendingExactMatch: null,
-    };
-    if (initialIngredient) {
-      return [
-        {
-          ...baseRow,
-          name: initialIngredient.name || "",
-          selectedId: initialIngredient.id ?? null,
-          selectedItem: initialIngredient,
-          pendingExactMatch: null,
-        },
-      ];
-    }
-    return [baseRow];
+  const createBaseRow = (ing) => ({
+    localId: Date.now(),
+    name: ing?.name || "",
+    selectedId: ing?.id ?? null,
+    selectedItem: ing ?? null,
+    quantity: "",
+    unitId: UNIT_ID.ML,
+    garnish: false,
+    optional: false,
+    allowBaseSubstitute: false,
+    allowBrandedSubstitutes: false,
+    substitutes: [],
+    pendingExactMatch: null,
   });
+
+  // ingredients list
+  const [ings, setIngs] = useState(() =>
+    initialIngredient ? [createBaseRow(initialIngredient)] : [createBaseRow()]
+  );
+
+  const resetKey = route.params?.resetKey;
+  const prevResetKey = useRef(resetKey);
+  const resetForm = useCallback(
+    (ing) => {
+      setName("");
+      setPhotoUri(null);
+      setTags(defaultTags);
+      setDescription("");
+      setInstructions("");
+      setGlassId("cocktail_glass");
+      setIngs([createBaseRow(ing)]);
+    },
+    [defaultTags]
+  );
+
+  useEffect(() => {
+    if (resetKey != null && resetKey !== prevResetKey.current) {
+      resetForm(initialIngredient);
+      prevResetKey.current = resetKey;
+    }
+  }, [resetKey, initialIngredient, resetForm]);
 
   // ingredients for suggestions
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
