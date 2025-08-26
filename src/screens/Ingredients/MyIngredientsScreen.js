@@ -156,19 +156,24 @@ export default function MyIngredientsScreen() {
   const toggleInBar = useCallback(
     (id) => {
       let updated;
+      let next;
       setIngredients((prev) => {
         const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inBar: !item.inBar };
-        const next = updateIngredientById(prev, updated);
-        startTransition(() => {
-          const nextArr = Array.from(next.values());
-          const map = updateIngredientAvailability(id, nextArr);
-          setAvailableMap(new Map(map));
-        });
+        next = updateIngredientById(prev, updated);
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        setPendingUpdates((p) => [...p, updated]);
+        setTimeout(() => {
+          startTransition(() => {
+            const nextArr = Array.from(next.values());
+            const map = updateIngredientAvailability(id, nextArr);
+            setAvailableMap(new Map(map));
+          });
+        }, 0);
+      }
     },
     [setIngredients, startTransition]
   );
