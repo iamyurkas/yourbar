@@ -221,13 +221,25 @@ export default function CocktailDetailsScreen() {
   const handleRate = useCallback(
     async (value) => {
       if (!cocktail) return;
+      const prev = cocktail;
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
       setCocktail(updated);
-      const saved = await saveCocktail(updated);
-      setGlobalCocktails((prev) =>
-        Array.isArray(prev) ? updateCocktailById(prev, saved) : prev
+      setGlobalCocktails((prevList) =>
+        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
       );
+      try {
+        const saved = await saveCocktail(updated);
+        setCocktail(saved);
+        setGlobalCocktails((prevList) =>
+          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
+        );
+      } catch (e) {
+        setCocktail(prev);
+        setGlobalCocktails((prevList) =>
+          Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
+        );
+      }
     },
     [cocktail, setGlobalCocktails]
   );
