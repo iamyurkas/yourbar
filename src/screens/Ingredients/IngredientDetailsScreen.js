@@ -220,8 +220,10 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
+    if (pendingUpdate) return;
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
@@ -240,6 +242,7 @@ export default function IngredientDetailsScreen() {
     cocktailsCtx,
     ingredientsById,
     route.params?.initialIngredient,
+    pendingUpdate,
   ]);
 
   const handleGoBack = useCallback(() => {
@@ -383,18 +386,31 @@ export default function IngredientDetailsScreen() {
     return () => sub.remove();
   }, [load]);
 
+  useEffect(() => {
+    if (!pendingUpdate) return;
+    const current = ingredientsById.get(id);
+    if (current && current.inBar === pendingUpdate.inBar) {
+      saveIngredient(pendingUpdate).catch(() => {});
+      setPendingUpdate(null);
+    }
+  }, [pendingUpdate, ingredientsById, id]);
+
+  useEffect(() => {
+    return () => {
+      if (pendingUpdate) {
+        saveIngredient(pendingUpdate).catch(() => {});
+      }
+    };
+  }, [pendingUpdate]);
+
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
-        id: updated.id,
-        inBar: updated.inBar,
-      });
-      saveIngredient(updated);
-      return nextList;
-    });
+    setIngredients((list) =>
+      updateIngredientById(list, { id: updated.id, inBar: updated.inBar })
+    );
+    setPendingUpdate(updated);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
