@@ -11,6 +11,8 @@ import {
   addAllowSubstitutesListener,
 } from "../storage/settingsStorage";
 import { sortByName } from "../utils/sortByName";
+import { getAllTags } from "../storage/ingredientTagsStorage";
+import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
 const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
@@ -25,18 +27,22 @@ export default function useIngredientsData() {
     loading,
     setLoading,
     baseIngredients,
+    ingredientTags,
+    setIngredientTags,
+    ingredientsByTag,
   } = useContext(IngredientUsageContext);
 
   const load = useCallback(
     async (force = false) => {
       setLoading(true);
       try {
-        const [already, ingInitial, cocksInitial, allowSubs] =
+        const [already, ingInitial, cocksInitial, allowSubs, customTags] =
           await Promise.all([
             force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
             getAllIngredients(),
             getAllCocktails(),
             getAllowSubstitutes(),
+            getAllTags(),
           ]);
 
         let ing = ingInitial;
@@ -85,11 +91,31 @@ export default function useIngredientsData() {
         setIngredients(withUsage);
         setCocktails(cocks);
         setUsageMap(map);
+        const nextTags = [
+          ...BUILTIN_INGREDIENT_TAGS,
+          ...((customTags || [])),
+        ];
+        let changed =
+          ingredientTags.length !== nextTags.length ||
+          ingredientTags.some(
+            (t, idx) =>
+              t.id !== nextTags[idx].id ||
+              t.name !== nextTags[idx].name ||
+              t.color !== nextTags[idx].color
+          );
+        if (changed) setIngredientTags(nextTags);
       } finally {
         setLoading(false);
       }
     },
-    [setIngredients, setCocktails, setUsageMap, setLoading]
+    [
+      setIngredients,
+      setCocktails,
+      setUsageMap,
+      setLoading,
+      setIngredientTags,
+      ingredientTags,
+    ]
   );
 
   useEffect(() => {
@@ -114,6 +140,8 @@ export default function useIngredientsData() {
     baseIngredients,
     cocktails,
     usageMap,
+    ingredientTags,
+    ingredientsByTag,
     refresh,
     loading,
     setIngredients,
