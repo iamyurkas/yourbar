@@ -276,8 +276,8 @@ export default function CocktailDetailsScreen() {
   );
 
   const load = useCallback(
-    async (refresh = false) => {
-      setLoading(true);
+    async (refresh = false, showSpinner = true) => {
+      if (showSpinner) setLoading(true);
       const ingredientPromise =
         !refresh && globalIngredients.length
           ? Promise.resolve(globalIngredients)
@@ -290,13 +290,16 @@ export default function CocktailDetailsScreen() {
           getIgnoreGarnish(),
           getAllowSubstitutes(),
         ]);
-      setCocktail(loadedCocktail || null);
+      setCocktail((prev) => {
+        if (!loadedCocktail) return prev;
+        return prev ? { ...prev, ...loadedCocktail } : loadedCocktail;
+      });
       setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
       setIngList(allIngredients || []);
       setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     },
     [id, globalIngredients]
   );
@@ -377,7 +380,7 @@ export default function CocktailDetailsScreen() {
     if (missingIngredient) {
       (async () => {
         try {
-          await load(true);
+          await load(true, false);
         } catch {}
       })();
     }
