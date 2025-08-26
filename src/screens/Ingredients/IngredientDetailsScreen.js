@@ -384,39 +384,35 @@ export default function IngredientDetailsScreen() {
   }, [load]);
 
   const toggleInBar = useCallback(() => {
-    setIngredient((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, inBar: !prev.inBar };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        });
-        saveIngredient(updated);
-        return nextList;
+    if (!ingredient) return;
+    const updated = { ...ingredient, inBar: !ingredient.inBar };
+    setIngredient(updated);
+    setIngredients((list) => {
+      const nextList = updateIngredientById(list, {
+        id: updated.id,
+        inBar: updated.inBar,
       });
-      return updated;
+      saveIngredient(updated);
+      return nextList;
     });
-  }, [setIngredients]);
+  }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
-    setIngredient((prev) => {
-      if (!prev) return prev;
-      const updated = {
-        ...prev,
-        inShoppingList: !prev.inShoppingList,
-      };
-      setIngredients((list) => {
-        const nextList = updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        });
-        saveIngredient(updated);
-        return nextList;
+    if (!ingredient) return;
+    const updated = {
+      ...ingredient,
+      inShoppingList: !ingredient.inShoppingList,
+    };
+    setIngredient(updated);
+    setIngredients((list) => {
+      const nextList = updateIngredientById(list, {
+        id: updated.id,
+        inShoppingList: updated.inShoppingList,
       });
-      return updated;
+      saveIngredient(updated);
+      return nextList;
     });
-  }, [setIngredients]);
+  }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
     ({ base, brandeds }) => {
