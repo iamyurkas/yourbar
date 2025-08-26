@@ -405,15 +405,16 @@ export default function IngredientDetailsScreen() {
       inShoppingList: !ingredient.inShoppingList,
     };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
+      })
+    );
+    InteractionManager.runAfterInteractions(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-      return nextList;
     });
   }, [ingredient, setIngredients]);
 
