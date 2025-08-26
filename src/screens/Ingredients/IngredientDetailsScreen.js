@@ -679,7 +679,7 @@ export default function IngredientDetailsScreen() {
         onPress={() =>
           navigation.navigate("Cocktails", {
             screen: "AddCocktail",
-            params: { initialIngredient: ingredient },
+            params: { initialIngredient: ingredient, resetKey: Date.now() },
           })
         }
       >
