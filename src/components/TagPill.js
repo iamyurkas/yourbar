@@ -15,7 +15,9 @@ const TagPill = memo(function TagPill({
   const theme = useTheme();
   const effectiveRipple = rippleColor ?? withAlpha(theme.colors.primary, 0.1);
   const background = color || defaultColor || theme.colors.surfaceVariant;
-  const foreground = textColor || theme.colors.onPrimary;
+  const foreground =
+    textColor ||
+    (defaultColor ? theme.colors.onSecondary : theme.colors.onPrimary);
 
   return (
     <Pressable

@@ -1715,6 +1715,7 @@ export default function EditCocktailScreen() {
                 onToggle={toggleTagById}
                 rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
                 defaultColor={theme.colors.secondary}
+                textColor={theme.colors.onSecondary}
               />
             ))}
           </View>
@@ -1734,6 +1735,7 @@ export default function EditCocktailScreen() {
                   onToggle={toggleTagById}
                   rippleColor={withAlpha(theme.colors.tertiary, 0.25)}
                   defaultColor={theme.colors.secondary}
+                  textColor={theme.colors.onSecondary}
                 />
               ))}
             <Pressable
