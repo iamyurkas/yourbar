@@ -400,20 +400,24 @@ export default function IngredientDetailsScreen() {
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
+    console.log("Shopping icon tapped");
     const updated = {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
+    console.log("Prepared updated ingredient", updated);
+    console.log("Updating ingredient state");
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
+      })
+    );
+    InteractionManager.runAfterInteractions(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-      return nextList;
     });
   }, [ingredient, setIngredients]);
 
