@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  startTransition,
+} from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -159,7 +165,10 @@ export default function MyIngredientsScreen() {
         setAvailableMap(new Map(map));
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated)
+        startTransition(() =>
+          setPendingUpdates((p) => [...p, updated])
+        );
     },
     [setIngredients]
   );
