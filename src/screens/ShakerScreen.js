@@ -7,10 +7,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
-import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
-import { getAllTags } from "../storage/ingredientTagsStorage";
 import { normalizeSearch } from "../utils/normalizeSearch";
-import { sortByName } from "../utils/sortByName";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
@@ -22,8 +19,14 @@ import {
 export default function ShakerScreen({ navigation }) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { ingredients, cocktails, usageMap, loading } = useIngredientsData();
-  const [allTags, setAllTags] = useState([]);
+  const {
+    ingredients,
+    cocktails,
+    usageMap,
+    loading,
+    ingredientTags,
+    ingredientsByTag,
+  } = useIngredientsData();
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
@@ -31,33 +34,7 @@ export default function ShakerScreen({ navigation }) {
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const custom = await getAllTags();
-      if (!cancelled)
-        setAllTags([...BUILTIN_INGREDIENT_TAGS, ...(custom || [])]);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const grouped = useMemo(() => {
-    const map = new Map();
-    allTags.forEach((t) => map.set(t.id, []));
-    ingredients.forEach((ing) => {
-      if (Array.isArray(ing.tags)) {
-        ing.tags.forEach((tag) => {
-          if (map.has(tag.id)) map.get(tag.id).push(ing);
-        });
-      }
-    });
-    for (const arr of map.values()) {
-      arr.sort(sortByName);
-    }
-    return map;
-  }, [allTags, ingredients]);
+  const grouped = ingredientsByTag;
 
   const filteredGrouped = useMemo(() => {
     const q = normalizeSearch(search);
@@ -82,7 +59,7 @@ export default function ShakerScreen({ navigation }) {
 
   const listData = useMemo(() => {
     const arr = [];
-    allTags.forEach((tag) => {
+    ingredientTags.forEach((tag) => {
       const items = displayGrouped.get(tag.id) || [];
       if (items.length === 0) return;
       arr.push({ type: "TAG", tag });
@@ -97,7 +74,7 @@ export default function ShakerScreen({ navigation }) {
       }
     });
     return arr;
-  }, [allTags, displayGrouped, expanded]);
+  }, [ingredientTags, displayGrouped, expanded]);
 
   const toggleTag = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));

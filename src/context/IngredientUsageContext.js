@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
 import { sortByName } from "../utils/sortByName";
+import { groupIngredientsByTag } from "../utils/groupIngredientsByTag";
 
 const IngredientUsageContext = createContext({
   usageMap: {},
@@ -22,6 +23,9 @@ const IngredientUsageContext = createContext({
   loading: true,
   setLoading: () => {},
   baseIngredients: [],
+  ingredientTags: [],
+  setIngredientTags: () => {},
+  ingredientsByTag: new Map(),
 });
 
 export function IngredientUsageProvider({ children }) {
@@ -30,10 +34,16 @@ export function IngredientUsageProvider({ children }) {
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [baseIngredients, setBaseIngredients] = useState([]);
+  const [ingredientTags, setIngredientTags] = useState([]);
 
   const ingredients = useMemo(
     () => Array.from(ingredientsMap.values()),
     [ingredientsMap]
+  );
+
+  const ingredientsByTag = useMemo(
+    () => groupIngredientsByTag(ingredients, ingredientTags),
+    [ingredients, ingredientTags]
   );
 
   const setIngredients = useCallback((next) => {
@@ -92,6 +102,9 @@ export function IngredientUsageProvider({ children }) {
         loading,
         setLoading,
         baseIngredients,
+        ingredientTags,
+        setIngredientTags,
+        ingredientsByTag,
       }}
     >
       {children}
