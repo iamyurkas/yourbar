@@ -29,6 +29,7 @@ import {
   getAllIngredients,
   saveIngredient,
   updateIngredientById,
+  updateIngredientFields,
 } from "../../storage/ingredientsStorage";
 import db from "../../storage/sqlite";
 
@@ -392,7 +393,7 @@ export default function IngredientDetailsScreen() {
         id: updated.id,
         inBar: updated.inBar,
       });
-      saveIngredient(updated);
+      updateIngredientFields(updated.id, { inBar: updated.inBar });
       return nextList;
     });
   }, [ingredient, setIngredients]);
@@ -409,7 +410,9 @@ export default function IngredientDetailsScreen() {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
       });
-      saveIngredient(updated);
+      updateIngredientFields(updated.id, {
+        inShoppingList: updated.inShoppingList,
+      });
       return nextList;
     });
   }, [ingredient, setIngredients]);

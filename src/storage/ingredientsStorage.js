@@ -150,9 +150,65 @@ export async function addIngredient(ingredient) {
 
 export async function saveIngredient(updated) {
   if (!updated?.id) return;
-  const item = sanitizeIngredient(updated);
+  const name = String(updated.name ?? "").trim();
+  const searchName = normalizeSearch(name);
+  let item;
+  if (
+    updated.searchName === searchName &&
+    Array.isArray(updated.searchTokens)
+  ) {
+    item = {
+      id: Number(updated.id),
+      name,
+      description: updated.description ?? null,
+      tags: Array.isArray(updated.tags) ? updated.tags : [],
+      baseIngredientId: updated.baseIngredientId ?? null,
+      usageCount: Number(updated.usageCount ?? 0),
+      singleCocktailName: updated.singleCocktailName ?? null,
+      searchName,
+      searchTokens: updated.searchTokens,
+      photoUri: updated.photoUri ?? null,
+      inBar: !!updated.inBar,
+      inShoppingList: !!updated.inShoppingList,
+    };
+  } else {
+    item = sanitizeIngredient({ ...updated, name });
+  }
   await upsertIngredient(item);
   return item;
+}
+
+export async function updateIngredientFields(id, fields) {
+  if (!id || !fields || typeof fields !== "object") return;
+  const entries = Object.entries(fields);
+  if (!entries.length) return;
+
+  const converters = {
+    name: (v) => v ?? null,
+    description: (v) => v ?? null,
+    tags: (v) => (v ? JSON.stringify(v) : null),
+    baseIngredientId: (v) => v ?? null,
+    usageCount: (v) => Number(v ?? 0),
+    singleCocktailName: (v) => v ?? null,
+    searchName: (v) => v ?? null,
+    searchTokens: (v) => (v ? JSON.stringify(v) : null),
+    photoUri: (v) => v ?? null,
+    inBar: (v) => (v ? 1 : 0),
+    inShoppingList: (v) => (v ? 1 : 0),
+  };
+
+  const parts = [];
+  const params = [];
+  for (const [key, value] of entries) {
+    if (converters[key]) {
+      parts.push(`${key} = ?`);
+      params.push(converters[key](value));
+    }
+  }
+  if (!parts.length) return;
+  params.push(String(id));
+  const sql = `UPDATE ingredients SET ${parts.join(", ")} WHERE id = ?`;
+  await db.runAsync(sql, params);
 }
 
 export async function flushPendingIngredients(list) {
