@@ -383,18 +383,37 @@ export default function IngredientDetailsScreen() {
     return () => sub.remove();
   }, [load]);
 
+  const [pendingUpdate, setPendingUpdate] = useState(null);
+
+  const flushPending = useCallback(() => {
+    if (pendingUpdate) {
+      saveIngredient(pendingUpdate).catch(() => {});
+      setPendingUpdate(null);
+    }
+  }, [pendingUpdate]);
+
+  useEffect(() => {
+    if (!pendingUpdate) return;
+    const handle = setTimeout(() => {
+      flushPending();
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [pendingUpdate, flushPending]);
+
+  useEffect(() => {
+    return () => {
+      flushPending();
+    };
+  }, [flushPending]);
+
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
-        id: updated.id,
-        inBar: updated.inBar,
-      });
-      saveIngredient(updated);
-      return nextList;
-    });
+    setIngredients((list) =>
+      updateIngredientById(list, { id: updated.id, inBar: updated.inBar })
+    );
+    setPendingUpdate(updated);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
