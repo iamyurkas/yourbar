@@ -48,16 +48,92 @@ const sanitizeCocktail = (c) => {
 };
 
 async function readAll() {
-  const res = await query("SELECT data FROM cocktails");
-  const list = res.rows._array.map((r) => JSON.parse(r.data));
-  return list.sort(sortByName);
+  const res = await query(
+    `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
+  );
+  const cocktails = res.rows._array.map((r) => ({
+    id: r.id,
+    name: r.name,
+    photoUri: r.photoUri,
+    glassId: r.glassId,
+    rating: r.rating ?? 0,
+    tags: r.tags ? JSON.parse(r.tags) : [],
+    description: r.description ?? "",
+    instructions: r.instructions ?? "",
+    ingredients: [],
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+  }));
+  const map = new Map(cocktails.map((c) => [c.id, c]));
+  const ingRes = await query(
+    `SELECT cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+       FROM cocktail_ingredients ORDER BY cocktailId, orderNum`
+  );
+  for (const r of ingRes.rows._array) {
+    const c = map.get(r.cocktailId);
+    if (c) {
+      c.ingredients.push({
+        order: r.orderNum,
+        ingredientId: r.ingredientId,
+        name: r.name,
+        amount: r.amount,
+        unitId: r.unitId,
+        garnish: !!r.garnish,
+        optional: !!r.optional,
+        allowBaseSubstitution: !!r.allowBaseSubstitution,
+        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+        substitutes: r.substitutes ? JSON.parse(r.substitutes) : [],
+      });
+    }
+  }
+  return Array.from(map.values()).sort(sortByName);
 }
 
 async function upsertCocktail(item) {
-  await query(
-    "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
-    [item.id, JSON.stringify(item)]
-  );
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
+      `INSERT OR REPLACE INTO cocktails (
+        id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        item.id,
+        item.name,
+        item.photoUri ?? null,
+        item.glassId ?? null,
+        item.rating ?? 0,
+        item.tags ? JSON.stringify(item.tags) : null,
+        item.description ?? null,
+        item.instructions ?? null,
+        item.createdAt ?? null,
+        item.updatedAt ?? null,
+      ]
+    );
+    await db.runAsync(`DELETE FROM cocktail_ingredients WHERE cocktailId = ?`, [
+      item.id,
+    ]);
+    for (const ing of item.ingredients) {
+      await db.runAsync(
+        `INSERT INTO cocktail_ingredients (
+          cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+          allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          item.id,
+          ing.order,
+          ing.ingredientId ?? null,
+          ing.name ?? null,
+          ing.amount ?? null,
+          ing.unitId ?? null,
+          ing.garnish ? 1 : 0,
+          ing.optional ? 1 : 0,
+          ing.allowBaseSubstitution ? 1 : 0,
+          ing.allowBrandedSubstitutes ? 1 : 0,
+          ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+        ]
+      );
+    }
+  });
 }
 
 // --- API ---
@@ -68,9 +144,44 @@ export async function getAllCocktails() {
 
 /** Get single cocktail by id (number) */
 export async function getCocktailById(id) {
-  const res = await query("SELECT data FROM cocktails WHERE id = ?", [id]);
+  const res = await query(
+    `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails WHERE id = ?`,
+    [id]
+  );
   if (res.rows.length === 0) return null;
-  return JSON.parse(res.rows.item(0).data);
+  const row = res.rows.item(0);
+  const cocktail = {
+    id: row.id,
+    name: row.name,
+    photoUri: row.photoUri,
+    glassId: row.glassId,
+    rating: row.rating ?? 0,
+    tags: row.tags ? JSON.parse(row.tags) : [],
+    description: row.description ?? "",
+    instructions: row.instructions ?? "",
+    ingredients: [],
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
+  const ingRes = await query(
+    `SELECT orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+       FROM cocktail_ingredients WHERE cocktailId = ? ORDER BY orderNum`,
+    [id]
+  );
+  cocktail.ingredients = ingRes.rows._array.map((r) => ({
+    order: r.orderNum,
+    ingredientId: r.ingredientId,
+    name: r.name,
+    amount: r.amount,
+    unitId: r.unitId,
+    garnish: !!r.garnish,
+    optional: !!r.optional,
+    allowBaseSubstitution: !!r.allowBaseSubstitution,
+    allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+    substitutes: r.substitutes ? JSON.parse(r.substitutes) : [],
+  }));
+  return cocktail;
 }
 
 /** Add new cocktail, returns created cocktail */
@@ -97,7 +208,10 @@ export function updateCocktailById(list, updated) {
 
 /** Delete by id */
 export async function deleteCocktail(id) {
-  await query("DELETE FROM cocktails WHERE id = ?", [id]);
+  await db.withTransactionAsync(async () => {
+    await db.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", [id]);
+    await db.runAsync("DELETE FROM cocktails WHERE id = ?", [id]);
+  });
 }
 
 export function removeCocktail(list, id) {
@@ -110,12 +224,47 @@ export async function replaceAllCocktails(cocktails) {
     ? cocktails.map(sanitizeCocktail)
     : [];
   await db.withTransactionAsync(async () => {
+    await db.runAsync("DELETE FROM cocktail_ingredients");
     await db.runAsync("DELETE FROM cocktails");
     for (const item of normalized) {
       await db.runAsync(
-        "INSERT OR REPLACE INTO cocktails (id, data) VALUES (?, ?)",
-        [item.id, JSON.stringify(item)]
+        `INSERT OR REPLACE INTO cocktails (
+          id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          item.id,
+          item.name,
+          item.photoUri ?? null,
+          item.glassId ?? null,
+          item.rating ?? 0,
+          item.tags ? JSON.stringify(item.tags) : null,
+          item.description ?? null,
+          item.instructions ?? null,
+          item.createdAt ?? null,
+          item.updatedAt ?? null,
+        ]
       );
+      for (const ing of item.ingredients) {
+        await db.runAsync(
+          `INSERT INTO cocktail_ingredients (
+            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            item.id,
+            ing.order,
+            ing.ingredientId ?? null,
+            ing.name ?? null,
+            ing.amount ?? null,
+            ing.unitId ?? null,
+            ing.garnish ? 1 : 0,
+            ing.optional ? 1 : 0,
+            ing.allowBaseSubstitution ? 1 : 0,
+            ing.allowBrandedSubstitutes ? 1 : 0,
+            ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+          ]
+        );
+      }
     }
   });
   return normalized;

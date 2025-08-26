@@ -8,7 +8,34 @@ let initPromise;
 export function initDatabase() {
   if (!initPromise) {
     initPromise = db.execAsync(`
-      CREATE TABLE IF NOT EXISTS cocktails (id INTEGER PRIMARY KEY NOT NULL, data TEXT);
+      PRAGMA foreign_keys = ON;
+      CREATE TABLE IF NOT EXISTS cocktails (
+        id INTEGER PRIMARY KEY NOT NULL,
+        name TEXT,
+        photoUri TEXT,
+        glassId TEXT,
+        rating INTEGER,
+        tags TEXT,
+        description TEXT,
+        instructions TEXT,
+        createdAt INTEGER,
+        updatedAt INTEGER
+      );
+      CREATE TABLE IF NOT EXISTS cocktail_ingredients (
+        cocktailId INTEGER NOT NULL,
+        orderNum INTEGER,
+        ingredientId TEXT,
+        name TEXT,
+        amount TEXT,
+        unitId INTEGER,
+        garnish INTEGER,
+        optional INTEGER,
+        allowBaseSubstitution INTEGER,
+        allowBrandedSubstitutes INTEGER,
+        substitutes TEXT,
+        PRIMARY KEY (cocktailId, orderNum),
+        FOREIGN KEY (cocktailId) REFERENCES cocktails(id) ON DELETE CASCADE
+      );
       CREATE TABLE IF NOT EXISTS ingredients (
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT,
