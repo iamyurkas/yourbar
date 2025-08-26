@@ -38,6 +38,7 @@ import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
+import { runInBackground } from "../../utils/runInBackground";
 import { useTheme } from "react-native-paper";
 import {
   getIgnoreGarnish,
@@ -388,33 +389,35 @@ export default function IngredientDetailsScreen() {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
-        id: updated.id,
-        inBar: updated.inBar,
-      });
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
-      return nextList;
-    });
+    setIngredients((list) =>
+      updateIngredientById(list, { id: updated.id, inBar: updated.inBar })
+    );
+    runInBackground(() =>
+      updateIngredientFields(updated.id, { inBar: updated.inBar })
+    );
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
+    console.log("Shopping icon tapped");
     const updated = {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
+    console.log("Prepared updated ingredient", updated);
+    console.log("Updating ingredient state");
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
+      })
+    );
+    runInBackground(() =>
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
-      });
-      return nextList;
-    });
+      })
+    );
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
