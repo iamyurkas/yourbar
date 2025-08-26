@@ -38,7 +38,7 @@ function CocktailTabs({ route }) {
               let iconName;
               if (route.name === "All") iconName = "list";
               else if (route.name === "My") iconName = "check-circle";
-              else if (route.name === "Favorite") iconName = "star";
+              else if (route.name === "Favorites") iconName = "star";
               return <MaterialIcons name={iconName} size={size} color={color} />;
             },
             tabBarActiveTintColor: theme.colors.primary,
@@ -57,7 +57,7 @@ function CocktailTabs({ route }) {
       >
         <Tab.Screen name="All" component={AllCocktailsScreen} />
         <Tab.Screen name="My" component={MyCocktailsScreen} />
-        <Tab.Screen name="Favorite" component={FavoriteCocktailsScreen} />
+        <Tab.Screen name="Favorites" component={FavoriteCocktailsScreen} />
       </Tab.Navigator>
       <FAB
         icon="plus"
