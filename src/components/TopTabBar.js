@@ -6,7 +6,15 @@ export const TOP_TAB_BAR_HEIGHT = 48;
 export default function TopTabBar({ navigation, theme }) {
   const state = navigation.getState();
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.surface,
+          borderBottomColor: theme.colors.outline,
+        },
+      ]}
+    >
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
         const label = route.name;
@@ -18,7 +26,13 @@ export default function TopTabBar({ navigation, theme }) {
             key={route.key}
             onPress={() => navigation.navigate(route.name)}
             android_ripple={{ color: theme.colors.surfaceVariant }}
-            style={styles.tab}
+            style={[
+              styles.tab,
+              isFocused && {
+                borderBottomWidth: 2,
+                borderBottomColor: theme.colors.primary,
+              },
+            ]}
           >
             <Text style={{ color }}>{label}</Text>
           </Pressable>
@@ -36,6 +50,7 @@ const styles = StyleSheet.create({
     height: TOP_TAB_BAR_HEIGHT,
     elevation: 4,
     zIndex: 1,
+    borderBottomWidth: 1,
   },
   tab: {
     flex: 1,
