@@ -185,7 +185,7 @@ const IngredientRow = memo(function IngredientRow({
 
 export default function CocktailDetailsScreen() {
   const navigation = useNavigation();
-  const { id, backToIngredientId } = useRoute().params;
+  const { id, backToIngredientId, initialCocktail } = useRoute().params;
   const theme = useTheme();
   const {
     ingredients: globalIngredients = [],
@@ -193,10 +193,10 @@ export default function CocktailDetailsScreen() {
     setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
-  const [cocktail, setCocktail] = useState(null);
+  const [cocktail, setCocktail] = useState(initialCocktail || null);
   const [ingMap, setIngMap] = useState(new Map());
   const [ingList, setIngList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialCocktail);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
@@ -308,10 +308,10 @@ export default function CocktailDetailsScreen() {
     useCallback(() => {
       (async () => {
         try {
-          await load();
+          await load(false, !initialCocktail);
         } catch {}
       })();
-    }, [load])
+    }, [load, initialCocktail])
   );
 
   useFocusEffect(

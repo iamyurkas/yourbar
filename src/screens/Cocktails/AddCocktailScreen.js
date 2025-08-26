@@ -55,7 +55,7 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import { addCocktail } from "../../storage/cocktailsStorage";
+import { addCocktail, updateCocktailById } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -606,33 +606,40 @@ export default function AddCocktailScreen() {
       })),
       createdAt: Date.now(),
     };
+    setCocktails((prev) => [...prev, cocktail]);
 
     if (fromIngredientFlow) {
       navigation.replace("CocktailDetails", {
         id: cocktail.id,
         backToIngredientId: initialIngredient?.id,
+        initialCocktail: cocktail,
       });
     } else {
-      navigation.replace("CocktailDetails", { id: cocktail.id });
+      navigation.replace("CocktailDetails", {
+        id: cocktail.id,
+        initialCocktail: cocktail,
+      });
     }
 
     InteractionManager.runAfterInteractions(async () => {
       const created = await addCocktail(cocktail);
-      const nextCocktails = [...cocktails, created];
-      setCocktails(nextCocktails);
       const allowSubs = await getAllowSubstitutes();
-      const nextUsage = addCocktailToUsageMap(
-        usageMap,
-        globalIngredients,
-        created,
-        {
-          allowSubstitutes: !!allowSubs,
-        }
-      );
-      setUsageMap(nextUsage);
-      setIngredients(
-        applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
-      );
+      setCocktails((prev) => {
+        const next = updateCocktailById(prev, created);
+        const nextUsage = addCocktailToUsageMap(
+          usageMap,
+          globalIngredients,
+          created,
+          {
+            allowSubstitutes: !!allowSubs,
+          }
+        );
+        setUsageMap(nextUsage);
+        setIngredients(
+          applyUsageMapToIngredients(globalIngredients, nextUsage, next)
+        );
+        return next;
+      });
     });
   }, [
     name,
@@ -642,7 +649,6 @@ export default function AddCocktailScreen() {
     instructions,
     glassId,
     ings,
-    cocktails,
     usageMap,
     globalIngredients,
     setCocktails,
