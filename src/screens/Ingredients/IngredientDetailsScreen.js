@@ -386,26 +386,22 @@ export default function IngredientDetailsScreen() {
     return () => sub.remove();
   }, [load]);
 
-  const flushPending = useCallback(() => {
-    if (pendingUpdate) {
+  useEffect(() => {
+    if (!pendingUpdate) return;
+    const current = ingredientsById.get(id);
+    if (current && current.inBar === pendingUpdate.inBar) {
       saveIngredient(pendingUpdate).catch(() => {});
       setPendingUpdate(null);
     }
-  }, [pendingUpdate]);
-
-  useEffect(() => {
-    if (!pendingUpdate) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdate, flushPending]);
+  }, [pendingUpdate, ingredientsById, id]);
 
   useEffect(() => {
     return () => {
-      flushPending();
+      if (pendingUpdate) {
+        saveIngredient(pendingUpdate).catch(() => {});
+      }
     };
-  }, [flushPending]);
+  }, [pendingUpdate]);
 
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
