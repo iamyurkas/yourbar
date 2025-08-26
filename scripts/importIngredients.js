@@ -37,15 +37,27 @@ function resolvePhoto(path) {
   return null;
 }
 
+function toNumberId(value) {
+  if (value == null) return null;
+  const direct = Number(value);
+  if (!Number.isNaN(direct)) return direct;
+  const str = String(value);
+  const parts = str.split("-");
+  const last = parts[parts.length - 1];
+  const num = Number(last);
+  return Number.isNaN(num) ? null : num;
+}
+
 function normalize(raw) {
   const now = Date.now();
   return raw.map((it, idx) => ({
-    id: `${now}-${idx}`, // стабільний id у межах імпорту
+    id: now + idx, // стабільний числовий id у межах імпорту
     name: String(it?.name ?? "").trim(),
     description: String(it?.description ?? "").trim(), // дефолт
     photoUri: resolvePhoto(it?.photoUri || it?.image),
     tags: toTagObjects(it?.tags), // масив ОБ'ЄКТІВ тегів
-    baseIngredientId: null, // дефолт
+    baseIngredientId:
+      it?.baseIngredientId != null ? toNumberId(it.baseIngredientId) : null,
   }));
 }
 
