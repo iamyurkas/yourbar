@@ -14,6 +14,8 @@ export const AppTheme = {
 
     secondaryContainer: "#E9F7DF",
 
+    inversePrimary: "#E9F7DF",
+
     background: "#FFFFFF",
     surface: "#F8F9FA",
     outline: "#E5EAF0",
