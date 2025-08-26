@@ -220,8 +220,10 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
+    if (pendingUpdate) return;
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
@@ -240,6 +242,7 @@ export default function IngredientDetailsScreen() {
     cocktailsCtx,
     ingredientsById,
     route.params?.initialIngredient,
+    pendingUpdate,
   ]);
 
   const handleGoBack = useCallback(() => {
@@ -382,8 +385,6 @@ export default function IngredientDetailsScreen() {
     const sub = addAllowSubstitutesListener(() => load());
     return () => sub.remove();
   }, [load]);
-
-  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   const flushPending = useCallback(() => {
     if (pendingUpdate) {
