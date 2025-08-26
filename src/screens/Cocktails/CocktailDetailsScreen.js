@@ -298,7 +298,8 @@ export default function CocktailDetailsScreen() {
       ]);
       setCocktail((prev) => {
         if (!loadedCocktail) return prev;
-        return prev ? { ...prev, ...loadedCocktail } : loadedCocktail;
+        if (!prev) return loadedCocktail;
+        return { ...loadedCocktail, rating: prev.rating };
       });
       const ingredientIds = Array.from(
         new Set(
