@@ -1,4 +1,5 @@
 import { useCallback, useContext, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllIngredients } from "../storage/ingredientsStorage";
 import { getAllCocktails } from "../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
@@ -10,6 +11,8 @@ import {
   addAllowSubstitutesListener,
 } from "../storage/settingsStorage";
 import { sortByName } from "../utils/sortByName";
+
+const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
 export default function useIngredientsData() {
   const {
@@ -24,21 +27,32 @@ export default function useIngredientsData() {
     baseIngredients,
   } = useContext(IngredientUsageContext);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    // Lazy-load heavy default data only when needed
-    console.log(
-      "Importing default data… This one-time operation may take a moment"
-    );
-    const { importCocktailsAndIngredients } = await import(
-      "../../scripts/importCocktailsAndIngredients"
-    );
-    await importCocktailsAndIngredients({ force: false });
-    const [ing, cocks, allowSubs] = await Promise.all([
-      getAllIngredients(),
-      getAllCocktails(),
-      getAllowSubstitutes(),
-    ]);
+  const load = useCallback(
+    async (force = false) => {
+      setLoading(true);
+      let needImport = force;
+      if (!force) {
+        try {
+          const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
+          if (already !== "true") needImport = true;
+        } catch {
+          needImport = true;
+        }
+      }
+      if (needImport) {
+        console.log(
+          "Importing default data… This one-time operation may take a moment"
+        );
+        const { importCocktailsAndIngredients } = await import(
+          "../../scripts/importCocktailsAndIngredients"
+        );
+        await importCocktailsAndIngredients({ force });
+      }
+      const [ing, cocks, allowSubs] = await Promise.all([
+        getAllIngredients(),
+        getAllCocktails(),
+        getAllowSubstitutes(),
+      ]);
     const sorted = [...ing].sort(sortByName);
     const map = mapCocktailsByIngredient(sorted, cocks, {
       allowSubstitutes: !!allowSubs,
@@ -63,7 +77,9 @@ export default function useIngredientsData() {
     setCocktails(cocks);
     setUsageMap(map);
     setLoading(false);
-  }, [setIngredients, setCocktails, setUsageMap, setLoading]);
+    },
+    [setIngredients, setCocktails, setUsageMap, setLoading]
+  );
 
   useEffect(() => {
     if (loading) {
@@ -79,7 +95,7 @@ export default function useIngredientsData() {
   }, [load]);
 
   const refresh = useCallback(async () => {
-    await load();
+    await load(true);
   }, [load]);
 
   return {
