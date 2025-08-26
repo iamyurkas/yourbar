@@ -127,8 +127,8 @@ export default function MyIngredientsScreen() {
         return next;
       });
       if (updated && next) {
-        updateIngredientFields(updated.id, { inBar: updated.inBar });
         setTimeout(() => {
+          updateIngredientFields(updated.id, { inBar: updated.inBar });
           const nextArr = Array.from(next.values());
           const map = updateIngredientAvailability(updated.id, nextArr);
           setAvailableMap(new Map(map));

@@ -391,7 +391,10 @@ export default function IngredientDetailsScreen() {
     setIngredients((list) =>
       updateIngredientById(list, { id: updated.id, inBar: updated.inBar })
     );
-    updateIngredientFields(updated.id, { inBar: updated.inBar });
+    setTimeout(
+      () => updateIngredientFields(updated.id, { inBar: updated.inBar }),
+      0
+    );
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
@@ -401,16 +404,17 @@ export default function IngredientDetailsScreen() {
       inShoppingList: !ingredient.inShoppingList,
     };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
+      })
+    );
+    setTimeout(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-      return nextList;
-    });
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(

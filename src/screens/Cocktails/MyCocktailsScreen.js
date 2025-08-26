@@ -268,7 +268,11 @@ export default function MyCocktailsScreen() {
             inShoppingList: updated.inShoppingList,
           })
         );
-        updateIngredientFields(id, { inShoppingList: updated.inShoppingList });
+        setTimeout(
+          () =>
+            updateIngredientFields(id, { inShoppingList: updated.inShoppingList }),
+          0
+        );
       }
     },
     [setGlobalIngredients, setIngredients]

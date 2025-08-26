@@ -79,7 +79,7 @@ export default function ShoppingIngredientsScreen() {
         return updateIngredientById(prev, updated);
       });
       if (updated) {
-        updateIngredientFields(id, { inShoppingList: false });
+        setTimeout(() => updateIngredientFields(id, { inShoppingList: false }), 0);
       }
     },
     [setIngredients]

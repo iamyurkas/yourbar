@@ -79,7 +79,10 @@ export default function AllIngredientsScreen() {
         return updateIngredientById(prev, updated);
       });
       if (updated) {
-        updateIngredientFields(updated.id, { inBar: updated.inBar });
+        setTimeout(
+          () => updateIngredientFields(updated.id, { inBar: updated.inBar }),
+          0
+        );
       }
     },
     [setIngredients]
