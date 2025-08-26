@@ -31,7 +31,7 @@ import {
   saveCocktail,
   updateCocktailById,
 } from "../../storage/cocktailsStorage";
-import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { getIngredientsByIds } from "../../storage/ingredientsStorage";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
@@ -278,30 +278,50 @@ export default function CocktailDetailsScreen() {
   const load = useCallback(
     async (refresh = false, showSpinner = true) => {
       if (showSpinner) setLoading(true);
-      const ingredientPromise =
-        !refresh && globalIngredients.length
-          ? Promise.resolve(globalIngredients)
-          : getAllIngredients();
-      const [loadedCocktail, allIngredients, useMetric, ig, allowSubs] =
-        await Promise.all([
-          getCocktailById(id),
-          ingredientPromise,
-          getUseMetric(),
-          getIgnoreGarnish(),
-          getAllowSubstitutes(),
-        ]);
+      const [loadedCocktail, useMetric, ig, allowSubs] = await Promise.all([
+        getCocktailById(id),
+        getUseMetric(),
+        getIgnoreGarnish(),
+        getAllowSubstitutes(),
+      ]);
       setCocktail((prev) => {
         if (!loadedCocktail) return prev;
         return prev ? { ...prev, ...loadedCocktail } : loadedCocktail;
       });
-      setIngMap(new Map((allIngredients || []).map((i) => [i.id, i])));
-      setIngList(allIngredients || []);
+      const ingredientIds = Array.from(
+        new Set(
+          (loadedCocktail?.ingredients || [])
+            .map((r) => r.ingredientId)
+            .filter(Boolean)
+        )
+      );
+      let allIngredients = [];
+      if (ingredientIds.length) {
+        allIngredients = await getIngredientsByIds(ingredientIds);
+        if (allowSubs) {
+          const baseIds = Array.from(
+            new Set(
+              allIngredients
+                .map((i) => i.baseIngredientId)
+                .filter(
+                  (bid) => bid != null && !ingredientIds.includes(bid)
+                )
+            )
+          );
+          if (baseIds.length) {
+            const baseIngredients = await getIngredientsByIds(baseIds);
+            allIngredients = allIngredients.concat(baseIngredients);
+          }
+        }
+      }
+      setIngMap(new Map(allIngredients.map((i) => [i.id, i])));
+      setIngList(allIngredients);
       setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
       if (showSpinner) setLoading(false);
     },
-    [id, globalIngredients]
+    [id]
   );
 
   useFocusEffect(
