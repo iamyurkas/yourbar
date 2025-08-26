@@ -345,6 +345,26 @@ export default function CocktailDetailsScreen() {
     return () => sub.remove();
   }, []);
 
+  // After saving a new cocktail, the details screen may mount before
+  // ingredients are written to SQLite. Once the global cocktail list
+  // receives the freshly saved item (with ingredient rows), merge it
+  // into local state so new ingredient elements appear without
+  // reloading the entire screen.
+  useEffect(() => {
+    const updated = globalCocktails.find((c) => c.id === id);
+    if (!updated) return;
+    setCocktail((prev) => {
+      if (!prev) return updated;
+      if (
+        prev.updatedAt >= updated.updatedAt &&
+        (prev.ingredients?.length || 0) >= (updated.ingredients?.length || 0)
+      ) {
+        return prev;
+      }
+      return { ...prev, ...updated };
+    });
+  }, [globalCocktails, id]);
+
   const rows = useMemo(() => {
     if (!cocktail) return [];
     const list = Array.isArray(cocktail.ingredients)
