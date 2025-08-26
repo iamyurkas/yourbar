@@ -11,10 +11,7 @@ import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { updateIngredientById, updateIngredientFields } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -48,7 +45,6 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -95,33 +91,6 @@ export default function MyIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
-    }
-  }, [pendingUpdates]);
-
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
-      flushPending();
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending();
-    };
-  }, [flushPending]);
-
   useEffect(() => {
     const map = initIngredientsAvailability(
       ingredients,
@@ -149,17 +118,22 @@ export default function MyIngredientsScreen() {
   const toggleInBar = useCallback(
     (id) => {
       let updated;
+      let next;
       setIngredients((prev) => {
         const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inBar: !item.inBar };
-        const next = updateIngredientById(prev, updated);
-        const nextArr = Array.from(next.values());
-        const map = updateIngredientAvailability(id, nextArr);
-        setAvailableMap(new Map(map));
+        next = updateIngredientById(prev, updated);
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated && next) {
+        setTimeout(() => {
+          updateIngredientFields(updated.id, { inBar: updated.inBar });
+          const nextArr = Array.from(next.values());
+          const map = updateIngredientAvailability(updated.id, nextArr);
+          setAvailableMap(new Map(map));
+        }, 0);
+      }
     },
     [setIngredients]
   );

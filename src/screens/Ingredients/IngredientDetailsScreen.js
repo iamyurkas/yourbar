@@ -388,14 +388,15 @@ export default function IngredientDetailsScreen() {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inBar: updated.inBar,
-      });
+      })
+    );
+    setTimeout(() => {
       updateIngredientFields(updated.id, { inBar: updated.inBar });
-      return nextList;
-    });
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
@@ -405,16 +406,17 @@ export default function IngredientDetailsScreen() {
       inShoppingList: !ingredient.inShoppingList,
     };
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
         id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
+      })
+    );
+    setTimeout(() => {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-      return nextList;
-    });
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
@@ -546,10 +548,19 @@ export default function IngredientDetailsScreen() {
       )}
 
       <View style={styles.iconRow}>
-        <TouchableOpacity
-          onPress={toggleInShoppingList}
-          style={styles.iconButton}
-        >
+        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
+          <MaterialIcons
+            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
+            size={24}
+            color={
+              ingredient.inBar
+                ? theme.colors.primary
+                : theme.colors.onSurfaceVariant
+            }
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={toggleInShoppingList} style={styles.iconButton}>
           <MaterialIcons
             name={
               ingredient.inShoppingList ? "shopping-cart" : "add-shopping-cart"
@@ -557,18 +568,6 @@ export default function IngredientDetailsScreen() {
             size={24}
             color={
               ingredient.inShoppingList
-                ? theme.colors.primary
-                : theme.colors.onSurfaceVariant
-            }
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
-          <MaterialIcons
-            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
-            size={24}
-            color={
-              ingredient.inBar
                 ? theme.colors.primary
                 : theme.colors.onSurfaceVariant
             }
