@@ -312,7 +312,7 @@ export default function MyCocktailsScreen() {
             baseIngredientId={ing.baseIngredientId}
             onPress={handleIngredientPress}
             onToggleShoppingList={toggleShoppingList}
-            highlightColor={theme.colors.secondaryContainer}
+            highlightColor={theme.colors.inversePrimary}
           />
         );
       }
@@ -330,7 +330,7 @@ export default function MyCocktailsScreen() {
       handleIngredientPress,
       toggleShoppingList,
       theme.colors.onSurfaceVariant,
-      theme.colors.secondaryContainer,
+      theme.colors.inversePrimary,
     ]
   );
 
