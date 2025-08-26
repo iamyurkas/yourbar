@@ -306,6 +306,7 @@ export default function ShakerScreen({ navigation }) {
         data={listData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        extraData={selectedIds}
         estimatedItemSize={INGREDIENT_ROW_HEIGHT}
         keyboardShouldPersistTaps="handled"
         getItemType={(item) => item.type}
