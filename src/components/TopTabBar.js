@@ -29,8 +29,9 @@ export default function TopTabBar({ navigation, theme }) {
             style={[
               styles.tab,
               isFocused && {
-                borderBottomWidth: 2,
+                borderBottomWidth: 3,
                 borderBottomColor: theme.colors.primary,
+                paddingBottom: 12,
               },
             ]}
           >
@@ -50,13 +51,14 @@ const styles = StyleSheet.create({
     height: TOP_TAB_BAR_HEIGHT,
     elevation: 4,
     zIndex: 1,
-    borderBottomWidth: 1,
+    // remove bottom divider so active underline sits at the very bottom
+    borderBottomWidth: 0,
   },
   tab: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
 });
 
