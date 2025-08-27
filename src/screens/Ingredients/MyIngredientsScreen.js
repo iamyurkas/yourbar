@@ -48,7 +48,9 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
+  // Buffer DB writes in refs to avoid re-renders on every toggle
+  const pendingUpdatesRef = React.useRef([]);
+  const flushTimerRef = React.useRef(null);
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -96,28 +98,30 @@ export default function MyIngredientsScreen() {
   }, [search]);
 
   const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
+    const list = pendingUpdatesRef.current;
+    if (list && list.length) {
+      pendingUpdatesRef.current = [];
+      flushPendingIngredients(list).catch(() => {});
     }
-  }, [pendingUpdates]);
+  }, []);
 
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
       flushPending();
     }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
+  }, [flushPending]);
+
+  // No dependency-based effect needed: scheduling handled via refs
 
   useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
+    if (!isFocused) flushPending();
   }, [isFocused, flushPending]);
 
   useEffect(() => {
     return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
       flushPending();
     };
   }, [flushPending]);
@@ -149,19 +153,28 @@ export default function MyIngredientsScreen() {
   const toggleInBar = useCallback(
     (id) => {
       let updated;
+      let nextSnapshot = null;
       setIngredients((prev) => {
         const item = prev.get(id);
         if (!item) return prev;
         updated = { ...item, inBar: !item.inBar };
         const next = updateIngredientById(prev, updated);
-        const nextArr = Array.from(next.values());
-        const map = updateIngredientAvailability(id, nextArr);
-        setAvailableMap(new Map(map));
+        nextSnapshot = next;
         return next;
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        // Defer availability recompute to after interactions to keep UI snappy
+        requestAnimationFrame(() => {
+          // Use the snapshot captured from the state update
+          const arr = nextSnapshot ? Array.from(nextSnapshot.values()) : ingredients;
+          const map = updateIngredientAvailability(id, arr);
+          setAvailableMap(new Map(map));
+        });
+        pendingUpdatesRef.current.push(updated);
+        scheduleFlush();
+      }
     },
-    [setIngredients]
+    [setIngredients, scheduleFlush, ingredients]
   );
 
   const onItemPress = useCallback(

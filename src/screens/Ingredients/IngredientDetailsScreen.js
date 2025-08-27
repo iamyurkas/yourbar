@@ -387,37 +387,43 @@ export default function IngredientDetailsScreen() {
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
+    // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    setIngredients((list) => {
-      const nextList = updateIngredientById(list, {
-        id: updated.id,
-        inBar: updated.inBar,
-      });
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
-      return nextList;
+    // Defer heavier global updates and DB write until after interactions
+    InteractionManager.runAfterInteractions(() => {
+      setTimeout(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inBar: updated.inBar,
+          })
+        );
+        updateIngredientFields(updated.id, { inBar: updated.inBar });
+      }, 0);
     });
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
-    console.log("Shopping icon tapped");
     const updated = {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
-    console.log("Prepared updated ingredient", updated);
-    console.log("Updating ingredient state");
+    // Optimistic local update for instant icon change
     setIngredient(updated);
-    setIngredients((list) =>
-      updateIngredientById(list, {
-        id: updated.id,
-        inShoppingList: updated.inShoppingList,
-      })
-    );
+    // Defer global list update and DB write after interactions
     InteractionManager.runAfterInteractions(() => {
-      updateIngredientFields(updated.id, {
-        inShoppingList: updated.inShoppingList,
-      });
+      setTimeout(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inShoppingList: updated.inShoppingList,
+          })
+        );
+        updateIngredientFields(updated.id, {
+          inShoppingList: updated.inShoppingList,
+        });
+      }, 0);
     });
   }, [ingredient, setIngredients]);
 

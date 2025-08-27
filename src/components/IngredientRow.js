@@ -1,5 +1,5 @@
-import React, { memo, useMemo } from "react";
-import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
+import React, { memo, useEffect, useMemo, useState } from "react";
+import { View, Text, Image, Pressable, StyleSheet, Platform, InteractionManager } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { withAlpha } from "../utils/color";
@@ -32,6 +32,21 @@ function IngredientRow({
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
 
+  // Optimistic local state: reflect checkbox immediately, then run heavy updates
+  const [optimisticInBar, setOptimisticInBar] = useState(null);
+  const currentInBar = optimisticInBar != null ? optimisticInBar : inBar;
+  const [optimisticInShopping, setOptimisticInShopping] = useState(null);
+  const currentInShopping =
+    optimisticInShopping != null ? optimisticInShopping : inShoppingList;
+
+  // When parent prop changes (after DB/compute), clear the optimistic override
+  useEffect(() => {
+    setOptimisticInBar(null);
+  }, [inBar]);
+  useEffect(() => {
+    setOptimisticInShopping(null);
+  }, [inShoppingList]);
+
   const ripple = useMemo(
     () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
     [theme.colors.tertiary]
@@ -40,9 +55,9 @@ function IngredientRow({
   return (
     <View
       style={[
-        inBar ? styles.highlightWrapper : styles.normalWrapper,
+        currentInBar ? styles.highlightWrapper : styles.normalWrapper,
         { borderBottomColor: theme.colors.background },
-        inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        currentInBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
         highlightColor && { backgroundColor: highlightColor },
       ]}
     >
@@ -53,7 +68,7 @@ function IngredientRow({
             ...styles.brandedStripe,
             borderLeftColor: theme.colors.primary,
           },
-          !inBar && !highlightColor && styles.dimmed,
+          !currentInBar && !highlightColor && styles.dimmed,
           isNavigating && {
             ...styles.navigatingRow,
             backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
@@ -165,29 +180,42 @@ function IngredientRow({
           </Pressable>
         ) : onToggleInBar ? (
           <Pressable
-            onPress={() => onToggleInBar(id)}
+            onPress={() => {
+              // Update UI immediately
+              setOptimisticInBar(!currentInBar);
+              // Defer heavy computations until after the current frame/interactions
+              InteractionManager.runAfterInteractions(() => {
+                // Small timeout to ensure the frame commits before work
+                setTimeout(() => onToggleInBar(id), 0);
+              });
+            }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
           >
             <MaterialIcons
-              name={inBar ? "check-circle" : "radio-button-unchecked"}
+              name={currentInBar ? "check-circle" : "radio-button-unchecked"}
               size={22}
-              color={inBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
+              color={currentInBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
             />
           </Pressable>
         ) : onToggleShoppingList ? (
           <Pressable
-            onPress={() => onToggleShoppingList(id)}
+            onPress={() => {
+              setOptimisticInShopping(!currentInShopping);
+              InteractionManager.runAfterInteractions(() => {
+                setTimeout(() => onToggleShoppingList(id), 0);
+              });
+            }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
           >
             <MaterialIcons
-              name={inShoppingList ? "shopping-cart" : "add-shopping-cart"}
+              name={currentInShopping ? "shopping-cart" : "add-shopping-cart"}
               size={22}
               color={
-                inShoppingList
+                currentInShopping
                   ? theme.colors.primary
                   : theme.colors.onSurfaceVariant
               }

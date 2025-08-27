@@ -35,7 +35,9 @@ export default function ShoppingIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
+  // Buffer DB writes to avoid extra renders
+  const pendingUpdatesRef = React.useRef([]);
+  const flushTimerRef = React.useRef(null);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "Shopping");
@@ -61,19 +63,22 @@ export default function ShoppingIngredientsScreen() {
   }, [search]);
 
   const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
+    const list = pendingUpdatesRef.current;
+    if (list && list.length) {
+      pendingUpdatesRef.current = [];
+      flushPendingIngredients(list).catch(() => {});
     }
-  }, [pendingUpdates]);
+  }, []);
 
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
       flushPending();
     }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
+  }, [flushPending]);
+
+  // scheduling handled via refs
 
   useEffect(() => {
     if (!isFocused) {
@@ -83,6 +88,7 @@ export default function ShoppingIngredientsScreen() {
 
   useEffect(() => {
     return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
       flushPending();
     };
   }, [flushPending]);
@@ -109,9 +115,12 @@ export default function ShoppingIngredientsScreen() {
         updated = { ...item, inShoppingList: false };
         return updateIngredientById(prev, updated);
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        pendingUpdatesRef.current.push(updated);
+        scheduleFlush();
+      }
     },
-    [setIngredients]
+    [setIngredients, scheduleFlush]
   );
 
   const onItemPress = useCallback(

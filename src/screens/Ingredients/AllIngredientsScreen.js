@@ -35,7 +35,9 @@ export default function AllIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
+  // Use refs to buffer DB writes without triggering re-renders on each toggle
+  const pendingUpdatesRef = React.useRef([]);
+  const flushTimerRef = React.useRef(null);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
@@ -61,28 +63,30 @@ export default function AllIngredientsScreen() {
   }, [search]);
 
   const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
+    const list = pendingUpdatesRef.current;
+    if (list && list.length) {
+      pendingUpdatesRef.current = [];
+      flushPendingIngredients(list).catch(() => {});
     }
-  }, [pendingUpdates]);
+  }, []);
 
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
       flushPending();
     }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
+  }, [flushPending]);
+
+  // No dependency-based effect needed: scheduling is handled via refs
 
   useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
+    if (!isFocused) flushPending();
   }, [isFocused, flushPending]);
 
   useEffect(() => {
     return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
       flushPending();
     };
   }, [flushPending]);
@@ -109,9 +113,12 @@ export default function AllIngredientsScreen() {
         updated = { ...item, inBar: !item.inBar };
         return updateIngredientById(prev, updated);
       });
-      if (updated) setPendingUpdates((p) => [...p, updated]);
+      if (updated) {
+        pendingUpdatesRef.current.push(updated);
+        scheduleFlush();
+      }
     },
-    [setIngredients]
+    [setIngredients, scheduleFlush]
   );
 
   const onItemPress = useCallback(

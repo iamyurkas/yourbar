@@ -54,7 +54,9 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [pendingUpdates, setPendingUpdates] = useState([]);
+  // Buffer shopping-list writes via refs to avoid extra renders
+  const pendingUpdatesRef = React.useRef([]);
+  const flushTimerRef = React.useRef(null);
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
@@ -80,19 +82,22 @@ export default function MyCocktailsScreen() {
   }, [search]);
 
   const flushPending = useCallback(() => {
-    if (pendingUpdates.length) {
-      flushPendingIngredients(pendingUpdates).catch(() => {});
-      setPendingUpdates([]);
+    const list = pendingUpdatesRef.current;
+    if (list && list.length) {
+      pendingUpdatesRef.current = [];
+      flushPendingIngredients(list).catch(() => {});
     }
-  }, [pendingUpdates]);
+  }, []);
 
-  useEffect(() => {
-    if (!pendingUpdates.length) return;
-    const handle = setTimeout(() => {
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
       flushPending();
     }, 300);
-    return () => clearTimeout(handle);
-  }, [pendingUpdates, flushPending]);
+  }, [flushPending]);
+
+  // no dependency effect; scheduling via refs
 
   useEffect(() => {
     if (!isFocused) {
@@ -102,6 +107,7 @@ export default function MyCocktailsScreen() {
 
   useEffect(() => {
     return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
       flushPending();
     };
   }, [flushPending]);
@@ -294,16 +300,20 @@ export default function MyCocktailsScreen() {
         return updateIngredientById(prev, updated);
       });
       if (updated) {
-        setGlobalIngredients((list) =>
-          updateIngredientById(list, {
-            id,
-            inShoppingList: updated.inShoppingList,
-          })
-        );
-        setPendingUpdates((p) => [...p, updated]);
+        // Defer global context update a tick to prioritize UI
+        requestAnimationFrame(() => {
+          setGlobalIngredients((list) =>
+            updateIngredientById(list, {
+              id,
+              inShoppingList: updated.inShoppingList,
+            })
+          );
+        });
+        pendingUpdatesRef.current.push(updated);
+        scheduleFlush();
       }
     },
-    [setGlobalIngredients, setIngredients]
+    [setGlobalIngredients, setIngredients, scheduleFlush]
   );
 
   const renderItem = useCallback(
