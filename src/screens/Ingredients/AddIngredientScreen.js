@@ -289,7 +289,7 @@ export default function AddIngredientScreen() {
     }
   }, []);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const trimmed = (name || "").trim();
     if (!trimmed) {
       showInfo("Validation", "Please enter a name for the ingredient.");
@@ -297,7 +297,7 @@ export default function AddIngredientScreen() {
     }
 
     const searchName = normalizeSearch(trimmed);
-    const saved = {
+    const draft = {
       id: Date.now(),
       name: trimmed,
       description,
@@ -311,6 +311,14 @@ export default function AddIngredientScreen() {
       inBar: false,
       inShoppingList: false,
     };
+
+    let saved;
+    try {
+      saved = await addIngredient(draft);
+    } catch (e) {
+      console.error("Failed to save ingredient", e);
+      return;
+    }
 
     const detailParams = { id: saved.id, initialIngredient: saved };
     if (fromCocktailFlow) {
@@ -336,10 +344,6 @@ export default function AddIngredientScreen() {
       return new Map(arr.map((i) => [i.id, i]));
     });
     setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
-
-    InteractionManager.runAfterInteractions(() => {
-      addIngredient(saved).catch(() => {});
-    });
   }, [
     name,
     description,

@@ -55,7 +55,7 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import { addCocktail, updateCocktailById } from "../../storage/cocktailsStorage";
+import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -546,7 +546,7 @@ export default function AddCocktailScreen() {
     }, [route.params, navigation])
   );
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const title = name.trim();
     if (!title) {
       showInfo("Validation", "Please enter a cocktail name.");
@@ -584,7 +584,7 @@ export default function AddCocktailScreen() {
     );
 
     const id = Date.now();
-    const cocktail = {
+    const draft = {
       id,
       name: title,
       photoUri: photoUri || null,
@@ -606,41 +606,43 @@ export default function AddCocktailScreen() {
       })),
       createdAt: Date.now(),
     };
-    setCocktails((prev) => [...prev, cocktail]);
+
+    let created;
+    try {
+      created = await addCocktail(draft);
+    } catch (e) {
+      console.error("Failed to save cocktail", e);
+      return;
+    }
+
+    const allowSubs = await getAllowSubstitutes();
+    setCocktails((prev) => {
+      const next = [...prev, created];
+      const nextUsage = addCocktailToUsageMap(
+        usageMap,
+        globalIngredients,
+        created,
+        { allowSubstitutes: !!allowSubs }
+      );
+      setUsageMap(nextUsage);
+      setIngredients(
+        applyUsageMapToIngredients(globalIngredients, nextUsage, next)
+      );
+      return next;
+    });
 
     if (fromIngredientFlow) {
       navigation.replace("CocktailDetails", {
-        id: cocktail.id,
+        id: created.id,
         backToIngredientId: initialIngredient?.id,
-        initialCocktail: cocktail,
+        initialCocktail: created,
       });
     } else {
       navigation.replace("CocktailDetails", {
-        id: cocktail.id,
-        initialCocktail: cocktail,
+        id: created.id,
+        initialCocktail: created,
       });
     }
-
-    InteractionManager.runAfterInteractions(async () => {
-      const created = await addCocktail(cocktail);
-      const allowSubs = await getAllowSubstitutes();
-      setCocktails((prev) => {
-        const next = updateCocktailById(prev, created);
-        const nextUsage = addCocktailToUsageMap(
-          usageMap,
-          globalIngredients,
-          created,
-          {
-            allowSubstitutes: !!allowSubs,
-          }
-        );
-        setUsageMap(nextUsage);
-        setIngredients(
-          applyUsageMapToIngredients(globalIngredients, nextUsage, next)
-        );
-        return next;
-      });
-    });
   }, [
     name,
     photoUri,
