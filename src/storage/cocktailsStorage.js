@@ -187,28 +187,14 @@ export async function getCocktailById(id) {
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
-  console.log("addCocktail storage", item);
-  try {
-    await upsertCocktail(item);
-    console.log("addCocktail success", item.id);
-  } catch (e) {
-    console.error("addCocktail failed", e);
-    throw e;
-  }
+  await upsertCocktail(item);
   return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
 export async function saveCocktail(updated) {
   const item = sanitizeCocktail(updated);
-  console.log("saveCocktail storage", item);
-  try {
-    await upsertCocktail(item);
-    console.log("saveCocktail success", item.id);
-  } catch (e) {
-    console.error("saveCocktail failed", e);
-    throw e;
-  }
+  await upsertCocktail(item);
   return item;
 }
 

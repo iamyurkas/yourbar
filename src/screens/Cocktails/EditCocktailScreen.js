@@ -385,10 +385,8 @@ export default function EditCocktailScreen() {
 
       const prev = cocktails.find((c) => c.id === cocktailId);
 
-      console.log("Saving cocktail", cocktail);
       try {
         const updated = await saveCocktail(cocktail);
-        console.log("Cocktail saved", updated);
         const nextCocktails = updateCocktailById(cocktails, updated);
         setCocktails(nextCocktails);
         const allowSubs = await getAllowSubstitutes();
