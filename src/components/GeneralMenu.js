@@ -55,9 +55,8 @@ export default function GeneralMenu({ visible, onClose }) {
       StyleSheet.create({
         overlay: {
           flex: 1,
+          flexDirection: "row",
           backgroundColor: theme.colors.backdrop,
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
         },
         menu: {
           height: "100%",
@@ -318,13 +317,11 @@ export default function GeneralMenu({ visible, onClose }) {
         animationType="none"
         onRequestClose={onClose}
       >
-        <Pressable style={styles.overlay} onPress={onClose}>
+        <View style={styles.overlay}>
           <Animated.View
             style={[styles.menu, { width: MENU_WIDTH, transform: [{ translateX: slideAnim }] }]}
-            onStartShouldSetResponder={() => true}
           >
-            <ScrollView
-            style={{ marginTop:-32 }}>
+            <ScrollView style={{ marginTop: -32 }}>
               <Text style={styles.title}>Settings</Text>
 
               <View style={styles.itemRow}>
@@ -542,7 +539,8 @@ export default function GeneralMenu({ visible, onClose }) {
               )}
             </ScrollView>
           </Animated.View>
-        </Pressable>
+          <Pressable style={{ flex: 1 }} onPress={onClose} />
+        </View>
       </Modal>
       <IngredientTagsModal visible={tagsVisible} onClose={closeTagsModal} />
       <CocktailTagsModal
