@@ -458,7 +458,11 @@ export default function CocktailDetailsScreen() {
           const base = byId.get(baseId);
           if (base && base.id !== ing.id) baseSubstitutes.push(base.name);
         }
-        if (r.allowBrandedSubstitutes) {
+        if (
+          allowSubstitutes ||
+          r.allowBrandedSubstitutes ||
+          ing?.baseIngredientId == null
+        ) {
           const others = (byBase.get(baseId) || []).filter(
             (i) => i.id !== ing.id && i.baseIngredientId === baseId
           );
@@ -471,7 +475,12 @@ export default function CocktailDetailsScreen() {
           if (base?.inBar && base.id !== ing.id) substitute = base;
         }
 
-        if (!substitute && r.allowBrandedSubstitutes) {
+        if (
+          !substitute &&
+          (allowSubstitutes ||
+            r.allowBrandedSubstitutes ||
+            ing?.baseIngredientId == null)
+        ) {
           const brand = (byBase.get(baseId) || []).find(
             (i) =>
               i.inBar &&
