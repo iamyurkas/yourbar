@@ -189,9 +189,12 @@ export async function addCocktail(cocktail) {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   console.log("[cocktailsStorage] addCocktail", item);
   await upsertCocktail(item);
-  const stored = await getCocktailById(item.id);
-  console.log("[cocktailsStorage] addCocktail stored", stored);
-  return stored;
+  // reading back immediately after a transaction may keep the SQLite
+  // connection locked on some platforms, causing "database is locked"
+  // errors. The `item` object already reflects the data that was
+  // persisted, so we return it directly instead of querying again.
+  console.log("[cocktailsStorage] addCocktail stored", item);
+  return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
