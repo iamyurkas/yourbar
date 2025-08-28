@@ -16,9 +16,10 @@ export default function BottomTabBar(props) {
 
   const overlineStyle = useAnimatedStyle(
     () => {
-      const offset = Math.max(-tabWidth, Math.min(tabWidth, -swipe.value));
+      // mirror finger movement just like top tabs
+      const mirrored = Math.max(-tabWidth, Math.min(tabWidth, swipe.value));
       return {
-        transform: [{ translateX: tabWidth * index + offset }],
+        transform: [{ translateX: tabWidth * index - mirrored }],
       };
     },
     [index, tabWidth, swipe]
@@ -28,6 +29,7 @@ export default function BottomTabBar(props) {
     <View style={styles.container}>
       <RNBottomTabBar {...props} />
       <Animated.View
+        pointerEvents="none"
         style={[
           styles.overline,
           { width: tabWidth, backgroundColor: theme.colors.primary },
