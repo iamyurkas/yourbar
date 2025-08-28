@@ -31,9 +31,11 @@ function CocktailTabs({ route }) {
     <>
       <Tab.Navigator
         initialRouteName={initial}
+        lazyPreloadDistance={1}
         screenOptions={({ route }) => {
           const options = {
             headerShown: false,
+            lazy: false,
             tabBarIcon: ({ color, size }) => {
               let iconName;
               if (route.name === "All") iconName = "list";
