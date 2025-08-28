@@ -91,9 +91,9 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
-  await db.withTransactionAsync(async (tx) => {
-    // use the transaction-bound connection `tx` for all queries to
-    // avoid overlapping statements that could keep the database locked
+  // Use an exclusive transaction so all queries share the same
+  // connection and SQLite can serialize writes without locking errors.
+  await db.withExclusiveTransactionAsync(async (tx) => {
     await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
         id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
