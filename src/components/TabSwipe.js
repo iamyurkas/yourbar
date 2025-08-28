@@ -12,21 +12,31 @@ export default function TabSwipe({ navigation, children }) {
   const swipeOffset = useSharedValue(0);
   const screenWidth = Dimensions.get("window").width;
 
-  const goNext = React.useCallback(() => {
-    const state = navigation.getState();
-    const index = state.index;
-    if (index < state.routes.length - 1) {
-      navigation.navigate(state.routes[index + 1].name);
+  const getTabNav = React.useCallback(() => {
+    let nav = navigation;
+    while (nav?.getState?.()?.type !== "tab" && nav?.getParent) {
+      nav = nav.getParent();
     }
+    return nav || navigation;
   }, [navigation]);
 
+  const goNext = React.useCallback(() => {
+    const nav = getTabNav();
+    const state = nav.getState();
+    const index = state.index;
+    if (index < state.routes.length - 1) {
+      nav.navigate(state.routes[index + 1].name);
+    }
+  }, [getTabNav]);
+
   const goPrev = React.useCallback(() => {
-    const state = navigation.getState();
+    const nav = getTabNav();
+    const state = nav.getState();
     const index = state.index;
     if (index > 0) {
-      navigation.navigate(state.routes[index - 1].name);
+      nav.navigate(state.routes[index - 1].name);
     }
-  }, [navigation]);
+  }, [getTabNav]);
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
