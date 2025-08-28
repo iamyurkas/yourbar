@@ -21,7 +21,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -277,7 +276,7 @@ export default function EditCocktailScreen() {
   );
 
   const handleSave = useCallback(
-    (stay = false) => {
+    async (stay = false) => {
       const title = name.trim();
       if (!title) {
         showInfo("Validation", "Please enter a cocktail name.");
@@ -340,6 +339,31 @@ export default function EditCocktailScreen() {
 
       const prev = cocktails.find((c) => c.id === cocktailId);
 
+      const updated = await saveCocktail(cocktail);
+      const nextCocktails = updateCocktailById(cocktails, updated);
+      setCocktails(nextCocktails);
+      const allowSubs = await getAllowSubstitutes();
+      let nextUsage = removeCocktailFromUsageMap(
+        usageMap,
+        globalIngredients,
+        prev,
+        { allowSubstitutes: !!allowSubs }
+      );
+      nextUsage = addCocktailToUsageMap(
+        nextUsage,
+        globalIngredients,
+        updated,
+        { allowSubstitutes: !!allowSubs }
+      );
+      setUsageMap(nextUsage);
+      setIngredients(
+        applyUsageMapToIngredients(
+          globalIngredients,
+          nextUsage,
+          nextCocktails
+        )
+      );
+
       initialHashRef.current = serialize();
       setDirty(false);
       if (!stay) {
@@ -347,34 +371,7 @@ export default function EditCocktailScreen() {
         navigation.goBack();
       }
 
-      InteractionManager.runAfterInteractions(async () => {
-        const updated = await saveCocktail(cocktail);
-        const nextCocktails = updateCocktailById(cocktails, updated);
-        setCocktails(nextCocktails);
-        const allowSubs = await getAllowSubstitutes();
-        let nextUsage = removeCocktailFromUsageMap(
-          usageMap,
-          globalIngredients,
-          prev,
-          { allowSubstitutes: !!allowSubs }
-        );
-        nextUsage = addCocktailToUsageMap(
-          nextUsage,
-          globalIngredients,
-          updated,
-          { allowSubstitutes: !!allowSubs }
-        );
-        setUsageMap(nextUsage);
-        setIngredients(
-          applyUsageMapToIngredients(
-            globalIngredients,
-            nextUsage,
-            nextCocktails
-          )
-        );
-      });
-
-      return cocktail;
+      return updated;
     },
     [
       name,
