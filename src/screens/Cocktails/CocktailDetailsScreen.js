@@ -315,7 +315,12 @@ export default function CocktailDetailsScreen() {
       const ingredientIds = Array.from(
         new Set(
           (loadedCocktail?.ingredients || [])
-            .map((r) => r.ingredientId)
+            .flatMap((r) => [
+              r.ingredientId,
+              ...(Array.isArray(r.substitutes)
+                ? r.substitutes.map((s) => s.id)
+                : []),
+            ])
             .filter(Boolean)
         )
       );
@@ -428,7 +433,10 @@ export default function CocktailDetailsScreen() {
     if (!updated) return;
 
     const missingIngredient = (updated.ingredients || []).some(
-      (r) => r.ingredientId && !ingMap.has(r.ingredientId)
+      (r) =>
+        (r.ingredientId && !ingMap.has(r.ingredientId)) ||
+        (Array.isArray(r.substitutes) &&
+          r.substitutes.some((s) => s.id && !ingMap.has(s.id)))
     );
 
     setCocktail((prev) => {
