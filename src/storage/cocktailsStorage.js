@@ -91,8 +91,10 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
-  await db.withTransactionAsync(async () => {
-    await db.runAsync(
+  await db.withTransactionAsync(async (tx) => {
+    // use the transaction-bound connection `tx` for all queries to
+    // avoid overlapping statements that could keep the database locked
+    await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
         id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -109,11 +111,11 @@ async function upsertCocktail(item) {
         item.updatedAt ?? null,
       ]
     );
-    await db.runAsync(`DELETE FROM cocktail_ingredients WHERE cocktailId = ?`, [
+    await tx.runAsync(`DELETE FROM cocktail_ingredients WHERE cocktailId = ?`, [
       item.id,
     ]);
     for (const ing of item.ingredients) {
-      await db.runAsync(
+      await tx.runAsync(
         `INSERT INTO cocktail_ingredients (
           cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
           allowBaseSubstitution, allowBrandedSubstitutes, substitutes
