@@ -10,6 +10,7 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import IngredientRow, {
   INGREDIENT_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/IngredientRow";
+import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import {
   flushPendingIngredients,
@@ -164,7 +165,8 @@ export default function AllIngredientsScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <TabSwipe navigation={navigation}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -197,7 +199,8 @@ export default function AllIngredientsScreen() {
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
         }}
       />
-    </View>
+      </View>
+    </TabSwipe>
   );
 }
 

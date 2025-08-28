@@ -30,6 +30,7 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
+import TabSwipe from "../../components/TabSwipe";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
@@ -343,7 +344,8 @@ export default function MyCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <TabSwipe navigation={navigation}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -382,7 +384,8 @@ export default function MyCocktailsScreen() {
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
         }}
       />
-    </View>
+      </View>
+    </TabSwipe>
   );
 }
 
