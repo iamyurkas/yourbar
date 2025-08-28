@@ -26,6 +26,8 @@ import EditCustomTagsScreen from "./src/screens/IngredientsTags/EditCustomTagsSc
 import { AppTheme } from "./src/theme";
 import ShakerResultsScreen from "./src/screens/ShakerResultsScreen";
 import SplashScreen from "./src/screens/SplashScreen";
+import TabSwipe from "./src/components/TabSwipe";
+import BottomTabBar from "./src/components/BottomTabBar";
 
 import CocktailIcon from "./assets/cocktail.svg";
 import ShakerIcon from "./assets/shaker.svg";
@@ -93,30 +95,43 @@ function Tabs({ startScreen }) {
   const theme = useTheme();
   const { getTab } = useTabMemory();
   const [startTab, startSub] = (startScreen || "cocktails:All").split(":");
+  const tabRef = React.useRef(null);
+  const [nav, setNav] = useState(null);
+  const setRef = React.useCallback((ref) => {
+    if (ref) {
+      tabRef.current = ref;
+      setNav(ref);
+    }
+  }, []);
   return (
-    <Tab.Navigator
-      initialRouteName={startTab === "ingredients" ? "Ingredients" : "Cocktails"}
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => {
-          if (route.name === "Cocktails") {
-            return <CocktailIcon width={size} height={size} fill={color} />;
-          } else if (route.name === "Shaker") {
-            return <ShakerIcon width={size} height={size} fill={color} />;
-          } else if (route.name === "Ingredients") {
-            return <IngredientIcon width={size} height={size} fill={color} />;
-          }
-          return null;
-        },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-        tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopWidth: 0,
-          borderTopColor: theme.colors.surface,
-        },
-      })}
-    >
+    <TabSwipe navigation={nav}>
+      <Tab.Navigator
+        ref={setRef}
+        initialRouteName={
+          startTab === "ingredients" ? "Ingredients" : "Cocktails"
+        }
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === "Cocktails") {
+              return <CocktailIcon width={size} height={size} fill={color} />;
+            } else if (route.name === "Shaker") {
+              return <ShakerIcon width={size} height={size} fill={color} />;
+            } else if (route.name === "Ingredients") {
+              return <IngredientIcon width={size} height={size} fill={color} />;
+            }
+            return null;
+          },
+          tabBarActiveTintColor: theme.colors.primary,
+          tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+          tabBarStyle: {
+            backgroundColor: theme.colors.surface,
+            borderTopWidth: 0,
+            borderTopColor: theme.colors.surface,
+          },
+        })}
+        tabBar={(props) => <BottomTabBar {...props} />}
+      >
       {/* ⬇️ Тут напряму твій екран з внутрішніми табами коктейлів */}
       <Tab.Screen
         name="Cocktails"
@@ -162,7 +177,8 @@ function Tabs({ startScreen }) {
           },
         })}
       />
-    </Tab.Navigator>
+      </Tab.Navigator>
+    </TabSwipe>
   );
 }
 
