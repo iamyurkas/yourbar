@@ -277,7 +277,7 @@ export default function EditCocktailScreen() {
   );
 
   const handleSave = useCallback(
-    (stay = false) => {
+    async (stay = false) => {
       const title = name.trim();
       if (!title) {
         showInfo("Validation", "Please enter a cocktail name.");
@@ -289,6 +289,18 @@ export default function EditCocktailScreen() {
         return;
       }
 
+      // Resolve missing selectedId by exact name match (unique)
+      let allKnown = [];
+      try {
+        allKnown = await getAllIngredients();
+      } catch {}
+      const bySearch = new Map();
+      allKnown.forEach((i) => {
+        const key = i.searchName || normalizeSearch(i.name || "");
+        if (!bySearch.has(key)) bySearch.set(key, i);
+        else bySearch.set(key, null);
+      });
+
       const committed = nonEmptyIngredients.map((r) => {
         if (r.selectedId == null && r.pendingExactMatch) {
           return {
@@ -297,6 +309,18 @@ export default function EditCocktailScreen() {
             selectedItem: r.pendingExactMatch,
             pendingExactMatch: null,
           };
+        }
+        if (r.selectedId == null) {
+          const key = normalizeSearch(r.name || "");
+          const found = bySearch.get(key);
+          if (found && found.id != null) {
+            return {
+              ...r,
+              selectedId: found.id,
+              selectedItem: found,
+              pendingExactMatch: null,
+            };
+          }
         }
         return { ...r, pendingExactMatch: null };
       });

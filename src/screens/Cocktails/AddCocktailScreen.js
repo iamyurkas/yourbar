@@ -71,6 +71,7 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
+import { getAllIngredients } from "../../storage/ingredientsStorage";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
 const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
@@ -559,17 +560,41 @@ export default function AddCocktailScreen() {
     }
 
     try {
-      const committed = nonEmptyIngredients.map((r) => {
-        if (r.selectedId == null && r.pendingExactMatch) {
+    // Resolve missing selectedId by exact name match (unique)
+    let allKnown = [];
+    try {
+      allKnown = await getAllIngredients();
+    } catch {}
+    const bySearch = new Map();
+    allKnown.forEach((i) => {
+      const key = i.searchName || normalizeSearch(i.name || "");
+      if (!bySearch.has(key)) bySearch.set(key, i);
+      else bySearch.set(key, null); // non-unique
+    });
+
+    const committed = nonEmptyIngredients.map((r) => {
+      if (r.selectedId == null && r.pendingExactMatch) {
+        return {
+          ...r,
+          selectedId: r.pendingExactMatch.id,
+          selectedItem: r.pendingExactMatch,
+          pendingExactMatch: null,
+        };
+      }
+      if (r.selectedId == null) {
+        const key = normalizeSearch(r.name || "");
+        const found = bySearch.get(key);
+        if (found && found.id != null) {
           return {
             ...r,
-            selectedId: r.pendingExactMatch.id,
-            selectedItem: r.pendingExactMatch,
+            selectedId: found.id,
+            selectedItem: found,
             pendingExactMatch: null,
           };
         }
-        return { ...r, pendingExactMatch: null };
-      });
+      }
+      return { ...r, pendingExactMatch: null };
+    });
       setIngs((prev) =>
         prev.map((r) => {
           if (r.selectedId == null && r.pendingExactMatch) {

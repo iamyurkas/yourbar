@@ -1,7 +1,17 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
-import db, { query, initDatabase } from "./sqlite";
+import db, { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+
+// Serialize write operations to avoid `database is locked` on Android.
+let writeQueue = Promise.resolve();
+function enqueueWrite(fn) {
+  writeQueue = writeQueue.then(fn, fn);
+  return writeQueue.catch((e) => {
+    console.warn("[cocktailsStorage] write error", e);
+    // swallow to keep chain alive
+  });
+}
 
 // --- utils ---
 
@@ -48,6 +58,7 @@ const sanitizeCocktail = (c) => {
 };
 
 async function readAll() {
+  await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
   );
@@ -91,48 +102,49 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
+  await initDatabase();
   console.log("[cocktailsStorage] upsertCocktail start", item.id);
-  // Run all writes in a single exclusive transaction so queries share the same
-  // connection and no parallel write can sneak in and lock the database.
-  await db.withExclusiveTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `INSERT OR REPLACE INTO cocktails (
-        id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      item.id,
-      item.name,
-      item.photoUri ?? null,
-      item.glassId ?? null,
-      item.rating ?? 0,
-      item.tags ? JSON.stringify(item.tags) : null,
-      item.description ?? null,
-      item.instructions ?? null,
-      item.createdAt ?? null,
-      item.updatedAt ?? null
-    );
-    await tx.runAsync(
-      `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
-      item.id
-    );
-    for (const ing of item.ingredients) {
+  await enqueueWrite(async () => {
+    await withExclusiveWriteAsync(async (tx) => {
       await tx.runAsync(
-        `INSERT INTO cocktail_ingredients (
-          cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
-          allowBaseSubstitution, allowBrandedSubstitutes, substitutes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT OR REPLACE INTO cocktails (
+          id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         item.id,
-        ing.order,
-        ing.ingredientId != null ? String(ing.ingredientId) : null,
-        ing.name ?? null,
-        ing.amount ?? null,
-        ing.unitId ?? null,
-        ing.garnish ? 1 : 0,
-        ing.optional ? 1 : 0,
-        ing.allowBaseSubstitution ? 1 : 0,
-        ing.allowBrandedSubstitutes ? 1 : 0,
-        ing.substitutes ? JSON.stringify(ing.substitutes) : null
+        item.name,
+        item.photoUri ?? null,
+        item.glassId ?? null,
+        item.rating ?? 0,
+        item.tags ? JSON.stringify(item.tags) : null,
+        item.description ?? null,
+        item.instructions ?? null,
+        item.createdAt ?? null,
+        item.updatedAt ?? null
       );
-    }
+      await tx.runAsync(
+        `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
+        item.id
+      );
+      for (const ing of item.ingredients) {
+        await tx.runAsync(
+          `INSERT INTO cocktail_ingredients (
+            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          item.id,
+          ing.order,
+          ing.ingredientId != null ? String(ing.ingredientId) : null,
+          ing.name ?? null,
+          ing.amount ?? null,
+          ing.unitId ?? null,
+          ing.garnish ? 1 : 0,
+          ing.optional ? 1 : 0,
+          ing.allowBaseSubstitution ? 1 : 0,
+          ing.allowBrandedSubstitutes ? 1 : 0,
+          ing.substitutes ? JSON.stringify(ing.substitutes) : null
+        );
+      }
+    });
   });
   console.log("[cocktailsStorage] upsertCocktail end", item.id);
 }
@@ -145,6 +157,7 @@ export async function getAllCocktails() {
 
 /** Get single cocktail by id (number) */
 export async function getCocktailById(id) {
+  await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails WHERE id = ?`,
     [id]
@@ -187,7 +200,6 @@ export async function getCocktailById(id) {
 
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
-  await initDatabase();
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   console.log("[cocktailsStorage] addCocktail", item);
   await upsertCocktail(item);
@@ -197,6 +209,7 @@ export async function addCocktail(cocktail) {
 
 /** Update existing (upsert). Returns updated cocktail */
 export async function saveCocktail(updated) {
+  await initDatabase();
   const item = sanitizeCocktail(updated);
   await upsertCocktail(item);
   return item;
@@ -212,9 +225,12 @@ export function updateCocktailById(list, updated) {
 
 /** Delete by id */
 export async function deleteCocktail(id) {
-  await db.withTransactionAsync(async () => {
-    await db.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", [id]);
-    await db.runAsync("DELETE FROM cocktails WHERE id = ?", [id]);
+  await initDatabase();
+  await enqueueWrite(async () => {
+    await withExclusiveWriteAsync(async (tx) => {
+      await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
+      await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
+    });
   });
 }
 
@@ -227,15 +243,16 @@ export async function replaceAllCocktails(cocktails) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
-  await db.withTransactionAsync(async () => {
-    await db.runAsync("DELETE FROM cocktail_ingredients");
-    await db.runAsync("DELETE FROM cocktails");
-    for (const item of normalized) {
-      await db.runAsync(
-        `INSERT OR REPLACE INTO cocktails (
-          id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
+  await initDatabase();
+  await enqueueWrite(async () => {
+    await withExclusiveWriteAsync(async (tx) => {
+      await tx.runAsync("DELETE FROM cocktail_ingredients");
+      await tx.runAsync("DELETE FROM cocktails");
+      for (const item of normalized) {
+        await tx.runAsync(
+          `INSERT OR REPLACE INTO cocktails (
+            id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           item.id,
           item.name,
           item.photoUri ?? null,
@@ -245,16 +262,14 @@ export async function replaceAllCocktails(cocktails) {
           item.description ?? null,
           item.instructions ?? null,
           item.createdAt ?? null,
-          item.updatedAt ?? null,
-        ]
+          item.updatedAt ?? null
       );
-      for (const ing of item.ingredients) {
-        await db.runAsync(
+        for (const ing of item.ingredients) {
+          await tx.runAsync(
           `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
             item.id,
             ing.order,
             ing.ingredientId != null ? String(ing.ingredientId) : null,
@@ -265,11 +280,11 @@ export async function replaceAllCocktails(cocktails) {
             ing.optional ? 1 : 0,
             ing.allowBaseSubstitution ? 1 : 0,
             ing.allowBrandedSubstitutes ? 1 : 0,
-            ing.substitutes ? JSON.stringify(ing.substitutes) : null,
-          ]
-        );
+            ing.substitutes ? JSON.stringify(ing.substitutes) : null
+          );
+        }
       }
-    }
+    });
   });
   return normalized;
 }
