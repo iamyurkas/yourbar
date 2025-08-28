@@ -145,11 +145,13 @@ const IngredientRow = memo(function IngredientRow({
               .join(" ");
             if (propLine) lines.push(propLine);
             if (substituteFor) lines.push(`Substitute for: ${substituteFor}`);
-            const allSubs = [
-              ...declaredSubstitutes,
-              ...baseSubstitutes,
-              ...brandedSubstitutes,
-            ];
+            const allSubs = Array.from(
+              new Set([
+                ...declaredSubstitutes,
+                ...baseSubstitutes,
+                ...brandedSubstitutes,
+              ])
+            );
             if (!inBar && !substituteFor && allSubs.length > 0) {
               allSubs.forEach((s, i) =>
                 lines.push(i === 0 ? `or ${s}` : s)
