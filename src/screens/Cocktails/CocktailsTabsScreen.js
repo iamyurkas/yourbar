@@ -6,6 +6,8 @@ import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import PlainHeader from "../../components/PlainHeader";
+import BottomTabBar from "../../components/BottomTabBar";
+import TabSwipe from "../../components/TabSwipe";
 
 // TopTabBar is rendered within each screen
 
@@ -28,50 +30,47 @@ function CocktailTabs({ route }) {
   const tabsOnTop = useTabsOnTop();
   const initial = route?.params?.screen || "All";
   return (
-    <>
-      <Tab.Navigator
-        initialRouteName={initial}
-        screenOptions={({ route }) => {
-          const options = {
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => {
-              let iconName;
-              if (route.name === "All") iconName = "list";
-              else if (route.name === "My") iconName = "check-circle";
-              else if (route.name === "Favorites") iconName = "star";
-              return <MaterialIcons name={iconName} size={size} color={color} />;
-            },
-            tabBarActiveTintColor: theme.colors.primary,
-            tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-          };
-          if (!tabsOnTop) {
-            options.tabBarStyle = {
-              backgroundColor: theme.colors.background,
-              borderTopWidth: 0,
-              borderTopColor: theme.colors.background,
+    <TabSwipe navigation={navigation}>
+      <>
+        <Tab.Navigator
+          initialRouteName={initial}
+          screenOptions={({ route }) => {
+            const options = {
+              headerShown: false,
+              tabBarIcon: ({ color, size }) => {
+                let iconName;
+                if (route.name === "All") iconName = "list";
+                else if (route.name === "My") iconName = "check-circle";
+                else if (route.name === "Favorites") iconName = "star";
+                return <MaterialIcons name={iconName} size={size} color={color} />;
+              },
+              tabBarActiveTintColor: theme.colors.primary,
+              tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
             };
+            return options;
+          }}
+          tabBar={
+            tabsOnTop ? () => null : (props) => <BottomTabBar {...props} />
           }
-          return options;
-        }}
-        tabBar={tabsOnTop ? () => null : undefined}
-      >
-        <Tab.Screen name="All" component={AllCocktailsScreen} />
-        <Tab.Screen name="My" component={MyCocktailsScreen} />
-        <Tab.Screen name="Favorites" component={FavoriteCocktailsScreen} />
-      </Tab.Navigator>
-      <FAB
-        icon="plus"
-        style={[
-          styles.fab,
-          {
-            backgroundColor: theme.colors.primaryContainer,
-            bottom: tabsOnTop ? 16 : 80,
-          },
-        ]}
-        color={theme.colors.primary}
-        onPress={() => navigation.navigate("AddCocktail")}
-      />
-    </>
+        >
+          <Tab.Screen name="All" component={AllCocktailsScreen} />
+          <Tab.Screen name="My" component={MyCocktailsScreen} />
+          <Tab.Screen name="Favorites" component={FavoriteCocktailsScreen} />
+        </Tab.Navigator>
+        <FAB
+          icon="plus"
+          style={[
+            styles.fab,
+            {
+              backgroundColor: theme.colors.primaryContainer,
+              bottom: tabsOnTop ? 16 : 80,
+            },
+          ]}
+          color={theme.colors.primary}
+          onPress={() => navigation.navigate("AddCocktail")}
+        />
+      </>
+    </TabSwipe>
   );
 }
 
