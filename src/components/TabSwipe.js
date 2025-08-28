@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Dimensions } from "react-native";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import Animated, { runOnJS, useSharedValue } from "react-native-reanimated";
@@ -9,7 +9,8 @@ const UNDERLINE_MOVE_THRESHOLD = 20;
 const NAVIGATE_THRESHOLD = 80;
 
 export default function TabSwipe({ navigation, children }) {
-  const swipeOffset = useSharedValue(0);
+  const inherited = useContext(TabSwipeContext);
+  const swipeOffset = inherited || useSharedValue(0);
   const screenWidth = Dimensions.get("window").width;
 
   const getTabNav = React.useCallback(() => {
@@ -59,11 +60,19 @@ export default function TabSwipe({ navigation, children }) {
       swipeOffset.value = 0;
     });
 
+  const content = (
+    <GestureDetector gesture={pan}>
+      <Animated.View style={{ flex: 1 }}>{children}</Animated.View>
+    </GestureDetector>
+  );
+
+  if (inherited) {
+    return content;
+  }
+
   return (
     <TabSwipeContext.Provider value={swipeOffset}>
-      <GestureDetector gesture={pan}>
-        <Animated.View style={{ flex: 1 }}>{children}</Animated.View>
-      </GestureDetector>
+      {content}
     </TabSwipeContext.Provider>
   );
 }

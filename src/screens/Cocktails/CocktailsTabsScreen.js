@@ -5,7 +5,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme, FAB } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useSharedValue } from "react-native-reanimated";
 import PlainHeader from "../../components/PlainHeader";
+import BottomTabBar from "../../components/BottomTabBar";
+import { TabSwipeContext } from "../../components/TabSwipe";
 
 // TopTabBar is rendered within each screen
 
@@ -27,8 +30,10 @@ function CocktailTabs({ route }) {
   const navigation = useNavigation();
   const tabsOnTop = useTabsOnTop();
   const initial = route?.params?.screen || "All";
+  const swipe = useSharedValue(0);
+
   return (
-    <>
+    <TabSwipeContext.Provider value={swipe}>
       <Tab.Navigator
         initialRouteName={initial}
         screenOptions={({ route }) => {
@@ -44,16 +49,11 @@ function CocktailTabs({ route }) {
             tabBarActiveTintColor: theme.colors.primary,
             tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
           };
-          if (!tabsOnTop) {
-            options.tabBarStyle = {
-              backgroundColor: theme.colors.background,
-              borderTopWidth: 0,
-              borderTopColor: theme.colors.background,
-            };
-          }
           return options;
         }}
-        tabBar={tabsOnTop ? () => null : undefined}
+        tabBar={
+          tabsOnTop ? () => null : (props) => <BottomTabBar {...props} />
+        }
       >
         <Tab.Screen name="All" component={AllCocktailsScreen} />
         <Tab.Screen name="My" component={MyCocktailsScreen} />
@@ -71,7 +71,7 @@ function CocktailTabs({ route }) {
         color={theme.colors.primary}
         onPress={() => navigation.navigate("AddCocktail")}
       />
-    </>
+    </TabSwipeContext.Provider>
   );
 }
 
