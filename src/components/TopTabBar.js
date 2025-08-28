@@ -21,7 +21,7 @@ export default function TopTabBar({ navigation, theme }) {
 
   const underlineStyle = useAnimatedStyle(
     () => {
-      const offset = Math.max(-tabWidth, Math.min(tabWidth, swipe.value));
+      const offset = Math.max(-tabWidth, Math.min(tabWidth, -swipe.value));
       return {
         transform: [{ translateX: tabWidth * index + offset }],
       };
