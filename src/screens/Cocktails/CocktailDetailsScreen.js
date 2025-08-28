@@ -320,11 +320,20 @@ export default function CocktailDetailsScreen() {
       let allIngredients = [];
       if (ingredientIds.length) {
         allIngredients = await getIngredientsByIds(ingredientIds);
-        if (allowSubs) {
+        const allowBaseSubs =
+          allowSubs ||
+          (loadedCocktail?.ingredients || []).some(
+            (r) => r.allowBaseSubstitution
+          );
+        if (allowBaseSubs) {
+          const baseMap = new Map(
+            allIngredients.map((i) => [i.id, i.baseIngredientId])
+          );
           const baseIds = Array.from(
             new Set(
-              allIngredients
-                .map((i) => i.baseIngredientId)
+              (loadedCocktail?.ingredients || [])
+                .filter((r) => allowSubs || r.allowBaseSubstitution)
+                .map((r) => baseMap.get(r.ingredientId))
                 .filter(
                   (bid) => bid != null && !ingredientIds.includes(bid)
                 )
