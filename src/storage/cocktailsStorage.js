@@ -189,9 +189,8 @@ export async function addCocktail(cocktail) {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   console.log("[cocktailsStorage] addCocktail", item);
   await upsertCocktail(item);
-  const stored = await getCocktailById(item.id);
-  console.log("[cocktailsStorage] addCocktail stored", stored);
-  return stored;
+  console.log("[cocktailsStorage] addCocktail stored", item);
+  return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
