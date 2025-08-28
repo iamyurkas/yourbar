@@ -209,7 +209,7 @@ export default function EditCocktailScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const params = route.params || {};
-  const cocktailId = params?.id;
+  const { id: cocktailId, initialCocktail } = params;
   const { cocktails, setCocktails, usageMap, setUsageMap } =
     useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
@@ -219,10 +219,40 @@ export default function EditCocktailScreen() {
   const subSearchRef = useRef(null);
   const [showInfo, infoDialog] = useInfoDialog();
 
-  const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState([]);
+  const buildRows = useCallback((list) => {
+    const base = Date.now();
+    return list.map((r, idx) => ({
+      localId: base + idx,
+      name: r.name || "",
+      selectedId: r.ingredientId ?? null,
+      selectedItem: null,
+      quantity: r.amount || r.quantity || "",
+      unitId: r.unitId || UNIT_ID.ML,
+      garnish: !!r.garnish,
+      optional: !!r.optional,
+      allowBaseSubstitute: !!(
+        r.allowBaseSubstitution || r.allowBaseSubstitute
+      ),
+      allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+      substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
+      pendingExactMatch: null,
+    }));
+  }, []);
+
+  const initialIngs = useMemo(
+    () =>
+      Array.isArray(initialCocktail?.ingredients)
+        ? buildRows(initialCocktail.ingredients)
+        : [],
+    [initialCocktail, buildRows]
+  );
+
+  const [loading, setLoading] = useState(!initialCocktail);
+  const [name, setName] = useState(initialCocktail?.name || "");
+  const [photoUri, setPhotoUri] = useState(initialCocktail?.photoUri || null);
+  const [tags, setTags] = useState(
+    Array.isArray(initialCocktail?.tags) ? initialCocktail.tags : []
+  );
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
@@ -248,18 +278,34 @@ export default function EditCocktailScreen() {
     loadAvailableTags();
   }, [loadAvailableTags]);
 
-  const [description, setDescription] = useState("");
-  const [instructions, setInstructions] = useState("");
-  const [glassId, setGlassId] = useState("cocktail_glass");
-  const [ings, setIngs] = useState([]);
+  const [description, setDescription] = useState(
+    initialCocktail?.description || ""
+  );
+  const [instructions, setInstructions] = useState(
+    initialCocktail?.instructions || ""
+  );
+  const [glassId, setGlassId] = useState(
+    initialCocktail?.glassId || "cocktail_glass"
+  );
+  const [ings, setIngs] = useState(initialIngs);
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [pendingNav, setPendingNav] = useState(null);
-  const initialHashRef = useRef("{}");
+  const initialHashRef = useRef(
+    JSON.stringify({
+      name: initialCocktail?.name || "",
+      photoUri: initialCocktail?.photoUri || null,
+      tags: Array.isArray(initialCocktail?.tags) ? initialCocktail.tags : [],
+      description: initialCocktail?.description || "",
+      instructions: initialCocktail?.instructions || "",
+      glassId: initialCocktail?.glassId || "cocktail_glass",
+      ings: initialIngs,
+    })
+  );
   const skipPromptRef = useRef(false);
-  const ratingRef = useRef(0);
-  const createdAtRef = useRef(Date.now());
+  const ratingRef = useRef(initialCocktail?.rating || 0);
+  const createdAtRef = useRef(initialCocktail?.createdAt || Date.now());
 
   const serialize = useCallback(
     () =>
@@ -442,7 +488,11 @@ export default function EditCocktailScreen() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const data = await getCocktailById(cocktailId);
+      let data = initialCocktail;
+      if (cocktailId != null) {
+        const fetched = await getCocktailById(cocktailId);
+        if (fetched) data = fetched;
+      }
       if (!mounted || !data) {
         setLoading(false);
         return;
@@ -455,25 +505,10 @@ export default function EditCocktailScreen() {
       setGlassId(data.glassId || "cocktail_glass");
       ratingRef.current = data.rating || 0;
       createdAtRef.current = data.createdAt || Date.now();
-      const initialIngs = Array.isArray(data.ingredients)
-        ? data.ingredients.map((r, idx) => ({
-            localId: Date.now() + idx,
-            name: r.name || "",
-            selectedId: r.ingredientId ?? null,
-            selectedItem: null,
-            quantity: r.amount || r.quantity || "",
-            unitId: r.unitId || UNIT_ID.ML,
-            garnish: !!r.garnish,
-            optional: !!r.optional,
-            allowBaseSubstitute: !!(
-              r.allowBaseSubstitution || r.allowBaseSubstitute
-            ),
-            allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-            substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
-            pendingExactMatch: null,
-          }))
+      const mapped = Array.isArray(data.ingredients)
+        ? buildRows(data.ingredients)
         : [];
-      setIngs(initialIngs);
+      setIngs(mapped);
       requestAnimationFrame(() => {
         initialHashRef.current = JSON.stringify({
           name: data.name || "",
@@ -482,7 +517,7 @@ export default function EditCocktailScreen() {
           description: data.description || "",
           instructions: data.instructions || "",
           glassId: data.glassId || "cocktail_glass",
-          ings: initialIngs,
+          ings: mapped,
         });
         setDirty(false);
         setLoading(false);
@@ -491,7 +526,7 @@ export default function EditCocktailScreen() {
     return () => {
       mounted = false;
     };
-  }, [cocktailId]);
+  }, [cocktailId, initialCocktail, buildRows]);
 
   useEffect(() => {
     if (loading) return;
