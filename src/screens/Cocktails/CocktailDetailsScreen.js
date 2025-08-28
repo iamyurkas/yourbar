@@ -31,7 +31,10 @@ import {
   saveCocktail,
   updateCocktailById,
 } from "../../storage/cocktailsStorage";
-import { getIngredientsByIds } from "../../storage/ingredientsStorage";
+import {
+  getIngredientsByIds,
+  getIngredientsByBaseIds,
+} from "../../storage/ingredientsStorage";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getGlassById } from "../../constants/glassware";
 import { withAlpha } from "../../utils/color";
@@ -330,6 +333,20 @@ export default function CocktailDetailsScreen() {
           if (baseIds.length) {
             const baseIngredients = await getIngredientsByIds(baseIds);
             allIngredients = allIngredients.concat(baseIngredients);
+          }
+        }
+
+        const brandBaseIds = Array.from(
+          new Set(allIngredients.map((i) => i.baseIngredientId ?? i.id))
+        );
+        if (brandBaseIds.length) {
+          const branded = await getIngredientsByBaseIds(brandBaseIds, {
+            inBarOnly: true,
+          });
+          if (branded.length) {
+            const map = new Map(allIngredients.map((i) => [i.id, i]));
+            for (const b of branded) map.set(b.id, b);
+            allIngredients = Array.from(map.values());
           }
         }
       }
