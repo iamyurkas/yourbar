@@ -103,11 +103,13 @@ export function getCocktailIngredientRows(
     const ing = r.ingredientId ? ingMap.get(String(r.ingredientId)) : null;
     const originalName = ing?.name || r.name;
     const inBar = ing?.inBar;
+    const baseId = String(ing?.baseIngredientId ?? ing?.id ?? r.ingredientId);
+    const isBaseIngredient = ing?.baseIngredientId == null;
+
     let substitute = null;
     let declaredSubstitutes = [];
     let baseSubstitutes = [];
     let brandedSubstitutes = [];
-    const baseId = String(ing?.baseIngredientId ?? ing?.id ?? r.ingredientId);
 
     if (ing) {
       if (Array.isArray(r.substitutes)) {
@@ -120,7 +122,7 @@ export function getCocktailIngredientRows(
         const base = ingMap.get(baseId);
         if (base && base.id !== ing.id) baseSubstitutes.push(base.name);
       }
-      if (r.allowBrandedSubstitutes) {
+      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
         const others = (byBase.get(baseId) || []).filter(
           (i) => i.id !== ing.id && String(i.baseIngredientId) === String(baseId)
         );
@@ -134,12 +136,12 @@ export function getCocktailIngredientRows(
         if (base?.inBar && base.id !== ing.id) substitute = base;
       }
 
-      if (!substitute && r.allowBrandedSubstitutes) {
+      if (
+        !substitute &&
+        (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+      ) {
         const brand = (byBase.get(baseId) || []).find(
-          (i) =>
-            i.inBar &&
-            i.id !== ing.id &&
-            String(i.baseIngredientId) === String(baseId)
+          (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
         );
         if (brand) substitute = brand;
       }
