@@ -596,7 +596,7 @@ export default function AddCocktailScreen() {
         order: idx + 1,
         ingredientId: r.selectedId,
         name: r.name.trim(),
-        quantity: r.quantity.trim(),
+        amount: r.quantity.trim(),
         unitId: r.unitId,
         garnish: !!r.garnish,
         optional: !!r.optional,
