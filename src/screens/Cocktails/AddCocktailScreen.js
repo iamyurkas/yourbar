@@ -546,6 +546,7 @@ export default function AddCocktailScreen() {
   );
 
   const handleSave = useCallback(async () => {
+    console.log("[AddCocktailScreen] handleSave start");
     const title = name.trim();
     if (!title) {
       showInfo("Validation", "Please enter a cocktail name.");
@@ -557,19 +558,8 @@ export default function AddCocktailScreen() {
       return;
     }
 
-    const committed = nonEmptyIngredients.map((r) => {
-      if (r.selectedId == null && r.pendingExactMatch) {
-        return {
-          ...r,
-          selectedId: r.pendingExactMatch.id,
-          selectedItem: r.pendingExactMatch,
-          pendingExactMatch: null,
-        };
-      }
-      return { ...r, pendingExactMatch: null };
-    });
-    setIngs((prev) =>
-      prev.map((r) => {
+    try {
+      const committed = nonEmptyIngredients.map((r) => {
         if (r.selectedId == null && r.pendingExactMatch) {
           return {
             ...r,
@@ -578,60 +568,85 @@ export default function AddCocktailScreen() {
             pendingExactMatch: null,
           };
         }
-        return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
-      })
-    );
-
-    const id = Date.now();
-    const cocktail = {
-      id,
-      name: title,
-      photoUri: photoUri || null,
-      tags,
-      description: description.trim(),
-      instructions: instructions.trim(),
-      glassId,
-      ingredients: committed.map((r, idx) => ({
-        order: idx + 1,
-        ingredientId: r.selectedId,
-        name: r.name.trim(),
-        amount: r.quantity.trim(),
-        unitId: r.unitId,
-        garnish: !!r.garnish,
-        optional: !!r.optional,
-        allowBaseSubstitution: !!r.allowBaseSubstitute,
-        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-        substitutes: r.substitutes || [],
-      })),
-      createdAt: Date.now(),
-    };
-
-    const created = await addCocktail(cocktail);
-    const allowSubs = await getAllowSubstitutes();
-    setCocktails((prev) => {
-      const next = [...prev, created];
-      const nextUsage = addCocktailToUsageMap(
-        usageMap,
-        globalIngredients,
-        created,
-        { allowSubstitutes: !!allowSubs }
+        return { ...r, pendingExactMatch: null };
+      });
+      setIngs((prev) =>
+        prev.map((r) => {
+          if (r.selectedId == null && r.pendingExactMatch) {
+            return {
+              ...r,
+              selectedId: r.pendingExactMatch.id,
+              selectedItem: r.pendingExactMatch,
+              pendingExactMatch: null,
+            };
+          }
+          return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
+        })
       );
-      setUsageMap(nextUsage);
-      setIngredients(applyUsageMapToIngredients(globalIngredients, nextUsage, next));
-      return next;
-    });
 
-    if (fromIngredientFlow) {
-      navigation.replace("CocktailDetails", {
-        id: created.id,
-        backToIngredientId: initialIngredient?.id,
-        initialCocktail: created,
+      const id = Date.now();
+      const cocktail = {
+        id,
+        name: title,
+        photoUri: photoUri || null,
+        tags,
+        description: description.trim(),
+        instructions: instructions.trim(),
+        glassId,
+        ingredients: committed.map((r, idx) => ({
+          order: idx + 1,
+          ingredientId: r.selectedId,
+          name: r.name.trim(),
+          amount: r.quantity.trim(),
+          unitId: r.unitId,
+          garnish: !!r.garnish,
+          optional: !!r.optional,
+          allowBaseSubstitution: !!r.allowBaseSubstitute,
+          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+          substitutes: r.substitutes || [],
+        })),
+        createdAt: Date.now(),
+      };
+      console.log("[AddCocktailScreen] handleSave cocktail", cocktail);
+
+      const created = await addCocktail(cocktail);
+      console.log("[AddCocktailScreen] handleSave created", created);
+      if (!created) {
+        console.error("[AddCocktailScreen] addCocktail returned null");
+        showInfo("Error", "Failed to save cocktail.");
+        return;
+      }
+
+      const allowSubs = await getAllowSubstitutes();
+      setCocktails((prev) => {
+        const next = [...prev, created];
+        const nextUsage = addCocktailToUsageMap(
+          usageMap,
+          globalIngredients,
+          created,
+          { allowSubstitutes: !!allowSubs }
+        );
+        setUsageMap(nextUsage);
+        setIngredients(applyUsageMapToIngredients(globalIngredients, nextUsage, next));
+        return next;
       });
-    } else {
-      navigation.replace("CocktailDetails", {
-        id: created.id,
-        initialCocktail: created,
-      });
+
+      console.log("[AddCocktailScreen] navigate to details", created.id);
+      if (fromIngredientFlow) {
+        navigation.replace("CocktailDetails", {
+          id: created.id,
+          backToIngredientId: initialIngredient?.id,
+          initialCocktail: created,
+        });
+      } else {
+        navigation.replace("CocktailDetails", {
+          id: created.id,
+          initialCocktail: created,
+        });
+      }
+    } catch (e) {
+      console.error("[AddCocktailScreen] handleSave error", e);
+      showInfo("Error", "Failed to save cocktail.");
     }
   }, [
     name,
