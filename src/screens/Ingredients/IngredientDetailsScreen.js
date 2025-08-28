@@ -53,6 +53,7 @@ import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
 } from "../../utils/cocktailIngredients";
+import { withAlpha } from "../../utils/color";
 
 const PHOTO_SIZE = 150;
 const THUMB = 40;
@@ -116,10 +117,16 @@ const RelationRow = memo(function RelationRow({
   onOpen,
   onUnlink,
   unlinkLabel = "Unlink",
+  inBar,
 }) {
   const theme = useTheme();
   return (
-    <View style={styles.row}>
+    <View
+      style={[
+        styles.row,
+        inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+      ]}
+    >
       <TouchableOpacity
         style={styles.rowMain}
         onPress={onOpen}
@@ -587,6 +594,7 @@ export default function IngredientDetailsScreen() {
                     onOpen={() => goToIngredient(child.id)}
                     onUnlink={() => unlinkChild(child)}
                     unlinkLabel={`Unlink ${child.name}`}
+                    inBar={child.inBar}
                   />
                   {idx !== brandedChildren.length - 1 && (
                     <View
@@ -616,6 +624,7 @@ export default function IngredientDetailsScreen() {
                 onOpen={() => goToIngredient(baseIngredient.id)}
                 onUnlink={unlinkFromBase}
                 unlinkLabel="Unlink from base ingredient"
+                inBar={baseIngredient.inBar}
               />
             </View>
           </>
