@@ -107,51 +107,6 @@ export default function ShakerScreen({ navigation }) {
     };
   }, []);
 
-  const renderItem = useCallback(
-    ({ item }) => {
-      if (item.type === "TAG") {
-        const { tag } = item;
-        const isOpen = expanded[tag.id];
-        return (
-          <View style={{ marginBottom: isOpen ? 0 : 12 }}>
-            <TouchableOpacity
-              onPress={() => toggleTag(tag.id)}
-              style={[styles.tagHeader, { backgroundColor: tag.color }]}
-            >
-              <Text style={styles.tagTitle}>{tag.name}</Text>
-              <MaterialIcons
-                name={isOpen ? "expand-less" : "expand-more"}
-                size={24}
-                color={theme.colors.onPrimary}
-              />
-            </TouchableOpacity>
-          </View>
-        );
-      }
-      const { ingredient: ing, isLast } = item;
-      const active = selectedIds.includes(ing.id);
-      return (
-        <View style={isLast ? { marginBottom: 12 } : null}>
-          <IngredientRow
-            id={ing.id}
-            name={ing.name}
-            photoUri={ing.photoUri}
-            usageCount={ing.usageCount}
-            singleCocktailName={ing.singleCocktailName}
-            showMake
-            inBar={ing.inBar}
-            inShoppingList={ing.inShoppingList}
-            baseIngredientId={ing.baseIngredientId}
-            onPress={toggleIngredient}
-            onDetails={(id) => navigation.push("IngredientDetails", { id })}
-            highlightColor={active ? theme.colors.inversePrimary : undefined}
-          />
-        </View>
-      );
-    },
-    [expanded, toggleTag, theme, selectedIds, toggleIngredient, navigation]
-  );
-
   const keyExtractor = useCallback((item) => {
     if (item.type === "TAG") return `tag-${item.tag.id}`;
     return `ing-${item.ingredient.id}`;
@@ -236,6 +191,88 @@ export default function ShakerScreen({ navigation }) {
 
     return { availableCount: ids.length, availableCocktailIds: ids };
   }, [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]);
+
+  const { availableUsageCountMap, availableSingleNameMap } = useMemo(() => {
+    const set = new Set(availableCocktailIds || []);
+    const nameMap = new Map((cocktails || []).map((c) => [c.id, c.name]));
+    const countMap = {};
+    const singleNameMap = {};
+    ingredients.forEach((ing) => {
+      const ids = usageMap[ing.id] || [];
+      let count = 0;
+      let lastId = null;
+      ids.forEach((cid) => {
+        if (set.has(cid)) {
+          count++;
+          lastId = cid;
+        }
+      });
+      if (count > 0) {
+        countMap[ing.id] = count;
+        if (count === 1) {
+          singleNameMap[ing.id] = nameMap.get(lastId);
+        }
+      }
+    });
+    return {
+      availableUsageCountMap: countMap,
+      availableSingleNameMap: singleNameMap,
+    };
+  }, [availableCocktailIds, usageMap, ingredients, cocktails]);
+
+  const renderItem = useCallback(
+    ({ item }) => {
+      if (item.type === "TAG") {
+        const { tag } = item;
+        const isOpen = expanded[tag.id];
+        return (
+          <View style={{ marginBottom: isOpen ? 0 : 12 }}>
+            <TouchableOpacity
+              onPress={() => toggleTag(tag.id)}
+              style={[styles.tagHeader, { backgroundColor: tag.color }]}
+            >
+              <Text style={styles.tagTitle}>{tag.name}</Text>
+              <MaterialIcons
+                name={isOpen ? "expand-less" : "expand-more"}
+                size={24}
+                color={theme.colors.onPrimary}
+              />
+            </TouchableOpacity>
+          </View>
+        );
+      }
+      const { ingredient: ing, isLast } = item;
+      const active = selectedIds.includes(ing.id);
+      return (
+        <View style={isLast ? { marginBottom: 12 } : null}>
+          <IngredientRow
+            id={ing.id}
+            name={ing.name}
+            photoUri={ing.photoUri}
+            usageCount={availableUsageCountMap[ing.id] || 0}
+            singleCocktailName={availableSingleNameMap[ing.id]}
+            showMake
+            inBar={ing.inBar}
+            inShoppingList={ing.inShoppingList}
+            baseIngredientId={ing.baseIngredientId}
+            onPress={toggleIngredient}
+            onDetails={(id) => navigation.push("IngredientDetails", { id })}
+            highlightColor={active ? theme.colors.inversePrimary : undefined}
+          />
+        </View>
+      );
+    },
+    [
+      expanded,
+      toggleTag,
+      theme,
+      selectedIds,
+      toggleIngredient,
+      navigation,
+      availableUsageCountMap,
+      availableSingleNameMap,
+    ]
+  );
 
   const handleClear = () => setSelectedIds([]);
 
