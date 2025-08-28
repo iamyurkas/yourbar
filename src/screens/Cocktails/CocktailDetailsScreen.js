@@ -31,11 +31,12 @@ import {
   saveCocktail,
   updateCocktailById,
 } from "../../storage/cocktailsStorage";
-import { getIngredientsByIds } from "../../storage/ingredientsStorage";
+import {
+  getIngredientsByIds,
+  getIngredientsByBaseIds,
+} from "../../storage/ingredientsStorage";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
-import { getUnitById, formatUnit } from "../../constants/measureUnits";
 import { getGlassById } from "../../constants/glassware";
-import { formatAmount, toMetric, toImperial } from "../../utils/units";
 import { withAlpha } from "../../utils/color";
 import {
   getUseMetric,
@@ -48,6 +49,10 @@ import {
 } from "../../storage/settingsStorage";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import ExpandableText from "../../components/ExpandableText";
+import {
+  buildIngredientIndex,
+  getCocktailIngredientRows,
+} from "../../utils/cocktailIngredients";
 
 /* ---------- Ingredient row (like AllIngredients) ---------- */
 const IMAGE_SIZE = 50;
@@ -194,13 +199,17 @@ export default function CocktailDetailsScreen() {
   } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(initialCocktail || null);
-  const [ingMap, setIngMap] = useState(new Map());
-  const [ingList, setIngList] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(!initialCocktail);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+
+  const { ingMap, byBase } = useMemo(
+    () => buildIngredientIndex(ingredients),
+    [ingredients]
+  );
 
   const handleGoBack = useCallback(() => {
     if (backToIngredientId != null) {
@@ -311,11 +320,20 @@ export default function CocktailDetailsScreen() {
       let allIngredients = [];
       if (ingredientIds.length) {
         allIngredients = await getIngredientsByIds(ingredientIds);
-        if (allowSubs) {
+        const allowBaseSubs =
+          allowSubs ||
+          (loadedCocktail?.ingredients || []).some(
+            (r) => r.allowBaseSubstitution
+          );
+        if (allowBaseSubs) {
+          const baseMap = new Map(
+            allIngredients.map((i) => [i.id, i.baseIngredientId])
+          );
           const baseIds = Array.from(
             new Set(
-              allIngredients
-                .map((i) => i.baseIngredientId)
+              (loadedCocktail?.ingredients || [])
+                .filter((r) => allowSubs || r.allowBaseSubstitution)
+                .map((r) => baseMap.get(r.ingredientId))
                 .filter(
                   (bid) => bid != null && !ingredientIds.includes(bid)
                 )
@@ -326,9 +344,22 @@ export default function CocktailDetailsScreen() {
             allIngredients = allIngredients.concat(baseIngredients);
           }
         }
+
+        const brandBaseIds = Array.from(
+          new Set(allIngredients.map((i) => i.baseIngredientId ?? i.id))
+        );
+        if (brandBaseIds.length) {
+          const branded = await getIngredientsByBaseIds(brandBaseIds, {
+            inBarOnly: true,
+          });
+          if (branded.length) {
+            const map = new Map(allIngredients.map((i) => [i.id, i]));
+            for (const b of branded) map.set(b.id, b);
+            allIngredients = Array.from(map.values());
+          }
+        }
       }
-      setIngMap(new Map(allIngredients.map((i) => [i.id, i])));
-      setIngList(allIngredients);
+      setIngredients(allIngredients);
       setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
@@ -383,8 +414,7 @@ export default function CocktailDetailsScreen() {
 
   useEffect(() => {
     if (globalIngredients.length) {
-      setIngMap(new Map(globalIngredients.map((i) => [i.id, i])));
-      setIngList(globalIngredients);
+      setIngredients(globalIngredients);
     }
   }, [globalIngredients]);
 
@@ -419,126 +449,26 @@ export default function CocktailDetailsScreen() {
     }
   }, [globalCocktails, id, ingMap, load]);
 
-  const rows = useMemo(() => {
-    if (!cocktail) return [];
-    const list = Array.isArray(cocktail.ingredients)
-      ? [...cocktail.ingredients].sort((a, b) => a.order - b.order)
-      : [];
-
-    const byId = new Map();
-    const byBase = new Map();
-    for (const ing of ingList) {
-      byId.set(ing.id, ing);
-      const base = ing.baseIngredientId ?? ing.id;
-      const arr = byBase.get(base);
-      if (arr) {
-        arr.push(ing);
-      } else {
-        byBase.set(base, [ing]);
-      }
-    }
-
-    return list.map((r) => {
-      const ing = r.ingredientId ? byId.get(r.ingredientId) : null;
-      const originalName = ing?.name || r.name;
-      const inBar = ing?.inBar;
-      let substitute = null;
-      let declaredSubstitutes = [];
-      let baseSubstitutes = [];
-      let brandedSubstitutes = [];
-      const baseId = ing?.baseIngredientId ?? ing?.id;
-      if (ing) {
-        if (Array.isArray(r.substitutes)) {
-          declaredSubstitutes = r.substitutes.map((s) => {
-            const candidate = byId.get(s.id);
-            return candidate?.name || s.name;
-          });
-        }
-        if (allowSubstitutes || r.allowBaseSubstitution) {
-          const base = byId.get(baseId);
-          if (base && base.id !== ing.id) baseSubstitutes.push(base.name);
-        }
-        if (r.allowBrandedSubstitutes) {
-          const others = (byBase.get(baseId) || []).filter(
-            (i) => i.id !== ing.id && i.baseIngredientId === baseId
-          );
-          brandedSubstitutes = others.map((i) => i.name);
-        }
-      }
-      if (!inBar && ing) {
-        if (allowSubstitutes || r.allowBaseSubstitution) {
-          const base = byId.get(baseId);
-          if (base?.inBar && base.id !== ing.id) substitute = base;
-        }
-
-        if (!substitute && r.allowBrandedSubstitutes) {
-          const brand = (byBase.get(baseId) || []).find(
-            (i) =>
-              i.inBar &&
-              i.id !== ing.id &&
-              i.baseIngredientId === baseId
-          );
-          if (brand) substitute = brand;
-        }
-
-        if (!substitute && Array.isArray(r.substitutes)) {
-          for (const s of r.substitutes) {
-            const candidate = byId.get(s.id);
-            if (candidate?.inBar) {
-              substitute = candidate;
-              break;
-            }
-          }
-        }
-      }
-
-      // If we use a substitute, omit it from the substitutes list to avoid duplicates.
-      if (substitute) {
-        const subName = substitute.name;
-        declaredSubstitutes = declaredSubstitutes.filter((s) => s !== subName);
-        baseSubstitutes = baseSubstitutes.filter((s) => s !== subName);
-        brandedSubstitutes = brandedSubstitutes.filter((s) => s !== subName);
-      } else if (inBar) {
-        declaredSubstitutes = [];
-        baseSubstitutes = [];
-        brandedSubstitutes = [];
-      }
-
-      const display = substitute || ing || {};
-      const finalInBar = substitute ? substitute.inBar : inBar;
-      const ignored = ignoreGarnish && r.garnish && !finalInBar;
-      let amount = r.amount;
-      let unitName = getUnitById(r.unitId)?.name || "";
-      if (amount != null) {
-        if (showImperial) {
-          ({ amount, unit: unitName } = toImperial(amount, unitName));
-        } else {
-          ({ amount, unit: unitName } = toMetric(amount, unitName));
-        }
-        unitName = formatUnit(unitName, amount);
-        amount = formatAmount(amount, showImperial);
-      } else {
-        unitName = formatUnit(unitName, amount);
-      }
-      return {
-        key: `${r.order}-${r.ingredientId ?? "free"}`,
-        ingredientId: display.id || null,
-        name: display.name || r.name,
-        photoUri: display.photoUri || null,
-        amount,
-        unitName,
-        inBar: finalInBar,
-        ignored,
-        garnish: !!r.garnish,
-        optional: !!r.optional,
-        substituteFor: substitute ? originalName : null,
-        isBranded: display.baseIngredientId != null,
-        declaredSubstitutes,
-        baseSubstitutes,
-        brandedSubstitutes,
-      };
-    });
-  }, [cocktail, ingList, showImperial, ignoreGarnish, allowSubstitutes]);
+  const rows = useMemo(
+    () =>
+      cocktail
+        ? getCocktailIngredientRows(cocktail, {
+            ingMap,
+            byBase,
+            allowSubstitutes,
+            ignoreGarnish,
+            showImperial,
+          })
+        : [],
+    [
+      cocktail,
+      ingMap,
+      byBase,
+      allowSubstitutes,
+      ignoreGarnish,
+      showImperial,
+    ],
+  );
 
   if (loading)
     return (

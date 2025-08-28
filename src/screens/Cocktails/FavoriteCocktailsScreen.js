@@ -33,6 +33,10 @@ import CocktailRow, {
 } from "../../components/CocktailRow";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
+import {
+  buildIngredientIndex,
+  getCocktailIngredientInfo,
+} from "../../utils/cocktailIngredients";
 
 export default function FavoriteCocktailsScreen() {
   const theme = useTheme();
@@ -118,13 +122,7 @@ export default function FavoriteCocktailsScreen() {
   }, [isFocused, globalCocktails, globalIngredients]);
 
   const filtered = useMemo(() => {
-    const ingMap = new Map(
-      (ingredients || []).map((i) => [String(i.id), i])
-    );
-    const findBrand = (baseId) =>
-      ingredients.find(
-        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
-      );
+    const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
     const q = normalizeSearch(searchDebounced);
     let list = cocktails.filter((c) => c.rating > 0 && c.rating >= minRating);
     if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
@@ -135,64 +133,17 @@ export default function FavoriteCocktailsScreen() {
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
     const mapped = list.map((c) => {
-      const required = (c.ingredients || []).filter(
-        (r) => !r.optional && !(ignoreGarnish && r.garnish)
-      );
-      const missing = [];
-      const ingredientNames = [];
-      let allAvail = required.length > 0;
-      let branded = false;
-      for (const r of required) {
-        const ing = ingMap.get(String(r.ingredientId));
-        const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-        let used = null;
-        if (ing?.inBar) {
-          used = ing;
-        } else {
-          if (allowSubstitutes || r.allowBaseSubstitution) {
-            const base = ingMap.get(baseId);
-            if (base?.inBar) used = base;
-          }
-          const isBaseIngredient = ing?.baseIngredientId == null;
-          if (
-            !used &&
-            (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
-          ) {
-            const brand = findBrand(baseId);
-            if (brand) used = brand;
-          }
-          if (!used && Array.isArray(r.substitutes)) {
-            for (const s of r.substitutes) {
-              const candidate = ingMap.get(String(s.id));
-              if (candidate?.inBar) {
-                used = candidate;
-                break;
-              }
-            }
-          }
-        }
-        if (used) {
-          ingredientNames.push(used.name);
-          if (used.baseIngredientId != null) branded = true;
-        } else {
-          if (ing?.baseIngredientId != null) branded = true;
-          const missingName = ing?.name || r.name || "";
-          if (missingName) missing.push(missingName);
-          allAvail = false;
-        }
-      }
-      let ingredientLine = ingredientNames.join(", ");
-      if (!allAvail) {
-        if (missing.length > 0 && missing.length <= 2) {
-          ingredientLine = `Missing: ${missing.join(", ")}`;
-        } else if (missing.length >= 3 || missing.length === 0) {
-          ingredientLine = `Missing: ${missing.length || required.length} ingredients`;
-        }
-      }
+      const { ingredientLine, isAllAvailable, hasBranded } =
+        getCocktailIngredientInfo(c, {
+          ingMap,
+          findBrand,
+          allowSubstitutes,
+          ignoreGarnish,
+        });
       return {
         ...c,
-        isAllAvailable: allAvail,
-        hasBranded: branded,
+        isAllAvailable,
+        hasBranded,
         ingredientLine,
       };
     });

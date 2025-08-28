@@ -54,6 +54,32 @@ export async function getIngredientsByIds(ids) {
     .sort(sortByName);
 }
 
+export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {}) {
+  const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
+  if (list.length === 0) return [];
+  const placeholders = list.map(() => "?").join(", ");
+  const res = await query(
+    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,
+    list.map((id) => String(id))
+  );
+  return res.rows._array
+    .map((r) => ({
+      id: Number(r.id),
+      name: r.name,
+      description: r.description,
+      tags: r.tags ? JSON.parse(r.tags) : [],
+      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
+      usageCount: r.usageCount ?? 0,
+      singleCocktailName: r.singleCocktailName,
+      searchName: r.searchName,
+      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
+      photoUri: r.photoUri,
+      inBar: !!r.inBar,
+      inShoppingList: !!r.inShoppingList,
+    }))
+    .sort(sortByName);
+}
+
 export function buildIndex(list) {
   return list.reduce((acc, item) => {
     acc[item.id] = item;
