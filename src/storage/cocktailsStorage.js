@@ -91,10 +91,11 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
-  // Run all writes in a single transaction so inserts share the same
-  // connection and the ingredient links always match the cocktail row.
-  await db.withTransactionAsync(async () => {
-    await db.runAsync(
+  console.log("[cocktailsStorage] upsertCocktail start", item.id);
+  // Run all writes in a single exclusive transaction so queries share the same
+  // connection and no parallel write can sneak in and lock the database.
+  await db.withExclusiveTransactionAsync(async (tx) => {
+    await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
         id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -109,12 +110,12 @@ async function upsertCocktail(item) {
       item.createdAt ?? null,
       item.updatedAt ?? null
     );
-    await db.runAsync(
+    await tx.runAsync(
       `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
       item.id
     );
     for (const ing of item.ingredients) {
-      await db.runAsync(
+      await tx.runAsync(
         `INSERT INTO cocktail_ingredients (
           cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
           allowBaseSubstitution, allowBrandedSubstitutes, substitutes
@@ -133,6 +134,7 @@ async function upsertCocktail(item) {
       );
     }
   });
+  console.log("[cocktailsStorage] upsertCocktail end", item.id);
 }
 
 // --- API ---
