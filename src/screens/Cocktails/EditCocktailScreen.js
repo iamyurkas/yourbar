@@ -385,39 +385,45 @@ export default function EditCocktailScreen() {
 
       const prev = cocktails.find((c) => c.id === cocktailId);
 
-      const updated = await saveCocktail(cocktail);
-      const nextCocktails = updateCocktailById(cocktails, updated);
-      setCocktails(nextCocktails);
-      const allowSubs = await getAllowSubstitutes();
-      let nextUsage = removeCocktailFromUsageMap(
-        usageMap,
-        globalIngredients,
-        prev,
-        { allowSubstitutes: !!allowSubs }
-      );
-      nextUsage = addCocktailToUsageMap(
-        nextUsage,
-        globalIngredients,
-        updated,
-        { allowSubstitutes: !!allowSubs }
-      );
-      setUsageMap(nextUsage);
-      setIngredients(
-        applyUsageMapToIngredients(
+      console.log("Saving cocktail", cocktail);
+      try {
+        const updated = await saveCocktail(cocktail);
+        console.log("Cocktail saved", updated);
+        const nextCocktails = updateCocktailById(cocktails, updated);
+        setCocktails(nextCocktails);
+        const allowSubs = await getAllowSubstitutes();
+        let nextUsage = removeCocktailFromUsageMap(
+          usageMap,
           globalIngredients,
+          prev,
+          { allowSubstitutes: !!allowSubs }
+        );
+        nextUsage = addCocktailToUsageMap(
           nextUsage,
-          nextCocktails
-        )
-      );
+          globalIngredients,
+          updated,
+          { allowSubstitutes: !!allowSubs }
+        );
+        setUsageMap(nextUsage);
+        setIngredients(
+          applyUsageMapToIngredients(
+            globalIngredients,
+            nextUsage,
+            nextCocktails
+          )
+        );
 
-      initialHashRef.current = serialize();
-      setDirty(false);
-      if (!stay) {
-        skipPromptRef.current = true;
-        navigation.goBack();
+        initialHashRef.current = serialize();
+        setDirty(false);
+        if (!stay) {
+          skipPromptRef.current = true;
+          navigation.goBack();
+        }
+
+        return updated;
+      } catch (e) {
+        console.error("Failed to save cocktail", e);
       }
-
-      return updated;
     },
     [
       name,

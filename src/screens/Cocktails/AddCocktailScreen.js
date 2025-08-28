@@ -621,25 +621,31 @@ export default function AddCocktailScreen() {
       });
     }
 
+    console.log("Saving new cocktail", cocktail);
     InteractionManager.runAfterInteractions(async () => {
-      const created = await addCocktail(cocktail);
-      const allowSubs = await getAllowSubstitutes();
-      setCocktails((prev) => {
-        const next = updateCocktailById(prev, created);
-        const nextUsage = addCocktailToUsageMap(
-          usageMap,
-          globalIngredients,
-          created,
-          {
-            allowSubstitutes: !!allowSubs,
-          }
-        );
-        setUsageMap(nextUsage);
-        setIngredients(
-          applyUsageMapToIngredients(globalIngredients, nextUsage, next)
-        );
-        return next;
-      });
+      try {
+        const created = await addCocktail(cocktail);
+        console.log("Cocktail saved", created);
+        const allowSubs = await getAllowSubstitutes();
+        setCocktails((prev) => {
+          const next = updateCocktailById(prev, created);
+          const nextUsage = addCocktailToUsageMap(
+            usageMap,
+            globalIngredients,
+            created,
+            {
+              allowSubstitutes: !!allowSubs,
+            }
+          );
+          setUsageMap(nextUsage);
+          setIngredients(
+            applyUsageMapToIngredients(globalIngredients, nextUsage, next)
+          );
+          return next;
+        });
+      } catch (e) {
+        console.error("Failed to save cocktail", e);
+      }
     });
   }, [
     name,
