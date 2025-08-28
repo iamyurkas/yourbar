@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useState,
   useMemo,
+  useRef,
   memo,
 } from "react";
 import {
@@ -205,6 +206,7 @@ export default function CocktailDetailsScreen() {
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
+  const showImperialLocked = useRef(false);
 
   const { ingMap, byBase } = useMemo(
     () => buildIngredientIndex(ingredients),
@@ -360,7 +362,7 @@ export default function CocktailDetailsScreen() {
         }
       }
       setIngredients(allIngredients);
-      setShowImperial(!useMetric);
+      if (!showImperialLocked.current) setShowImperial(!useMetric);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
       if (showSpinner) setLoading(false);
@@ -528,7 +530,10 @@ export default function CocktailDetailsScreen() {
       {ratingStars}
 
       <TouchableOpacity
-        onPress={() => setShowImperial((v) => !v)}
+        onPress={() => {
+          showImperialLocked.current = true;
+          setShowImperial((v) => !v);
+        }}
         style={[styles.toggleBtn, { borderColor: theme.colors.primary }]}
         accessibilityRole="button"
         accessibilityLabel={
