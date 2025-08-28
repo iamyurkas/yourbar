@@ -40,6 +40,9 @@ export default function TabSwipe({ navigation, children }) {
   }, [getTabNav]);
 
   const pan = Gesture.Pan()
+    // Only react to horizontal swipes so vertical lists can scroll
+    .activeOffsetX([-UNDERLINE_MOVE_THRESHOLD, UNDERLINE_MOVE_THRESHOLD])
+    .failOffsetY([-UNDERLINE_MOVE_THRESHOLD, UNDERLINE_MOVE_THRESHOLD])
     .onUpdate((e) => {
       const t = e.translationX;
       if (Math.abs(t) > UNDERLINE_MOVE_THRESHOLD) {
