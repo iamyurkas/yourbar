@@ -27,6 +27,7 @@ import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/CocktailRow";
+import TabSwipe from "../../components/TabSwipe";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
@@ -183,7 +184,8 @@ export default function AllCocktailsScreen() {
     );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <TabSwipe navigation={navigation}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderWithSearch
         searchValue={search}
         setSearchValue={setSearch}
@@ -216,7 +218,8 @@ export default function AllCocktailsScreen() {
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
         }}
       />
-    </View>
+      </View>
+    </TabSwipe>
   );
 }
 
