@@ -210,7 +210,7 @@ export default function CocktailDetailsScreen() {
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const showImperialLocked = useRef(false);
 
-  const { ingMap, byBase } = useMemo(
+  const { ingMap, byBase, bySearch } = useMemo(
     () => buildIngredientIndex(ingredients),
     [ingredients]
   );
@@ -309,14 +309,21 @@ export default function CocktailDetailsScreen() {
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
+      // If DB hasn't yet persisted ingredients, fall back to existing state/route data
       setCocktail((prev) => {
         if (!loadedCocktail) return prev;
         if (!prev) return loadedCocktail;
-        return { ...loadedCocktail, rating: prev.rating };
+        const mergedIngs = (loadedCocktail.ingredients && loadedCocktail.ingredients.length)
+          ? loadedCocktail.ingredients
+          : (prev.ingredients || []);
+        return { ...loadedCocktail, ingredients: mergedIngs, rating: prev.rating };
       });
+      const fallbackRows = (loadedCocktail?.ingredients && loadedCocktail.ingredients.length)
+        ? loadedCocktail.ingredients
+        : (initialCocktail?.ingredients || []);
       const ingredientIds = Array.from(
         new Set(
-          (loadedCocktail?.ingredients || [])
+          (fallbackRows || [])
             .flatMap((r) => [
               r.ingredientId,
               ...(Array.isArray(r.substitutes)
@@ -421,15 +428,18 @@ export default function CocktailDetailsScreen() {
     return () => sub.remove();
   }, []);
 
+  // Hydrate ingredients list from global cache only if we don't have any yet.
   useEffect(() => {
-    if (globalIngredients.length) {
+    if (ingredients.length === 0 && globalIngredients.length) {
       setIngredients(globalIngredients);
     }
-  }, [globalIngredients]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalIngredients, ingredients.length]);
 
   // When the global cocktail list updates, merge the item into local state.
   // If the cocktail references ingredient ids that we don't have cached yet,
   // perform a full reload to fetch the missing ingredient rows.
+  const loadingMissingRef = useRef(false);
   useEffect(() => {
     const updated = globalCocktails.find((c) => c.id === id);
     if (!updated) return;
@@ -452,14 +462,16 @@ export default function CocktailDetailsScreen() {
       return { ...prev, ...updated };
     });
 
-    if (missingIngredient) {
+    if (missingIngredient && !loadingMissingRef.current) {
+      loadingMissingRef.current = true;
       (async () => {
         try {
           await load(true, false);
         } catch {}
+        loadingMissingRef.current = false;
       })();
     }
-  }, [globalCocktails, id, ingMap, load]);
+  }, [globalCocktails, id]);
 
   const rows = useMemo(
     () =>
@@ -467,6 +479,7 @@ export default function CocktailDetailsScreen() {
         ? getCocktailIngredientRows(cocktail, {
             ingMap,
             byBase,
+            bySearch,
             allowSubstitutes,
             ignoreGarnish,
             showImperial,

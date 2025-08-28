@@ -1,20 +1,27 @@
 import { getUnitById, formatUnit } from "../constants/measureUnits";
 import { formatAmount, toMetric, toImperial } from "./units";
+import { normalizeSearch } from "./normalizeSearch";
 
 export function buildIngredientIndex(ingredients = []) {
   const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
   const byBase = new Map();
+  const bySearch = new Map();
   for (const ing of ingredients || []) {
     const baseId = String(ing.baseIngredientId ?? ing.id);
     const arr = byBase.get(baseId);
     if (arr) arr.push(ing);
     else byBase.set(baseId, [ing]);
+    const key = ing.searchName || normalizeSearch(ing.name || "");
+    if (key) {
+      if (!bySearch.has(key)) bySearch.set(key, ing);
+      else bySearch.set(key, null);
+    }
   }
   const findBrand = (baseId) =>
     (byBase.get(String(baseId)) || []).find(
       (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
     );
-  return { ingMap, findBrand, byBase };
+  return { ingMap, findBrand, byBase, bySearch };
 }
 
 export function getCocktailIngredientInfo(
@@ -90,6 +97,7 @@ export function getCocktailIngredientRows(
   {
     ingMap = new Map(),
     byBase = new Map(),
+    bySearch = new Map(),
     allowSubstitutes = false,
     ignoreGarnish = false,
     showImperial = false,
@@ -100,7 +108,12 @@ export function getCocktailIngredientRows(
     : [];
 
   return list.map((r) => {
-    const ing = r.ingredientId ? ingMap.get(String(r.ingredientId)) : null;
+    let ing = r.ingredientId ? ingMap.get(String(r.ingredientId)) : null;
+    if (!ing && r.name && bySearch) {
+      const key = normalizeSearch(r.name || "");
+      const candidate = bySearch.get(key);
+      if (candidate) ing = candidate;
+    }
     const originalName = ing?.name || r.name;
     const inBar = ing?.inBar;
     const baseId = String(ing?.baseIngredientId ?? ing?.id ?? r.ingredientId);

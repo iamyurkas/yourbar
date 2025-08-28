@@ -21,7 +21,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  InteractionManager,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -55,7 +54,7 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import { addCocktail, updateCocktailById } from "../../storage/cocktailsStorage";
+import { addCocktail } from "../../storage/cocktailsStorage";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -72,6 +71,7 @@ import {
   applyUsageMapToIngredients,
 } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
+import { getAllIngredients } from "../../storage/ingredientsStorage";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
 const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
@@ -546,7 +546,8 @@ export default function AddCocktailScreen() {
     }, [route.params, navigation])
   );
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
+    console.log("[AddCocktailScreen] handleSave start");
     const title = name.trim();
     if (!title) {
       showInfo("Validation", "Please enter a cocktail name.");
@@ -558,6 +559,19 @@ export default function AddCocktailScreen() {
       return;
     }
 
+    try {
+    // Resolve missing selectedId by exact name match (unique)
+    let allKnown = [];
+    try {
+      allKnown = await getAllIngredients();
+    } catch {}
+    const bySearch = new Map();
+    allKnown.forEach((i) => {
+      const key = i.searchName || normalizeSearch(i.name || "");
+      if (!bySearch.has(key)) bySearch.set(key, i);
+      else bySearch.set(key, null); // non-unique
+    });
+
     const committed = nonEmptyIngredients.map((r) => {
       if (r.selectedId == null && r.pendingExactMatch) {
         return {
@@ -567,80 +581,98 @@ export default function AddCocktailScreen() {
           pendingExactMatch: null,
         };
       }
-      return { ...r, pendingExactMatch: null };
-    });
-    setIngs((prev) =>
-      prev.map((r) => {
-        if (r.selectedId == null && r.pendingExactMatch) {
+      if (r.selectedId == null) {
+        const key = normalizeSearch(r.name || "");
+        const found = bySearch.get(key);
+        if (found && found.id != null) {
           return {
             ...r,
-            selectedId: r.pendingExactMatch.id,
-            selectedItem: r.pendingExactMatch,
+            selectedId: found.id,
+            selectedItem: found,
             pendingExactMatch: null,
           };
         }
-        return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
-      })
-    );
+      }
+      return { ...r, pendingExactMatch: null };
+    });
+      setIngs((prev) =>
+        prev.map((r) => {
+          if (r.selectedId == null && r.pendingExactMatch) {
+            return {
+              ...r,
+              selectedId: r.pendingExactMatch.id,
+              selectedItem: r.pendingExactMatch,
+              pendingExactMatch: null,
+            };
+          }
+          return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
+        })
+      );
 
-    const id = Date.now();
-    const cocktail = {
-      id,
-      name: title,
-      photoUri: photoUri || null,
-      tags,
-      description: description.trim(),
-      instructions: instructions.trim(),
-      glassId,
-      ingredients: committed.map((r, idx) => ({
-        order: idx + 1,
-        ingredientId: r.selectedId,
-        name: r.name.trim(),
-        quantity: r.quantity.trim(),
-        unitId: r.unitId,
-        garnish: !!r.garnish,
-        optional: !!r.optional,
-        allowBaseSubstitute: !!r.allowBaseSubstitute,
-        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-        substitutes: r.substitutes || [],
-      })),
-      createdAt: Date.now(),
-    };
-    setCocktails((prev) => [...prev, cocktail]);
+      const id = Date.now();
+      const cocktail = {
+        id,
+        name: title,
+        photoUri: photoUri || null,
+        tags,
+        description: description.trim(),
+        instructions: instructions.trim(),
+        glassId,
+        ingredients: committed.map((r, idx) => ({
+          order: idx + 1,
+          ingredientId: r.selectedId,
+          name: r.name.trim(),
+          amount: r.quantity.trim(),
+          unitId: r.unitId,
+          garnish: !!r.garnish,
+          optional: !!r.optional,
+          allowBaseSubstitution: !!r.allowBaseSubstitute,
+          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+          substitutes: r.substitutes || [],
+        })),
+        createdAt: Date.now(),
+      };
+      console.log("[AddCocktailScreen] handleSave cocktail", cocktail);
 
-    if (fromIngredientFlow) {
-      navigation.replace("CocktailDetails", {
-        id: cocktail.id,
-        backToIngredientId: initialIngredient?.id,
-        initialCocktail: cocktail,
-      });
-    } else {
-      navigation.replace("CocktailDetails", {
-        id: cocktail.id,
-        initialCocktail: cocktail,
-      });
-    }
-
-    InteractionManager.runAfterInteractions(async () => {
       const created = await addCocktail(cocktail);
+      console.log("[AddCocktailScreen] handleSave created", created);
+      if (!created) {
+        console.error("[AddCocktailScreen] addCocktail returned null");
+        showInfo("Error", "Failed to save cocktail.");
+        return;
+      }
+
       const allowSubs = await getAllowSubstitutes();
       setCocktails((prev) => {
-        const next = updateCocktailById(prev, created);
+        const next = [...prev, created];
         const nextUsage = addCocktailToUsageMap(
           usageMap,
           globalIngredients,
           created,
-          {
-            allowSubstitutes: !!allowSubs,
-          }
+          { allowSubstitutes: !!allowSubs }
         );
         setUsageMap(nextUsage);
-        setIngredients(
-          applyUsageMapToIngredients(globalIngredients, nextUsage, next)
-        );
+        setIngredients(applyUsageMapToIngredients(globalIngredients, nextUsage, next));
         return next;
       });
-    });
+
+      console.log("[AddCocktailScreen] navigate to details", created.id);
+      if (fromIngredientFlow) {
+        navigation.replace("CocktailDetails", {
+          id: created.id,
+          backToIngredientId: initialIngredient?.id,
+          initialCocktail: created,
+        });
+      } else {
+        navigation.replace("CocktailDetails", {
+          id: created.id,
+          initialCocktail: created,
+        });
+      }
+    } catch (e) {
+      console.error("[AddCocktailScreen] handleSave error", e);
+      showInfo("Error", "Failed to save cocktail.");
+    }
   }, [
     name,
     photoUri,

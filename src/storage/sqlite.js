@@ -4,6 +4,7 @@ import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
+let writeQueue = Promise.resolve();
 
 export function initDatabase() {
   if (!initPromise) {
@@ -74,6 +75,23 @@ export async function query(sql, params = []) {
     };
   }
   return db.runAsync(sql, params);
+}
+
+// Serialize all write operations across modules to avoid DB locked errors
+export function withExclusiveWriteAsync(work) {
+  if (typeof work !== "function") throw new Error("work must be a function");
+  const runner = async () => {
+    await initPromise;
+    return SQLite.withExclusiveTransactionAsync
+      ? SQLite.withExclusiveTransactionAsync(db, work)
+      : db.withExclusiveTransactionAsync(work);
+  };
+  const next = writeQueue.then(runner, runner);
+  // Keep the chain alive even if an operation fails
+  writeQueue = next.catch((e) => {
+    console.warn("[sqlite] withExclusiveWriteAsync error", e);
+  });
+  return next;
 }
 
 export default db;
