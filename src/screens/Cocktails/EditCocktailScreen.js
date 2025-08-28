@@ -279,6 +279,10 @@ export default function EditCocktailScreen() {
 
   const handleSave = useCallback(
     async (stay = false) => {
+      console.log("[EditCocktailScreen] handleSave start", {
+        stay,
+        cocktailId,
+      });
       const title = name.trim();
       if (!title) {
         showInfo("Validation", "Please enter a cocktail name.");
@@ -470,8 +474,26 @@ export default function EditCocktailScreen() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const data = await getCocktailById(cocktailId);
+      console.log("[EditCocktailScreen] load start", {
+        params,
+        cocktailId,
+      });
+      let data = null;
+      try {
+        data = await getCocktailById(cocktailId);
+        console.log("[EditCocktailScreen] load from storage", data);
+      } catch (e) {
+        console.error("[EditCocktailScreen] getCocktailById error", e);
+      }
+      if (!data) {
+        data = cocktails.find((c) => c.id === cocktailId) || null;
+        console.log("[EditCocktailScreen] load from context", data);
+      }
       if (!mounted || !data) {
+        console.warn(
+          "[EditCocktailScreen] cocktail not found",
+          cocktailId
+        );
         setLoading(false);
         return;
       }
@@ -519,7 +541,7 @@ export default function EditCocktailScreen() {
     return () => {
       mounted = false;
     };
-  }, [cocktailId]);
+  }, [cocktailId, cocktails, params]);
 
   useEffect(() => {
     if (loading) return;
