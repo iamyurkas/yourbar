@@ -210,7 +210,8 @@ export default function EditCocktailScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const params = route.params || {};
-  const cocktailId = params?.id;
+  const cocktailId =
+    params?.id != null ? Number(params.id) : undefined;
   const { cocktails, setCocktails, usageMap, setUsageMap } =
     useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
