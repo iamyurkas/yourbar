@@ -1,7 +1,7 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
-import db, { query } from "./sqlite";
+import db, { query, initDatabase } from "./sqlite";
 
 // --- utils ---
 
@@ -91,48 +91,45 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
-  // Use an exclusive transaction so all queries share the same
-  // connection and SQLite can serialize writes without locking errors.
-  await db.withExclusiveTransactionAsync(async (tx) => {
-    await tx.runAsync(
+  // Run all writes in a single transaction so inserts share the same
+  // connection and the ingredient links always match the cocktail row.
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
       `INSERT OR REPLACE INTO cocktails (
         id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        item.id,
-        item.name,
-        item.photoUri ?? null,
-        item.glassId ?? null,
-        item.rating ?? 0,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.description ?? null,
-        item.instructions ?? null,
-        item.createdAt ?? null,
-        item.updatedAt ?? null,
-      ]
-    );
-    await tx.runAsync(`DELETE FROM cocktail_ingredients WHERE cocktailId = ?`, [
       item.id,
-    ]);
+      item.name,
+      item.photoUri ?? null,
+      item.glassId ?? null,
+      item.rating ?? 0,
+      item.tags ? JSON.stringify(item.tags) : null,
+      item.description ?? null,
+      item.instructions ?? null,
+      item.createdAt ?? null,
+      item.updatedAt ?? null
+    );
+    await db.runAsync(
+      `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
+      item.id
+    );
     for (const ing of item.ingredients) {
-      await tx.runAsync(
+      await db.runAsync(
         `INSERT INTO cocktail_ingredients (
           cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
           allowBaseSubstitution, allowBrandedSubstitutes, substitutes
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          item.id,
-          ing.order,
-          ing.ingredientId != null ? String(ing.ingredientId) : null,
-          ing.name ?? null,
-          ing.amount ?? null,
-          ing.unitId ?? null,
-          ing.garnish ? 1 : 0,
-          ing.optional ? 1 : 0,
-          ing.allowBaseSubstitution ? 1 : 0,
-          ing.allowBrandedSubstitutes ? 1 : 0,
-          ing.substitutes ? JSON.stringify(ing.substitutes) : null,
-        ]
+        item.id,
+        ing.order,
+        ing.ingredientId != null ? String(ing.ingredientId) : null,
+        ing.name ?? null,
+        ing.amount ?? null,
+        ing.unitId ?? null,
+        ing.garnish ? 1 : 0,
+        ing.optional ? 1 : 0,
+        ing.allowBaseSubstitution ? 1 : 0,
+        ing.allowBrandedSubstitutes ? 1 : 0,
+        ing.substitutes ? JSON.stringify(ing.substitutes) : null
       );
     }
   });
@@ -188,15 +185,13 @@ export async function getCocktailById(id) {
 
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
+  await initDatabase();
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   console.log("[cocktailsStorage] addCocktail", item);
   await upsertCocktail(item);
-  // reading back immediately after a transaction may keep the SQLite
-  // connection locked on some platforms, causing "database is locked"
-  // errors. The `item` object already reflects the data that was
-  // persisted, so we return it directly instead of querying again.
-  console.log("[cocktailsStorage] addCocktail stored", item);
-  return item;
+  const stored = await getCocktailById(item.id);
+  console.log("[cocktailsStorage] addCocktail stored", stored);
+  return stored;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
