@@ -138,12 +138,12 @@ const IngredientRow = memo(function IngredientRow({
           {(() => {
             const lines = [];
             const propLine = [
-              garnish && "(garnish)",
-              optional && "(optional)",
+              garnish && "garnish",
+              optional && "optional",
             ]
               .filter(Boolean)
-              .join(" ");
-            if (propLine) lines.push(propLine);
+              .join(", ");
+            if (propLine) lines.push(`(${propLine})`);
             if (substituteFor) lines.push(`Substitute for: ${substituteFor}`);
             const allSubs = Array.from(
               new Set([
