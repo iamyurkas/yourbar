@@ -7,9 +7,13 @@ export async function resizeImage(uri, maxSize = 150) {
       info.width > info.height
         ? { resize: { width: maxSize } }
         : { resize: { height: maxSize } };
+    const actions = [
+      { extent: { width: info.width, height: info.height, backgroundColor: '#fff' } },
+      resizeAction,
+    ];
     const result = await ImageManipulator.manipulateAsync(
       uri,
-      [resizeAction],
+      actions,
       { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
     );
     return result.uri;
