@@ -378,6 +378,13 @@ export default function EditCocktailScreen() {
 
       InteractionManager.runAfterInteractions(async () => {
         const updated = await saveCocktail(cocktail);
+        // Debug: read freshly saved cocktail from DB and log it
+        try {
+          const dbValue = await getCocktailById(updated.id);
+          console.log("[EditCocktailScreen][DB] getCocktailById after save", dbValue);
+        } catch (e) {
+          console.error("[EditCocktailScreen][DB] fetch after save error", e);
+        }
         const nextCocktails = updateCocktailById(cocktails, updated);
         setCocktails(nextCocktails);
         const allowSubs = await getAllowSubstitutes();
