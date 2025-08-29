@@ -74,7 +74,6 @@ function buildDetails(all, cocktails, loaded, ig = true, allowSubs = true) {
   const list = (map[loaded.id] || [])
     .map((cid) => byId.get(cid))
     .filter(Boolean)
-    .sort(sortByName)
     .map((c) => {
       const { ingredientLine, isAllAvailable, hasBranded } =
         getCocktailIngredientInfo(c, {
@@ -89,7 +88,8 @@ function buildDetails(all, cocktails, loaded, ig = true, allowSubs = true) {
         hasBranded,
         ingredientLine,
       };
-    });
+    })
+    .sort(sortByName);
   return { children, base, used: list };
 }
 
