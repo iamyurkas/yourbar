@@ -231,6 +231,11 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("EditCocktail", { id });
   }, [navigation, id]);
 
+  const handleClone = useCallback(() => {
+    if (!cocktail) return;
+    navigation.navigate("AddCocktail", { initialCocktail: cocktail });
+  }, [navigation, cocktail]);
+
   const handleRate = useCallback(
     async (value) => {
       if (!cocktail) return;
@@ -569,25 +574,34 @@ export default function CocktailDetailsScreen() {
       </TouchableOpacity>
 
       <View style={styles.body}>
-        {glass && (
-          <View style={styles.glassRow}>
-            <Image
-              source={glass.image}
-              style={[
-                styles.glassImage,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            />
-            <Text
-              style={[
-                styles.glassText,
-                { color: theme.colors.onSurfaceVariant },
-              ]}
-            >
-              {glass.name}
+        <View style={styles.glassRow}>
+          {glass ? (
+            <View style={styles.glassInfo}>
+              <Image
+                source={glass.image}
+                style={[
+                  styles.glassImage,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.glassText,
+                  { color: theme.colors.onSurfaceVariant },
+                ]}
+              >
+                {glass.name}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.glassInfo} />
+          )}
+          <TouchableOpacity onPress={handleClone}>
+            <Text style={[styles.cloneText, { color: theme.colors.primary }]}>
+              Clone and edit
             </Text>
-          </View>
-        )}
+          </TouchableOpacity>
+        </View>
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
           <View style={styles.section}>
@@ -670,9 +684,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
   },
   body: { paddingHorizontal: 24, marginTop: 0 },
-  glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  glassRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 4,
+  },
+  glassInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
-  glassText: { marginLeft: 8 },
+  glassText: { marginLeft: 8, flexShrink: 1 },
+  cloneText: { fontSize: 14 },
   ratingRow: {
     flexDirection: "row",
     justifyContent: "center",
