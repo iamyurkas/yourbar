@@ -281,18 +281,37 @@ export default function CocktailDetailsScreen() {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity
-          onPress={handleEdit}
-          style={styles.headerEditBtn}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          accessibilityRole="button"
-          accessibilityLabel="Edit"
-        >
-          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={handleClone}
+            style={[styles.headerIconBtn, styles.headerCloneBtn]}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel="Clone and edit"
+          >
+            <MaterialIcons
+              name="content-copy"
+              size={24}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleEdit}
+            style={styles.headerIconBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel="Edit"
+          >
+            <MaterialIcons
+              name="edit"
+              size={24}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+        </View>
       ),
     });
-  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleClone, handleEdit, theme.colors.onSurface]);
 
   useFocusEffect(
     useCallback(() => {
@@ -596,24 +615,6 @@ export default function CocktailDetailsScreen() {
           ) : (
             <View style={styles.glassInfo} />
           )}
-          <TouchableOpacity onPress={handleClone}>
-            <View style={styles.cloneRow}>
-              <Text style={[styles.cloneText, { color: theme.colors.primary }]}>
-                Clone and edit
-              </Text>
-              <MaterialIcons
-                name="content-copy"
-                size={16}
-                color={theme.colors.primary}
-                style={styles.cloneIcon}
-              />
-              <MaterialIcons
-                name="edit"
-                size={16}
-                color={theme.colors.primary}
-              />
-            </View>
-          </TouchableOpacity>
         </View>
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
@@ -688,7 +689,9 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
-  headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerIconBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerActions: { flexDirection: "row", alignItems: "center" },
+  headerCloneBtn: { marginRight: 8 },
   photo: { width: 150, height: 150, marginTop: 12, alignSelf: "center" },
   title: {
     fontSize: 22,
@@ -706,9 +709,6 @@ const styles = StyleSheet.create({
   glassInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8, flexShrink: 1 },
-  cloneText: { fontSize: 14 },
-  cloneRow: { flexDirection: "row", alignItems: "center" },
-  cloneIcon: { marginLeft: 4 },
   ratingRow: {
     flexDirection: "row",
     justifyContent: "center",
