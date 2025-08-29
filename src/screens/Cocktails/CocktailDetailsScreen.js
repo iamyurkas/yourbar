@@ -597,9 +597,17 @@ export default function CocktailDetailsScreen() {
             <View style={styles.glassInfo} />
           )}
           <TouchableOpacity onPress={handleClone}>
-            <Text style={[styles.cloneText, { color: theme.colors.primary }]}>
-              Clone and edit
-            </Text>
+            <View style={styles.cloneRow}>
+              <Text style={[styles.cloneText, { color: theme.colors.primary }]}>
+                Clone and edit
+              </Text>
+              <MaterialIcons
+                name="content-copy"
+                size={16}
+                color={theme.colors.primary}
+                style={styles.cloneIcon}
+              />
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -694,6 +702,8 @@ const styles = StyleSheet.create({
   glassImage: { width: 40, height: 40, borderRadius: 8 },
   glassText: { marginLeft: 8, flexShrink: 1 },
   cloneText: { fontSize: 14 },
+  cloneRow: { flexDirection: "row", alignItems: "center" },
+  cloneIcon: { marginLeft: 4 },
   ratingRow: {
     flexDirection: "row",
     justifyContent: "center",
