@@ -9,6 +9,10 @@ import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRo
 import useIngredientsData from "../hooks/useIngredientsData";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import {
+  buildIngredientIndex,
+  getCocktailIngredientInfo,
+} from "../utils/cocktailIngredients";
+import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
   getIgnoreGarnish,
@@ -107,6 +111,34 @@ export default function ShakerScreen({ navigation }) {
     };
   }, []);
 
+  const availableByIngredient = useMemo(() => {
+    if (!Array.isArray(ingredients) || !Array.isArray(cocktails)) {
+      return new Map();
+    }
+    const { ingMap, findBrand } = buildIngredientIndex(ingredients);
+    const nameMap = new Map(cocktails.map((c) => [c.id, c.name]));
+    const availableSet = new Set();
+    cocktails.forEach((c) => {
+      const { isAllAvailable } = getCocktailIngredientInfo(c, {
+        ingMap,
+        findBrand,
+        allowSubstitutes,
+        ignoreGarnish,
+      });
+      if (isAllAvailable) availableSet.add(c.id);
+    });
+    const map = new Map();
+    ingredients.forEach((ing) => {
+      const list = usageMap[ing.id] || [];
+      const avail = list.filter((id) => availableSet.has(id));
+      map.set(ing.id, {
+        count: avail.length,
+        name: avail.length === 1 ? nameMap.get(avail[0]) : null,
+      });
+    });
+    return map;
+  }, [ingredients, cocktails, usageMap, allowSubstitutes, ignoreGarnish]);
+
   const renderItem = useCallback(
     ({ item }) => {
       if (item.type === "TAG") {
@@ -130,14 +162,15 @@ export default function ShakerScreen({ navigation }) {
       }
       const { ingredient: ing, isLast } = item;
       const active = selectedIds.includes(ing.id);
+      const info = availableByIngredient.get(ing.id) || { count: 0, name: null };
       return (
         <View style={isLast ? { marginBottom: 12 } : null}>
           <IngredientRow
             id={ing.id}
             name={ing.name}
             photoUri={ing.photoUri}
-            usageCount={ing.usageCount}
-            singleCocktailName={ing.singleCocktailName}
+            usageCount={info.count}
+            singleCocktailName={info.name}
             showMake
             inBar={ing.inBar}
             inShoppingList={ing.inShoppingList}
@@ -149,7 +182,15 @@ export default function ShakerScreen({ navigation }) {
         </View>
       );
     },
-    [expanded, toggleTag, theme, selectedIds, toggleIngredient, navigation]
+    [
+      expanded,
+      toggleTag,
+      theme,
+      selectedIds,
+      toggleIngredient,
+      navigation,
+      availableByIngredient,
+    ]
   );
 
   const keyExtractor = useCallback((item) => {
