@@ -775,15 +775,25 @@ export default function EditCocktailScreen() {
   const [kbHeight, setKbHeight] = useState(0);
 
   useEffect(() => {
-    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
-      setKbHeight(e?.endCoordinates?.height || 0)
-    );
-    const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
+    const sh = Keyboard.addListener("keyboardDidShow", (e) => {
+      const h = e?.endCoordinates?.height || 0;
+      console.log('[EditCocktailScreen][kb] didShow height', h, 'viewportH', viewportHRef.current, 'contentH', contentHRef.current, 'scrollY', scrollYRef.current);
+      setKbHeight(h);
+      kbHeightRef.current = h;
+      const target = focusedInputRef.current;
+      if (target) {
+        console.log('[EditCocktailScreen][kb] scroll target set');
+        requestAnimationFrame(() => requestScrollIntoViewUpOnly(target));
+        setTimeout(() => requestScrollIntoViewUpOnly(target), 80);
+        setTimeout(() => requestScrollIntoViewUpOnly(target), 180);
+      }
+    });
+    const hd = Keyboard.addListener("keyboardDidHide", () => { setKbHeight(0); kbHeightRef.current = 0; });
     return () => {
       sh.remove();
       hd.remove();
     };
-  }, []);
+  }, [requestScrollIntoViewUpOnly]);
 
   const requestScrollIntoView = useCallback(
     (nodeRef) => {
@@ -825,6 +835,42 @@ export default function EditCocktailScreen() {
   const screenNameRef = useRef(null);
   const descRef = useRef(null);
   const instrRef = useRef(null);
+  const focusedInputRef = useRef(null);
+  const viewportHRef = useRef(0);
+  const contentHRef = useRef(0);
+  const scrollYRef = useRef(0);
+  const kbHeightRef = useRef(0);
+
+  // Scroll only upwards to keep focused field visible (never scroll down automatically)
+  const requestScrollIntoViewUpOnly = useCallback((nodeRef) => {
+    if (!nodeRef?.current || !scrollRef.current || !viewportRef.current) return;
+    const MARGIN = 50; // extra pixels above keyboard
+
+    const tryOnce = () => {
+      const vH = viewportHRef.current;
+      const cH = contentHRef.current;
+      const sY = scrollYRef.current;
+      const kb = kbHeightRef.current;
+      viewportRef.current.measureInWindow((vx, vy, vw, vhMeasured) => {
+        const vHeight = vhMeasured || vH || 0;
+        const visibleBottom = vy + vHeight - kb - MARGIN;
+        nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
+          const bottom = iy + ih;
+          const overshoot = bottom - visibleBottom;
+          const maxY = Math.max(0, cH - vHeight);
+          const targetY = Math.min(sY + overshoot, maxY);
+          console.log('[EditCocktailScreen][scroll]', { vy, vh: vHeight, kbHeight: kb, MARGIN, bottom, visibleBottom, overshoot, scrollY: sY, targetY });
+          if (overshoot > 0 && targetY > sY) {
+            scrollRef.current.scrollTo({ y: targetY, animated: true });
+          }
+        });
+      });
+    };
+
+    tryOnce();
+    setTimeout(tryOnce, 80);
+    setTimeout(tryOnce, 180);
+  }, []);
 
   return (
     <>
@@ -832,17 +878,28 @@ export default function EditCocktailScreen() {
         ref={viewportRef}
         collapsable={false}
         style={{ flex: 1 }}
-        onLayout={(e) => setViewportH(e.nativeEvent.layout.height)}
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          viewportHRef.current = h;
+          setViewportH(h);
+        }}
       >
         <ScrollView
           ref={scrollRef}
-          onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
+          onScroll={(e) => {
+            const y = e.nativeEvent.contentOffset.y;
+            scrollYRef.current = y;
+            setScrollY(y);
+          }}
           scrollEventThrottle={16}
           contentContainerStyle={[
             styles.container,
             { paddingBottom: 60 + kbHeight },
           ]}
-          onContentSizeChange={(_, h) => setContentH(h)}
+          onContentSizeChange={(_, h) => {
+            contentHRef.current = h;
+            setContentH(h);
+          }}
           scrollIndicatorInsets={{ bottom: kbHeight }}
           keyboardShouldPersistTaps="handled"
           style={{ backgroundColor: theme.colors.background }}
@@ -854,7 +911,10 @@ export default function EditCocktailScreen() {
           <TextInput
             ref={screenNameRef}
             collapsable={false}
-            onFocus={() => requestScrollIntoView(screenNameRef)}
+            onFocus={() => {
+              focusedInputRef.current = screenNameRef;
+              requestScrollIntoViewUpOnly(screenNameRef);
+            }}
             placeholder="e.g. Margarita"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={name}
@@ -993,7 +1053,10 @@ export default function EditCocktailScreen() {
           <TextInput
             ref={descRef}
             collapsable={false}
-            onFocus={() => requestScrollIntoView(descRef)}
+            onFocus={() => {
+              focusedInputRef.current = descRef;
+              requestScrollIntoViewUpOnly(descRef);
+            }}
             placeholder="Optional description"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={description}
@@ -1017,7 +1080,10 @@ export default function EditCocktailScreen() {
           <TextInput
             ref={instrRef}
             collapsable={false}
-            onFocus={() => requestScrollIntoView(instrRef)}
+            onFocus={() => {
+              focusedInputRef.current = instrRef;
+              requestScrollIntoViewUpOnly(instrRef);
+            }}
             placeholder="1. Grab some ice..."
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={instructions}
@@ -1060,7 +1126,8 @@ export default function EditCocktailScreen() {
                 onMoveDown={() => moveIngredient(idx, idx + 1)}
                 onOpenSubstitutePicker={() => openSubstituteModal(row.localId)}
                 showInfo={showInfo}
-                requestScrollIntoView={requestScrollIntoView}
+                requestScrollIntoView={requestScrollIntoViewUpOnly}
+                setFocusedRef={(ref) => (focusedInputRef.current = ref)}
               />
             </Animated.View>
           ))}

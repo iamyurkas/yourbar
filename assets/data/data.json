@@ -1182,6 +1182,26 @@
       "photoUri": "assets/ingredients/652053-blueberry-schnapps.jpg"
     },
     {
+      "id": 1756467110503,
+      "name": "Borage",
+      "description": "",
+      "tags": [
+        {
+          "id": 7,
+          "name": "herb",
+          "color": "#4DB6AC"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "borage",
+      "searchTokens": [
+        "borage"
+      ],
+      "photoUri": "assets/ingredients/1756467110503-borage.jpg"
+    },
+    {
       "id": 342124,
       "name": "Bourbon",
       "description": "Bourbon whiskey /bɜːrbən/ is a type of American whiskey: a barrel-aged distilled spirit made primarily from corn. The name is derived from the French Bourbon dynasty. However, it is unclear precisely what inspired the whiskey's name (contenders include Bourbon County in Kentucky and Bourbon Street in New Orleans). Bourbon has been distilled since the 18th century. The use of the term \"bourbon\" for the whiskey has been traced to the 1820s, and the term began to be used consistently in Kentucky in the 1870s. While bourbon may be made anywhere in the United States, it is strongly associated with the American South, and with Kentucky in particular.",
@@ -4282,6 +4302,27 @@
       "photoUri": "assets/ingredients/906592-lemonade.jpg"
     },
     {
+      "id": 1756463728903,
+      "name": "Licor Beirão",
+      "description": "",
+      "tags": [
+        {
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "licor beirao",
+      "searchTokens": [
+        "licor",
+        "beirao"
+      ],
+      "photoUri": "assets/ingredients/1756463728903-licor-beirao.jpg"
+    },
+    {
       "id": 797737,
       "name": "Lillet Blanc",
       "description": "Lillet Blanc is a French aperitif wine by Pernod Ricard, 17% ABV, with citrus and floral notes. Key in a Vesper or Corpse Reviver No. 2.",
@@ -4867,25 +4908,25 @@
       "photoUri": "assets/ingredients/421867-orange-liqueur.jpg"
     },
     {
-      "id": 738590,
-      "name": "Orgeat Syrup",
-      "description": "Orgeat syrup is a sweet syrup made from almonds, sugar, and rose water or orange flower water. It was, however, originally made with a barley-almond blend. It has a pronounced almond taste and is used to flavour many cocktails, perhaps the most famous of which is the Mai Tai.[citation needed]",
+      "id": 1756466690974,
+      "name": "Oude Genever",
+      "description": "",
       "tags": [
         {
-          "id": 4,
-          "name": "syrup",
-          "color": "#FFB74D"
+          "id": 1,
+          "name": "strong alcohol",
+          "color": "#ec5a5a"
         }
       ],
       "baseIngredientId": null,
-      "usageCount": 2,
+      "usageCount": 0,
       "singleCocktailName": null,
-      "searchName": "orgeat syrup",
+      "searchName": "oude genever",
       "searchTokens": [
-        "orgeat",
-        "syrup"
+        "oude",
+        "genever"
       ],
-      "photoUri": "assets/ingredients/738590-orgeat-syrup.png"
+      "photoUri": "assets/ingredients/1756466690974-oude-genever.jpg"
     },
     {
       "id": 652314,
@@ -6971,6 +7012,359 @@
   ],
   "cocktails": [
     {
+      "id": 1756467849702,
+      "name": "20th Century Cocktail",
+      "glassId": "coupe",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 797737,
+          "name": "Lillet Blanc",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 795313,
+          "name": "Cocoa Powder",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 591435,
+          "name": "Nutmeg",
+          "amount": "2",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "90",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756467849702,
+      "updatedAt": 1756467963648,
+      "photoUri": "assets/cocktails/1756467849702-20th-century-cocktail.jpg"
+    },
+    {
+      "id": 1756468135042,
+      "name": "7 & 7",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 702409,
+          "name": "Seagram's 7 Crown",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 88580,
+          "name": "7-Up",
+          "amount": "150",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "90",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756468135042,
+      "updatedAt": 1756468462336,
+      "photoUri": "assets/cocktails/1756468135042-7-and-7.jpg"
+    },
+    {
+      "id": 1756468654091,
+      "name": "ABC",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "The abbreviation stands for Amaretto, Baileys and Cognac",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 502166,
+          "name": "Cognac",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 435165,
+              "name": "Brandy"
+            }
+          ]
+        }
+      ],
+      "createdAt": 1756468654091,
+      "updatedAt": 1756468920714,
+      "photoUri": "assets/cocktails/1756468654091-abc.jpg"
+    },
+    {
+      "id": 1756469191370,
+      "name": "Acapulco",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 787067,
+              "name": "Tequila Gold"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "75",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 131206,
+          "name": "Grapefruit Juice",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 525624,
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756469191370,
+      "updatedAt": 1756469191373,
+      "photoUri": "assets/cocktails/1756469191370-acapulco.jpg"
+    },
+    {
       "id": 1755800000049,
       "name": "Alexander",
       "glassId": "cocktail_glass",
@@ -7265,14 +7659,26 @@
           "amount": "1",
           "unitId": 1,
           "garnish": true,
-          "optional": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": true,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
           "substitutes": []
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1756394485122,
+      "updatedAt": 1756462075865,
       "photoUri": "assets/cocktails/1755800000052-aviation.jpg"
     },
     {
@@ -7416,7 +7822,7 @@
           "ingredientId": 5992,
           "name": "Peach",
           "amount": "50",
-          "unitId": 11,
+          "unitId": 8,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
@@ -7425,7 +7831,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1756401175652,
+      "updatedAt": 1756461393414,
       "photoUri": "assets/cocktails/1755800000054-bellini.jpg"
     },
     {
@@ -7542,7 +7948,7 @@
           "order": 1,
           "ingredientId": 16862,
           "name": "Vodka",
-          "amount": "50",
+          "amount": "60",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7554,7 +7960,7 @@
           "order": 2,
           "ingredientId": 705618,
           "name": "Coffee Liqueur",
-          "amount": "20",
+          "amount": "30",
           "unitId": 11,
           "garnish": false,
           "optional": false,
@@ -7564,7 +7970,7 @@
         }
       ],
       "createdAt": 1755959676876,
-      "updatedAt": 1756394485122,
+      "updatedAt": 1756462542170,
       "photoUri": "assets/cocktails/1755800000056-black-russian.jpg"
     },
     {
@@ -8087,6 +8493,71 @@
       "photoUri": "assets/cocktails/1755800000020-bronx.jpg"
     },
     {
+      "id": 1756463822185,
+      "name": "Caipirão",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "Muddle lime wedges and sugar in a rocks glass.\nFill the glass with crushed ice.\nPour Licor Beirão over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "8",
+          "unitId": 27,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "4",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 1756463728903,
+          "name": "Licor Beirão",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756463822185,
+      "updatedAt": 1756463981709,
+      "photoUri": "assets/cocktails/1756463822185-caipirao.jpg"
+    },
+    {
       "id": 1755800000021,
       "name": "Caipirinha",
       "glassId": "rocks_glass",
@@ -8100,6 +8571,11 @@
           "id": 3,
           "name": "Contemporary",
           "color": "#64B5F6"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
         }
       ],
       "description": "Brazil's national cocktail of muddled lime, sugar, and cachaça served over ice.",
@@ -8109,7 +8585,7 @@
           "order": 1,
           "ingredientId": 336572,
           "name": "Lime",
-          "amount": "4",
+          "amount": "8",
           "unitId": 27,
           "garnish": false,
           "optional": false,
@@ -8143,8 +8619,147 @@
         }
       ],
       "createdAt": 1755959676877,
-      "updatedAt": 1756394485123,
+      "updatedAt": 1756463998742,
       "photoUri": "assets/cocktails/1755800000021-caipirinha.jpg"
+    },
+    {
+      "id": 1756463553442,
+      "name": "Caipirissima",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "Muddle lime wedges and sugar in a rocks glass.\nFill the glass with crushed ice.\nPour rum over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "8",
+          "unitId": 27,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "4",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 811139,
+              "name": "Gold Rum"
+            },
+            {
+              "id": 908571,
+              "name": "Spiced Rum"
+            }
+          ]
+        }
+      ],
+      "createdAt": 1756463553442,
+      "updatedAt": 1756464069002,
+      "photoUri": "assets/cocktails/1756463553442-caipirissima.jpg"
+    },
+    {
+      "id": 1756462968613,
+      "name": "Caipiroska",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "Muddle lime wedges and sugar in a rocks glass.\nFill the glass with crushed ice.\nPour vodka over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "8",
+          "unitId": 27,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "4",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756462968613,
+      "updatedAt": 1756464092426,
+      "photoUri": "assets/cocktails/1756462968613-caipiroska.jpg"
     },
     {
       "id": 1755800000022,
@@ -9669,6 +10284,222 @@
       "photoUri": "assets/cocktails/1755800000040-garibaldi.jpg"
     },
     {
+      "id": 1756467152550,
+      "name": "Genever Fruit Cup",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 1756466690974,
+          "name": "Oude Genever",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 587125,
+          "name": "Orange Curaçao",
+          "amount": "",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 38880,
+              "name": "Triple Sec"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 898334,
+          "name": "Red Vermouth",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 401724,
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 474349,
+          "name": "Ginger Ale",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 358227,
+          "name": "Cola",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "4",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 10,
+          "ingredientId": 304217,
+          "name": "Mint",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 11,
+          "ingredientId": 1756467110503,
+          "name": "Borage",
+          "amount": "1",
+          "unitId": 21,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756467152550,
+      "updatedAt": 1756467222773,
+      "photoUri": "assets/cocktails/1756467152550-genever-fruit-cup.jpg"
+    },
+    {
+      "id": 1756466170421,
+      "name": "Gin & Tonic",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 289771,
+              "name": "Old Tom Gin"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": 676673,
+          "name": "Tonic",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756466170421,
+      "updatedAt": 1756466307606,
+      "photoUri": "assets/cocktails/1756466170421-gin-and-tonic.jpg"
+    },
+    {
       "id": 1755800000041,
       "name": "Gin Basil Smash",
       "glassId": "rocks_glass",
@@ -10558,6 +11389,11 @@
           "id": 2,
           "name": "Unforgettables",
           "color": "#9575CD"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
         }
       ],
       "description": "Refreshing gin highball with lemon, sugar, and soda.",
@@ -10637,7 +11473,7 @@
         }
       ],
       "createdAt": 1755959676878,
-      "updatedAt": 1756394485124,
+      "updatedAt": 1756464626264,
       "photoUri": "assets/cocktails/1755800000074-john-collins.jpg"
     },
     {
@@ -10788,6 +11624,68 @@
       "createdAt": 1755959676879,
       "updatedAt": 1756394485124,
       "photoUri": "assets/cocktails/1755800000076-kir.jpg"
+    },
+    {
+      "id": 1756464913297,
+      "name": "Kir Royal",
+      "glassId": "champagne_flute",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 435337,
+          "name": "Champagne",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 588255,
+              "name": "Prosecco"
+            },
+            {
+              "id": 756362,
+              "name": "Sparkling Wine"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": 389154,
+          "name": "Creme de Cassis",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756464913297,
+      "updatedAt": 1756464963823,
+      "photoUri": "assets/cocktails/1756464913297-kir-royal.jpg"
     },
     {
       "id": 1755800000077,
@@ -11151,20 +12049,15 @@
         },
         {
           "order": 4,
-          "ingredientId": 738590,
-          "name": "Orgeat Syrup",
+          "ingredientId": 860438,
+          "name": "Almond (Orgeat) Syrup",
           "amount": "15",
           "unitId": 11,
           "garnish": false,
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": [
-            {
-              "id": 860438,
-              "name": "Almond Syrup"
-            }
-          ]
+          "substitutes": []
         },
         {
           "order": 5,
@@ -11216,7 +12109,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1756394485125,
+      "updatedAt": 1756465116968,
       "photoUri": "assets/cocktails/1755800000060-mai-tai.jpg"
     },
     {
@@ -12884,6 +13777,11 @@
           "id": 3,
           "name": "Contemporary",
           "color": "#64B5F6"
+        },
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
         }
       ],
       "description": "Tropical blend of rum, pineapple, and coconut cream.",
@@ -12899,7 +13797,20 @@
           "optional": false,
           "allowBaseSubstitution": false,
           "allowBrandedSubstitutes": false,
-          "substitutes": []
+          "substitutes": [
+            {
+              "id": 908571,
+              "name": "Spiced Rum"
+            },
+            {
+              "id": 811139,
+              "name": "Gold Rum"
+            },
+            {
+              "id": 783639,
+              "name": "Coconut Rum"
+            }
+          ]
         },
         {
           "order": 2,
@@ -12963,7 +13874,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1756394485126,
+      "updatedAt": 1756464753928,
       "photoUri": "assets/cocktails/1755800000088-pina-colada.jpg"
     },
     {
@@ -13574,7 +14485,7 @@
         }
       ],
       "description": "A frothy gin fizz with citrus, cream, and a hint of orange flower water.",
-      "instructions": "Add gin, lemon juice, lime juice, simple syrup, cream, egg white, orange flower water, and vanilla extract into a shaker without ice.\nDry shake vigorously.\nAdd ice and shake again until chilled.\nStrain into a highball glass without ice.\nTop with soda water.",
+      "instructions": "Add gin, lemon juice, lime juice, simple syrup, cream, egg white, orange flower water, and vanilla extract into a shaker without ice.\nDry shake for two minutes vigorously.\nAdd ice and shake again until chilled.\nStrain into a highball glass without ice.\nTop with soda water.",
       "ingredients": [
         {
           "order": 1,
@@ -13686,7 +14597,7 @@
         }
       ],
       "createdAt": 1755959676879,
-      "updatedAt": 1756394485127,
+      "updatedAt": 1756465457474,
       "photoUri": "assets/cocktails/1755800000095-ramos-fizz.jpg"
     },
     {
@@ -13781,6 +14692,163 @@
       "createdAt": 1755959676879,
       "updatedAt": 1756400834205,
       "photoUri": "assets/cocktails/1755800000096-remember-the-maine.jpg"
+    },
+    {
+      "id": 1756459353215,
+      "name": "Rossini",
+      "glassId": "champagne_flute",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 588255,
+          "name": "Prosecco",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 435337,
+              "name": "Champagne"
+            },
+            {
+              "id": 756362,
+              "name": "Sparkling Wine"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756459353215,
+      "updatedAt": 1756461342904,
+      "photoUri": "assets/cocktails/1756459353215-rossini.jpg"
+    },
+    {
+      "id": 1756466030551,
+      "name": "Rum & Cola",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 811139,
+              "name": "Gold Rum"
+            },
+            {
+              "id": 908571,
+              "name": "Spiced Rum"
+            },
+            {
+              "id": 962705,
+              "name": "Dark Rum"
+            },
+            {
+              "id": 4130,
+              "name": "Blackstrap Rum"
+            },
+            {
+              "id": 1756051374456,
+              "name": "Demerara Rum"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": 358227,
+          "name": "Cola",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "2",
+          "unitId": 27,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "2",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756466030551,
+      "updatedAt": 1756466030554,
+      "photoUri": "assets/cocktails/1756466030551-rum-and-cola.jpg"
     },
     {
       "id": 1755800000097,
@@ -15234,7 +16302,7 @@
         }
       ],
       "createdAt": 1756041427585,
-      "updatedAt": 1756394485128,
+      "updatedAt": 1756461747794,
       "photoUri": "assets/cocktails/1756041427585-tintoretto.jpg"
     },
     {
@@ -15320,6 +16388,83 @@
       "createdAt": 1755959676880,
       "updatedAt": 1756394485128,
       "photoUri": "assets/cocktails/1755800000112-tipperary.jpg"
+    },
+    {
+      "id": 1756464488397,
+      "name": "Tom Collins",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 2,
+          "name": "Unforgettables",
+          "color": "#9575CD"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "",
+      "instructions": "Add Old Tom gin, lemon juice, and simple syrup into a collins glass filled with ice.\nTop with soda water and stir gently.\nGarnish with a lemon slice and a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 289771,
+          "name": "Old Tom Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756464488397,
+      "updatedAt": 1756464604423,
+      "photoUri": "assets/cocktails/1756464488397-tom-collins.jpg"
     },
     {
       "id": 1755800000113,
@@ -15426,8 +16571,8 @@
         },
         {
           "order": 2,
-          "ingredientId": 738590,
-          "name": "Orgeat Syrup",
+          "ingredientId": 860438,
+          "name": "Almond (Orgeat) Syrup",
           "amount": "30",
           "unitId": 11,
           "garnish": false,
@@ -15462,7 +16607,7 @@
         }
       ],
       "createdAt": 1755959676880,
-      "updatedAt": 1756394485128,
+      "updatedAt": 1756465089796,
       "photoUri": "assets/cocktails/1755800000114-trinidad-sour.jpg"
     },
     {
@@ -16021,6 +17166,61 @@
       "createdAt": 1755959676880,
       "updatedAt": 1756394485128,
       "photoUri": "assets/cocktails/1755800000120-white-lady.jpg"
+    },
+    {
+      "id": 1756462309763,
+      "name": "White Russian",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1756462309763,
+      "updatedAt": 1756462641904,
+      "photoUri": "assets/cocktails/1756462309763-white-russian.jpg"
     },
     {
       "id": 1756051666171,
