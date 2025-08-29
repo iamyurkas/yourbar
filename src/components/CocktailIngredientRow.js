@@ -45,6 +45,7 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
   const MIN_CHARS = 2;
   const theme = useTheme();
   const [query, setQuery] = useState(row.name || "");
+  const setFocusedRef = (arguments?.[0]?.setFocusedRef) || null;
   const debounced = useDebounced(query, 200);
 
   const collator = useMemo(
@@ -395,7 +396,10 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
           <TextInput
             ref={nameInputRef}
             collapsable={false}
-            onFocus={() => requestScrollIntoView?.(nameInputRef)}
+            onFocus={() => {
+              setFocusedRef?.(nameInputRef);
+              requestScrollIntoView?.(nameInputRef);
+            }}
             placeholder="Type ingredient name"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={query}
@@ -553,7 +557,10 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
           <TextInput
             ref={amountInputRef}
             collapsable={false}
-            onFocus={() => requestScrollIntoView?.(amountInputRef)}
+            onFocus={() => {
+              setFocusedRef?.(amountInputRef);
+              requestScrollIntoView?.(amountInputRef);
+            }}
             placeholder="e.g. 45"
             placeholderTextColor={theme.colors.onSurfaceVariant}
             keyboardType="decimal-pad"

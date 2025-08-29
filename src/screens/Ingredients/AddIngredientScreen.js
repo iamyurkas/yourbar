@@ -123,48 +123,56 @@ export default function AddIngredientScreen() {
   // scrolling helpers
   const scrollRef = useRef(null);
   const viewportRef = useRef(null);
+  const nameRef = useRef(null);
   const descRef = useRef(null);
+  const focusedInputRef = useRef(null);
   const [viewportH, setViewportH] = useState(0);
   const [contentH, setContentH] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [kbHeight, setKbHeight] = useState(0);
 
   useEffect(() => {
-    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
-      setKbHeight(e?.endCoordinates?.height || 0)
-    );
+    const sh = Keyboard.addListener("keyboardDidShow", (e) => {
+      const h = e?.endCoordinates?.height || 0;
+      console.log('[AddIngredientScreen][kb] didShow height', h, 'viewportH', viewportH, 'contentH', contentH, 'scrollY', scrollY);
+      setKbHeight(h);
+      const target = focusedInputRef.current;
+      if (target) {
+        console.log('[AddIngredientScreen][kb] scroll target set');
+        requestAnimationFrame(() => requestScrollIntoView(target));
+        setTimeout(() => requestScrollIntoView(target), 80);
+        setTimeout(() => requestScrollIntoView(target), 180);
+      }
+    });
     const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
     return () => {
       sh.remove();
       hd.remove();
     };
-  }, []);
+  }, [requestScrollIntoView]);
 
   const requestScrollIntoView = useCallback(
     (nodeRef) => {
       if (!nodeRef?.current || !scrollRef.current) return;
       if (contentH <= viewportH) return;
 
-      const viewportHeight =
-        viewportH || Dimensions.get("window").height;
-      const visibleHeight = viewportHeight - kbHeight;
-      const targetCenter = visibleHeight / 2;
-      const DEAD = 10;
-      const EXTRA_SCROLL = 10; // scroll a bit higher when moving up
+      const MARGIN = 50; // ensure extra 50px visible above keyboard
 
       const tryOnce = () => {
-        if (!nodeRef?.current) return;
-        nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
-          const inputCenter = iy + ih / 2;
-          const delta = inputCenter - targetCenter;
-          if (delta > DEAD || kbHeight === 0) {
-            const maxY = Math.max(0, contentH - viewportH);
-            const targetY = Math.min(scrollY + delta + DEAD, maxY);
-            if (targetY > scrollY) {
-              const adjustedY = Math.min(targetY + EXTRA_SCROLL, maxY);
-              scrollRef.current.scrollTo({ y: adjustedY, animated: true });
+        if (!nodeRef?.current || !viewportRef.current) return;
+        viewportRef.current.measureInWindow((vx, vy) => {
+          const visibleBottom = vy + viewportH - kbHeight - MARGIN;
+          nodeRef.current.measureInWindow((ix, iy, iw, ih) => {
+            const bottom = iy + ih;
+            const overshoot = bottom - visibleBottom;
+            if (overshoot > 0) {
+              const maxY = Math.max(0, contentH - viewportH);
+              const targetY = Math.min(scrollY + overshoot, maxY);
+              if (targetY > scrollY) {
+                scrollRef.current.scrollTo({ y: targetY, animated: true });
+              }
             }
-          }
+          });
         });
       };
 
@@ -391,6 +399,12 @@ export default function AddIngredientScreen() {
           Name:
         </Text>
         <TextInput
+          ref={nameRef}
+          collapsable={false}
+          onFocus={() => {
+            focusedInputRef.current = nameRef;
+            requestScrollIntoView(nameRef);
+          }}
           placeholder="e.g. Lemon juice"
           placeholderTextColor={theme.colors.onSurfaceVariant}
           value={name}
@@ -621,7 +635,10 @@ export default function AddIngredientScreen() {
         <TextInput
           ref={descRef}
           collapsable={false}
-          onFocus={() => requestScrollIntoView(descRef)}
+          onFocus={() => {
+            focusedInputRef.current = descRef;
+            requestScrollIntoView(descRef);
+          }}
           placeholder="Optional description"
           placeholderTextColor={theme.colors.onSurfaceVariant}
           value={description}
