@@ -607,6 +607,11 @@ export default function CocktailDetailsScreen() {
                 color={theme.colors.primary}
                 style={styles.cloneIcon}
               />
+              <MaterialIcons
+                name="edit"
+                size={16}
+                color={theme.colors.primary}
+              />
             </View>
           </TouchableOpacity>
         </View>
