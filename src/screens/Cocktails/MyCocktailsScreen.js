@@ -38,6 +38,7 @@ import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
 } from "../../utils/cocktailIngredients";
+import { sortByName } from "../../utils/sortByName";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -168,26 +169,28 @@ export default function MyCocktailsScreen() {
           Array.isArray(c.tags) &&
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return list.map((c) => {
-      const {
-        ingredientLine,
-        isAllAvailable,
-        hasBranded,
-        missingIngredientIds,
-      } = getCocktailIngredientInfo(c, {
-        ingMap,
-        findBrand,
-        allowSubstitutes,
-        ignoreGarnish,
-      });
-      return {
-        ...c,
-        ingredientLine,
-        isAllAvailable,
-        hasBranded,
-        missingIngredientIds,
-      };
-    });
+    return list
+      .map((c) => {
+        const {
+          ingredientLine,
+          isAllAvailable,
+          hasBranded,
+          missingIngredientIds,
+        } = getCocktailIngredientInfo(c, {
+          ingMap,
+          findBrand,
+          allowSubstitutes,
+          ignoreGarnish,
+        });
+        return {
+          ...c,
+          ingredientLine,
+          isAllAvailable,
+          hasBranded,
+          missingIngredientIds,
+        };
+      })
+      .sort(sortByName);
   }, [
     cocktails,
     ingredients,
