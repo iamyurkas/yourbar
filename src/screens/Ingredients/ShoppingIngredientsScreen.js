@@ -21,6 +21,7 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
+import { sortByName } from "../../utils/sortByName";
 
 export default function ShoppingIngredientsScreen() {
   const theme = useTheme();
@@ -104,7 +105,7 @@ export default function ShoppingIngredientsScreen() {
           Array.isArray(i.tags) &&
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return data;
+    return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
   const removeFromList = useCallback(

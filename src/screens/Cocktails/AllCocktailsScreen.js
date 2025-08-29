@@ -34,6 +34,7 @@ import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
 } from "../../utils/cocktailIngredients";
+import { sortByName } from "../../utils/sortByName";
 
 export default function AllCocktailsScreen() {
   const theme = useTheme();
@@ -122,21 +123,23 @@ export default function AllCocktailsScreen() {
           Array.isArray(c.tags) &&
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return list.map((c) => {
-      const { ingredientLine, isAllAvailable, hasBranded } =
-        getCocktailIngredientInfo(c, {
-          ingMap,
-          findBrand,
-          allowSubstitutes,
-          ignoreGarnish,
-        });
-      return {
-        ...c,
-        ingredientLine,
-        isAllAvailable,
-        hasBranded,
+    return list
+      .map((c) => {
+        const { ingredientLine, isAllAvailable, hasBranded } =
+          getCocktailIngredientInfo(c, {
+            ingMap,
+            findBrand,
+            allowSubstitutes,
+            ignoreGarnish,
+          });
+        return {
+          ...c,
+          ingredientLine,
+          isAllAvailable,
+          hasBranded,
       };
-    });
+      })
+      .sort(sortByName);
   }, [
     cocktails,
     ingredients,

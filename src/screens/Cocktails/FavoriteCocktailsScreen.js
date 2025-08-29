@@ -26,7 +26,6 @@ import {
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TagFilterMenu from "../../components/TagFilterMenu";
-import SortMenu from "../../components/SortMenu";
 import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
@@ -60,7 +59,6 @@ export default function FavoriteCocktailsScreen() {
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [minRating, setMinRating] = useState(0);
-  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "Favorites");
@@ -133,28 +131,23 @@ export default function FavoriteCocktailsScreen() {
           Array.isArray(c.tags) &&
           c.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    const mapped = list.map((c) => {
-      const { ingredientLine, isAllAvailable, hasBranded } =
-        getCocktailIngredientInfo(c, {
-          ingMap,
-          findBrand,
-          allowSubstitutes,
-          ignoreGarnish,
-        });
-      return {
-        ...c,
-        isAllAvailable,
-        hasBranded,
-        ingredientLine,
-      };
-    });
-    mapped.sort((a, b) => {
-      const aRating = a.rating ?? 0;
-      const bRating = b.rating ?? 0;
-      if (aRating === bRating) return sortByName(a, b);
-      return sortOrder === "asc" ? aRating - bRating : bRating - aRating;
-    });
-    return mapped;
+    return list
+      .map((c) => {
+        const { ingredientLine, isAllAvailable, hasBranded } =
+          getCocktailIngredientInfo(c, {
+            ingMap,
+            findBrand,
+            allowSubstitutes,
+            ignoreGarnish,
+          });
+        return {
+          ...c,
+          isAllAvailable,
+          hasBranded,
+          ingredientLine,
+        };
+      })
+      .sort(sortByName);
   }, [
     cocktails,
     ingredients,
@@ -162,7 +155,6 @@ export default function FavoriteCocktailsScreen() {
     selectedTagIds,
     ignoreGarnish,
     minRating,
-    sortOrder,
     allowSubstitutes,
   ]);
 
@@ -210,16 +202,11 @@ export default function FavoriteCocktailsScreen() {
         searchValue={search}
         setSearchValue={setSearch}
         filterComponent={
-          <View style={{ flexDirection: "row" }}>
-            {minRating < 5 && (
-              <SortMenu order={sortOrder} onChange={setSortOrder} />
-            )}
-            <TagFilterMenu
-              tags={availableTags}
-              selected={selectedTagIds}
-              setSelected={setSelectedTagIds}
-            />
-          </View>
+          <TagFilterMenu
+            tags={availableTags}
+            selected={selectedTagIds}
+            setSelected={setSelectedTagIds}
+          />
         }
       />
       {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}

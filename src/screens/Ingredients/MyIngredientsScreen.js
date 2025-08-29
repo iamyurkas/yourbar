@@ -31,6 +31,7 @@ import {
   initIngredientsAvailability,
   updateIngredientAvailability,
 } from "../../utils/ingredientsAvailabilityCache";
+import { sortByName } from "../../utils/sortByName";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -148,7 +149,7 @@ export default function MyIngredientsScreen() {
           Array.isArray(i.tags) &&
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return data;
+    return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
   const toggleInBar = useCallback(
