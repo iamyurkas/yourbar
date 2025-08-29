@@ -9,7 +9,7 @@ import {
   useIngredientUsage,
 } from "./src/context/IngredientUsageContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -180,7 +180,7 @@ export default function App() {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+          <StatusBar style="dark" backgroundColor="#fff" hidden={false} />
           <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <SplashScreen />
           </SafeAreaView>
@@ -194,7 +194,7 @@ export default function App() {
       <PaperProvider theme={AppTheme}>
         <MenuProvider>
           <SafeAreaProvider>
-            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+            <StatusBar style="dark" backgroundColor="#fff" hidden={false} />
             <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
               <IngredientUsageProvider>
                 <InitialDataLoader>
