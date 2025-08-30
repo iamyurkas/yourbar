@@ -82,6 +82,7 @@ export default function EditIngredientScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([]);
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
+  const [saving, setSaving] = useState(false);
 
   // reference lists / tags modal
   const {
@@ -355,12 +356,15 @@ export default function EditIngredientScreen() {
 
   const handleSave = useCallback(
     (stay = false) => {
+      if (saving) return;
       const trimmed = name.trim();
       if (!trimmed) {
         showInfo("Validation", "Please enter a name for the ingredient.");
         return;
       }
       if (!ingredient) return;
+
+      setSaving(true);
 
       const updated = {
         ...ingredient,
@@ -414,6 +418,7 @@ export default function EditIngredientScreen() {
           return new Map(arr.map((i) => [i.id, i]));
         });
         saveIngredient(updated).catch(() => {});
+        if (stay) setSaving(false);
       });
 
       return updated;
@@ -432,6 +437,8 @@ export default function EditIngredientScreen() {
       setGlobalIngredients,
       saveIngredient,
       collator,
+      saving,
+      showInfo,
     ]
   );
 
@@ -757,13 +764,27 @@ export default function EditIngredientScreen() {
         />
 
         <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+          style={[
+            styles.saveButton,
+            {
+              backgroundColor: theme.colors.primary,
+              opacity: saving ? 0.7 : 1,
+            },
+          ]}
           onPress={() => handleSave(false)}
+          disabled={saving}
           android_ripple={{ color: theme.colors.onPrimary }}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Changes
           </Text>
+          {saving && (
+            <ActivityIndicator
+              size="small"
+              color={theme.colors.onPrimary}
+              style={{ marginLeft: 8 }}
+            />
+          )}
         </Pressable>
 
       </ScrollView>
@@ -904,6 +925,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 12,
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
     borderRadius: 8,
   },
 });
