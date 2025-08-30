@@ -209,6 +209,7 @@ export default function AddCocktailScreen() {
     useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
     useIngredientsData();
+  const initialCocktail = route.params?.initialCocktail;
   const initialIngredient = route.params?.initialIngredient;
   const fromIngredientFlow = initialIngredient != null;
   const lastCocktailsTab =
@@ -284,9 +285,11 @@ export default function AddCocktailScreen() {
     return custom ? [custom] : [{ id: 11, name: "custom", color: TAG_COLORS[15] }];
   }, []);
 
-  const [name, setName] = useState("");
-  const [photoUri, setPhotoUri] = useState(null);
-  const [tags, setTags] = useState(defaultTags);
+  const [name, setName] = useState(initialCocktail?.name || "");
+  const [photoUri, setPhotoUri] = useState(initialCocktail?.photoUri || null);
+  const [tags, setTags] = useState(
+    initialCocktail?.tags?.length ? initialCocktail.tags : defaultTags
+  );
   const [availableTags, setAvailableTags] = useState(BUILTIN_COCKTAIL_TAGS);
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
   const [tagsModalAutoAdd, setTagsModalAutoAdd] = useState(false);
@@ -311,10 +314,16 @@ export default function AddCocktailScreen() {
     loadAvailableTags();
   }, [loadAvailableTags]);
 
-  const [description, setDescription] = useState("");
-  const [instructions, setInstructions] = useState("");
+  const [description, setDescription] = useState(
+    initialCocktail?.description || ""
+  );
+  const [instructions, setInstructions] = useState(
+    initialCocktail?.instructions || ""
+  );
 
-  const [glassId, setGlassId] = useState("cocktail_glass");
+  const [glassId, setGlassId] = useState(
+    initialCocktail?.glassId || "cocktail_glass"
+  );
 
   const createBaseRow = (ing) => ({
     localId: Date.now(),
@@ -333,7 +342,26 @@ export default function AddCocktailScreen() {
 
   // ingredients list
   const [ings, setIngs] = useState(() =>
-    initialIngredient ? [createBaseRow(initialIngredient)] : [createBaseRow()]
+    initialCocktail?.ingredients?.length
+      ? initialCocktail.ingredients.map((r, idx) => ({
+          localId: Date.now() + idx,
+          name: r.name || "",
+          selectedId: r.ingredientId ?? null,
+          selectedItem: null,
+          quantity: r.amount || r.quantity || "",
+          unitId: r.unitId || UNIT_ID.ML,
+          garnish: !!r.garnish,
+          optional: !!r.optional,
+          allowBaseSubstitute: !!(
+            r.allowBaseSubstitution || r.allowBaseSubstitute
+          ),
+          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+          substitutes: Array.isArray(r.substitutes) ? r.substitutes : [],
+          pendingExactMatch: null,
+        }))
+      : initialIngredient
+      ? [createBaseRow(initialIngredient)]
+      : [createBaseRow()]
   );
 
   const resetKey = route.params?.resetKey;

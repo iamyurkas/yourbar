@@ -231,6 +231,11 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("EditCocktail", { id });
   }, [navigation, id]);
 
+  const handleClone = useCallback(() => {
+    if (!cocktail) return;
+    navigation.navigate("AddCocktail", { initialCocktail: cocktail });
+  }, [navigation, cocktail]);
+
   const handleRate = useCallback(
     async (value) => {
       if (!cocktail) return;
@@ -276,18 +281,37 @@ export default function CocktailDetailsScreen() {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity
-          onPress={handleEdit}
-          style={styles.headerEditBtn}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          accessibilityRole="button"
-          accessibilityLabel="Edit"
-        >
-          <MaterialIcons name="edit" size={24} color={theme.colors.onSurface} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={handleClone}
+            style={[styles.headerIconBtn, styles.headerCloneBtn]}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel="Clone and edit"
+          >
+            <MaterialIcons
+              name="content-copy"
+              size={24}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleEdit}
+            style={styles.headerIconBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel="Edit"
+          >
+            <MaterialIcons
+              name="edit"
+              size={24}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+        </View>
       ),
     });
-  }, [navigation, handleGoBack, handleEdit, theme.colors.onSurface]);
+  }, [navigation, handleGoBack, handleClone, handleEdit, theme.colors.onSurface]);
 
   useFocusEffect(
     useCallback(() => {
@@ -569,25 +593,29 @@ export default function CocktailDetailsScreen() {
       </TouchableOpacity>
 
       <View style={styles.body}>
-        {glass && (
-          <View style={styles.glassRow}>
-            <Image
-              source={glass.image}
-              style={[
-                styles.glassImage,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            />
-            <Text
-              style={[
-                styles.glassText,
-                { color: theme.colors.onSurfaceVariant },
-              ]}
-            >
-              {glass.name}
-            </Text>
-          </View>
-        )}
+        <View style={styles.glassRow}>
+          {glass ? (
+            <View style={styles.glassInfo}>
+              <Image
+                source={glass.image}
+                style={[
+                  styles.glassImage,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.glassText,
+                  { color: theme.colors.onSurfaceVariant },
+                ]}
+              >
+                {glass.name}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.glassInfo} />
+          )}
+        </View>
 
         {Array.isArray(cocktail.tags) && cocktail.tags.length > 0 && (
           <View style={styles.section}>
@@ -661,7 +689,9 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
-  headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerIconBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerActions: { flexDirection: "row", alignItems: "center" },
+  headerCloneBtn: { marginRight: 8 },
   photo: { width: 150, height: 150, marginTop: 12, alignSelf: "center" },
   title: {
     fontSize: 22,
@@ -670,9 +700,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
   },
   body: { paddingHorizontal: 24, marginTop: 0 },
-  glassRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  glassRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 4,
+  },
+  glassInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
   glassImage: { width: 40, height: 40, borderRadius: 8 },
-  glassText: { marginLeft: 8 },
+  glassText: { marginLeft: 8, flexShrink: 1 },
   ratingRow: {
     flexDirection: "row",
     justifyContent: "center",
