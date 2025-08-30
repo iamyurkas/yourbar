@@ -21,6 +21,7 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
+  ActivityIndicator,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -325,6 +326,8 @@ export default function AddCocktailScreen() {
     initialCocktail?.glassId || "cocktail_glass"
   );
 
+  const [saving, setSaving] = useState(false);
+
   const createBaseRow = (ing) => ({
     localId: Date.now(),
     name: ing?.name || "",
@@ -575,6 +578,7 @@ export default function AddCocktailScreen() {
   );
 
   const handleSave = useCallback(async () => {
+    if (saving) return;
     console.log("[AddCocktailScreen] handleSave start");
     const title = name.trim();
     if (!title) {
@@ -586,6 +590,8 @@ export default function AddCocktailScreen() {
       showInfo("Validation", "Please add at least one ingredient.");
       return;
     }
+
+    setSaving(true);
 
     try {
     // Resolve missing selectedId by exact name match (unique)
@@ -700,6 +706,7 @@ export default function AddCocktailScreen() {
     } catch (e) {
       console.error("[AddCocktailScreen] handleSave error", e);
       showInfo("Error", "Failed to save cocktail.");
+      setSaving(false);
     }
   }, [
     name,
@@ -717,6 +724,7 @@ export default function AddCocktailScreen() {
     navigation,
     fromIngredientFlow,
     initialIngredient?.id,
+    saving,
   ]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
@@ -1134,11 +1142,25 @@ export default function AddCocktailScreen() {
           <Pressable
             onPress={handleSave}
             android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-            style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.saveBtn,
+              {
+                backgroundColor: theme.colors.primary,
+                opacity: saving ? 0.7 : 1,
+              },
+            ]}
+            disabled={saving}
           >
             <Text style={{ color: theme.colors.onPrimary, fontWeight: "700" }}>
               Save cocktail
             </Text>
+            {saving && (
+              <ActivityIndicator
+                size="small"
+                color={theme.colors.onPrimary}
+                style={{ marginLeft: 8 }}
+              />
+            )}
           </Pressable>
         </ScrollView>
       </View>
@@ -1437,6 +1459,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
   },
 
   addInlineBtn: {

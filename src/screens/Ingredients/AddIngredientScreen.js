@@ -16,6 +16,7 @@ import {
   ScrollView,
   FlatList,
   InteractionManager,
+  ActivityIndicator,
   Pressable,
   BackHandler,
   Dimensions,
@@ -90,6 +91,7 @@ export default function AddIngredientScreen() {
     const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
     return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
+  const [saving, setSaving] = useState(false);
 
   // tag helpers & modal state
   const {
@@ -298,11 +300,13 @@ export default function AddIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(() => {
+    if (saving) return;
     const trimmed = (name || "").trim();
     if (!trimmed) {
       showInfo("Validation", "Please enter a name for the ingredient.");
       return;
     }
+    setSaving(true);
 
     const searchName = normalizeSearch(trimmed);
     const saved = {
@@ -362,6 +366,7 @@ export default function AddIngredientScreen() {
     setGlobalIngredients,
     setUsageMap,
     collator,
+    saving,
   ]);
 
   const openMenu = useCallback(() => {
@@ -656,13 +661,27 @@ export default function AddIngredientScreen() {
         />
 
         <Pressable
-          style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+          style={[
+            styles.saveButton,
+            {
+              backgroundColor: theme.colors.primary,
+              opacity: saving ? 0.7 : 1,
+            },
+          ]}
           onPress={handleSave}
+          disabled={saving}
           android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Ingredient
           </Text>
+          {saving && (
+            <ActivityIndicator
+              size="small"
+              color={theme.colors.onPrimary}
+              style={{ marginLeft: 8 }}
+            />
+          )}
         </Pressable>
       </ScrollView>
     </View>
@@ -737,6 +756,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 12,
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
     borderRadius: 8,
   },
 });
