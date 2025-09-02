@@ -1,14 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RAW_DATA from "../assets/data/data.json";
+import versionData from "../assets/data/version.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import {
-  replaceAllCocktails,
+  addCocktail,
   getAllCocktails,
+  saveCocktail,
 } from "../src/storage/cocktailsStorage";
 import {
+  addIngredient,
   getAllIngredients,
-  saveAllIngredients,
+  saveIngredient,
 } from "../src/storage/ingredientsStorage";
 import { initDatabase } from "../src/storage/sqlite";
 import { normalizeSearch } from "../src/utils/normalizeSearch";
@@ -16,7 +19,8 @@ import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
 
-const IMPORT_FLAG_KEY = "default_data_imported_flag";
+const IMPORT_VERSION_KEY = "default_data_version";
+export const DATA_VERSION = String(versionData.version ?? 0);
 
 // Maps for quick tag lookup
 const ING_TAG_BY_ID = Object.fromEntries(
@@ -117,59 +121,57 @@ function sanitizeCocktails(raw) {
 export async function importCocktailsAndIngredients({ force = false } = {}) {
   try {
     await initDatabase();
-    const [already, existingIngredients, existingCocktails] = await Promise.all([
-      force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
+    const [storedVersion, existingIngredients, existingCocktails] = await Promise.all([
+      force ? null : AsyncStorage.getItem(IMPORT_VERSION_KEY),
       getAllIngredients(),
       getAllCocktails(),
     ]);
 
-    if (
-      !force &&
-      already === "true" &&
-      existingIngredients.length > 0 &&
-      existingCocktails.length > 0
-    ) {
-      console.log("ℹ️ Sample data already imported — skip");
+    if (!force && storedVersion === DATA_VERSION) {
+      console.log("ℹ️ Sample data up to date — skip");
       return;
     }
 
-    const existingIngredientsMap = Object.fromEntries(
+    const existingIngredientsMap = new Map(
       existingIngredients.map((it) => [it.id, it])
     );
-    const existingCocktailsMap = Object.fromEntries(
+    const existingCocktailsMap = new Map(
       existingCocktails.map((c) => [c.id, c])
     );
 
-    const ingredients = sanitizeIngredients(RAW_DATA.ingredients).map((it) => {
-      const existing = existingIngredientsMap[it.id];
+    const ingredients = sanitizeIngredients(RAW_DATA.ingredients);
+    for (const it of ingredients) {
+      const existing = existingIngredientsMap.get(it.id);
       if (existing) {
-        return {
+        await saveIngredient({
           ...it,
           inBar: existing.inBar,
           inShoppingList: existing.inShoppingList,
-        };
+        });
+      } else {
+        await addIngredient(it);
       }
-      return it;
-    });
+    }
 
-    const cocktails = sanitizeCocktails(RAW_DATA.cocktails).map((c) => {
-      const existing = existingCocktailsMap[c.id];
+    const cocktails = sanitizeCocktails(RAW_DATA.cocktails);
+    for (const c of cocktails) {
+      const existing = existingCocktailsMap.get(c.id);
       if (existing) {
-        return {
-          ...c,
-          rating: existing.rating,
-        };
+        const modified = existing.updatedAt && existing.createdAt && existing.updatedAt !== existing.createdAt;
+        if (!modified) {
+          await saveCocktail({
+            ...c,
+            rating: existing.rating,
+            createdAt: existing.createdAt,
+          });
+        }
+      } else {
+        await addCocktail(c);
       }
-      return c;
-    });
+    }
 
-    await saveAllIngredients(ingredients);
-    await replaceAllCocktails(cocktails);
-    await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
-
-    console.log(
-      `✅ Imported ${ingredients.length} ingredients and ${cocktails.length} cocktails`
-    );
+    await AsyncStorage.setItem(IMPORT_VERSION_KEY, DATA_VERSION);
+    console.log(`✅ Imported/updated ${ingredients.length} ingredients and ${cocktails.length} cocktails`);
   } catch (error) {
     console.error("❌ Error importing data:", error);
   }

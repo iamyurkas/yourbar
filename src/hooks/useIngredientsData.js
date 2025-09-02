@@ -14,7 +14,7 @@ import { sortByName } from "../utils/sortByName";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
-const IMPORT_FLAG_KEY = "default_data_imported_flag";
+const IMPORT_VERSION_KEY = "default_data_version";
 
 export default function useIngredientsData() {
   const {
@@ -36,9 +36,12 @@ export default function useIngredientsData() {
     async (force = false) => {
       setLoading(true);
       try {
-        const [already, ingInitial, cocksInitial, allowSubs, customTags] =
+        const { DATA_VERSION, importCocktailsAndIngredients } = await import(
+          "../../scripts/importCocktailsAndIngredients"
+        );
+        const [storedVersion, ingInitial, cocksInitial, allowSubs, customTags] =
           await Promise.all([
-            force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
+            force ? null : AsyncStorage.getItem(IMPORT_VERSION_KEY),
             getAllIngredients(),
             getAllCocktails(),
             getAllowSubstitutes(),
@@ -50,16 +53,13 @@ export default function useIngredientsData() {
 
         let needImport =
           force ||
-          already !== "true" ||
+          storedVersion !== DATA_VERSION ||
           ing.length === 0 ||
           cocks.length === 0;
 
         if (needImport) {
           console.log(
-            "Importing default data… This one-time operation may take a moment"
-          );
-          const { importCocktailsAndIngredients } = await import(
-            "../../scripts/importCocktailsAndIngredients"
+            "Importing default data… This operation may take a moment"
           );
           await importCocktailsAndIngredients({ force });
           [ing, cocks] = await Promise.all([
