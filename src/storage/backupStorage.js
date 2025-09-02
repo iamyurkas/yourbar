@@ -8,6 +8,8 @@ import { Image } from 'react-native';
 import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
 import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
+import { stripFalse } from './stripFalse';
+import { normalizeImportData } from './normalizeBackupData';
 
 const getExt = (uri) => {
   const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri || '');
@@ -33,17 +35,6 @@ function resolvePhoto(path) {
   return null;
 }
 
-function toNumberId(value) {
-  if (value == null) return null;
-  const direct = Number(value);
-  if (!Number.isNaN(direct)) return direct;
-  const str = String(value);
-  const parts = str.split('-');
-  const last = parts[parts.length - 1];
-  const num = Number(last);
-  return Number.isNaN(num) ? null : num;
-}
-
 /**
  * Export all ingredients and cocktails to a JSON file and open share dialog.
  * Returns the URI of the created file.
@@ -63,7 +54,7 @@ export async function exportAllData() {
     ...rest,
     photoUri: serializePhotoUri(photoUri, 'cocktails', rest),
   }));
-  const data = { ingredients, cocktails };
+  const data = stripFalse({ ingredients, cocktails });
   const json = JSON.stringify(data, null, 2);
   const fileName = `yourbar-backup-${Date.now()}.json`;
   const fileUri = FileSystem.cacheDirectory + fileName;
@@ -165,47 +156,9 @@ export async function importAllData() {
       encoding: FileSystem.EncodingType.UTF8,
     });
     const data = JSON.parse(contents);
-    if (Array.isArray(data.ingredients)) {
-      const ingredients = data.ingredients.map(
-        ({ inBar, inShoppingList, photoUri, ...rest }) => ({
-          ...rest,
-          id: toNumberId(rest?.id) ?? 0,
-          baseIngredientId:
-            rest?.baseIngredientId != null
-              ? toNumberId(rest.baseIngredientId)
-              : null,
-          photoUri: resolvePhoto(photoUri),
-          inBar: false,
-          inShoppingList: false,
-        })
-      );
-      await saveAllIngredients(ingredients);
-    }
-    if (Array.isArray(data.cocktails)) {
-      const cocktails = data.cocktails.map(
-        ({ rating, photoUri, ...rest }) => ({
-          ...rest,
-          id: toNumberId(rest?.id) ?? 0,
-          photoUri: resolvePhoto(photoUri),
-          ingredients: Array.isArray(rest?.ingredients)
-            ? rest.ingredients.map((ing) => ({
-                ...ing,
-                ingredientId:
-                  ing?.ingredientId != null
-                    ? toNumberId(ing.ingredientId)
-                    : null,
-                substitutes: Array.isArray(ing?.substitutes)
-                  ? ing.substitutes.map((s) => ({
-                      ...s,
-                      id: toNumberId(s?.id),
-                    }))
-                  : [],
-              }))
-            : [],
-        })
-      );
-      await replaceAllCocktails(cocktails);
-    }
+    const { ingredients, cocktails } = normalizeImportData(data, resolvePhoto);
+    await saveAllIngredients(ingredients);
+    await replaceAllCocktails(cocktails);
     return true;
   } catch (e) {
     console.error('Import failed', e);
