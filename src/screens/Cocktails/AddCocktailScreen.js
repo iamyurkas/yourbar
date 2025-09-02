@@ -457,7 +457,7 @@ export default function AddCocktailScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      quality: 0.7,
+      quality: 0.8,
     });
     if (!result.canceled) {
       const resized = await resizeImage(result.assets[0].uri);
