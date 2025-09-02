@@ -828,7 +828,7 @@ export default function AddCocktailScreen() {
   // Scroll only upwards to keep focused field visible (never scroll down automatically)
   const requestScrollIntoViewUpOnly = useCallback((nodeRef) => {
     if (!nodeRef?.current || !scrollRef.current || !viewportRef.current) return;
-    const MARGIN = 50; // extra pixels above the keyboard as requested
+    const MARGIN = 175; // extra pixels above the keyboard as requested
 
     const tryOnce = () => {
       const vH = viewportHRef.current;
