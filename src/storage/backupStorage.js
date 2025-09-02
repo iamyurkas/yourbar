@@ -44,6 +44,19 @@ function toNumberId(value) {
   return Number.isNaN(num) ? null : num;
 }
 
+function stripFalse(value) {
+  if (Array.isArray(value)) return value.map(stripFalse);
+  if (value && typeof value === 'object') {
+    const res = {};
+    for (const [k, v] of Object.entries(value)) {
+      if (v === false) continue;
+      res[k] = stripFalse(v);
+    }
+    return res;
+  }
+  return value;
+}
+
 /**
  * Export all ingredients and cocktails to a JSON file and open share dialog.
  * Returns the URI of the created file.
@@ -63,7 +76,7 @@ export async function exportAllData() {
     ...rest,
     photoUri: serializePhotoUri(photoUri, 'cocktails', rest),
   }));
-  const data = { ingredients, cocktails };
+  const data = stripFalse({ ingredients, cocktails });
   const json = JSON.stringify(data, null, 2);
   const fileName = `yourbar-backup-${Date.now()}.json`;
   const fileUri = FileSystem.cacheDirectory + fileName;
@@ -200,6 +213,12 @@ export async function importAllData() {
                       id: toNumberId(s?.id),
                     }))
                   : [],
+                garnish: !!ing?.garnish,
+                optional: !!ing?.optional,
+                allowBaseSubstitution: !!(
+                  ing?.allowBaseSubstitution ?? ing?.allowBaseSubstitute
+                ),
+                allowBrandedSubstitutes: !!ing?.allowBrandedSubstitutes,
               }))
             : [],
         })
