@@ -8,6 +8,8 @@ import { Image } from 'react-native';
 import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
 import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
+import { stripFalse } from './stripFalse';
+import { normalizeImportData } from './normalizeBackupData';
 
 const getExt = (uri) => {
   const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri || '');
@@ -31,30 +33,6 @@ function resolvePhoto(path) {
   }
   console.warn('Missing asset', str);
   return null;
-}
-
-function toNumberId(value) {
-  if (value == null) return null;
-  const direct = Number(value);
-  if (!Number.isNaN(direct)) return direct;
-  const str = String(value);
-  const parts = str.split('-');
-  const last = parts[parts.length - 1];
-  const num = Number(last);
-  return Number.isNaN(num) ? null : num;
-}
-
-function stripFalse(value) {
-  if (Array.isArray(value)) return value.map(stripFalse);
-  if (value && typeof value === 'object') {
-    const res = {};
-    for (const [k, v] of Object.entries(value)) {
-      if (v === false) continue;
-      res[k] = stripFalse(v);
-    }
-    return res;
-  }
-  return value;
 }
 
 /**
@@ -178,53 +156,9 @@ export async function importAllData() {
       encoding: FileSystem.EncodingType.UTF8,
     });
     const data = JSON.parse(contents);
-    if (Array.isArray(data.ingredients)) {
-      const ingredients = data.ingredients.map(
-        ({ inBar, inShoppingList, photoUri, ...rest }) => ({
-          ...rest,
-          id: toNumberId(rest?.id) ?? 0,
-          baseIngredientId:
-            rest?.baseIngredientId != null
-              ? toNumberId(rest.baseIngredientId)
-              : null,
-          photoUri: resolvePhoto(photoUri),
-          inBar: false,
-          inShoppingList: false,
-        })
-      );
-      await saveAllIngredients(ingredients);
-    }
-    if (Array.isArray(data.cocktails)) {
-      const cocktails = data.cocktails.map(
-        ({ rating, photoUri, ...rest }) => ({
-          ...rest,
-          id: toNumberId(rest?.id) ?? 0,
-          photoUri: resolvePhoto(photoUri),
-          ingredients: Array.isArray(rest?.ingredients)
-            ? rest.ingredients.map((ing) => ({
-                ...ing,
-                ingredientId:
-                  ing?.ingredientId != null
-                    ? toNumberId(ing.ingredientId)
-                    : null,
-                substitutes: Array.isArray(ing?.substitutes)
-                  ? ing.substitutes.map((s) => ({
-                      ...s,
-                      id: toNumberId(s?.id),
-                    }))
-                  : [],
-                garnish: !!ing?.garnish,
-                optional: !!ing?.optional,
-                allowBaseSubstitution: !!(
-                  ing?.allowBaseSubstitution ?? ing?.allowBaseSubstitute
-                ),
-                allowBrandedSubstitutes: !!ing?.allowBrandedSubstitutes,
-              }))
-            : [],
-        })
-      );
-      await replaceAllCocktails(cocktails);
-    }
+    const { ingredients, cocktails } = normalizeImportData(data, resolvePhoto);
+    await saveAllIngredients(ingredients);
+    await replaceAllCocktails(cocktails);
     return true;
   } catch (e) {
     console.error('Import failed', e);
