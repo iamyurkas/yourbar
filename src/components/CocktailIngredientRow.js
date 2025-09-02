@@ -18,6 +18,7 @@ const { Popover } = renderers;
 
 import TinyDivider from "./TinyDivider";
 import useDebounced from "../hooks/useDebounced";
+import useKeyboardHeight from "../hooks/useKeyboardHeight";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../utils/wordPrefixMatch";
 import { withAlpha } from "../utils/color";
@@ -80,18 +81,8 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
     });
   }, []);
 
-  // keyboard height (локальне — для підказок)
-  const [kbHeight, setKbHeight] = useState(0);
-  useEffect(() => {
-    const sh = Keyboard.addListener("keyboardDidShow", (e) =>
-      setKbHeight(e?.endCoordinates?.height || 0)
-    );
-    const hd = Keyboard.addListener("keyboardDidHide", () => setKbHeight(0));
-    return () => {
-      sh.remove();
-      hd.remove();
-    };
-  }, []);
+  // keyboard height from global hook
+  const kbHeight = useKeyboardHeight();
 
   // положення випадаючого списку назв інгредієнтів
   const [suggestState, setSuggestState] = useState({
