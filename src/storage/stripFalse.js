@@ -3,7 +3,7 @@ export function stripFalse(value) {
     const arr = value
       .map(stripFalse)
       .filter((v) => {
-        if (v === false) return false;
+        if (v === false || v == null) return false;
         if (Array.isArray(v)) return v.length > 0;
         if (v && typeof v === 'object') return Object.keys(v).length > 0;
         return true;
@@ -13,7 +13,7 @@ export function stripFalse(value) {
   if (value && typeof value === 'object') {
     const res = {};
     for (const [k, v] of Object.entries(value)) {
-      if (v === false) continue;
+      if (v === false || v == null) continue;
       const cleaned = stripFalse(v);
       if (Array.isArray(cleaned) && cleaned.length === 0) continue;
       if (cleaned && typeof cleaned === 'object' && Object.keys(cleaned).length === 0)

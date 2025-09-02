@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import { stripFalse } from '../stripFalse.js';
 import { normalizeImportData } from '../normalizeBackupData.js';
 
-test('stripFalse removes empty arrays and objects', () => {
+test('stripFalse removes empty arrays, objects, and null values', () => {
 
   const data = {
     emptyArr: [],
     emptyObj: {},
-    nested: { arr: [], obj: {} },
-    list: [{}],
+    nullVal: null,
+    nested: { arr: [], obj: {}, baseIngredientId: null },
+    list: [null, {}],
     keep: [1, { a: 1 }, [2]],
   };
 
@@ -43,6 +44,25 @@ test('normalizeImportData restores omitted arrays', () => {
           allowBrandedSubstitutes: false,
         },
       ],
+    },
+  ]);
+});
+
+test('normalizeImportData sets missing baseIngredientId to null', () => {
+  const sample = {
+    ingredients: [
+      { id: 1, name: 'Vodka' },
+    ],
+  };
+  const { ingredients } = normalizeImportData(sample, () => null);
+  assert.deepEqual(ingredients, [
+    {
+      id: 1,
+      name: 'Vodka',
+      baseIngredientId: null,
+      photoUri: null,
+      inBar: false,
+      inShoppingList: false,
     },
   ]);
 });
