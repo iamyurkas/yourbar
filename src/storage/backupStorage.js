@@ -4,6 +4,7 @@ import * as Sharing from 'expo-sharing';
 import JSZip from 'jszip';
 import slugify from 'slugify';
 import { Image } from 'react-native';
+import { Buffer } from 'buffer';
 
 import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
@@ -114,23 +115,28 @@ export async function exportAllPhotos() {
       if (readUri !== uri) {
         await FileSystem.deleteAsync(readUri, { idempotent: true });
       }
-      zip.file(name, base64, { base64: true });
+      const bytes = Buffer.from(base64, 'base64');
+      zip.file(name, bytes);
       added.add(uri);
     } catch (e) {
       console.warn('Failed to add photo', uri, e);
     }
   };
 
+  const tasks = [];
   for (const ing of ingredients) {
     const path = serializePhotoUri(ing.photoUri, 'ingredients', ing);
-    if (path) await addFile(ing.photoUri, path.replace(/^assets\//, ''));
+    if (path) tasks.push(addFile(ing.photoUri, path.replace(/^assets\//, '')));
   }
   for (const c of cocktails) {
     const path = serializePhotoUri(c.photoUri, 'cocktails', c);
-    if (path) await addFile(c.photoUri, path.replace(/^assets\//, ''));
+    if (path) tasks.push(addFile(c.photoUri, path.replace(/^assets\//, '')));
   }
 
-  const base64Zip = await zip.generateAsync({ type: 'base64' });
+  await Promise.all(tasks);
+
+  const zipArray = await zip.generateAsync({ type: 'uint8array' });
+  const base64Zip = Buffer.from(zipArray).toString('base64');
   const fileName = `yourbar-photos-${Date.now()}.zip`;
   const fileUri = FileSystem.cacheDirectory + fileName;
   await FileSystem.writeAsStringAsync(fileUri, base64Zip, {
