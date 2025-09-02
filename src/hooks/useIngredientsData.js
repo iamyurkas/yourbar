@@ -61,7 +61,7 @@ export default function useIngredientsData() {
           const { importCocktailsAndIngredients } = await import(
             "../../scripts/importCocktailsAndIngredients"
           );
-          await importCocktailsAndIngredients({ force });
+          await importCocktailsAndIngredients({ force: true });
           [ing, cocks] = await Promise.all([
             getAllIngredients(),
             getAllCocktails(),
