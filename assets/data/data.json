@@ -2111,6 +2111,26 @@
       "photoUri": "assets/ingredients/219375-coconut-syrup.jpg"
     },
     {
+      "id": 1757000000002,
+      "name": "Coffee",
+      "description": "Coffee is a brewed beverage made from roasted coffee beans, adding rich, bitter notes and caffeine.",
+      "tags": [
+        {
+          "id": 3,
+          "name": "beverage",
+          "color": "#9575CD"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 1,
+      "singleCocktailName": null,
+      "searchName": "coffee",
+      "searchTokens": [
+        "coffee"
+      ],
+      "photoUri": "assets/ingredients/1757000000002-coffee.jpg"
+    },
+    {
       "id": 128442,
       "name": "Coffee Beans",
       "description": "Coffee beans are used to infuse spirits or garnish coffee-flavored cocktails. They release aroma without adding sweetness. A single bean is often floated on drinks for decoration.",
@@ -5741,6 +5761,27 @@
         "syrup"
       ],
       "photoUri": "assets/ingredients/196062-raspberry-syrup.jpg"
+    },
+    {
+      "id": 1757000000003,
+      "name": "Red Bull",
+      "description": "Red Bull is a caffeinated energy drink that adds sweetness and carbonation.",
+      "tags": [
+        {
+          "id": 3,
+          "name": "beverage",
+          "color": "#9575CD"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 1,
+      "singleCocktailName": null,
+      "searchName": "red bull",
+      "searchTokens": [
+        "red",
+        "bull"
+      ],
+      "photoUri": "assets/ingredients/1757000000003-red-bull.jpg"
     },
     {
       "id": 281512,
@@ -14328,6 +14369,114 @@
       "photoUri": "assets/cocktails/1757000000109-bull-shot.jpg"
     },
     {
+      "id": 1757000000110,
+      "name": "Bullfrog",
+      "glassId": "pub_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A strong and invigorating cocktail, something you'd want to order in a nightclub.",
+      "instructions": "Put some ice into a pub glass.\nPour 30ml of white rum, 30ml of vodka, 30ml of tequila, 30ml of blue curaçao and 30ml of gin.\nPour in a full can of Red Bull and stir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 787067,
+              "name": "Tequila Gold"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "ingredientId": 453367,
+          "name": "Blue Curaçao",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 1757000000003,
+          "name": "Red Bull",
+          "amount": "250",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000110,
+      "updatedAt": 1757000000110,
+      "photoUri": "assets/cocktails/1757000000110-bullfrog.jpg"
+    },
+    {
       "id": 1756591716941,
       "name": "Bumbo",
       "glassId": "rocks_glass",
@@ -14467,6 +14616,241 @@
       "createdAt": 1756591716941,
       "updatedAt": 1756836323391,
       "photoUri": "assets/cocktails/1756591716941-bumbo.jpg"
+    },
+    {
+      "id": 1757000000111,
+      "name": "Bushwacker",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A delicious, creamy long cocktail that is very similar to the Piña Colada. The recipe here is for 3 cocktails. A blender should be big enough to fit at least 1 liter of the mixture.",
+      "instructions": "Put a cup of ice cubes into a blender.\nPour 90ml of dark rum, 90ml of coffee liqueur and 90ml of crème de cacao.\nAdd 180ml of coconut cream and 180ml of milk.\nBlend until smooth and pour into hurricane glasses.\nGarnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 519309,
+          "name": "Creme de Cacao Brown",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 808918,
+          "name": "Coconut Cream",
+          "amount": "180",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 38882,
+          "name": "Milk",
+          "amount": "180",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000111,
+      "updatedAt": 1757000000111,
+      "photoUri": "assets/cocktails/1757000000111-bushwacker.jpg"
+    },
+    {
+      "id": 1757000000112,
+      "name": "Butter Cream",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        }
+      ],
+      "description": "A not-so-sweet and very soft, creamy cocktail.",
+      "instructions": "Fill a rocks glass with ice cubes.\nPour 30ml of butterscotch liqueur and 30ml of Baileys Irish Cream.\nAdd 60ml of milk on top.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 940010,
+          "name": "Butterscotch Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38882,
+          "name": "Milk",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000112,
+      "updatedAt": 1757000000112,
+      "photoUri": "assets/cocktails/1757000000112-butter-cream.jpg"
+    },
+    {
+      "id": 1757000000113,
+      "name": "Buttery Nipple",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A variation of the \"Slippery Nipple\" cocktail but with butterscotch instead of Sambuca. This one is even sweeter and softer than the original.",
+      "instructions": "Pour 25ml of butterscotch liqueur into a shooter glass.\nCarefully pour 25ml of Baileys on top.\nOptionally, add a dash of grenadine syrup.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 940010,
+          "name": "Butterscotch Liqueur",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000113,
+      "updatedAt": 1757000000113,
+      "photoUri": "assets/cocktails/1757000000113-buttery-nipple.jpg"
     },
     {
       "id": 1756463822185,
@@ -14738,6 +15122,356 @@
       "photoUri": "assets/cocktails/1756462968613-caipiroska.jpg"
     },
     {
+      "id": 1757000000114,
+      "name": "California Root Beer",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A fizzy cocktail that mimics the taste of root beer with coffee and vanilla notes.",
+      "instructions": "Put some ice into a highball glass.\nPour 30ml of coffee liqueur, 30ml of Galliano, 60ml of soda and 30ml of cola.\nTop with a splash of beer and stir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 358227,
+          "name": "Cola",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 900535,
+          "name": "Beer",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000114,
+      "updatedAt": 1757000000114,
+      "photoUri": "assets/cocktails/1757000000114-california-root-beer.jpg"
+    },
+    {
+      "id": 1757000000115,
+      "name": "Calypso Coffee",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A rich coffee cocktail with dark rum and Kahlua finished with cream.",
+      "instructions": "Fill a rocks glass with ice.\nPour 29ml of dark rum and 29ml of Kahlua.\nAdd 147ml of coffee.\nTop with 29ml of double cream.\nGarnish with coffee beans.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "29",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 722227,
+          "name": "Kahlua",
+          "amount": "29",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 1757000000002,
+          "name": "Coffee",
+          "amount": "147",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "88",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 945886,
+          "name": "Heavy Cream",
+          "amount": "29",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 128442,
+          "name": "Coffee Beans",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000115,
+      "updatedAt": 1757000000115,
+      "photoUri": "assets/cocktails/1757000000115-calypso-coffee.jpg"
+    },
+    {
+      "id": 1757000000116,
+      "name": "Campari Gin Tonic",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A simple classic cocktail, but with the bitterness of Campari and a hint of sweetness.",
+      "instructions": "Fill a highball glass with ice.\nAdd 40ml of gin, 20ml of Campari and 100ml of tonic.\nStir gently and garnish with an orange wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705866,
+          "name": "Campari",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 676673,
+          "name": "Tonic",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000116,
+      "updatedAt": 1757000000116,
+      "photoUri": "assets/cocktails/1757000000116-campari-gin-tonic.jpg"
+    },
+    {
+      "id": 1757000000117,
+      "name": "Canary Flip",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A bold combination of wine and egg liqueur.",
+      "instructions": "Combine 60ml of egg liqueur, 60ml of white wine and 20ml of lemon juice in a cocktail shaker with ice.\nShake well and strain into a big chilled Martini glass.\nGarnish with lemon zest.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 438075,
+          "name": "Egg Liqueur",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 540275,
+          "name": "White Wine",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000117,
+      "updatedAt": 1757000000117,
+      "photoUri": "assets/cocktails/1757000000117-canary-flip.jpg"
+    },
+    {
       "id": 1755800000022,
       "name": "Canchanchara",
       "glassId": "rocks_glass",
@@ -14818,6 +15552,186 @@
       "createdAt": 1755959676877,
       "updatedAt": 1756472879996,
       "photoUri": "assets/cocktails/1755800000022-canchanchara.jpg"
+    },
+    {
+      "id": 1757000000118,
+      "name": "Cantaritos",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A refreshing Mexican cocktail traditionally served in a clay pot.",
+      "instructions": "Prepare the clay pot, if using, by soaking it in cold water for 10–15 minutes.\nPut some salt on the rim of the glass and add ice.\nPour 60ml of tequila blanco, 15ml of orange juice, 15ml of lemon juice and 15ml of lime juice into the glass.\nTop with 60ml of pink grapefruit soda.\nGarnish with pink grapefruit if desired.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 525624,
+          "name": "Lime Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 326697,
+          "name": "Grapefruit Soda",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 769178,
+          "name": "Grapefruit",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000118,
+      "updatedAt": 1757000000118,
+      "photoUri": "assets/cocktails/1757000000118-cantaritos.jpg"
+    },
+    {
+      "id": 1757000000119,
+      "name": "Cape Cod",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A simple mix of vodka and cranberry juice named after the Massachusetts peninsula.",
+      "instructions": "Fill a highball glass with ice.\nAdd 40ml of vodka and 120ml of cranberry juice.\nStir well and garnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 81569,
+          "name": "Cranberry Juice",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000119,
+      "updatedAt": 1757000000119,
+      "photoUri": "assets/cocktails/1757000000119-cape-cod.jpg"
     },
     {
       "id": 1755800000023,
