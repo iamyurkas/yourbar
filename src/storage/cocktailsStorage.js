@@ -289,9 +289,14 @@ export async function replaceAllCocktailsTx(tx, cocktails) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
+  console.log("[cocktailsStorage] replaceAllCocktails start", normalized.length);
+  console.log("[cocktailsStorage] deleting cocktail tables");
   await tx.runAsync("DELETE FROM cocktail_ingredients");
   await tx.runAsync("DELETE FROM cocktails");
+  let idx = 0;
   for (const item of normalized) {
+    idx += 1;
+    console.log("[cocktailsStorage] insert cocktail", idx, item.id);
     await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
             id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
@@ -327,6 +332,7 @@ export async function replaceAllCocktailsTx(tx, cocktails) {
       );
     }
   }
+  console.log("[cocktailsStorage] replaceAllCocktails done");
   return normalized;
 }
 

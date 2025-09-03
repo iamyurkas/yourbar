@@ -64,9 +64,11 @@ export function initDatabase() {
 export async function query(sql, params = []) {
   // assume initDatabase() has been invoked at app startup
   await initPromise;
+  console.log("[sqlite] query start", sql, params);
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
     const rows = await db.getAllAsync(sql, params);
+    console.log("[sqlite] query rows", rows.length);
     return {
       rows: {
         _array: rows,
@@ -75,7 +77,9 @@ export async function query(sql, params = []) {
       },
     };
   }
-  return db.runAsync(sql, params);
+  const res = await db.runAsync(sql, params);
+  console.log("[sqlite] query done");
+  return res;
 }
 
 // Serialize all write operations across modules to avoid DB locked errors
@@ -83,9 +87,30 @@ export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
-    return SQLite.withExclusiveTransactionAsync
-      ? SQLite.withExclusiveTransactionAsync(db, work)
-      : db.withExclusiveTransactionAsync(work);
+    const wrapper = async (tx) => {
+      const origRun = tx.runAsync.bind(tx);
+      tx.runAsync = async (sql, ...args) => {
+        console.log("[sqlite] tx.run", sql);
+        return origRun(sql, ...args);
+      };
+      const origGet = tx.getAllAsync.bind(tx);
+      tx.getAllAsync = async (sql, ...args) => {
+        console.log("[sqlite] tx.getAll", sql);
+        return origGet(sql, ...args);
+      };
+      try {
+        return await work(tx);
+      } finally {
+        tx.runAsync = origRun;
+        tx.getAllAsync = origGet;
+      }
+    };
+    console.log("[sqlite] withExclusiveWriteAsync start");
+    const result = SQLite.withExclusiveTransactionAsync
+      ? await SQLite.withExclusiveTransactionAsync(db, wrapper)
+      : await db.withExclusiveTransactionAsync(wrapper);
+    console.log("[sqlite] withExclusiveWriteAsync end");
+    return result;
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails

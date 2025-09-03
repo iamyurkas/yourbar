@@ -155,8 +155,13 @@ async function upsertIngredient(item) {
 export async function saveAllIngredientsTx(tx, ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   console.log("[ingredientsStorage] saveAllIngredients start", list.length);
+  console.log("[ingredientsStorage] deleting ingredients");
   await tx.runAsync("DELETE FROM ingredients");
+  console.log("[ingredientsStorage] inserting ingredients");
+  let idx = 0;
   for (const item of list) {
+    idx += 1;
+    console.log("[ingredientsStorage] insert", idx, item.id);
     await tx.runAsync(
       `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
