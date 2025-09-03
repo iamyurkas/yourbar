@@ -87,9 +87,28 @@ export function withExclusiveWriteAsync(work, label = "") {
   const runner = async () => {
     console.log("[sqlite] begin", tag);
     await initPromise;
-    return SQLite.withExclusiveTransactionAsync
-      ? SQLite.withExclusiveTransactionAsync(db, work)
-      : db.withExclusiveTransactionAsync(work);
+    let attempt = 0;
+    // Retry transient "database is locked" errors a few times
+    while (true) {
+      try {
+        return await (SQLite.withExclusiveTransactionAsync
+          ? SQLite.withExclusiveTransactionAsync(db, work)
+          : db.withExclusiveTransactionAsync(work));
+      } catch (e) {
+        const message = String(e?.message || e);
+        if (message.includes("database is locked") && attempt < 5) {
+          attempt += 1;
+          const delay = 50 * attempt;
+          console.warn(
+            `[sqlite] retry ${tag} attempt ${attempt} after lock`,
+            e
+          );
+          await new Promise((res) => setTimeout(res, delay));
+          continue;
+        }
+        throw e;
+      }
+    }
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails
