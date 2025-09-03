@@ -32,6 +32,35 @@ export async function getAllIngredients() {
   return list;
 }
 
+export async function getAllIngredientsTx(tx) {
+  console.log("[ingredientsStorage] getAllIngredientsTx start");
+  const rows = await tx.getAllAsync(
+    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
+  );
+  const list = rows
+    .map((r) => ({
+      id: Number(r.id),
+      name: r.name,
+      description: r.description,
+      tags: r.tags ? JSON.parse(r.tags) : [],
+      baseIngredientId:
+        r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
+      usageCount: r.usageCount ?? 0,
+      singleCocktailName: r.singleCocktailName,
+      searchName: r.searchName,
+      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
+      photoUri: r.photoUri,
+      inBar: !!r.inBar,
+      inShoppingList: !!r.inShoppingList,
+    }))
+    .sort(sortByName);
+  console.log(
+    "[ingredientsStorage] getAllIngredientsTx rows",
+    list.length
+  );
+  return list;
+}
+
 export async function getIngredientsByIds(ids) {
   const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
   if (list.length === 0) return [];

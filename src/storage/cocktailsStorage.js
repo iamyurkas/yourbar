@@ -101,6 +101,52 @@ async function readAll() {
   return Array.from(map.values()).sort(sortByName);
 }
 
+export async function getAllCocktailsTx(tx) {
+  console.log("[cocktailsStorage] getAllCocktailsTx start");
+  const rows = await tx.getAllAsync(
+    `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
+  );
+  const cocktails = rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    photoUri: r.photoUri,
+    glassId: r.glassId,
+    rating: r.rating ?? 0,
+    tags: r.tags ? JSON.parse(r.tags) : [],
+    description: r.description ?? "",
+    instructions: r.instructions ?? "",
+    ingredients: [],
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+  }));
+  const map = new Map(cocktails.map((c) => [c.id, c]));
+  const ingRows = await tx.getAllAsync(
+    `SELECT cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+       FROM cocktail_ingredients ORDER BY cocktailId, orderNum`
+  );
+  for (const r of ingRows) {
+    const c = map.get(r.cocktailId);
+    if (c) {
+      c.ingredients.push({
+        order: r.orderNum,
+        ingredientId: r.ingredientId != null ? Number(r.ingredientId) : null,
+        name: r.name,
+        amount: r.amount,
+        unitId: r.unitId,
+        garnish: !!r.garnish,
+        optional: !!r.optional,
+        allowBaseSubstitution: !!r.allowBaseSubstitution,
+        allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
+        substitutes: r.substitutes ? JSON.parse(r.substitutes) : [],
+      });
+    }
+  }
+  const list = Array.from(map.values()).sort(sortByName);
+  console.log("[cocktailsStorage] getAllCocktailsTx rows", list.length);
+  return list;
+}
+
 async function upsertCocktail(item) {
   await initDatabase();
   console.log("[cocktailsStorage] upsertCocktail start", item.id);
