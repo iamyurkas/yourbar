@@ -102,51 +102,14 @@ async function upsertIngredient(item) {
   try {
     await withExclusiveWriteAsync(async (tx) => {
       console.log("[ingredientsStorage] upsertIngredient start", item.id, item.name);
-      await tx.runAsync(
+      const stmt = await tx.prepareAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
-      console.log("[ingredientsStorage] upsertIngredient done", item.id);
-    });
-  } catch (e) {
-    console.error("[ingredientsStorage] upsertIngredient error", item.id, e);
-    throw e;
-  }
-}
-
-export async function saveAllIngredients(ingredients) {
-  const list = Array.isArray(ingredients) ? ingredients : [];
-  await initDatabase();
-  try {
-    await withExclusiveWriteAsync(async (tx) => {
-      console.log("[ingredientsStorage] saveAllIngredients start", list.length);
-      await tx.runAsync("DELETE FROM ingredients");
-      let i = 0;
-      for (const item of list) {
-        console.log(
-          "[ingredientsStorage] saveAllIngredients insert",
-          i++,
-          item.id
-        );
-        await tx.runAsync(
-          `INSERT OR REPLACE INTO ingredients (
-            id, name, description, tags, baseIngredientId, usageCount,
-            singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      try {
+        await stmt.executeAsync(
           String(item.id),
           item.name ?? null,
           item.description ?? null,
@@ -160,8 +123,57 @@ export async function saveAllIngredients(ingredients) {
           item.inBar ? 1 : 0,
           item.inShoppingList ? 1 : 0
         );
+        console.log("[ingredientsStorage] upsertIngredient done", item.id);
+      } finally {
+        await stmt.finalizeAsync();
       }
-      console.log("[ingredientsStorage] saveAllIngredients done");
+    });
+  } catch (e) {
+    console.error("[ingredientsStorage] upsertIngredient error", item.id, e);
+    throw e;
+  }
+}
+
+export async function saveAllIngredients(ingredients) {
+  const list = Array.isArray(ingredients) ? ingredients : [];
+  await initDatabase();
+  try {
+    await withExclusiveWriteAsync(async (tx) => {
+      console.log("[ingredientsStorage] saveAllIngredients start", list.length);
+      await tx.execAsync("DELETE FROM ingredients");
+      const stmt = await tx.prepareAsync(
+        `INSERT OR REPLACE INTO ingredients (
+          id, name, description, tags, baseIngredientId, usageCount,
+          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      );
+      try {
+        let i = 0;
+        for (const item of list) {
+          console.log(
+            "[ingredientsStorage] saveAllIngredients insert",
+            i++,
+            item.id
+          );
+          await stmt.executeAsync(
+            String(item.id),
+            item.name ?? null,
+            item.description ?? null,
+            item.tags ? JSON.stringify(item.tags) : null,
+            item.baseIngredientId ?? null,
+            item.usageCount ?? 0,
+            item.singleCocktailName ?? null,
+            item.searchName ?? null,
+            item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+            item.photoUri ?? null,
+            item.inBar ? 1 : 0,
+            item.inShoppingList ? 1 : 0
+          );
+        }
+        console.log("[ingredientsStorage] saveAllIngredients done");
+      } finally {
+        await stmt.finalizeAsync();
+      }
     });
   } catch (e) {
     console.error("[ingredientsStorage] saveAllIngredients error", e);
@@ -286,34 +298,40 @@ export async function flushPendingIngredients(list) {
         "[ingredientsStorage] flushPendingIngredients start",
         items.length
       );
-      let i = 0;
-      for (const u of items) {
-        const item = sanitizeIngredient(u);
-        console.log(
-          "[ingredientsStorage] flushPendingIngredients insert",
-          i++,
-          item.id
-        );
-        await tx.runAsync(
-          `INSERT OR REPLACE INTO ingredients (
-            id, name, description, tags, baseIngredientId, usageCount,
-            singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          String(item.id),
-          item.name ?? null,
-          item.description ?? null,
-          item.tags ? JSON.stringify(item.tags) : null,
-          item.baseIngredientId ?? null,
-          item.usageCount ?? 0,
-          item.singleCocktailName ?? null,
-          item.searchName ?? null,
-          item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-          item.photoUri ?? null,
-          item.inBar ? 1 : 0,
-          item.inShoppingList ? 1 : 0
-        );
+      const stmt = await tx.prepareAsync(
+        `INSERT OR REPLACE INTO ingredients (
+          id, name, description, tags, baseIngredientId, usageCount,
+          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      );
+      try {
+        let i = 0;
+        for (const u of items) {
+          const item = sanitizeIngredient(u);
+          console.log(
+            "[ingredientsStorage] flushPendingIngredients insert",
+            i++,
+            item.id
+          );
+          await stmt.executeAsync(
+            String(item.id),
+            item.name ?? null,
+            item.description ?? null,
+            item.tags ? JSON.stringify(item.tags) : null,
+            item.baseIngredientId ?? null,
+            item.usageCount ?? 0,
+            item.singleCocktailName ?? null,
+            item.searchName ?? null,
+            item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+            item.photoUri ?? null,
+            item.inBar ? 1 : 0,
+            item.inShoppingList ? 1 : 0
+          );
+        }
+        console.log("[ingredientsStorage] flushPendingIngredients done");
+      } finally {
+        await stmt.finalizeAsync();
       }
-      console.log("[ingredientsStorage] flushPendingIngredients done");
     });
   } catch (e) {
     console.error("[ingredientsStorage] flushPendingIngredients error", e);
