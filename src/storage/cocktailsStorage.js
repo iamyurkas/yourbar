@@ -239,53 +239,61 @@ export function removeCocktail(list, id) {
 }
 
 /** Replace whole storage (use carefully) */
-export async function replaceAllCocktails(cocktails) {
+export async function replaceAllCocktails(cocktails, tx) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
   await initDatabase();
-  await enqueueWrite(async () => {
-    await withExclusiveWriteAsync(async (tx) => {
-      await tx.runAsync("DELETE FROM cocktail_ingredients");
-      await tx.runAsync("DELETE FROM cocktails");
-      for (const item of normalized) {
-        await tx.runAsync(
-          `INSERT OR REPLACE INTO cocktails (
+
+  const run = async (t) => {
+    await t.runAsync("DELETE FROM cocktail_ingredients");
+    await t.runAsync("DELETE FROM cocktails");
+    for (const item of normalized) {
+      await t.runAsync(
+        `INSERT OR REPLACE INTO cocktails (
             id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          item.id,
-          item.name,
-          item.photoUri ?? null,
-          item.glassId ?? null,
-          item.rating ?? 0,
-          item.tags ? JSON.stringify(item.tags) : null,
-          item.description ?? null,
-          item.instructions ?? null,
-          item.createdAt ?? null,
-          item.updatedAt ?? null
+        item.id,
+        item.name,
+        item.photoUri ?? null,
+        item.glassId ?? null,
+        item.rating ?? 0,
+        item.tags ? JSON.stringify(item.tags) : null,
+        item.description ?? null,
+        item.instructions ?? null,
+        item.createdAt ?? null,
+        item.updatedAt ?? null
       );
-        for (const ing of item.ingredients) {
-          await tx.runAsync(
+      for (const ing of item.ingredients) {
+        await t.runAsync(
           `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            item.id,
-            ing.order,
-            ing.ingredientId != null ? String(ing.ingredientId) : null,
-            ing.name ?? null,
-            ing.amount ?? null,
-            ing.unitId ?? null,
-            ing.garnish ? 1 : 0,
-            ing.optional ? 1 : 0,
-            ing.allowBaseSubstitution ? 1 : 0,
-            ing.allowBrandedSubstitutes ? 1 : 0,
-            ing.substitutes ? JSON.stringify(ing.substitutes) : null
-          );
-        }
+          item.id,
+          ing.order,
+          ing.ingredientId != null ? String(ing.ingredientId) : null,
+          ing.name ?? null,
+          ing.amount ?? null,
+          ing.unitId ?? null,
+          ing.garnish ? 1 : 0,
+          ing.optional ? 1 : 0,
+          ing.allowBaseSubstitution ? 1 : 0,
+          ing.allowBrandedSubstitutes ? 1 : 0,
+          ing.substitutes ? JSON.stringify(ing.substitutes) : null
+        );
       }
+    }
+  };
+
+  if (tx) {
+    await run(tx);
+  } else {
+    await enqueueWrite(async () => {
+      await withExclusiveWriteAsync(run);
     });
-  });
+  }
+
   return normalized;
 }
 

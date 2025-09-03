@@ -10,7 +10,7 @@ import {
   getAllIngredients,
   saveAllIngredients,
 } from "../src/storage/ingredientsStorage";
-import { initDatabase } from "../src/storage/sqlite";
+import { initDatabase, withExclusiveWriteAsync } from "../src/storage/sqlite";
 import { normalizeSearch } from "../src/utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";
@@ -163,8 +163,10 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       return c;
     });
 
-    await saveAllIngredients(ingredients);
-    await replaceAllCocktails(cocktails);
+    await withExclusiveWriteAsync(async (tx) => {
+      await saveAllIngredients(ingredients, tx);
+      await replaceAllCocktails(cocktails, tx);
+    });
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
     console.log(

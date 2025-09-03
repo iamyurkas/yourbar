@@ -1,4 +1,4 @@
-import db, { query, initDatabase } from "./sqlite";
+import db, { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
@@ -123,14 +123,15 @@ async function upsertIngredient(item) {
   });
 }
 
-export async function saveAllIngredients(ingredients) {
+export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
-  await db.withExclusiveTransactionAsync(async (tx) => {
+
+  const run = async (t) => {
     console.log("[ingredientsStorage] saveAllIngredients start", list.length);
-    await tx.runAsync("DELETE FROM ingredients");
+    await t.runAsync("DELETE FROM ingredients");
     for (const item of list) {
-      await tx.runAsync(
+      await t.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
@@ -150,7 +151,13 @@ export async function saveAllIngredients(ingredients) {
       );
     }
     console.log("[ingredientsStorage] saveAllIngredients done");
-  });
+  };
+
+  if (tx) {
+    await run(tx);
+  } else {
+    await withExclusiveWriteAsync(run);
+  }
 }
 
 export function updateIngredientById(map, updated) {
