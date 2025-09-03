@@ -27208,6 +27208,795 @@
       "createdAt": 1757000000149,
       "updatedAt": 1757000000149,
       "photoUri": "assets/cocktails/1757000000149-el-presidente.jpg"
+    },
+    {
+      "id": 1757000000150,
+      "name": "Electric Lemonade",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "Named for its electric blue color, the Electric Lemonade cocktail can be shaken or stirred.",
+      "instructions": "Fill a highball glass with ice.\nAdd 45ml of vodka, 30ml of lemon juice and 20ml of simple syrup.\nTop with 60ml of 7-Up.\nFloat 15ml of blue curaçao on top.\nGarnish with a lemon wedge and maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 88580,
+          "name": "7-Up",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 453367,
+          "name": "Blue Curaçao",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000150,
+      "updatedAt": 1757000000150,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000151,
+      "name": "Emerson",
+      "glassId": "margarita_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 289771,
+          "name": "Old Tom Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 898334,
+          "name": "Red Vermouth",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000151,
+      "updatedAt": 1757000000151,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000152,
+      "name": "End of the Road",
+      "glassId": "margarita_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "",
+      "instructions": "",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 1755350605072,
+          "name": "Laphroaig",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705866,
+          "name": "Campari",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 399740,
+          "name": "Green Chartreuse",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000152,
+      "updatedAt": 1757000000152,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000153,
+      "name": "Final Ward",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "Perhaps the most famous variation of the classic \"Last Word\" cocktail created by Phil Ward, with rye whiskey instead of gin and lemon juice instead of lime juice.",
+      "instructions": "Combine 20ml of rye whisky, 20ml of Green Chartreuse, 20ml of maraschino liqueur and 20ml of lemon juice in a cocktail shaker with ice.\nShake well and strain into a chilled cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 399740,
+          "name": "Green Chartreuse",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000153,
+      "updatedAt": 1757000000153,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000154,
+      "name": "Fireball",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "This recipe is for 3 shots.",
+      "instructions": "Fill a shaker with ice cubes.\nPour 75ml of white rum, 75ml of Goldschläger (cinnamon schnapps) and 3 dashes of Tabasco.\nShake well and strain into shots.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "75",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 961666,
+          "name": "Goldschläger",
+          "amount": "75",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 384922,
+          "name": "Tabasco",
+          "amount": "3",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000154,
+      "updatedAt": 1757000000154,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000155,
+      "name": "First Word",
+      "glassId": "margarita_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "",
+      "instructions": "Combine gin, maraschino liqueur, dry vermouth, Aperol and lime juice in a shaker with ice.\nShake well and strain into a chilled glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 569330,
+          "name": "Dry Vermouth",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 167992,
+          "name": "Aperol",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000155,
+      "updatedAt": 1757000000155,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000156,
+      "name": "Flaming Dr Pepper",
+      "glassId": "pub_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Although Dr Pepper is not one of ingredients of this cocktail, it is claimed that it tastes like Dr Pepper.",
+      "instructions": "Pour a pint of beer.\nPour 30ml of amaretto into a shot glass.\nCarefully pour 15ml of overproof rum on top of the amaretto.\nLight the shot and allow it to burn for several seconds.\nDrop the flaming shot into the beer and drink.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 900535,
+          "name": "Beer",
+          "amount": "600",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 669831,
+          "name": "Overproof Rum",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000156,
+      "updatedAt": 1757000000156,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000157,
+      "name": "Flaming Lamborghini",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A very strong and beautiful cocktail.",
+      "instructions": "Pour 30ml of coffee liqueur into a cocktail glass.\nCarefully pour 30ml of sambuca over the coffee liqueur.\nPrepare 30ml of Baileys and 30ml of blue curaçao in two separate shots.\nLight the sambuca and start drinking through the straw.\nDon't stop – drink the two shots into the glass just before you finish the sambuca.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 722227,
+          "name": "Kahlua",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 453367,
+          "name": "Blue Curaçao",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000157,
+      "updatedAt": 1757000000157,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000158,
+      "name": "Flaming Volcano",
+      "glassId": "bowl",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This drink is something you want to share with your friends. Just get a volcano bowl, mix everything and add a flame. The ingredients can be varied greatly, so run wild and use long straws in this case!",
+      "instructions": "Put some crushed ice into a bowl.\nAdd 30ml of white rum, 30ml of brandy and 30ml of dark rum.\nAdd 120ml of orange juice, 30ml of lemon juice and 60ml of almond syrup.\nBlend well and pour into a volcano bowl.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 435165,
+          "name": "Brandy",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 860438,
+          "name": "Almond (Orgeat) Syrup",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000158,
+      "updatedAt": 1757000000158,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000159,
+      "name": "Flatliner",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A strong and really invigorating shot.",
+      "instructions": "Pour 20ml of sambuca into a shooter.\nCarefully pour 25ml of tequila on top of the sambuca.\nAdd a dash of Tabasco.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 384922,
+          "name": "Tabasco",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000159,
+      "updatedAt": 1757000000159,
+      "photoUri": null
     }
   ]
 }
