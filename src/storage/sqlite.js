@@ -10,6 +10,7 @@ export function initDatabase() {
   if (!initPromise) {
     initPromise = db.execAsync(`
       PRAGMA foreign_keys = ON;
+      PRAGMA busy_timeout = 5000;
       CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY NOT NULL,
         name TEXT,
