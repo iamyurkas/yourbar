@@ -3,14 +3,14 @@ import RAW_DATA from "../assets/data/data.json";
 import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import {
-  replaceAllCocktails,
+  replaceAllCocktailsTx,
   getAllCocktails,
 } from "../src/storage/cocktailsStorage";
 import {
   getAllIngredients,
-  saveAllIngredients,
+  saveAllIngredientsTx,
 } from "../src/storage/ingredientsStorage";
-import { initDatabase } from "../src/storage/sqlite";
+import { initDatabase, withExclusiveWriteAsync } from "../src/storage/sqlite";
 import { normalizeSearch } from "../src/utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";
@@ -163,8 +163,10 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       return c;
     });
 
-    await saveAllIngredients(ingredients);
-    await replaceAllCocktails(cocktails);
+    await withExclusiveWriteAsync(async (tx) => {
+      await saveAllIngredientsTx(tx, ingredients);
+      await replaceAllCocktailsTx(tx, cocktails);
+    });
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
     console.log(
