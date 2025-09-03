@@ -544,6 +544,7 @@ export default function EditIngredientScreen() {
               style={{
                 color: theme.colors.onSurfaceVariant,
                 textAlign: "center",
+                margin: 8,
               }}
             >
               Tap to select image
