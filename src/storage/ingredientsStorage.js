@@ -140,7 +140,7 @@ export async function saveAllIngredients(ingredients) {
   try {
     await withExclusiveWriteAsync(async (tx) => {
       console.log("[ingredientsStorage] saveAllIngredients start", list.length);
-      await tx.execAsync("DELETE FROM ingredients");
+      await tx.runAsync("DELETE FROM ingredients");
       const stmt = await tx.prepareAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
