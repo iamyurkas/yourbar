@@ -29520,6 +29520,820 @@
       "createdAt": 1757000000179,
       "updatedAt": 1757000000179,
       "photoUri": null
+    },
+    {
+      "id": 1757000000180,
+      "name": "Hairy Navel",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This is a stronger variation of the \"Fuzzy Navel\" cocktail with vodka.",
+      "instructions": "Put some ice cubes into a highball glass.\nPour 50ml of peach schnapps and 30ml of vodka.\nTop with orange juice, and garnish with an orange slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "70",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000180,
+      "updatedAt": 1757000000180,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000181,
+      "name": "Hanky Panky",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 2,
+          "name": "Unforgettables",
+          "color": "#9575CD"
+        },
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "This IBA official cocktail was invented at the beginning of the 20th century by Ada Coleman, the head bartender of the Savoy Hotel.",
+      "instructions": "Fill a mixing glass with ice cubes.\nPour 45ml of London Dry Gin, 45ml of sweet red vermouth and 8ml of Fernet-Branca.\nStir well and strain into a chilled cocktail glass.\nGarnish with orange zest.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 898334,
+          "name": "Red Vermouth",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 173236,
+          "name": "Fernet Branca",
+          "amount": "8",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000181,
+      "updatedAt": 1757000000181,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000182,
+      "name": "Harvey Wallbanger",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 3,
+          "name": "Contemporary",
+          "color": "#64B5F6"
+        },
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This IBA official cocktail was invented in 1952 by famous three-time world champion mixologist Donato \"Duke\" Antone.",
+      "instructions": "Fill a highball glass with ice cubes.\nPour 45ml of vodka and 90ml of orange juice over the ice.\nStir gently and top with 15ml of Galliano.\nGarnish with an orange slice and a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000182,
+      "updatedAt": 1757000000182,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000183,
+      "name": "Hazelnut Martini",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "An interesting Martini variation with Frangelico (hazelnut liqueur) and cacao liqueur. If you like it mild, some recipes also suggest adding about a half shot of cream.",
+      "instructions": "Combine 60ml of vodka, 15ml of Frangelico and 15ml of crème de cacao white in a shaker with ice.\nShake well and strain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 241335,
+          "name": "Frangelico",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000183,
+      "updatedAt": 1757000000183,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000184,
+      "name": "Hellboy",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A very interesting cocktail if you like whisky-based (especially smoky whisky-based) drinks. It's not too popular throughout the world, but it is known in Zurich bars, notably Old Crow and Widder Bar. Chili-infused honey syrup is difficult to find in stores but easy to make yourself.",
+      "instructions": "Combine 50ml of Islay whisky, 10ml of Frangelico and half a teaspoon of chili-infused honey.\nStir well and add some ice cubes.\nStrain into a rocks glass and add a big ice cube.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 830162,
+          "name": "Whisky",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 241335,
+          "name": "Frangelico",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 281512,
+          "name": "Red Chili Pepper",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 63524,
+          "name": "Honey",
+          "amount": "0.5",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000184,
+      "updatedAt": 1757000000184,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000185,
+      "name": "Highball",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A classic popular cocktail that is best made with Canadian whisky.",
+      "instructions": "Fill a highball glass with ice.\nPour 60ml of whisky over the ice, and top with ginger ale.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 830162,
+          "name": "Whisky",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "150",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 474349,
+              "name": "Ginger Ale"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000185,
+      "updatedAt": 1757000000185,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000186,
+      "name": "Hiroshima",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "",
+      "instructions": "Pour 20ml of sambuca into a shooter glass.\nCarefully pour 15ml of Baileys and 15ml of absinthe.\nAdd several grenadine drops using a straw.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 440131,
+          "name": "Absinthe",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000186,
+      "updatedAt": 1757000000186,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000187,
+      "name": "Horny Bull (long)",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "Similar to the Screwdriver but with tequila instead of vodka.",
+      "instructions": "Fill a highball glass with ice.\nAdd 50ml of tequila, and top with orange juice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 787067,
+              "name": "Tequila Gold"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000187,
+      "updatedAt": 1757000000187,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000188,
+      "name": "Horny Bull (shot)",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "This is a strong shooter version of the Horny Bull long drink. Some people prefer it with vodka.",
+      "instructions": "Pour tequila and rum in equal proportions into a shot glass.\nOptionally, add vodka.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000188,
+      "updatedAt": 1757000000188,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000189,
+      "name": "Hot Buttered Rum",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        }
+      ],
+      "description": "A traditional hot winter drink. Some recipes suggest using warm cider instead of water. The sugar in the recipe can be substituted with honey.",
+      "instructions": "Put 1 teaspoon of butter into a toddy (Irish coffee) glass.\nAdd 1-2 teaspoons of dark sugar, 1 dash of ground cinnamon and 1/16 teaspoon of ground nutmeg.\nPour 50ml of rum and top with 100ml of hot (not boiling) water.\nStir well until the butter and sugar are dissolved.\nGarnish with a cinnamon stick and a lemon slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 982687,
+          "name": "Butter",
+          "amount": "2",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 46858,
+          "name": "Cinnamon",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 591435,
+          "name": "Nutmeg",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 752336,
+          "name": "Water",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 331650,
+          "name": "Cinnamon Sticks",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000189,
+      "updatedAt": 1757000000189,
+      "photoUri": null
     }
   ]
 }
