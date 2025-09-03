@@ -3819,6 +3819,27 @@
       "photoUri": "assets/ingredients/42279-honey-syrup.jpg"
     },
     {
+      "id": 933885,
+      "name": "Honeydew Melon",
+      "description": "",
+      "tags": [
+        {
+          "id": 6,
+          "name": "fruit",
+          "color": "#81C784"
+        }
+      ],
+      "baseIngredientId": null,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "honeydew melon",
+      "searchTokens": [
+        "honeydew",
+        "melon"
+      ],
+      "photoUri": "assets/ingredients/933885-honeydew-melon.jpg"
+    },
+    {
       "id": 435279,
       "name": "Hot Sauce",
       "description": "",
@@ -31156,6 +31177,630 @@
       ],
       "createdAt": 1757000000199,
       "updatedAt": 1757000000199,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000200,
+      "name": "Jagertee",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        }
+      ],
+      "description": "Hot black tea spiked with overproof rum and sweetened to taste.",
+      "instructions": "Make a cup of black tea.\nAdd 40ml of overproof rum.\nAdd sugar according to your taste.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 457437,
+          "name": "Black Tea",
+          "amount": "200",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 669831,
+          "name": "Overproof Rum",
+          "amount": "40",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "10",
+          "unitId": 8,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000200,
+      "updatedAt": 1757000000200,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000201,
+      "name": "Japanese Slipper",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "This popular cocktail was created in 1984 by Jean-Paul Bourguignon at Mietta's Restaurant in Melbourne.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 30ml of Midori, 30ml of Cointreau and 30ml of lemon juice.\nShake well and strain into a cocktail glass.\nGarnish with a small slice of honeydew melon.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 354943,
+          "name": "Cointreau",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 38880,
+              "name": "Triple Sec"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 933885,
+          "name": "Honeydew Melon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000201,
+      "updatedAt": 1757000000201,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000202,
+      "name": "Jelly Bean",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Layered shooter with grenadine, sambuca and Southern Comfort.",
+      "instructions": "Pour 15ml of grenadine into a shooter.\nCarefully add 15ml of sambuca and 15ml of Southern Comfort on top of the grenadine.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 4041,
+          "name": "Southern Comfort",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000202,
+      "updatedAt": 1757000000202,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000203,
+      "name": "Jellyfish",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A mild and nice-looking shot that slightly resembles a jellyfish.",
+      "instructions": "Pour 25ml of crème de cacao white into a shooter glass.\nGently add 10ml of amaretto on top.\nGently pour 15ml of Baileys on top of the amaretto.\nAdd a few drops of grenadine.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "4",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000203,
+      "updatedAt": 1757000000203,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000204,
+      "name": "Jellyfish 2",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A stronger variation of the Jellyfish cocktail.",
+      "instructions": "Pour 15ml of sambuca into a shooter glass.\nGently add 15ml of blue curaçao on top.\nGently pour 15ml of Baileys on top of the blue curaçao.\nAdd a few drops of grenadine.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 453367,
+          "name": "Blue Curaçao",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "4",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000204,
+      "updatedAt": 1757000000204,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000205,
+      "name": "Jellyfish 3",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Yet another variation of the Jellyfish cocktail. This one is the strongest one.",
+      "instructions": "Pour 15ml of blue curaçao into a shooter glass.\nGently add 15ml of tequila on top.\nGently add 15ml of absinthe on top of the tequila.\nAdd a drop of Baileys.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 453367,
+          "name": "Blue Curaçao",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 440131,
+          "name": "Absinthe",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000205,
+      "updatedAt": 1757000000205,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000206,
+      "name": "Jolly Rancher",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "Named after the popular American candy brand.",
+      "instructions": "Fill a shaker with ice cubes.\nPour 30ml of vodka, 30ml of Midori melon liqueur and 90ml of cranberry juice.\nShake and pour over the ice into a highball glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 81569,
+          "name": "Cranberry Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000206,
+      "updatedAt": 1757000000206,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000207,
+      "name": "Jägerbomb",
+      "glassId": "pub_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Also called \"Flying Meister\" or \"Turbojäger\" in German-speaking countries.",
+      "instructions": "Pour half a can of Red Bull into a pub glass.\nMake a shot of Jägermeister, and drop it into the glass with the Red Bull.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 579784,
+          "name": "Jägermeister",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 1757000000003,
+          "name": "Red Bull",
+          "amount": "125",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000207,
+      "updatedAt": 1757000000207,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000208,
+      "name": "Kamikaze",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "This popular IBA official cocktail is a variation of the original Kamikaze shooter.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 30ml of vodka, 30ml of triple sec and 30ml of lime juice.\nShake well and strain into a cocktail glass.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38880,
+          "name": "Triple Sec",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 354943,
+              "name": "Cointreau"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000208,
+      "updatedAt": 1757000000208,
       "photoUri": null
     }
   ]
