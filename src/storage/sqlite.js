@@ -5,6 +5,7 @@ const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
 let writeQueue = Promise.resolve();
+const pendingSelects = new Set();
 
 export function initDatabase() {
   if (!initPromise) {
@@ -65,7 +66,9 @@ export async function query(sql, params = []) {
   await initPromise;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
-    const rows = await db.getAllAsync(sql, params);
+    const promise = db.getAllAsync(sql, params);
+    pendingSelects.add(promise);
+    const rows = await promise.finally(() => pendingSelects.delete(promise));
     return {
       rows: {
         _array: rows,
@@ -92,6 +95,10 @@ export function withExclusiveWriteAsync(work) {
     console.warn("[sqlite] withExclusiveWriteAsync error", e);
   });
   return next;
+}
+
+export function waitForSelects() {
+  return Promise.all(Array.from(pendingSelects));
 }
 
 export default db;
