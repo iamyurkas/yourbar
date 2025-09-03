@@ -244,6 +244,7 @@ export async function replaceAllCocktails(cocktails) {
     ? cocktails.map(sanitizeCocktail)
     : [];
   await initDatabase();
+  console.log("[cocktailsStorage] replaceAllCocktails start", normalized.length);
   await enqueueWrite(async () => {
     await withExclusiveWriteAsync(async (tx) => {
       await tx.runAsync("DELETE FROM cocktail_ingredients");
@@ -286,6 +287,7 @@ export async function replaceAllCocktails(cocktails) {
       }
     });
   });
+  console.log("[cocktailsStorage] replaceAllCocktails done");
   return normalized;
 }
 

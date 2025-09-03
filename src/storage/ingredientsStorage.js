@@ -126,31 +126,36 @@ async function upsertIngredient(item) {
 export async function saveAllIngredients(ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
-  await db.withExclusiveTransactionAsync(async (tx) => {
-    console.log("[ingredientsStorage] saveAllIngredients start", list.length);
-    await tx.runAsync("DELETE FROM ingredients");
-    for (const item of list) {
-      await tx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
+  try {
+    await db.withExclusiveTransactionAsync(async (tx) => {
+      console.log("[ingredientsStorage] saveAllIngredients start", list.length);
+      await tx.runAsync("DELETE FROM ingredients");
+      for (const item of list) {
+        await tx.runAsync(
+          `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
-      );
-    }
-    console.log("[ingredientsStorage] saveAllIngredients done");
-  });
+          String(item.id),
+          item.name ?? null,
+          item.description ?? null,
+          item.tags ? JSON.stringify(item.tags) : null,
+          item.baseIngredientId ?? null,
+          item.usageCount ?? 0,
+          item.singleCocktailName ?? null,
+          item.searchName ?? null,
+          item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+          item.photoUri ?? null,
+          item.inBar ? 1 : 0,
+          item.inShoppingList ? 1 : 0
+        );
+      }
+      console.log("[ingredientsStorage] saveAllIngredients done");
+    });
+  } catch (e) {
+    console.error("[ingredientsStorage] saveAllIngredients error", e);
+    throw e;
+  }
 }
 
 export function updateIngredientById(map, updated) {

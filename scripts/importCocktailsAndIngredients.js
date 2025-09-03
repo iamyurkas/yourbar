@@ -163,8 +163,28 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       return c;
     });
 
-    await saveAllIngredients(ingredients);
-    await replaceAllCocktails(cocktails);
+    console.log(
+      `[importCocktailsAndIngredients] saving ${ingredients.length} ingredients`
+    );
+    try {
+      await saveAllIngredients(ingredients);
+      console.log("[importCocktailsAndIngredients] ingredients saved");
+    } catch (e) {
+      console.error("[importCocktailsAndIngredients] saveAllIngredients error", e);
+      throw e;
+    }
+
+    console.log(
+      `[importCocktailsAndIngredients] replacing ${cocktails.length} cocktails`
+    );
+    try {
+      await replaceAllCocktails(cocktails);
+      console.log("[importCocktailsAndIngredients] cocktails replaced");
+    } catch (e) {
+      console.error("[importCocktailsAndIngredients] replaceAllCocktails error", e);
+      throw e;
+    }
+
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
     console.log(
