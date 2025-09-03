@@ -94,12 +94,13 @@ async function readAll() {
 async function upsertCocktail(item) {
   await initDatabase();
   console.log("[cocktailsStorage] upsertCocktail start", item.id);
-  await withExclusiveWriteAsync(async (tx) => {
-    await tx.runAsync(
-      `INSERT OR REPLACE INTO cocktails (
-          id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      item.id,
+  await withExclusiveWriteAsync(
+    async (tx) => {
+      await tx.runAsync(
+        `INSERT OR REPLACE INTO cocktails (
+            id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        item.id,
       item.name,
       item.photoUri ?? null,
       item.glassId ?? null,
@@ -133,7 +134,9 @@ async function upsertCocktail(item) {
         ing.substitutes ? JSON.stringify(ing.substitutes) : null
       );
     }
-  });
+    },
+    "upsertCocktail"
+  );
   console.log("[cocktailsStorage] upsertCocktail end", item.id);
 }
 
@@ -214,10 +217,13 @@ export function updateCocktailById(list, updated) {
 /** Delete by id */
 export async function deleteCocktail(id) {
   await initDatabase();
-  await withExclusiveWriteAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
-    await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
-  });
+  await withExclusiveWriteAsync(
+    async (tx) => {
+      await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
+      await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
+    },
+    "deleteCocktail"
+  );
 }
 
 export function removeCocktail(list, id) {
@@ -231,46 +237,49 @@ export async function replaceAllCocktails(cocktails) {
     : [];
   await initDatabase();
   console.log("[cocktailsStorage] replaceAllCocktails start", normalized.length);
-  await withExclusiveWriteAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM cocktail_ingredients");
-    await tx.runAsync("DELETE FROM cocktails");
-    for (const item of normalized) {
-      await tx.runAsync(
-        `INSERT OR REPLACE INTO cocktails (
+  await withExclusiveWriteAsync(
+    async (tx) => {
+      await tx.runAsync("DELETE FROM cocktail_ingredients");
+      await tx.runAsync("DELETE FROM cocktails");
+      for (const item of normalized) {
+        await tx.runAsync(
+          `INSERT OR REPLACE INTO cocktails (
             id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        item.id,
-        item.name,
-        item.photoUri ?? null,
-        item.glassId ?? null,
-        item.rating ?? 0,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.description ?? null,
-        item.instructions ?? null,
-        item.createdAt ?? null,
-        item.updatedAt ?? null
-      );
-      for (const ing of item.ingredients) {
-        await tx.runAsync(
-          `INSERT INTO cocktail_ingredients (
+          item.id,
+          item.name,
+          item.photoUri ?? null,
+          item.glassId ?? null,
+          item.rating ?? 0,
+          item.tags ? JSON.stringify(item.tags) : null,
+          item.description ?? null,
+          item.instructions ?? null,
+          item.createdAt ?? null,
+          item.updatedAt ?? null
+        );
+        for (const ing of item.ingredients) {
+          await tx.runAsync(
+            `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          item.id,
-          ing.order,
-          ing.ingredientId != null ? String(ing.ingredientId) : null,
-          ing.name ?? null,
-          ing.amount ?? null,
-          ing.unitId ?? null,
-          ing.garnish ? 1 : 0,
-          ing.optional ? 1 : 0,
-          ing.allowBaseSubstitution ? 1 : 0,
-          ing.allowBrandedSubstitutes ? 1 : 0,
-          ing.substitutes ? JSON.stringify(ing.substitutes) : null
-        );
+            item.id,
+            ing.order,
+            ing.ingredientId != null ? String(ing.ingredientId) : null,
+            ing.name ?? null,
+            ing.amount ?? null,
+            ing.unitId ?? null,
+            ing.garnish ? 1 : 0,
+            ing.optional ? 1 : 0,
+            ing.allowBaseSubstitution ? 1 : 0,
+            ing.allowBrandedSubstitutes ? 1 : 0,
+            ing.substitutes ? JSON.stringify(ing.substitutes) : null
+          );
+        }
       }
-    }
-  });
+    },
+    "replaceAllCocktails"
+  );
   console.log("[cocktailsStorage] replaceAllCocktails done");
   return normalized;
 }

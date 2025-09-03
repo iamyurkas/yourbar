@@ -5,6 +5,7 @@ const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
 let writeQueue = Promise.resolve();
+let writeSeq = 0;
 
 export function initDatabase() {
   if (!initPromise) {
@@ -78,9 +79,13 @@ export async function query(sql, params = []) {
 }
 
 // Serialize all write operations across modules to avoid DB locked errors
-export function withExclusiveWriteAsync(work) {
+export function withExclusiveWriteAsync(work, label = "") {
   if (typeof work !== "function") throw new Error("work must be a function");
+  const id = ++writeSeq;
+  const tag = label ? `${label}#${id}` : `op#${id}`;
+  console.log("[sqlite] queue", tag);
   const runner = async () => {
+    console.log("[sqlite] begin", tag);
     await initPromise;
     return SQLite.withExclusiveTransactionAsync
       ? SQLite.withExclusiveTransactionAsync(db, work)
@@ -88,9 +93,13 @@ export function withExclusiveWriteAsync(work) {
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails
-  writeQueue = next.catch((e) => {
-    console.warn("[sqlite] withExclusiveWriteAsync error", e);
-  });
+  writeQueue = next
+    .catch((e) => {
+      console.warn("[sqlite] withExclusiveWriteAsync error", e);
+    })
+    .finally(() => {
+      console.log("[sqlite] end", tag);
+    });
   return next;
 }
 
