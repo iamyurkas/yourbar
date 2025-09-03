@@ -1,7 +1,12 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
-import db, { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+import db, {
+  query,
+  initDatabase,
+  withExclusiveWriteAsync,
+  waitForSelects,
+} from "./sqlite";
 
 // Serialize write operations to avoid `database is locked` on Android.
 let writeQueue = Promise.resolve();
@@ -105,6 +110,7 @@ async function upsertCocktail(item) {
   await initDatabase();
   console.log("[cocktailsStorage] upsertCocktail start", item.id);
   await enqueueWrite(async () => {
+    await waitForSelects();
     await withExclusiveWriteAsync(async (tx) => {
       await tx.runAsync(
         `INSERT OR REPLACE INTO cocktails (
@@ -227,6 +233,7 @@ export function updateCocktailById(list, updated) {
 export async function deleteCocktail(id) {
   await initDatabase();
   await enqueueWrite(async () => {
+    await waitForSelects();
     await withExclusiveWriteAsync(async (tx) => {
       await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
       await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
@@ -288,6 +295,7 @@ export async function replaceAllCocktails(cocktails, tx) {
     await run(tx);
   } else {
     await enqueueWrite(async () => {
+      await waitForSelects();
       await withExclusiveWriteAsync(run);
     });
   }
