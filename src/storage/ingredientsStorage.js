@@ -148,11 +148,11 @@ export async function saveAllIngredients(ingredients) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       try {
-        let i = 0;
-        for (const item of list) {
+        for (let i = 0; i < list.length; i++) {
+          const item = list[i];
           console.log(
-            "[ingredientsStorage] saveAllIngredients insert",
-            i++,
+            "[ingredientsStorage] saveAllIngredients insert start",
+            i,
             item.id
           );
           await stmt.executeAsync(
@@ -169,10 +169,21 @@ export async function saveAllIngredients(ingredients) {
             item.inBar ? 1 : 0,
             item.inShoppingList ? 1 : 0
           );
+          console.log(
+            "[ingredientsStorage] saveAllIngredients insert done",
+            i,
+            item.id
+          );
         }
         console.log("[ingredientsStorage] saveAllIngredients done");
       } finally {
+        console.log(
+          "[ingredientsStorage] saveAllIngredients finalize start"
+        );
         await stmt.finalizeAsync();
+        console.log(
+          "[ingredientsStorage] saveAllIngredients finalize done"
+        );
       }
     });
   } catch (e) {
@@ -305,12 +316,11 @@ export async function flushPendingIngredients(list) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       try {
-        let i = 0;
-        for (const u of items) {
-          const item = sanitizeIngredient(u);
+        for (let i = 0; i < items.length; i++) {
+          const item = sanitizeIngredient(items[i]);
           console.log(
-            "[ingredientsStorage] flushPendingIngredients insert",
-            i++,
+            "[ingredientsStorage] flushPendingIngredients insert start",
+            i,
             item.id
           );
           await stmt.executeAsync(
@@ -327,10 +337,21 @@ export async function flushPendingIngredients(list) {
             item.inBar ? 1 : 0,
             item.inShoppingList ? 1 : 0
           );
+          console.log(
+            "[ingredientsStorage] flushPendingIngredients insert done",
+            i,
+            item.id
+          );
         }
         console.log("[ingredientsStorage] flushPendingIngredients done");
       } finally {
+        console.log(
+          "[ingredientsStorage] flushPendingIngredients finalize start"
+        );
         await stmt.finalizeAsync();
+        console.log(
+          "[ingredientsStorage] flushPendingIngredients finalize done"
+        );
       }
     });
   } catch (e) {
