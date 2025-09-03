@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { beforeRead, afterRead } from "./importLock";
 
 // Initialize and export a shared SQLite instance for the app.
 const db = SQLite.openDatabaseSync("yourbar.db");
@@ -67,15 +68,20 @@ export async function query(sql, params = []) {
   console.log("[sqlite] query start", sql, params);
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
-    const rows = await db.getAllAsync(sql, params);
-    console.log("[sqlite] query rows", rows.length);
-    return {
-      rows: {
-        _array: rows,
-        length: rows.length,
-        item: (i) => rows[i],
-      },
-    };
+    await beforeRead();
+    try {
+      const rows = await db.getAllAsync(sql, params);
+      console.log("[sqlite] query rows", rows.length);
+      return {
+        rows: {
+          _array: rows,
+          length: rows.length,
+          item: (i) => rows[i],
+        },
+      };
+    } finally {
+      afterRead();
+    }
   }
   const res = await db.runAsync(sql, params);
   console.log("[sqlite] query done");

@@ -116,7 +116,7 @@ function sanitizeCocktails(raw) {
 }
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
-  startImport();
+  await startImport();
   try {
     await initDatabase();
     const already = force
