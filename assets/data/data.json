@@ -28798,6 +28798,728 @@
       "createdAt": 1757000000169,
       "updatedAt": 1757000000169,
       "photoUri": null
+    },
+    {
+      "id": 1757000000170,
+      "name": "Gladiator",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This recipe is for 3 shots, but you can make it as a long drink by mixing all the ingredients together in a collins glass.",
+      "instructions": "Prepare a shot with 25ml of amaretto and 25ml of peach schnapps.\nMix around 70ml of 7-Up and 70ml of orange juice in a pub glass.\nDrop the shooter into the pub glass and drink quickly.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 88580,
+          "name": "7-Up",
+          "amount": "70",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "70",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000170,
+      "updatedAt": 1757000000170,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000171,
+      "name": "Godfather",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "A good mix of Scotch and amaretto, this rich-flavoured cocktail is an IBA official cocktail.",
+      "instructions": "Fill a rocks glass with ice cubes.\nPour 35ml of Scotch and 35ml of amaretto over the ice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 140867,
+          "name": "Scotch Whiskey",
+          "amount": "35",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "35",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000171,
+      "updatedAt": 1757000000171,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000172,
+      "name": "Godmother",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "Also called \"Tawny Russian\", this IBA official cocktail is a softer variation of another classic cocktail – Godfather.",
+      "instructions": "Fill a rocks glass with ice cubes.\nPour 35ml of vodka and 35ml of amaretto over the ice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "35",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "35",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000172,
+      "updatedAt": 1757000000172,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000173,
+      "name": "Gold Rush",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A variation of the \"Whiskey Sour\" with honey instead of sugar syrup.",
+      "instructions": "Combine 60ml of bourbon, 20ml of lemon juice and 20ml of honey syrup with ice in a cocktail shaker.\nShake well and strain into a rocks glass filled with ice.\nGarnish with a lemon wedge or a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 342124,
+          "name": "Bourbon",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 42279,
+          "name": "Honey Syrup",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000173,
+      "updatedAt": 1757000000173,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000174,
+      "name": "Golden Cadillac",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "An after-dinner cocktail.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 20ml of Galliano, 20ml of crème de cacao white and 20ml of cream.\nShake well and strain into a cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000174,
+      "updatedAt": 1757000000174,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000175,
+      "name": "Golden Dream",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "An IBA official cocktail.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 20ml of Galliano, 20ml of triple sec, 20ml of orange juice and 10ml of cream.\nShake well and strain into a cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38880,
+          "name": "Triple Sec",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000175,
+      "updatedAt": 1757000000175,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000176,
+      "name": "Green Mexican",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A big and quite strong cocktail that is definitely not for everybody!",
+      "instructions": "Fill a collins glass with ice.\nAdd 90ml of tequila and 90ml of Midori, then fill the rest with approximately 45ml of lemon juice and 45ml of sugar syrup.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000176,
+      "updatedAt": 1757000000176,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000177,
+      "name": "Green Mexican (shot)",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "The shot variation of the \"Green Mexican\" cocktail.",
+      "instructions": "Pour 20ml of Midori into a shooter glass.\nCarefully add 10ml of lime juice and 20ml of tequila.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": true,
+          "allowBrandedSubstitutes": true,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000177,
+      "updatedAt": 1757000000177,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000178,
+      "name": "Green Vesper",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A popular variation of the \"Vesper\" cocktail invented by James Bond in \"Casino Royale\". The original recipe has Kina Lillet instead of absinthe.",
+      "instructions": "Fill a shaker with ice.\nAdd 60ml of gin, 20ml of vodka and 10ml of absinthe.\nShake well and strain into a cocktail glass.\nGarnish with a lemon peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 440131,
+          "name": "Absinthe",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000178,
+      "updatedAt": 1757000000178,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000179,
+      "name": "Greyhound",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "The Greyhound is a softer variation of the \"Salty Dog\" without salt. As with the Salty Dog, gin is often substituted with vodka.",
+      "instructions": "Fill a collins glass with ice cubes.\nAdd 50ml of gin and 200ml of grapefruit juice.\nStir well and garnish with a lemon wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 131206,
+          "name": "Grapefruit Juice",
+          "amount": "200",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000179,
+      "updatedAt": 1757000000179,
+      "photoUri": null
     }
   ]
 }
