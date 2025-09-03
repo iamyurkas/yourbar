@@ -123,14 +123,14 @@ async function upsertIngredient(item) {
   });
 }
 
-export async function saveAllIngredients(ingredients) {
+export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
-  await db.withExclusiveTransactionAsync(async (tx) => {
+  const run = async (innerTx) => {
     console.log("[ingredientsStorage] saveAllIngredients start", list.length);
-    await tx.runAsync("DELETE FROM ingredients");
+    await innerTx.runAsync("DELETE FROM ingredients");
     for (const item of list) {
-      await tx.runAsync(
+      await innerTx.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
@@ -150,7 +150,12 @@ export async function saveAllIngredients(ingredients) {
       );
     }
     console.log("[ingredientsStorage] saveAllIngredients done");
-  });
+  };
+  if (tx) {
+    await run(tx);
+  } else {
+    await db.withExclusiveTransactionAsync(run);
+  }
 }
 
 export function updateIngredientById(map, updated) {
