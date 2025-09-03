@@ -5200,6 +5200,28 @@
       "photoUri": "assets/ingredients/65926-passion-fruit-liqueur.jpg"
     },
     {
+      "id": 933884,
+      "name": "Passion Fruit Puree",
+      "description": "",
+      "tags": [
+        {
+          "id": 6,
+          "name": "fruit",
+          "color": "#81C784"
+        }
+      ],
+      "baseIngredientId": 41869,
+      "usageCount": 0,
+      "singleCocktailName": null,
+      "searchName": "passion fruit puree",
+      "searchTokens": [
+        "passion",
+        "fruit",
+        "puree"
+      ],
+      "photoUri": "assets/ingredients/933884-passion-fruit-puree.jpg"
+    },
+    {
       "id": 623211,
       "name": "Passion Fruit Syrup",
       "description": "",
@@ -30333,6 +30355,807 @@
       ],
       "createdAt": 1757000000189,
       "updatedAt": 1757000000189,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000190,
+      "name": "Hot Toddy",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A warming mix of whiskey, honey, lemon and hot water.",
+      "instructions": "Put 1 teaspoon of honey on the bottom of an Irish coffee glass.\nPour 45ml of whiskey and squeeze in a quarter of a lemon.\nFill the glass with 100ml of hot water or tea.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 63524,
+          "name": "Honey",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 830162,
+          "name": "Whisky",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 752336,
+          "name": "Water",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000190,
+      "updatedAt": 1757000000190,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000191,
+      "name": "Hurricane",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A classic tropical cocktail popularized in 1940s New Orleans.",
+      "instructions": "Fill a shaker with ice.\nAdd white rum, dark rum, optional overproof rum, passion fruit puree, orange juice, lime juice, grenadine and simple syrup.\nShake well and strain into a hurricane glass filled with ice.\nGarnish with an orange slice and a cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 669831,
+          "name": "Overproof Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 933884,
+          "name": "Passion Fruit Puree",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 525624,
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 10,
+          "ingredientId": 791672,
+          "name": "Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 11,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000191,
+      "updatedAt": 1757000000191,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000192,
+      "name": "Improved Scotch Sling",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "Scotch-based take on the Improved Whisky Cocktail with honey and maraschino.",
+      "instructions": "Combine all ingredients in a mixing glass with ice and stir until chilled.\nStrain into a rocks glass over fresh ice.\nGarnish with a lemon peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 1755350605072,
+          "name": "Laphroaig",
+          "amount": "59",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 898334,
+          "name": "Red Vermouth",
+          "amount": "22",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 42279,
+          "name": "Honey Syrup",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 752336,
+          "name": "Water",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 401724,
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000192,
+      "updatedAt": 1757000000192,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000193,
+      "name": "Incredible Hulk",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A vibrant green mix of cognac and Hpnotiq named after the comic book hero.",
+      "instructions": "Fill a rocks glass with ice.\nPour 50ml of Hpnotiq and 50ml of cognac over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 535129,
+          "name": "Hpnotiq",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 502166,
+          "name": "Cognac",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000193,
+      "updatedAt": 1757000000193,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000194,
+      "name": "Innocent Sex",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Layered shooter of sambuca, Cointreau and Irish cream.",
+      "instructions": "Pour 20ml of sambuca into a shooter glass.\nCarefully add 15ml of Cointreau and 15ml of Baileys.\nIf desired, light it and drink through a straw.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 354943,
+          "name": "Cointreau",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000194,
+      "updatedAt": 1757000000194,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000195,
+      "name": "Irish Car Bomb",
+      "glassId": "pub_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Drop a shot of whiskey and Irish cream into stout for a quick-drinking bomb.",
+      "instructions": "Pour 250ml of Guinness into a pub glass.\nPour 30ml of Baileys into a shot glass and gently add 20ml of whiskey.\nDrop the shot into the stout and drink immediately.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 489584,
+          "name": "Irish Whisky",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 60960,
+          "name": "Guinness",
+          "amount": "250",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000195,
+      "updatedAt": 1757000000195,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000196,
+      "name": "Irish Flag",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Layered shot showing the green, white and orange of the Irish flag.",
+      "instructions": "Pour 20ml of green crème de menthe into a shooter.\nCarefully layer 15ml of Baileys and 15ml of Grand Marnier on top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 393722,
+          "name": "Creme de Menthe Green",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 392135,
+          "name": "Grand Marnier",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000196,
+      "updatedAt": 1757000000196,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000197,
+      "name": "Irish Frog",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Simple layered shot with melon liqueur and Irish cream.",
+      "instructions": "Pour 25ml of Midori into a shooter.\nCarefully add 25ml of Baileys on top of the Midori.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000197,
+      "updatedAt": 1757000000197,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000198,
+      "name": "Jack and Coke",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "Simple and popular mix of Jack Daniel's and cola.",
+      "instructions": "Fill a collins glass with ice.\nPour 50ml of Jack Daniel's and 150ml of cola over the ice.\nStir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 279646,
+          "name": "Jack Daniels",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 358227,
+          "name": "Cola",
+          "amount": "150",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000198,
+      "updatedAt": 1757000000198,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000199,
+      "name": "Jack Rose",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "Early 20th century classic of apple brandy, lemon and grenadine.",
+      "instructions": "Add calvados, the juice of half a lemon, grenadine and optional egg into a shaker with ice.\nShake well and strain into a chilled cocktail glass.\nGarnish with a lemon twist or apple slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 260102,
+          "name": "Calvados",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 368774,
+          "name": "Egg",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 767167,
+          "name": "Apple",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000199,
+      "updatedAt": 1757000000199,
       "photoUri": null
     }
   ]
