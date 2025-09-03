@@ -1,4 +1,5 @@
 import { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+import { waitForImport } from "./importLock";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
@@ -8,6 +9,7 @@ const genId = () => now();
 
 export async function getAllIngredients() {
   console.log("[ingredientsStorage] getAllIngredients start");
+  await waitForImport();
   await initDatabase();
   const res = await query(
     "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
@@ -65,6 +67,7 @@ export async function getIngredientsByIds(ids) {
   const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
+  await waitForImport();
   await initDatabase();
   const res = await query(
     `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
@@ -94,6 +97,7 @@ export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {
   const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
+  await waitForImport();
   await initDatabase();
   const res = await query(
     `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,

@@ -15,6 +15,7 @@ import { normalizeSearch } from "../src/utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";
 import { ASSET_MAP } from "./assetMap";
+import { startImport, finishImport } from "../src/storage/importLock";
 
 const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
@@ -115,6 +116,7 @@ function sanitizeCocktails(raw) {
 }
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
+  startImport();
   try {
     await initDatabase();
     const already = force
@@ -177,5 +179,7 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
     }
   } catch (error) {
     console.error("❌ Error importing data:", error);
+  } finally {
+    finishImport();
   }
 }

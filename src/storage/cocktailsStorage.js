@@ -2,6 +2,7 @@
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
 import db, { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+import { waitForImport } from "./importLock";
 
 // Serialize write operations to avoid `database is locked` on Android.
 let writeQueue = Promise.resolve();
@@ -58,6 +59,7 @@ const sanitizeCocktail = (c) => {
 };
 
 async function readAll() {
+  await waitForImport();
   await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
@@ -203,6 +205,7 @@ export async function getAllCocktails() {
 
 /** Get single cocktail by id (number) */
 export async function getCocktailById(id) {
+  await waitForImport();
   await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails WHERE id = ?`,
