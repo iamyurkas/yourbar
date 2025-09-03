@@ -27997,6 +27997,807 @@
       "createdAt": 1757000000159,
       "updatedAt": 1757000000159,
       "photoUri": null
+    },
+    {
+      "id": 1757000000160,
+      "name": "Fluffy Duck",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A stronger version of the cocktail. If you want something smoother, check out the 'Fluffy Duck 2'.",
+      "instructions": "Fill a rocks glass with ice.\nPour 30ml of white rum, 30ml of egg liqueur and top with 10ml of cream.\nStir and garnish with a strawberry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 438075,
+          "name": "Egg Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000160,
+      "updatedAt": 1757000000160,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000161,
+      "name": "Fluffy Duck 2",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This sweet and soft drink is the smoother variation of the \"Fluffy Duck\".",
+      "instructions": "Put some ice cubes into a highball glass.\nPour 30ml of egg liqueur and 30ml of crème de cacao white, and slowly top with 7-Up according to taste.\nGently stir.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 438075,
+          "name": "Egg Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 88580,
+          "name": "7-Up",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000161,
+      "updatedAt": 1757000000161,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000162,
+      "name": "Frozen Daiquiri",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A variation of the popular Daiquiri cocktail with ice cream.",
+      "instructions": "Put some crushed ice into a blender.\nAdd 45ml of white rum, 20ml of lemon or lime juice, 5ml of sugar syrup and 1 scoop of ice cream.\nBlend until it is smooth and pour into a chilled goblet.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 108496,
+              "name": "Lemon"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 175777,
+          "name": "Ice Cream",
+          "amount": "1",
+          "unitId": 17,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000162,
+      "updatedAt": 1757000000162,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000163,
+      "name": "Fuzzy Navel",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This cocktail became popular in the 1980s. 'Fuzzy' refers to the peach and 'navel' to the orange. Peach schnapps and orange juice amounts can be varied. There is a variation called 'Hairy Navel' with vodka.",
+      "instructions": "Put some ice cubes into a highball glass.\nPour 50ml of peach schnapps.\nTop with orange juice, and garnish with an orange slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000163,
+      "updatedAt": 1757000000163,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000164,
+      "name": "Galliano Hotshot",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A layered shot with Galliano, coffee and cream.",
+      "instructions": "Pour 20ml of Galliano into a shooter glass.\nCarefully add 20ml of espresso and 10ml of cream on top of the Galliano.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 1757000000002,
+          "name": "Coffee",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000164,
+      "updatedAt": 1757000000164,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000165,
+      "name": "Gibson",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A strong gin martini garnished with a silverskin onion.",
+      "instructions": "Fill a shaker with ice and add 60ml of gin and 10ml of dry vermouth.\nStir and strain into a cocktail glass.\nGarnish with a silverskin onion peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 569330,
+          "name": "Dry Vermouth",
+          "amount": "10",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 297740,
+          "name": "Silver Onion",
+          "amount": "1",
+          "unitId": 14,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000165,
+      "updatedAt": 1757000000165,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000166,
+      "name": "Gimlet",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A classic gin-based cocktail with a long history.",
+      "instructions": "Fill a mixing glass with ice cubes.\nAdd 60ml of gin and 15ml of lime juice.\nOptionally, add 15ml of sugar syrup.\nStir and strain into a chilled cocktail glass.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000166,
+      "updatedAt": 1757000000166,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000167,
+      "name": "Gin and Sin",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "This cocktail's name speaks for itself. Bright, strong and good for adventure. It may be prepared as a shot.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 30ml of gin, 30ml of lemon juice, 30ml of orange juice and a dash of grenadine.\nShake well and strain into a cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000167,
+      "updatedAt": 1757000000167,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000168,
+      "name": "Gin Rickey",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "This classic cocktail is considered the best of the 'Rickey' group of drinks, which are made from a base spirit, lime juice and soda.",
+      "instructions": "Put some ice into a highball glass.\nAdd 50ml of gin and 30ml of lime juice. Top with soda.\nGarnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 734220,
+          "name": "Lime Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "1",
+          "unitId": 20,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000168,
+      "updatedAt": 1757000000168,
+      "photoUri": null
+    },
+    {
+      "id": 1757000000169,
+      "name": "Gin Sour",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "The Gin Sour is a classic 'sour' cocktail. It can be served in a cocktail glass or a rocks glass.",
+      "instructions": "Combine 60ml of gin, 30ml of lemon juice, 15ml of sugar syrup and an optional egg white into a cocktail shaker.\nAdd ice, shake again, and strain into a cocktail glass or a rocks glass with ice.\nGarnish with either a lemon slice and maraschino cherry or with several drops of Angostura bitters.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 368774,
+          "name": "Egg",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 401724,
+              "name": "Angostura Bitters"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [
+            {
+              "id": 401724,
+              "name": "Angostura Bitters"
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "ingredientId": 401724,
+          "name": "Angostura Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": true,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000169,
+      "updatedAt": 1757000000169,
+      "photoUri": null
     }
   ]
 }
