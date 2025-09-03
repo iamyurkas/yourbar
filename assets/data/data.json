@@ -37206,6 +37206,3482 @@
       "createdAt": 1757000000268,
       "updatedAt": 1757000000268,
       "photoUri": "assets/cocktails/1757000000268-screaming-orgasm.jpg"
+    },
+    {
+      "id": 1757000000269,
+      "name": "Screwdriver",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A simple and popular IBA official cocktail. The drink reportedly got its name because American petroleum engineers in Saudi Arabia secretly added vodka to small cans of orange juice and stirred the mixture with their screwdrivers.",
+      "instructions": "Fill a highball glass with ice cubes.\nPour 50ml of vodka and 100ml of orange juice over the ice.\nStir gently and garnish with an orange slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000269,
+      "updatedAt": 1757000000269,
+      "photoUri": "assets/cocktails/1757000000269-screwdriver.jpg"
+    },
+    {
+      "id": 1757000000270,
+      "name": "Sexy Alligator",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A layered cocktail combining Midori, pineapple juice, amaretto and Jägermeister.",
+      "instructions": "Fill a shaker with ice cubes.\nPour 30ml of Midori and 30ml of pineapple juice.\nShake well and strain into a martini glass.\nCarefully add 30ml of amaretto, and allow it to go to the bottom.\nCarefully add 15ml of Jägermeister on top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 579784,
+          "name": "Jägermeister",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000270,
+      "updatedAt": 1757000000270,
+      "photoUri": "assets/cocktails/1757000000270-sexy-alligator.jpg"
+    },
+    {
+      "id": 1757000000271,
+      "name": "Shirley Temple",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 10,
+          "name": "non-alcoholic",
+          "color": "#DCE775"
+        }
+      ],
+      "description": "A simple and popular non-alcoholic cocktail.",
+      "instructions": "Fill a collins glass with ice cubes.\nAdd 60ml of ginger ale and 60ml of lemonade, or just add 120ml of ginger ale.\nAdd 5ml of grenadine.\nStir well and garnish with a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 474349,
+          "name": "Ginger Ale",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 906592,
+          "name": "Lemonade",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000271,
+      "updatedAt": 1757000000271,
+      "photoUri": "assets/cocktails/1757000000271-shirley-temple.jpg"
+    },
+    {
+      "id": 1757000000272,
+      "name": "Silver Bullet",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "Not for everybody, as the rich Scotch flavor and gin will blow your head off. The gin to Scotch ratio can be varied greatly. This drink can also be made as a shooter.",
+      "instructions": "Fill a shaker or mixing glass with ice.\nAdd 30ml of Scotch whisky and 60ml of gin.\nStir and strain into a cocktail glass.\nGarnish with a lemon twist.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 140867,
+          "name": "Scotch Whiskey",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 26,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000272,
+      "updatedAt": 1757000000272,
+      "photoUri": "assets/cocktails/1757000000272-silver-bullet.jpg"
+    },
+    {
+      "id": 1757000000273,
+      "name": "Slippery Nipple",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "A very smooth and beautiful shot.",
+      "instructions": "Pour 20ml of sambuca into a shooter glass.\nCarefully pour 25ml of Baileys on top of the sambuca.\nAdd a dash of grenadine syrup (optional).",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 267073,
+          "name": "Sambuca",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 436447,
+          "name": "Baileys",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000273,
+      "updatedAt": 1757000000273,
+      "photoUri": "assets/cocktails/1757000000273-slippery-nipple.jpg"
+    },
+    {
+      "id": 1757000000274,
+      "name": "Smoky Whisky Sour",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A variation of the classic \"Whisky Sour\" created by Simon Difford for people who like the distinct smoky flavor of Scotch Islay whisky.",
+      "instructions": "Combine 30ml of Islay single malt Scotch and 30ml of scotch whisky in a cocktail shaker.\nAdd 30ml of lemon juice, 20ml of maple syrup and a dash of Angostura bitters.\nAdd 1 egg white and dry shake without ice.\nAdd ice and shake again.\nStrain into a rocks glass filled with ice.\nGarnish with a lemon peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 140867,
+          "name": "Scotch Whiskey",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 182121,
+          "name": "Maple syrup",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 401724,
+          "name": "Angostura Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 368774,
+          "name": "Egg",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "1",
+          "unitId": 14,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000274,
+      "updatedAt": 1757000000274,
+      "photoUri": "assets/cocktails/1757000000274-smoky-whisky-sour.jpg"
+    },
+    {
+      "id": 1757000000275,
+      "name": "Sneaky Pete",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "Another variation of the classic 'White Russian' cocktail made with whiskey instead of vodka.",
+      "instructions": "Fill a rocks glass with ice cubes.\nPour 30ml of rye whisky, 30ml of coffee liqueur and 30ml of milk.\nStir well.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38882,
+          "name": "Milk",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000275,
+      "updatedAt": 1757000000275,
+      "photoUri": "assets/cocktails/1757000000275-sneaky-pete.jpg"
+    },
+    {
+      "id": 1757000000276,
+      "name": "Snowball",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "Simple and delicious. In the UK, it may be called the 'Winter Warmer'.",
+      "instructions": "Pour 60ml of egg liqueur into a collins glass.\nOptionally, add 15ml of lime juice.\nCarefully fill to the top with lemonade.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 438075,
+          "name": "Egg Liqueur",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 906592,
+          "name": "Lemonade",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000276,
+      "updatedAt": 1757000000276,
+      "photoUri": "assets/cocktails/1757000000276-snowball.jpg"
+    },
+    {
+      "id": 1757000000277,
+      "name": "Spiced Rum Milk Punch",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A creamy punch blending spiced rum with milk, vanilla and warm spices.",
+      "instructions": "Fill a rocks glass with ice.\nPour 45ml of spiced rum, 90ml of milk and 22ml of simple syrup.\nAdd a dash of vanilla extract and stir.\nGarnish with grated cinnamon and grated nutmeg.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 908571,
+          "name": "Spiced Rum",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38882,
+          "name": "Milk",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "22",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 116001,
+          "name": "Vanilla Extract",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "90",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 46858,
+          "name": "Cinnamon",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 591435,
+          "name": "Nutmeg",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000277,
+      "updatedAt": 1757000000277,
+      "photoUri": "assets/cocktails/1757000000277-spiced-rum-milk-punch.jpg"
+    },
+    {
+      "id": 1757000000278,
+      "name": "Spritz Veneziano",
+      "glassId": "wine_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "An IBA official sparkling cocktail. Prosecco is recommended for the sparkling wine.",
+      "instructions": "Fill a wine glass with ice.\nAdd 90ml of sparkling wine and 60ml of Aperol.\nTop with a splash of soda water.\nGarnish with an orange slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 756362,
+          "name": "Sparkling Wine",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 167992,
+          "name": "Aperol",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000278,
+      "updatedAt": 1757000000278,
+      "photoUri": "assets/cocktails/1757000000278-spritz-veneziano.jpg"
+    },
+    {
+      "id": 1757000000279,
+      "name": "Squashed Frog",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Despite its name, this layered shot is very mild and sweet.",
+      "instructions": "Pour 15ml of grenadine into a shooter glass.\nCarefully add 15ml of melon liqueur and 15ml of egg liqueur on top using a bar spoon.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 118387,
+          "name": "Midori Melon Liqueur",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 438075,
+          "name": "Egg Liqueur",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000279,
+      "updatedAt": 1757000000279,
+      "photoUri": "assets/cocktails/1757000000279-squashed-frog.jpg"
+    },
+    {
+      "id": 1757000000280,
+      "name": "Stay Sober",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 10,
+          "name": "non-alcoholic",
+          "color": "#DCE775"
+        }
+      ],
+      "description": "A delightful, refreshing non-alcoholic cocktail. The ratio of ingredients can be varied according to your taste.",
+      "instructions": "Fill a highball glass with ice cubes.\nPour 30ml of apple juice and 30ml of cranberry juice.\nTop with ginger beer.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 252791,
+          "name": "Apple Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 81569,
+          "name": "Cranberry Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 353113,
+          "name": "Ginger Beer",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000280,
+      "updatedAt": 1757000000280,
+      "photoUri": "assets/cocktails/1757000000280-stay-sober.jpg"
+    },
+    {
+      "id": 1757000000281,
+      "name": "Strawberry Colada",
+      "glassId": "goblet",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A variation of the Piña Colada with strawberries.",
+      "instructions": "Fill a blender or shaker with crushed ice.\nAdd 30ml of rum, 20ml of strawberry liqueur and 50g of strawberries or strawberry puree.\nAdd 30ml of coconut cream and 90ml of pineapple juice.\nShake or blend until smooth and pour into a chilled goblet.\nGarnish with a pineapple wedge and a maraschino cherry.\nOptionally, top with whipped cream.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 896547,
+          "name": "Strawberry Liqueur",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 808918,
+          "name": "Coconut Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 932849,
+          "name": "Pineapple",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 477462,
+          "name": "Whipped Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000281,
+      "updatedAt": 1757000000281,
+      "photoUri": "assets/cocktails/1757000000281-strawberry-colada.jpg"
+    },
+    {
+      "id": 1757000000282,
+      "name": "Strawberry Daiquiri",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A popular variation of the Daiquiri cocktail. The recipe here is for 3–4 drinks.",
+      "instructions": "Put some ice into a blender.\nAdd 120g of strawberries with 50g of sugar.\nPour 100ml of lemon juice and 25ml of lime juice.\nFinally, add 170ml of light rum, and blend until smooth.\nPour into a chilled glass, and garnish with a strawberry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "120",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "170",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 525624,
+          "name": "Lime Juice",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 217733,
+          "name": "Sugar",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000282,
+      "updatedAt": 1757000000282,
+      "photoUri": "assets/cocktails/1757000000282-strawberry-daiquiri.jpg"
+    },
+    {
+      "id": 1757000000283,
+      "name": "Strawberry Margarita",
+      "glassId": "margarita_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A variation of the classic Margarita. The recipe here is for 3–4 drinks.",
+      "instructions": "Put some ice and 120g of strawberries into a blender.\nAdd 170ml of tequila, 100ml of Cointreau or triple sec and 80ml of lime juice.\nBlend until smooth, and pour into margarita glasses.\nGarnish with a strawberry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "120",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "170",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 354943,
+          "name": "Cointreau",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 525624,
+          "name": "Lime Juice",
+          "amount": "80",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000283,
+      "updatedAt": 1757000000283,
+      "photoUri": "assets/cocktails/1757000000283-strawberry-margarita.jpg"
+    },
+    {
+      "id": 1757000000284,
+      "name": "Suburban",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A bit similar to the classic \"Old Fashioned\" because of the whiskey and bitters, this cocktail combines bourbon, rum and port.",
+      "instructions": "Combine 50ml of bourbon, 25ml of aged dark rum and 25ml of aged tawny port wine in a mixing glass with ice.\nAdd 1 dash of Angostura bitters and 1 dash of orange bitters.\nStir well and strain into a rocks glass with ice.\nGarnish with an orange peel.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 342124,
+          "name": "Bourbon",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 888500,
+          "name": "Tawny Port",
+          "amount": "25",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 401724,
+          "name": "Angostura Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 552212,
+          "name": "Orange Bitters",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 14,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000284,
+      "updatedAt": 1757000000284,
+      "photoUri": "assets/cocktails/1757000000284-suburban.jpg"
+    },
+    {
+      "id": 1757000000285,
+      "name": "Swimming Pool",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A tropical cocktail with vodka, rum, coconut and pineapple flavors.",
+      "instructions": "Fill a shaker with ice.\nPour 30ml of vodka and 60ml of white rum.\nAdd 15ml of cream, 30ml of coconut milk and 60ml of pineapple juice.\nShake well and strain into a hurricane glass filled with ice.\nPour 15ml of blue curacao on the top.\nGarnish with a pineapple wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 140127,
+          "name": "Coconut Milk",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 453367,
+          "name": "Blue Curacao",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 932849,
+          "name": "Pineapple",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000285,
+      "updatedAt": 1757000000285,
+      "photoUri": "assets/cocktails/1757000000285-swimming-pool.jpg"
+    },
+    {
+      "id": 1757000000286,
+      "name": "Symphony",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A custom mix of gin, maraschino liqueur, green Chartreuse and a smoky Laphroaig float.",
+      "instructions": "Fill a mixing glass with ice.\nPour 30ml of gin, 20ml of maraschino liqueur, 20ml of green Chartreuse and 20ml of lemon juice.\nStir and strain into a chilled cocktail glass.\nFloat 5ml of Laphroaig on top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 399740,
+          "name": "Green Chartreuse",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 1755350605072,
+          "name": "Laphroaig",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000286,
+      "updatedAt": 1757000000286,
+      "photoUri": "assets/cocktails/1757000000286-symphony.jpg"
+    },
+    {
+      "id": 1757000000287,
+      "name": "Szarlotka",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A simple Polish cocktail pairing Żubrówka with apple juice and cinnamon.",
+      "instructions": "Fill a rocks glass with ice.\nPour 60ml of Żubrówka and 120ml of apple juice.\nAdd a pinch of grated cinnamon and stir gently.\nGarnish with a cinnamon stick and an apple slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 284294,
+          "name": "Zubrowka",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 252791,
+          "name": "Apple Juice",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 46858,
+          "name": "Cinnamon",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 331650,
+          "name": "Cinnamon Sticks",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 767167,
+          "name": "Apple",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000287,
+      "updatedAt": 1757000000287,
+      "photoUri": "assets/cocktails/1757000000287-szarlotka.jpg"
+    },
+    {
+      "id": 1757000000288,
+      "name": "Tarzan",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A refreshing long drink of gin, Campari and pineapple juice topped with soda.",
+      "instructions": "Fill a collins glass with ice.\nPour 30ml of gin and 30ml of Campari.\nAdd 45ml of pineapple juice, 15ml of sugar syrup and 15ml of lemon juice.\nTop with soda water and stir gently.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705866,
+          "name": "Campari",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 807431,
+          "name": "Soda Water",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000288,
+      "updatedAt": 1757000000288,
+      "photoUri": "assets/cocktails/1757000000288-tarzan.jpg"
+    },
+    {
+      "id": 1757000000289,
+      "name": "Tequila Slammer",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Also called \"Tequila Boom,\" this cocktail is great for a noisy party.",
+      "instructions": "Pour 50ml of tequila into a rocks glass.\nAdd 50ml of 7-Up or another carbonated beverage.\nCover the glass and quickly slam it onto a hard surface to release bubbles, then drink immediately.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [787067]
+        },
+        {
+          "order": 2,
+          "ingredientId": 88580,
+          "name": "7-Up",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [474349]
+        },
+        {
+          "order": 3,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000289,
+      "updatedAt": 1757000000289,
+      "photoUri": "assets/cocktails/1757000000289-tequila-slammer.jpg"
+    },
+    {
+      "id": 1757000000290,
+      "name": "That's my word",
+      "glassId": "coupe",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        },
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A floral riff on the Last Word with gin, St. Germain and yellow Chartreuse.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd gin, St. Germain, yellow Chartreuse and half a lime.\nShake and strain into a chilled coupe.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 121379,
+          "name": "St. Germain",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 366531,
+          "name": "Yellow Chartreuse",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000290,
+      "updatedAt": 1757000000290,
+      "photoUri": "assets/cocktails/1757000000290-thats-my-word.jpg"
+    },
+    {
+      "id": 1757000000291,
+      "name": "Toasted Almond",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A variation of this cocktail with vodka is called the \"Roasted Toasted Almond\".",
+      "instructions": "Fill a shaker with ice cubes.\nAdd amaretto, coffee liqueur and cream.\nShake and strain into a rocks glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 728860,
+          "name": "Amaretto",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000291,
+      "updatedAt": 1757000000291,
+      "photoUri": "assets/cocktails/1757000000291-toasted-almond.jpg"
+    },
+    {
+      "id": 1757000000292,
+      "name": "Tom and Jerry",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A classic winter cocktail that is very popular during Christmas time.",
+      "instructions": "Separate the egg white from the yolk and beat them separately.\nPour the egg white on top of the yolk in an Irish coffee glass.\nCarefully add sugar syrup, dark rum and cognac.\nFill with hot milk and garnish with grated nutmeg.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 368774,
+          "name": "Egg",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 502166,
+          "name": "Cognac",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 38882,
+          "name": "Milk",
+          "amount": "100",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 591435,
+          "name": "Nutmeg",
+          "amount": "2",
+          "unitId": 15,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000292,
+      "updatedAt": 1757000000292,
+      "photoUri": "assets/cocktails/1757000000292-tom-and-jerry.jpg"
+    },
+    {
+      "id": 1757000000293,
+      "name": "Tootsie Roll",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "This nice and mild shot is an attempt to recall the famous \"Tootsie Roll\" candy. The recipe here is for 3–4 shots.",
+      "instructions": "Fill a shaker with ice cubes.\nPour coffee liqueur and orange juice.\nAdd vodka if you want to make it stronger.\nShake well and strain into a shooter.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": true,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000293,
+      "updatedAt": 1757000000293,
+      "photoUri": "assets/cocktails/1757000000293-tootsie-roll.jpg"
+    },
+    {
+      "id": 1757000000294,
+      "name": "Tropic Dream",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 10,
+          "name": "non-alcoholic",
+          "color": "#DCE775"
+        }
+      ],
+      "description": "A delicious non-alcoholic summer beverage.",
+      "instructions": "Put some ice, a banana and several strawberries into a blender.\nAdd pineapple juice and coconut syrup.\nBlend until smooth, and pour into a hurricane glass.\nTop with whipped cream, and garnish with a strawberry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 609552,
+          "name": "Banana",
+          "amount": "1",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "50",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "150",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 219375,
+          "name": "Coconut Syrup",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 477462,
+          "name": "Whipped Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 969224,
+          "name": "Strawberry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000294,
+      "updatedAt": 1757000000294,
+      "photoUri": "assets/cocktails/1757000000294-tropic-dream.jpg"
+    },
+    {
+      "id": 1757000000295,
+      "name": "Vampiro",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 7,
+          "name": "soft",
+          "color": "#FFD54F"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "An IBA official cocktail.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd tequila blanco, tomato juice, orange juice and half a lime.\nAdd honey, onion, and slices of red chili pepper.\nAdd a few drops of Worcestershire sauce and a pinch of salt.\nShake well and strain into a highball glass.\nGarnish with a lime wedge and a chili pepper.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "50",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 306059,
+          "name": "Tomato Juice",
+          "amount": "70",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 63524,
+          "name": "Honey",
+          "amount": "1",
+          "unitId": 24,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 297740,
+          "name": "Silver Onion",
+          "amount": "0.5",
+          "unitId": 14,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 281512,
+          "name": "Red Chili Pepper",
+          "amount": "3",
+          "unitId": 19,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 312841,
+          "name": "Worcestershire Sauce",
+          "amount": "3",
+          "unitId": 7,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 728001,
+          "name": "Salt",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 10,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 11,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 12,
+          "ingredientId": 281512,
+          "name": "Red Chili Pepper",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000295,
+      "updatedAt": 1757000000295,
+      "photoUri": "assets/cocktails/1757000000295-vampiro.jpg"
+    },
+    {
+      "id": 1757000000296,
+      "name": "Vegas Bomb",
+      "glassId": "pub_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "A sweet and energetic bomb shot combining whisky, peach schnapps and Red Bull.",
+      "instructions": "Pour half a can of Red Bull into a pub glass.\nMake a shot of rye whisky and peach schnapps, and drop it into the glass with the Red Bull.\nDrink quickly.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 1757000000003,
+          "name": "Red Bull",
+          "amount": "150",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000296,
+      "updatedAt": 1757000000296,
+      "photoUri": "assets/cocktails/1757000000296-vegas-bomb.jpg"
+    },
+    {
+      "id": 1757000000297,
+      "name": "Virgin Colada",
+      "glassId": "hurricane_glass",
+      "tags": [
+        {
+          "id": 10,
+          "name": "non-alcoholic",
+          "color": "#DCE775"
+        }
+      ],
+      "description": "A non-alcoholic variation of the \"Piña Colada\".",
+      "instructions": "Put some crushed ice into a blender.\nAdd coconut milk and pineapple juice.\nBlend until smooth, and pour into a hurricane glass.\nTop with whipped cream, and garnish with a pineapple wedge and a maraschino cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 140127,
+          "name": "Coconut Milk",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [219375]
+        },
+        {
+          "order": 2,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 932849,
+          "name": "Pineapple",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 477462,
+          "name": "Whipped Cream",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000297,
+      "updatedAt": 1757000000297,
+      "photoUri": "assets/cocktails/1757000000297-virgin-colada.jpg"
+    },
+    {
+      "id": 1757000000298,
+      "name": "Virgin Mary",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 10,
+          "name": "non-alcoholic",
+          "color": "#DCE775"
+        }
+      ],
+      "description": "A non-alcoholic version of the \"Bloody Mary\" cocktail. It is also called the \"Bloody Shame\", \"Bloody Virgin\" or \"Bloody Barbara\".",
+      "instructions": "Put ice cubes into a highball glass.\nAdd Worcestershire sauce, Tabasco, salt and black pepper.\nPour tomato juice and the juice of a quarter lemon.\nStir gently and garnish with a celery stalk or lemon wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 306059,
+          "name": "Tomato Juice",
+          "amount": "90",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 108496,
+          "name": "Lemon",
+          "amount": "0.25",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 384922,
+          "name": "Tabasco",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 312841,
+          "name": "Worcestershire Sauce",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 728001,
+          "name": "Salt",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 220504,
+          "name": "Black Pepper",
+          "amount": "1",
+          "unitId": 15,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 146921,
+          "name": "Celery",
+          "amount": "1",
+          "unitId": 22,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000298,
+      "updatedAt": 1757000000298,
+      "photoUri": "assets/cocktails/1757000000298-virgin-mary.jpg"
+    },
+    {
+      "id": 1757000000299,
+      "name": "Ward 8",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "A classic whiskey cocktail with citrus and a touch of grenadine.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 60ml of rye whiskey, 15ml of lemon juice, 15ml of orange juice and a dash of grenadine.\nShake well and strain into a cocktail glass.\nGarnish with a cherry.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 607153,
+          "name": "Maraschino Cherry",
+          "amount": "1",
+          "unitId": 1,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000299,
+      "updatedAt": 1757000000299,
+      "photoUri": "assets/cocktails/1757000000299-ward-8.jpg"
+    },
+    {
+      "id": 1757000000300,
+      "name": "Washington Apple",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A crisp mix of rye whiskey, apple liqueur and cranberry juice.",
+      "instructions": "Fill a highball glass with ice cubes.\nAdd 60ml of rye whiskey and 60ml of apple liqueur.\nAdd about 60ml of cranberry juice to the top.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 797544,
+          "name": "Apple Liqueur",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 81569,
+          "name": "Cranberry Juice",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000300,
+      "updatedAt": 1757000000300,
+      "photoUri": "assets/cocktails/1757000000300-washington-apple.jpg"
+    },
+    {
+      "id": 1757000000301,
+      "name": "Water Moccasin",
+      "glassId": "shooter",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
+        }
+      ],
+      "description": "Named after the venomous snake, this shooter blends peach schnapps with rye whiskey and citrus.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 30ml of peach schnapps, 30ml of rye whiskey, 15ml of lemon juice and 15ml of simple syrup.\nPour a dash of triple sec or another orange liqueur.\nShake well and strain into shot glasses.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 38880,
+          "name": "Triple Sec",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000301,
+      "updatedAt": 1757000000301,
+      "photoUri": "assets/cocktails/1757000000301-water-moccasin.jpg"
+    },
+    {
+      "id": 1757000000302,
+      "name": "Weng Weng",
+      "glassId": "collins_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A potent Filipino party drink combining six spirits with juices and grenadine.",
+      "instructions": "Put some ice into a collins glass.\nPour 20ml of vodka, 20ml of tequila, 20ml of brandy, 20ml of bourbon, 20ml of Scotch whiskey and 20ml of orange juice.\nFill with equal parts orange juice and pineapple juice to the top.\nAdd a dash of grenadine.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 266182,
+          "name": "Tequila Blanco",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [787067]
+        },
+        {
+          "order": 3,
+          "ingredientId": 435165,
+          "name": "Brandy",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": [502166]
+        },
+        {
+          "order": 4,
+          "ingredientId": 342124,
+          "name": "Bourbon",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 140867,
+          "name": "Scotch Whiskey",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 38131,
+          "name": "Orange Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 494177,
+          "name": "Pineapple Juice",
+          "amount": "20",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 803536,
+          "name": "Grenadine",
+          "amount": "1",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 9,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000302,
+      "updatedAt": 1757000000302,
+      "photoUri": "assets/cocktails/1757000000302-weng-weng.jpg"
+    },
+    {
+      "id": 1757000000303,
+      "name": "Whiskey Rebellion",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        }
+      ],
+      "description": "Whiskey and Pimm's combine with citrus and syrup for a refreshing twist.",
+      "instructions": "Pour 30ml of Pimm's No. 1 and 30ml of rye whiskey into a cocktail shaker with ice cubes.\nAdd 15ml of lemon juice and 15ml of simple syrup.\nShake well and strain into a rocks glass over ice cubes.\nGarnish with a lemon wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 160433,
+          "name": "Rye Whisky",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 991368,
+          "name": "Pimm's No. 1",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 150490,
+          "name": "Simple Syrup",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000303,
+      "updatedAt": 1757000000303,
+      "photoUri": "assets/cocktails/1757000000303-whiskey-rebellion.jpg"
+    },
+    {
+      "id": 1757000000304,
+      "name": "White Negroni",
+      "glassId": "rocks_glass",
+      "tags": [
+        {
+          "id": 5,
+          "name": "strong",
+          "color": "#ec5a5a"
+        }
+      ],
+      "description": "The White Negroni is a variation on the classic cocktail made with gin, Suze and Lillet Blanc.",
+      "instructions": "Fill a rocks glass with ice.\nAdd 30ml of gin, 30ml of Suze and 30ml of Lillet Blanc and stir.\nGarnish with an orange slice.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 863081,
+          "name": "Gin",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 759169,
+          "name": "Suze",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 797737,
+          "name": "Lillet Blanc",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 19,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000304,
+      "updatedAt": 1757000000304,
+      "photoUri": "assets/cocktails/1757000000304-white-negroni.jpg"
+    },
+    {
+      "id": 1757000000305,
+      "name": "Woo Woo",
+      "glassId": "highball_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 8,
+          "name": "long",
+          "color": "#FFB74D"
+        }
+      ],
+      "description": "A popular party long drink of vodka, peach schnapps and cranberry juice.",
+      "instructions": "Put ice cubes into a highball glass.\nPour 60ml of vodka, 30ml of peach schnapps and 120ml of cranberry juice.\nStir well and garnish with a lime wedge.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 16862,
+          "name": "Vodka",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 669094,
+          "name": "Peach Schnapps",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 81569,
+          "name": "Cranberry Juice",
+          "amount": "120",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000305,
+      "updatedAt": 1757000000305,
+      "photoUri": "assets/cocktails/1757000000305-woo-woo.jpg"
+    },
+    {
+      "id": 1757000000306,
+      "name": "Writer's Coffee",
+      "glassId": "irish_coffee_glass",
+      "tags": [
+        {
+          "id": 11,
+          "name": "custom",
+          "color": "#a8a8a8"
+        }
+      ],
+      "description": "A rich coffee cocktail with dark rum, Kahlua and maraschino liqueur.",
+      "instructions": "Fill an irish coffee glass with ice cubes.\nAdd 60ml of dark rum, 45ml of Kahlua, 15ml of maraschino liqueur, 5ml of caramel syrup and 2 dashes of orange bitters.\nStir well and garnish with an orange wedge and an ice cube.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 962705,
+          "name": "Dark Rum",
+          "amount": "60",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 722227,
+          "name": "Kahlua",
+          "amount": "45",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 147675,
+          "name": "Maraschino Liqueur",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 422971,
+          "name": "Caramel Syrup",
+          "amount": "5",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 552212,
+          "name": "Orange Bitters",
+          "amount": "2",
+          "unitId": 6,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 6,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 7,
+          "ingredientId": 454059,
+          "name": "Orange",
+          "amount": "1",
+          "unitId": 27,
+          "garnish": true,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 8,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "1",
+          "unitId": 4,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000306,
+      "updatedAt": 1757000000306,
+      "photoUri": "assets/cocktails/1757000000306-writers-coffee.jpg"
+    },
+    {
+      "id": 1757000000307,
+      "name": "Yellow Bird",
+      "glassId": "cocktail_glass",
+      "tags": [
+        {
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        }
+      ],
+      "description": "An IBA official all-day cocktail combining white rum, Galliano, triple sec and lime.",
+      "instructions": "Fill a shaker with ice cubes.\nAdd 30ml of white rum, 15ml of Galliano, 15ml of triple sec and half a lime.\nShake and strain into a chilled cocktail glass.",
+      "ingredients": [
+        {
+          "order": 1,
+          "ingredientId": 861551,
+          "name": "White Rum",
+          "amount": "30",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 2,
+          "ingredientId": 872324,
+          "name": "Galliano",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 3,
+          "ingredientId": 38880,
+          "name": "Triple Sec",
+          "amount": "15",
+          "unitId": 11,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 4,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "0.5",
+          "unitId": 9,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        },
+        {
+          "order": 5,
+          "ingredientId": 346304,
+          "name": "Ice",
+          "amount": "100",
+          "unitId": 8,
+          "garnish": false,
+          "optional": false,
+          "allowBaseSubstitution": false,
+          "allowBrandedSubstitutes": false,
+          "substitutes": []
+        }
+      ],
+      "createdAt": 1757000000307,
+      "updatedAt": 1757000000307,
+      "photoUri": "assets/cocktails/1757000000307-yellow-bird.jpg"
     }
   ]
 }
