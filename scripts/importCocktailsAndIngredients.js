@@ -4,10 +4,10 @@ import { BUILTIN_INGREDIENT_TAGS } from "../src/constants/ingredientTags";
 import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import {
   replaceAllCocktailsTx,
-  getAllCocktailsTx,
+  getAllCocktails,
 } from "../src/storage/cocktailsStorage";
 import {
-  getAllIngredientsTx,
+  getAllIngredients,
   saveAllIngredientsTx,
 } from "../src/storage/ingredientsStorage";
 import { initDatabase, withExclusiveWriteAsync } from "../src/storage/sqlite";
@@ -116,61 +116,62 @@ function sanitizeCocktails(raw) {
 }
 
 export async function importCocktailsAndIngredients({ force = false } = {}) {
+  await initDatabase();
+  const already = force
+    ? null
+    : await AsyncStorage.getItem(IMPORT_FLAG_KEY);
+
+  const existingIngredients = await getAllIngredients();
+  const existingCocktails = await getAllCocktails();
+
   await startImport();
+  let counts = null;
   try {
-    await initDatabase();
-    const already = force
-      ? null
-      : await AsyncStorage.getItem(IMPORT_FLAG_KEY);
-    let counts = null;
-    await withExclusiveWriteAsync(async (tx) => {
-      const existingIngredients = await getAllIngredientsTx(tx);
-      const existingCocktails = await getAllCocktailsTx(tx);
+    if (
+      !force &&
+      already === "true" &&
+      existingIngredients.length > 0 &&
+      existingCocktails.length > 0
+    ) {
+      console.log("ℹ️ Sample data already imported — skip");
+      return;
+    }
 
-      if (
-        !force &&
-        already === "true" &&
-        existingIngredients.length > 0 &&
-        existingCocktails.length > 0
-      ) {
-        console.log("ℹ️ Sample data already imported — skip");
-        return;
+    const existingIngredientsMap = Object.fromEntries(
+      existingIngredients.map((it) => [it.id, it])
+    );
+    const existingCocktailsMap = Object.fromEntries(
+      existingCocktails.map((c) => [c.id, c])
+    );
+
+    const ingredients = sanitizeIngredients(RAW_DATA.ingredients).map((it) => {
+      const existing = existingIngredientsMap[it.id];
+      if (existing) {
+        return {
+          ...it,
+          inBar: existing.inBar,
+          inShoppingList: existing.inShoppingList,
+        };
       }
+      return it;
+    });
 
-      const existingIngredientsMap = Object.fromEntries(
-        existingIngredients.map((it) => [it.id, it])
-      );
-      const existingCocktailsMap = Object.fromEntries(
-        existingCocktails.map((c) => [c.id, c])
-      );
+    const cocktails = sanitizeCocktails(RAW_DATA.cocktails).map((c) => {
+      const existing = existingCocktailsMap[c.id];
+      if (existing) {
+        return {
+          ...c,
+          rating: existing.rating,
+        };
+      }
+      return c;
+    });
 
-      const ingredients = sanitizeIngredients(RAW_DATA.ingredients).map((it) => {
-        const existing = existingIngredientsMap[it.id];
-        if (existing) {
-          return {
-            ...it,
-            inBar: existing.inBar,
-            inShoppingList: existing.inShoppingList,
-          };
-        }
-        return it;
-      });
-
-      const cocktails = sanitizeCocktails(RAW_DATA.cocktails).map((c) => {
-        const existing = existingCocktailsMap[c.id];
-        if (existing) {
-          return {
-            ...c,
-            rating: existing.rating,
-          };
-        }
-        return c;
-      });
-
+    await withExclusiveWriteAsync(async (tx) => {
       await saveAllIngredientsTx(tx, ingredients);
       await replaceAllCocktailsTx(tx, cocktails);
-      counts = { ingredients: ingredients.length, cocktails: cocktails.length };
     });
+    counts = { ingredients: ingredients.length, cocktails: cocktails.length };
     if (counts) {
       await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
       console.log(
