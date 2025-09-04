@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useNavigation, useIsFocused, useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
@@ -53,6 +53,7 @@ export default function MyIngredientsScreen() {
   // Buffer DB writes in refs to avoid re-renders on every toggle
   const pendingUpdatesRef = React.useRef([]);
   const flushTimerRef = React.useRef(null);
+  const filteredRef = React.useRef([]);
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -128,18 +129,21 @@ export default function MyIngredientsScreen() {
     };
   }, [flushPending]);
 
-  useEffect(() => {
-    const map = initIngredientsAvailability(
-      ingredients,
-      cocktails,
-      usageMap,
-      ignoreGarnish,
-      allowSubstitutes
-    );
-    setAvailableMap(new Map(map));
-  }, [cocktails, usageMap, ignoreGarnish, allowSubstitutes, ingredients.length]);
+  useFocusEffect(
+    useCallback(() => {
+      const map = initIngredientsAvailability(
+        ingredients,
+        cocktails,
+        usageMap,
+        ignoreGarnish,
+        allowSubstitutes
+      );
+      setAvailableMap(new Map(map));
+    }, [ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes])
+  );
 
   const filtered = useMemo(() => {
+    if (!isFocused) return filteredRef.current;
     const q = normalizeSearch(searchDebounced);
     let data = ingredients.filter((i) => i.inBar);
     if (q) data = data.filter((i) => i.searchName.includes(q));
@@ -149,8 +153,10 @@ export default function MyIngredientsScreen() {
           Array.isArray(i.tags) &&
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return [...data].sort(sortByName);
-  }, [ingredients, searchDebounced, selectedTagIds]);
+    const list = [...data].sort(sortByName);
+    filteredRef.current = list;
+    return list;
+  }, [ingredients, searchDebounced, selectedTagIds, isFocused]);
 
   const toggleInBar = useCallback(
     (id) => {

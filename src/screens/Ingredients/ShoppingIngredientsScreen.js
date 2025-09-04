@@ -40,6 +40,7 @@ export default function ShoppingIngredientsScreen() {
   // Buffer DB writes to avoid extra renders
   const pendingUpdatesRef = React.useRef([]);
   const flushTimerRef = React.useRef(null);
+  const filteredRef = React.useRef([]);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "Shopping");
@@ -96,6 +97,7 @@ export default function ShoppingIngredientsScreen() {
   }, [flushPending]);
 
   const filtered = useMemo(() => {
+    if (!isFocused) return filteredRef.current;
     const q = normalizeSearch(searchDebounced);
     let data = ingredients.filter((i) => i.inShoppingList);
     if (q) data = data.filter((i) => i.searchName.includes(q));
@@ -105,8 +107,10 @@ export default function ShoppingIngredientsScreen() {
           Array.isArray(i.tags) &&
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return [...data].sort(sortByName);
-  }, [ingredients, searchDebounced, selectedTagIds]);
+    const list = [...data].sort(sortByName);
+    filteredRef.current = list;
+    return list;
+  }, [ingredients, searchDebounced, selectedTagIds, isFocused]);
 
   const removeFromList = useCallback(
     (id) => {
