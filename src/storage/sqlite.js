@@ -66,6 +66,9 @@ export async function query(sql, params = []) {
   await initPromise;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
+    // Wait for pending writes to finish before starting a read to avoid
+    // "database is locked" errors when a SELECT races with a write
+    await writeQueue;
     const promise = db.getAllAsync(sql, params);
     pendingSelects.add(promise);
     const rows = await promise.finally(() => pendingSelects.delete(promise));
@@ -77,6 +80,8 @@ export async function query(sql, params = []) {
       },
     };
   }
+  // Non-select queries should normally be executed via withExclusiveWriteAsync
+  // so we simply run them directly here.
   return db.runAsync(sql, params);
 }
 
