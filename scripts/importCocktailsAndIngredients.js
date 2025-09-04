@@ -129,7 +129,7 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       existingIngredients.length > 0 &&
       existingCocktails.length > 0
     ) {
-      console.log("ℹ️ Sample data already imported — skip");
+      //console.log("ℹ️ Sample data already imported — skip");
       return;
     }
 

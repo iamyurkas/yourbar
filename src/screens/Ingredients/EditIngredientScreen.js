@@ -259,11 +259,11 @@ export default function EditIngredientScreen() {
   useEffect(() => {
     const sh = Keyboard.addListener("keyboardDidShow", (e) => {
       const h = e?.endCoordinates?.height || 0;
-      console.log('[EditIngredientScreen][kb] didShow height', h, 'viewportH', viewportH, 'contentH', contentH, 'scrollY', scrollY);
+      // console.log('[EditIngredientScreen][kb] didShow height', h, 'viewportH', viewportH, 'contentH', contentH, 'scrollY', scrollY);
       setKbHeight(h);
       const target = focusedInputRef.current;
       if (target) {
-        console.log('[EditIngredientScreen][kb] scroll target set');
+        // console.log('[EditIngredientScreen][kb] scroll target set');
         requestAnimationFrame(() => requestScrollIntoView(target));
         setTimeout(() => requestScrollIntoView(target), 80);
         setTimeout(() => requestScrollIntoView(target), 180);

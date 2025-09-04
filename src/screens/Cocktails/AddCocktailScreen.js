@@ -579,7 +579,7 @@ export default function AddCocktailScreen() {
 
   const handleSave = useCallback(async () => {
     if (saving) return;
-    console.log("[AddCocktailScreen] handleSave start");
+    //console.log("[AddCocktailScreen] handleSave start");
     const title = name.trim();
     if (!title) {
       showInfo("Validation", "Please enter a cocktail name.");
@@ -666,12 +666,12 @@ export default function AddCocktailScreen() {
         })),
         createdAt: Date.now(),
       };
-      console.log("[AddCocktailScreen] handleSave cocktail", cocktail);
+      //console.log("[AddCocktailScreen] handleSave cocktail", cocktail);
 
       const created = await addCocktail(cocktail);
-      console.log("[AddCocktailScreen] handleSave created", created);
+      //console.log("[AddCocktailScreen] handleSave created", created);
       if (!created) {
-        console.error("[AddCocktailScreen] addCocktail returned null");
+        //console.error("[AddCocktailScreen] addCocktail returned null");
         showInfo("Error", "Failed to save cocktail.");
         return;
       }
@@ -690,7 +690,7 @@ export default function AddCocktailScreen() {
         return next;
       });
 
-      console.log("[AddCocktailScreen] navigate to details", created.id);
+      //console.log("[AddCocktailScreen] navigate to details", created.id);
       if (fromIngredientFlow) {
         navigation.replace("CocktailDetails", {
           id: created.id,
@@ -761,12 +761,12 @@ export default function AddCocktailScreen() {
   useEffect(() => {
     const sh = Keyboard.addListener("keyboardDidShow", (e) => {
       const h = e?.endCoordinates?.height || 0;
-      console.log('[AddCocktailScreen][kb] didShow height', h, 'viewportH', viewportHRef.current, 'contentH', contentHRef.current, 'scrollY', scrollYRef.current);
+      //console.log('[AddCocktailScreen][kb] didShow height', h, 'viewportH', viewportHRef.current, 'contentH', contentHRef.current, 'scrollY', scrollYRef.current);
       setKbHeight(h);
       kbHeightRef.current = h;
       const target = focusedInputRef.current;
       if (target) {
-        console.log('[AddCocktailScreen][kb] scroll target set');
+        //console.log('[AddCocktailScreen][kb] scroll target set');
         requestAnimationFrame(() => requestScrollIntoViewUpOnly(target));
         setTimeout(() => requestScrollIntoViewUpOnly(target), 80);
         setTimeout(() => requestScrollIntoViewUpOnly(target), 180);
@@ -843,7 +843,7 @@ export default function AddCocktailScreen() {
           const overshoot = bottom - visibleBottom;
           const maxY = Math.max(0, cH - vHeight);
           const targetY = Math.min(sY + overshoot, maxY);
-          console.log('[AddCocktailScreen][scroll]', { vy, vh: vHeight, kbHeight: kb, MARGIN, bottom, visibleBottom, overshoot, scrollY: sY, targetY });
+          //console.log('[AddCocktailScreen][scroll]', { vy, vh: vHeight, kbHeight: kb, MARGIN, bottom, visibleBottom, overshoot, scrollY: sY, targetY });
           if (overshoot > 0 && targetY > sY) {
             scrollRef.current.scrollTo({ y: targetY, animated: true });
           }
