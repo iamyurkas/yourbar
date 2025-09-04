@@ -4,8 +4,7 @@ import { sortByName } from "../utils/sortByName";
 import db, {
   query,
   initDatabase,
-  withExclusiveWriteAsync,
-  waitForSelects,
+  withWriteTransactionAsync,
 } from "./sqlite";
 
 // Serialize write operations to avoid `database is locked` on Android.
@@ -110,8 +109,7 @@ async function upsertCocktail(item) {
   await initDatabase();
    console.log("[cocktailsStorage] upsertCocktail start!", item.id);
   await enqueueWrite(async () => {
-    await waitForSelects();
-    await withExclusiveWriteAsync(async (tx) => {
+    await withWriteTransactionAsync(async (tx) => {
       await tx.runAsync(
         `INSERT OR REPLACE INTO cocktails (
           id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
@@ -233,8 +231,7 @@ export function updateCocktailById(list, updated) {
 export async function deleteCocktail(id) {
   await initDatabase();
   await enqueueWrite(async () => {
-    await waitForSelects();
-    await withExclusiveWriteAsync(async (tx) => {
+    await withWriteTransactionAsync(async (tx) => {
       await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
       await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
     });
@@ -295,8 +292,7 @@ export async function replaceAllCocktails(cocktails, tx) {
     await run(tx);
   } else {
     await enqueueWrite(async () => {
-      await waitForSelects();
-      await withExclusiveWriteAsync(run);
+    await withWriteTransactionAsync(run);
     });
   }
   return normalized;

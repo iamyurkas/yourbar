@@ -89,19 +89,19 @@ export async function query(sql, params = []) {
 }
 
 // Serialize all write operations across modules to avoid DB locked errors
-export function withExclusiveWriteAsync(work) {
+export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
     await waitForSelects();
-    return SQLite.withExclusiveTransactionAsync
-      ? SQLite.withExclusiveTransactionAsync(db, work)
-      : db.withExclusiveTransactionAsync(work);
+    return SQLite.withTransactionAsync
+      ? SQLite.withTransactionAsync(db, work)
+      : db.withTransactionAsync(work);
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails
   writeQueue = next.catch((e) => {
-    console.warn("[sqlite] withExclusiveWriteAsync error", e);
+    console.warn("[sqlite] withWriteTransactionAsync error", e);
   });
   return next;
 }

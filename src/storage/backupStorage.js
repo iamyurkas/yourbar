@@ -8,7 +8,7 @@ import { Image } from 'react-native';
 import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
 import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
-import { withExclusiveWriteAsync, waitForSelects } from './sqlite';
+import { withWriteTransactionAsync } from './sqlite';
 import { stripFalse } from './stripFalse';
 import { normalizeImportData } from './normalizeBackupData';
 
@@ -158,8 +158,7 @@ export async function importAllData() {
     });
     const data = JSON.parse(contents);
     const { ingredients, cocktails } = normalizeImportData(data, resolvePhoto);
-    await waitForSelects();
-    await withExclusiveWriteAsync(async (tx) => {
+    await withWriteTransactionAsync(async (tx) => {
       await saveAllIngredients(ingredients, tx);
       await replaceAllCocktails(cocktails, tx);
     });
