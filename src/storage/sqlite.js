@@ -3,6 +3,11 @@ import * as SQLite from "expo-sqlite";
 // Initialize and export a shared SQLite instance for the app.
 const db = SQLite.openDatabaseSync("yourbar.db");
 
+// Disable verbose SQL query logging if the tracer API is available.
+if (typeof SQLite.setTracer === "function") {
+  SQLite.setTracer(() => {});
+}
+
 let initPromise;
 // Global mutex that serializes writes and blocks new reads while a write is
 // pending.  Initialized as an already-resolved promise so `await writeLock`
