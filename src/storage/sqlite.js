@@ -95,17 +95,16 @@ export function withExclusiveWriteAsync(work) {
     // safety net in case some other process temporarily holds a lock.
     while (true) {
       try {
-        // Using a regular transaction is sufficient because the global queue
-        // guarantees no other operations run concurrently. Requesting an
-        // exclusive transaction occasionally fails with "database is locked"
-        // despite the queue, so we avoid the stricter lock level here.
+        // Acquire an exclusive transaction so the callback receives a
+        // dedicated transaction handle and no other operation can interfere.
         const runTx =
-          typeof db.withTransactionAsync === "function"
-            ? (fn) => db.withTransactionAsync(fn)
-            : SQLite.withTransactionAsync
-            ? (fn) => SQLite.withTransactionAsync(db, fn)
+          typeof db.withExclusiveTransactionAsync === "function"
+            ? (fn) => db.withExclusiveTransactionAsync(fn)
+            : typeof SQLite.withExclusiveTransactionAsync === "function"
+            ? (fn) => SQLite.withExclusiveTransactionAsync(db, fn)
             : null;
-        if (!runTx) throw new Error("No transaction API available");
+        if (!runTx)
+          throw new Error("No exclusive transaction API available");
         return await runTx(work);
       } catch (e) {
         if (String(e?.message || e).includes("database is locked")) {
