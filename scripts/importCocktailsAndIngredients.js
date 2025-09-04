@@ -129,7 +129,6 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
       existingIngredients.length > 0 &&
       existingCocktails.length > 0
     ) {
-      //console.log("ℹ️ Sample data already imported — skip");
       return;
     }
 
@@ -167,9 +166,6 @@ export async function importCocktailsAndIngredients({ force = false } = {}) {
     await replaceAllCocktails(cocktails);
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
-    console.log(
-      `✅ Imported ${ingredients.length} ingredients and ${cocktails.length} cocktails`
-    );
   } catch (error) {
     console.error("❌ Error importing data:", error);
   }

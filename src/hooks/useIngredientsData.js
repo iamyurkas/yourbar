@@ -58,9 +58,6 @@ export default function useIngredientsData() {
 
         if (needImport) {
           setImporting(true);
-          console.log(
-            "Importing default data… This one-time operation may take a moment"
-          );
           const { importCocktailsAndIngredients } = await import(
             "../../scripts/importCocktailsAndIngredients"
           );

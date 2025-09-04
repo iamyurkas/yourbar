@@ -11,7 +11,6 @@ const now = () => Date.now();
 const genId = () => now();
 
 export async function getAllIngredients() {
-  console.log("[ingredientsStorage] getAllIngredients start");
   await initDatabase();
   const res = await query(
     "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
@@ -32,7 +31,6 @@ export async function getAllIngredients() {
       inShoppingList: !!r.inShoppingList,
     }))
     .sort(sortByName);
-  console.log("[ingredientsStorage] getAllIngredients rows", list.length);
   return list;
 }
 
@@ -61,7 +59,6 @@ export async function getIngredientsByIds(ids) {
       inShoppingList: !!r.inShoppingList,
     }))
     .sort(sortByName);
-  console.log("[ingredientsStorage] getIngredientsByIds rows", rows.length, "ids", list.map(String));
   return rows;
 }
 
@@ -90,7 +87,6 @@ export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {
       inShoppingList: !!r.inShoppingList,
     }))
     .sort(sortByName);
-  console.log("[ingredientsStorage] getIngredientsByBaseIds rows", rows.length, "baseIds", list.map(String), "inBarOnly", !!inBarOnly);
   return rows;
 }
 
@@ -104,7 +100,6 @@ export function buildIndex(list) {
 async function upsertIngredient(item) {
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
-    console.log("[ingredientsStorage] upsertIngredient start", item.id, item.name);
     await tx.runAsync(
       `INSERT OR REPLACE INTO ingredients (
         id, name, description, tags, baseIngredientId, usageCount,
@@ -123,7 +118,6 @@ async function upsertIngredient(item) {
       item.inBar ? 1 : 0,
       item.inShoppingList ? 1 : 0
     );
-    console.log("[ingredientsStorage] upsertIngredient done", item.id);
   });
 }
 
@@ -131,7 +125,6 @@ export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
   const run = async (innerTx) => {
-    console.log("[ingredientsStorage] saveAllIngredients start", list.length);
     await innerTx.runAsync("DELETE FROM ingredients");
     for (const item of list) {
       await innerTx.runAsync(
@@ -153,7 +146,6 @@ export async function saveAllIngredients(ingredients, tx) {
         item.inShoppingList ? 1 : 0
       );
     }
-    console.log("[ingredientsStorage] saveAllIngredients done");
   };
   if (tx) {
     await run(tx);
@@ -225,7 +217,6 @@ export async function saveIngredient(updated) {
     item = sanitizeIngredient({ ...updated, name });
   }
   await upsertIngredient(item);
-  console.log("[ingredientsStorage] saveIngredient stored", item.id, item.name);
   return item;
 }
 
@@ -263,7 +254,6 @@ export async function updateIngredientFields(id, fields) {
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(sql, params);
   });
-  console.log("[ingredientsStorage] updateIngredientFields", id, Object.keys(fields));
 }
 
 export async function flushPendingIngredients(list) {
@@ -271,7 +261,6 @@ export async function flushPendingIngredients(list) {
   if (!items.length) return;
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
-    console.log("[ingredientsStorage] flushPendingIngredients start", items.length);
     for (const u of items) {
       const item = sanitizeIngredient(u);
       await tx.runAsync(
@@ -293,7 +282,6 @@ export async function flushPendingIngredients(list) {
         item.inShoppingList ? 1 : 0
       );
     }
-    console.log("[ingredientsStorage] flushPendingIngredients done");
   });
 }
 
@@ -306,7 +294,6 @@ export async function deleteIngredient(id) {
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
   });
-  console.log("[ingredientsStorage] deleteIngredient", String(id));
 }
 
 export function removeIngredient(list, id) {
