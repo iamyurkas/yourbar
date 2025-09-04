@@ -8,6 +8,7 @@ import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import { normalizeSearch } from "../utils/normalizeSearch";
+import { groupIngredientsByTag } from "../utils/groupIngredientsByTag";
 import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
@@ -29,16 +30,17 @@ export default function ShakerScreen({ navigation }) {
     usageMap,
     loading,
     ingredientTags,
-    ingredientsByTag,
   } = useIngredientsData();
+  const grouped = useMemo(
+    () => groupIngredientsByTag(ingredients, ingredientTags),
+    [ingredients, ingredientTags]
+  );
   const [expanded, setExpanded] = useState({});
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState("");
   const [inStockOnly, setInStockOnly] = useState(true);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
-
-  const grouped = ingredientsByTag;
 
   const filteredGrouped = useMemo(() => {
     const q = normalizeSearch(search);

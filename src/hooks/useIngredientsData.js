@@ -29,7 +29,6 @@ export default function useIngredientsData() {
     baseIngredients,
     ingredientTags,
     setIngredientTags,
-    ingredientsByTag,
     setImporting,
   } = useContext(IngredientUsageContext);
 
@@ -143,7 +142,6 @@ export default function useIngredientsData() {
     cocktails,
     usageMap,
     ingredientTags,
-    ingredientsByTag,
     refresh,
     loading,
     setIngredients,
