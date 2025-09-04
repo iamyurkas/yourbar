@@ -11,6 +11,7 @@ export function initDatabase() {
   if (!initPromise) {
     initPromise = db.execAsync(`
       PRAGMA foreign_keys = ON;
+      PRAGMA busy_timeout = 5000;
       CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY NOT NULL,
         name TEXT,
@@ -89,13 +90,27 @@ export function withExclusiveWriteAsync(work) {
     await initPromise;
     // Ensure no concurrent reads are active before starting a write
     await waitForSelects();
-    // Using a regular transaction is sufficient because the global queue
-    // guarantees no other operations run concurrently. Requesting an
-    // exclusive transaction occasionally fails with "database is locked"
-    // despite the queue, so we avoid the stricter lock level here.
-    return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(db, work)
-      : db.withTransactionAsync(work);
+    // Retry if the native layer reports the database is locked. This should
+    // not normally happen because we serialize access in JS, but we add a
+    // safety net in case some other process temporarily holds a lock.
+    while (true) {
+      try {
+        // Using a regular transaction is sufficient because the global queue
+        // guarantees no other operations run concurrently. Requesting an
+        // exclusive transaction occasionally fails with "database is locked"
+        // despite the queue, so we avoid the stricter lock level here.
+        return SQLite.withTransactionAsync
+          ? await SQLite.withTransactionAsync(db, work)
+          : await db.withTransactionAsync(work);
+      } catch (e) {
+        if (String(e?.message || e).includes("database is locked")) {
+          // Wait a bit and retry until the lock clears.
+          await new Promise((res) => setTimeout(res, 50));
+          continue;
+        }
+        throw e;
+      }
+    }
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails

@@ -5,6 +5,7 @@ import {
   query,
   initDatabase,
   withExclusiveWriteAsync,
+  waitForSelects,
 } from "./sqlite";
 
 // --- utils ---
@@ -97,6 +98,7 @@ async function readAll() {
 
 async function upsertCocktail(item) {
   await initDatabase();
+  await waitForSelects();
   // console.log("[cocktailsStorage] upsertCocktail start", item.id);
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync(
