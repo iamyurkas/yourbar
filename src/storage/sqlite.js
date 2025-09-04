@@ -64,6 +64,8 @@ export function initDatabase() {
 export async function query(sql, params = []) {
   // assume initDatabase() has been invoked at app startup
   await initPromise;
+  // Block new reads while an exclusive write is pending or running
+  await writeQueue;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
     const promise = db.getAllAsync(sql, params);
