@@ -353,15 +353,17 @@ export default function IngredientDetailsScreen() {
     setIngredient(updated);
     // Defer heavier global updates and DB write until after interactions
     InteractionManager.runAfterInteractions(() => {
-      // Run follow-up work on the next frame so the toggle feels instant
+      // Wait two frames so the UI can update before heavy work runs
       requestAnimationFrame(() => {
-        setIngredients((list) =>
-          updateIngredientById(list, {
-            id: updated.id,
-            inBar: updated.inBar,
-          })
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar });
+        requestAnimationFrame(() => {
+          setIngredients((list) =>
+            updateIngredientById(list, {
+              id: updated.id,
+              inBar: updated.inBar,
+            })
+          );
+          updateIngredientFields(updated.id, { inBar: updated.inBar });
+        });
       });
     });
   }, [ingredient, setIngredients]);
@@ -376,16 +378,18 @@ export default function IngredientDetailsScreen() {
     setIngredient(updated);
     // Defer global list update and DB write after interactions
     InteractionManager.runAfterInteractions(() => {
-      // Schedule heavy work for the next frame to keep UI responsive
+      // Wait an extra frame so the checkbox change is rendered first
       requestAnimationFrame(() => {
-        setIngredients((list) =>
-          updateIngredientById(list, {
-            id: updated.id,
+        requestAnimationFrame(() => {
+          setIngredients((list) =>
+            updateIngredientById(list, {
+              id: updated.id,
+              inShoppingList: updated.inShoppingList,
+            })
+          );
+          updateIngredientFields(updated.id, {
             inShoppingList: updated.inShoppingList,
-          })
-        );
-        updateIngredientFields(updated.id, {
-          inShoppingList: updated.inShoppingList,
+          });
         });
       });
     });
