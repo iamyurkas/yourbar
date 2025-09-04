@@ -21,7 +21,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  InteractionManager,
   ActivityIndicator,
 } from "react-native";
 import Animated, {
@@ -374,14 +373,7 @@ export default function EditCocktailScreen() {
 
       const prev = cocktails.find((c) => c.id === cocktailId);
 
-      initialHashRef.current = serialize();
-      setDirty(false);
-      if (!stay) {
-        skipPromptRef.current = true;
-        navigation.goBack();
-      }
-
-      InteractionManager.runAfterInteractions(async () => {
+      try {
         const updated = await saveCocktail(cocktail);
         // Debug: read freshly saved cocktail from DB and log it
         try {
@@ -413,10 +405,20 @@ export default function EditCocktailScreen() {
             nextCocktails
           )
         );
-        if (stay) setSaving(false);
-      });
-
-      return cocktail;
+        initialHashRef.current = serialize();
+        setDirty(false);
+        if (!stay) {
+          skipPromptRef.current = true;
+          navigation.goBack();
+        } else {
+          setSaving(false);
+        }
+        return updated;
+      } catch (e) {
+        console.warn("[EditCocktailScreen] handleSave error", e);
+        setSaving(false);
+        return null;
+      }
     },
     [
       name,
@@ -1320,14 +1322,12 @@ export default function EditCocktailScreen() {
         message="Delete this cocktail?"
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
           skipPromptRef.current = true;
+          setConfirmDelete(false);
           const prev = cocktails.find((c) => c.id === cocktailId);
           const nextCocktails = removeCocktail(cocktails, cocktailId);
-          setCocktails(nextCocktails);
-          navigation.popToTop();
-          setConfirmDelete(false);
-          InteractionManager.runAfterInteractions(async () => {
+          try {
             await deleteCocktail(cocktailId);
             const allowSubs = await getAllowSubstitutes();
             const nextUsage = removeCocktailFromUsageMap(
@@ -1344,7 +1344,11 @@ export default function EditCocktailScreen() {
                 nextCocktails
               )
             );
-          });
+            setCocktails(nextCocktails);
+            navigation.popToTop();
+          } catch (e) {
+            console.warn("[EditCocktailScreen] delete error", e);
+          }
         }}
       />
       <ConfirmationDialog
