@@ -16,6 +16,7 @@ export function initDatabase() {
       } catch (e) {
         console.warn("[sqlite] failed to enable WAL", e);
       }
+      await db.execAsync("PRAGMA busy_timeout = 5000;");
       await db.execAsync(`
         CREATE TABLE IF NOT EXISTS cocktails (
           id INTEGER PRIMARY KEY NOT NULL,
@@ -92,6 +93,7 @@ export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
+    await waitForSelects();
     return SQLite.withExclusiveTransactionAsync
       ? SQLite.withExclusiveTransactionAsync(db, work)
       : db.withExclusiveTransactionAsync(work);
