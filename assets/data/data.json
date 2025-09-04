@@ -6571,13 +6571,18 @@
       "glassId": "coupe",
       "tags": [
         {
+          "id": 4,
+          "name": "New Era",
+          "color": "#4DD0E1"
+        },
+        {
           "id": 5,
           "name": "strong",
           "color": "#ec5a5a"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "The 20th Century Cocktail is a classic cocktail that was first created in 1937 by a British bartender C.A. Tuck and named in honor of the celebrated 20th Century Limited train which ran between New York City and Chicago. It's a sophisticated and elegant drink that combines London Dry Gin, Lillet Blanc (a French aperitif wine), lime juice, and creme de cacao white.",
+      "instructions": "1. Fill a cocktail shaker with ice.\n2. Add 30ml of gin, 20ml of Lillet Blonde, 20ml of creme de cacao white and 30ml of lime juice.\n3. Shake well for about 10 seconds and strain into a chilled cocktail glass.\n4. Garnish with cocoa powder and grated nutmeg.",
       "ingredients": [
         {
           "order": 1,
@@ -6619,7 +6624,7 @@
           "order": 6,
           "ingredientId": 591435,
           "name": "Nutmeg",
-          "amount": "2",
+          "amount": "1",
           "unitId": 15,
           "garnish": true
         },
@@ -6627,7 +6632,7 @@
           "order": 7,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "90",
+          "amount": "100",
           "unitId": 8
         }
       ],
@@ -6651,17 +6656,15 @@
           "color": "#FFB74D"
         }
       ],
-      "description": "",
-      "instructions": "",
+        "description": "This cocktail is similar to the Cuba Libre and may refer to any drink consisting of whiskey mixed with lemon soft drink. It was originally made with Seagram's Seven Crown Whiskey, but any whiskey can be used.",
+        "instructions": "1. Fill a highball glass with ice.\n2. Add 50ml of whiskey and 150ml of 7-Up.\n3. Garnish with a lemon wedge.",
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": 702409,
-          "name": "Seagram's 7 Crown",
+          "ingredientId": 830162,
+          "name": "Whiskey",
           "amount": "50",
-          "unitId": 11,
-          "allowBaseSubstitution": true,
-          "allowBrandedSubstitutes": true
+          "unitId": 11
         },
         {
           "order": 2,
@@ -6684,7 +6687,7 @@
           "order": 4,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "90",
+          "amount": "150",
           "unitId": 8
         }
       ],
@@ -6708,8 +6711,8 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "The abbreviation stands for Amaretto, Baileys and Cognac",
-      "instructions": "",
+      "description": "The abbreviation stands for amaretto, Baileys and cognac.",
+      "instructions": "1. Pour 15ml of amaretto into a shooter glass.\n2. Carefully pour 15ml of Baileys on top of the amaretto.\n3. Helping yourself with a teaspoon, pour 15ml of cognac on top of the Baileys.",
       "ingredients": [
         {
           "order": 1,
@@ -6760,8 +6763,8 @@
           "color": "#FFB74D"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A stronger variation uses lime juice and sweet and sour instead of grapefruit and pineapple juice and is served in a cocktail glass.",
+      "instructions": "1. Put some ice cubes into a shaker.\n2. Add 50ml of tequila, 50ml of white rum, 75ml of pineapple juice and 50ml of grapefruit juice.\n3. Optionally, add a splash of lime juice and 10ml of sugar syrup.\n4. Shake well and strain into a hurricane glass.",
       "ingredients": [
         {
           "order": 1,
@@ -6799,10 +6802,10 @@
         },
         {
           "order": 5,
-          "ingredientId": 525624,
-          "name": "Lime Juice",
-          "amount": "15",
-          "unitId": 11,
+          "ingredientId": 336572,
+          "name": "Lime",
+          "amount": "1",
+          "unitId": 31,
           "optional": true
         },
         {
@@ -6817,8 +6820,8 @@
           "order": 7,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "90",
-          "unitId": 11
+          "amount": "100",
+          "unitId": 8
         }
       ],
       "createdAt": 1756469191370,
@@ -6836,8 +6839,8 @@
           "color": "#F06292"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A classic cocktail created in 1884 and named after the first Broadway musical to run for more than 500 performances. The ratio of sherry and vermouth may be varied to make the cocktail sweeter or drier accordingly.",
+      "instructions": "1. Pour 45ml of dry sherry and 45ml of sweet vermouth into a mixing glass with ice.\n2. Add 2 dashes of orange bitters.\n3. Stir well and strain into a coupe glass.\n4. Garnish with orange zest.",
       "ingredients": [
         {
           "order": 1,
@@ -6858,7 +6861,7 @@
           "ingredientId": 552212,
           "name": "Orange Bitters",
           "amount": "2",
-          "unitId": 11
+          "unitId": 6
         },
         {
           "order": 4,
@@ -6872,7 +6875,7 @@
           "order": 5,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "90",
+          "amount": "150",
           "unitId": 8
         }
       ],
@@ -7913,29 +7916,30 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "This recipe is for 3 shots.",
+      "instructions": "1. Fill a shaker with ice cubes.\n2. Pour 75ml of Jack Daniel's or another whiskey and 75ml of sambuca.\n3. Shake well and strain into shots.",
       "ingredients": [
         {
           "order": 1,
           "ingredientId": 279646,
           "name": "Jack Daniels",
-          "amount": "25",
-          "unitId": 11
+          "amount": "75",
+          "unitId": 11,
+          "allowBaseSubstitution": true
         },
         {
           "order": 2,
           "ingredientId": 267073,
           "name": "Sambuca",
-          "amount": "25",
+          "amount": "75",
           "unitId": 11
         },
         {
           "order": 3,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "30",
-          "unitId": 11
+          "amount": "100",
+          "unitId": 8
         }
       ],
       "createdAt": 1756494863223,
@@ -8004,38 +8008,45 @@
         }
       ],
       "description": "",
-      "instructions": "",
+      "instructions": "1. Pour 15ml of crème de cacao white into a shooter glass.\n2. Carefully pour 10ml of sloe gin on top of the crème de cacao and 10ml of brandy on top of the gin.\n3. Carefully top with 10ml of cream or whipped cream.",
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": 502166,
-          "name": "Cognac",
-          "amount": "15",
-          "unitId": 11,
-          "substitutes": [
-            {
-              "id": 435165,
-              "name": "Brandy"
-            }
-          ]
-        },
-        {
-          "order": 2,
-          "ingredientId": 945886,
-          "name": "Heavy Cream",
+          "ingredientId": 838213,
+          "name": "Creme de Cacao White",
           "amount": "15",
           "unitId": 11
         },
         {
+          "order": 2,
+          "ingredientId": 706556,
+          "name": "Sloe Gin",
+          "amount": "10",
+          "unitId": 11
+        },
+        {
           "order": 3,
-          "ingredientId": 838213,
-          "name": "Creme de Cacao White",
-          "amount": "15",
+          "ingredientId": 435165,
+          "name": "Brandy",
+          "amount": "10",
           "unitId": 11,
           "substitutes": [
             {
-              "id": 519309,
-              "name": "Creme de Cacao Brown"
+              "id": 502166,
+              "name": "Cognac"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "ingredientId": 564821,
+          "name": "Cream",
+          "amount": "10",
+          "unitId": 11,
+          "substitutes": [
+            {
+              "id": 477462,
+              "name": "Whipped Cream"
             }
           ]
         }
@@ -8492,9 +8503,14 @@
       "glassId": "shooter",
       "tags": [
         {
-          "id": 5,
-          "name": "strong",
-          "color": "#ec5a5a"
+          "id": 6,
+          "name": "moderate",
+          "color": "#F06292"
+        },
+        {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
         },
         {
           "id": 9,
@@ -8502,8 +8518,8 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "The name of this IBA official cocktail refers to the US B-52 Stratofortress long-range bomber.",
+      "instructions": "1. Pour 20ml of Kahlua into a shooter glass.\n2. Very carefully pour Baileys on top of the Kahlua, followed by Grand Marnier.\n3. Serve flamed, and drink flamed using a long straw.",
       "ingredients": [
         {
           "order": 1,
@@ -8563,8 +8579,8 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A popular variation of the B-52 shooter.",
+      "instructions": "1. Pour 20ml of Kahlua or another coffee liqueur into a shooter glass.\n2. Pour 20ml of Baileys on top of the Kahlua.\n3. Very carefully pour 15ml of absinthe on top of the Baileys.",
       "ingredients": [
         {
           "order": 1,
@@ -8646,28 +8662,29 @@
           "id": 6,
           "name": "moderate",
           "color": "#F06292"
+        },
+        {
+          "id": 9,
+          "name": "shooter",
+          "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "This layered shooter was named for its appearance — it looks like a tiny glass of stout. The Baileys can also be whipped and spooned on top, for a frothy presentation.",
+      "instructions": "1. Pour 30ml of coffee liqueur into a shooter glass.\n2. Carefully pour 15ml of Irish cream liqueur on top.",
       "ingredients": [
         {
           "order": 1,
-          "ingredientId": 722227,
-          "name": "Kahlua",
+          "ingredientId": 705618,
+          "name": "Coffee Liqueur",
           "amount": "30",
-          "unitId": 11,
-          "allowBaseSubstitution": true,
-          "allowBrandedSubstitutes": true
+          "unitId": 11
         },
         {
           "order": 2,
           "ingredientId": 436447,
           "name": "Baileys",
           "amount": "15",
-          "unitId": 11,
-          "allowBaseSubstitution": true,
-          "allowBrandedSubstitutes": true
+          "unitId": 11
         }
       ],
       "createdAt": 1756502550966,
@@ -9359,21 +9376,21 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "This mild, sweet and creamy shot is named after a female spirit in Irish and Celtic folklore, who foretells the death of a family member of the person who hears her wailing screams. This recipe is for 3 shots.",
+      "instructions": "1. Pour 50ml of banana liqueur, 50ml of crème de cacao white and 50ml of light cream into a cocktail shaker with ice.\n2. Shake well and strain into shooter glasses.",
       "ingredients": [
         {
           "order": 1,
           "ingredientId": 490583,
           "name": "Banana Liqueur",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11
         },
         {
           "order": 2,
           "ingredientId": 838213,
           "name": "Creme de Cacao White",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11,
           "substitutes": [
             {
@@ -9386,14 +9403,14 @@
           "order": 3,
           "ingredientId": 564821,
           "name": "Cream",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11
         },
         {
           "order": 4,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "60",
+          "amount": "150",
           "unitId": 8
         }
       ],
@@ -9453,7 +9470,7 @@
     {
       "id": 1756637682106,
       "name": "Barracuda",
-      "glassId": "coupe",
+      "glassId": "highball_glass",
       "tags": [
         {
           "id": 7,
@@ -9461,13 +9478,18 @@
           "color": "#FFD54F"
         },
         {
+          "id": 1,
+          "name": "IBA Official",
+          "color": "#81C784"
+        },
+        {
           "id": 8,
           "name": "long",
           "color": "#FFB74D"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "An IBA official sparkling cocktail.",
+      "instructions": "1. Fill a highball glass with ice cubes.\n2. Add 45ml of gold rum, 15ml of Galliano, 60ml of pineapple juice and a dash of lime juice.\n3. Top with sparkling wine.",
       "ingredients": [
         {
           "order": 1,
@@ -9500,8 +9522,8 @@
           "order": 4,
           "ingredientId": 525624,
           "name": "Lime Juice",
-          "amount": "15",
-          "unitId": 11
+          "amount": "1",
+          "unitId": 6
         },
         {
           "order": 5,
@@ -9524,16 +9546,8 @@
           "order": 6,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "90",
+          "amount": "100",
           "unitId": 8
-        },
-        {
-          "order": 7,
-          "ingredientId": 932849,
-          "name": "Pineapple",
-          "amount": "1",
-          "unitId": 27,
-          "garnish": true
         }
       ],
       "createdAt": 1756637682106,
@@ -9971,7 +9985,7 @@
     {
       "id": 1756588129960,
       "name": "Bijou",
-      "glassId": "coupe",
+      "glassId": "cocktail_glass",
       "tags": [
         {
           "id": 5,
@@ -9979,8 +9993,8 @@
           "color": "#ec5a5a"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "First described in Harry Johnson's book 'Bartender's Manual', this herbal cocktail is a classic from the late 1800s. The original recipe had equal parts gin, Chartreuse and vermouth, but it was adapted because many found that the Chartreuse was too dominant.",
+      "instructions": "1. Combine 60ml of gin, 30ml of sweet vermouth and 20ml of Chartreuse with ice in a mixing glass.\n2. Add a dash of orange bitters, and stir well.\n3. Strain into a chilled cocktail glass and, optionally, garnish with a lemon peel.",
       "ingredients": [
         {
           "order": 1,
@@ -10000,7 +10014,7 @@
           "order": 3,
           "ingredientId": 399740,
           "name": "Green Chartreuse",
-          "amount": "30",
+          "amount": "20",
           "unitId": 11
         },
         {
@@ -10012,10 +10026,10 @@
         },
         {
           "order": 5,
-          "ingredientId": 454059,
-          "name": "Orange",
+          "ingredientId": 108496,
+          "name": "Lemon",
           "amount": "1",
-          "unitId": 14,
+          "unitId": 26,
           "garnish": true,
           "optional": true
         }
@@ -10336,8 +10350,8 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A delicious and very popular shooter with controversial references.",
+      "instructions": "1. Pour 20ml of amaretto liqueur into a shooter glass.\n2. Carefully pour 20ml of Baileys on top of the amaretto.\n3. Top with whipped cream.",
       "ingredients": [
         {
           "order": 1,
@@ -10360,7 +10374,8 @@
           "ingredientId": 477462,
           "name": "Whipped Cream",
           "amount": "20",
-          "unitId": 11
+          "unitId": 11,
+          "optional": true
         }
       ],
       "createdAt": 1756819275103,
@@ -10472,49 +10487,36 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "The shot variation of the IBA official Kamikaze cocktail. The recipe here is for 3 shots. Blue Kamikaze can also be made as a long drink.",
+      "instructions": "1. Fill a shaker with ice cubes.\n2. Add 50ml of vodka, 50ml of blue curaçao and 50ml of lime juice.\n3. Shake well and strain into shots.",
       "ingredients": [
         {
           "order": 1,
           "ingredientId": 16862,
           "name": "Vodka",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11
         },
         {
           "order": 2,
           "ingredientId": 453367,
           "name": "Blue Curaçao",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11
         },
         {
           "order": 3,
           "ingredientId": 525624,
           "name": "Lime Juice",
-          "amount": "15",
+          "amount": "50",
           "unitId": 11
         },
         {
           "order": 4,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "30",
+          "amount": "100",
           "unitId": 8
-        },
-        {
-          "order": 5,
-          "ingredientId": 336572,
-          "name": "Lime",
-          "amount": "1",
-          "unitId": 19,
-          "substitutes": [
-            {
-              "id": 108496,
-              "name": "Lemon"
-            }
-          ]
         }
       ],
       "createdAt": 1756823642522,
@@ -11352,8 +11354,8 @@
           "color": "#F06292"
         }
       ],
-      "description": "A variation of the White Russian, smoother with brandy and milk.",
-      "instructions": "Fill a rocks glass with ice cubes.\nAdd 15ml of coffee liqueur, 30ml of brandy and 100ml of milk.\nStir gently.",
+      "description": "A variation of the 'White Russian', this cocktail is close to the 'Sneaky Pete', but smoother. The amount of milk can be varied according to taste.",
+      "instructions": "1. Fill a rocks glass with ice cubes.\n2. Add 15ml of coffee liqueur, 30ml of brandy and 100ml of milk.\n3. Stir gently.",
       "ingredients": [
         {
           "order": 1,
@@ -12732,7 +12734,7 @@
     },
     {
       "id": 1757000000120,
-      "name": "Car crash",
+      "name": "Car Crash",
       "glassId": "collins_glass",
       "tags": [
         {
@@ -12746,8 +12748,8 @@
           "color": "#FFB74D"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A sweet and fruity long drink.",
+      "instructions": "1. Put some ice into a collins glass.\n2. Pour 30ml of peach liqueur and 30ml of amaretto.\n3. Top with 30ml of lemon juice, 30ml of sugar syrup and 70ml of orange juice.\n4. Add a dash of grenadine syrup and stir.",
       "ingredients": [
         {
           "order": 1,
@@ -12765,10 +12767,10 @@
         },
         {
           "order": 3,
-          "ingredientId": 108496,
-          "name": "Lemon",
-          "amount": "1",
-          "unitId": 1
+          "ingredientId": 734220,
+          "name": "Lemon Juice",
+          "amount": "30",
+          "unitId": 11
         },
         {
           "order": 4,
@@ -12795,7 +12797,7 @@
           "order": 7,
           "ingredientId": 346304,
           "name": "Ice",
-          "amount": "100",
+          "amount": "90",
           "unitId": 8
         }
       ],
@@ -14760,8 +14762,8 @@
           "color": "#FF8A65"
         }
       ],
-      "description": "",
-      "instructions": "",
+      "description": "A sweet and strong shot. The recipe here is for 3 shots.",
+      "instructions": "1. Fill a shaker with ice cubes.\n2. Pour 30ml of vodka, 30ml of coffee liqueur, 30ml of Baileys and 30ml of creme de menthe white.\n3. Shake and strain into shot glasses.",
       "ingredients": [
         {
           "order": 1,
@@ -15794,7 +15796,7 @@
         }
       ],
       "description": "This recipe is for 3 shots.",
-      "instructions": "Fill a shaker with ice cubes.\nPour 75ml of white rum, 75ml of Goldschläger (cinnamon schnapps) and 3 dashes of Tabasco.\nShake well and strain into shots.",
+      "instructions": "1. Fill a shaker with ice cubes.\n2. Pour 75ml of white rum, 75ml of Goldschläger (cinnamon schnapps) and 3 dashes of Tabasco.\n3. Shake well and strain into shots.",
       "ingredients": [
         {
           "order": 1,
