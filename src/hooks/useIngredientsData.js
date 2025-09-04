@@ -9,10 +9,16 @@ import IngredientUsageContext from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
+  getIgnoreGarnish,
+  addIgnoreGarnishListener,
 } from "../storage/settingsStorage";
 import { sortByName } from "../utils/sortByName";
 import { getAllTags } from "../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
+import {
+  buildIngredientIndex,
+  getCocktailIngredientInfo,
+} from "../utils/cocktailIngredients";
 
 const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
@@ -38,14 +44,21 @@ export default function useIngredientsData() {
       setLoading(true);
       setImporting(false);
       try {
-        const [already, ingInitial, cocksInitial, allowSubs, customTags] =
-          await Promise.all([
-            force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
-            getAllIngredients(),
-            getAllCocktails(),
-            getAllowSubstitutes(),
-            getAllTags(),
-          ]);
+        const [
+          already,
+          ingInitial,
+          cocksInitial,
+          allowSubs,
+          ignoreGarnish,
+          customTags,
+        ] = await Promise.all([
+          force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
+          getAllIngredients(),
+          getAllCocktails(),
+          getAllowSubstitutes(),
+          getIgnoreGarnish(),
+          getAllTags(),
+        ]);
 
         let ing = ingInitial;
         let cocks = cocksInitial;
@@ -89,7 +102,17 @@ export default function useIngredientsData() {
           };
         });
         setIngredients(withUsage);
-        setCocktails(cocks);
+        const { ingMap, findBrand } = buildIngredientIndex(withUsage);
+        const cocktailsWithInfo = cocks.map((c) => ({
+          ...c,
+          ...getCocktailIngredientInfo(c, {
+            ingMap,
+            findBrand,
+            allowSubstitutes: !!allowSubs,
+            ignoreGarnish: !!ignoreGarnish,
+          }),
+        }));
+        setCocktails(cocktailsWithInfo);
         setUsageMap(map);
         const nextTags = [
           ...BUILTIN_INGREDIENT_TAGS,
@@ -127,10 +150,16 @@ export default function useIngredientsData() {
   }, [loading, load]);
 
   useEffect(() => {
-    const sub = addAllowSubstitutesListener(() => {
+    const subAs = addAllowSubstitutesListener(() => {
       load();
     });
-    return () => sub.remove();
+    const subIg = addIgnoreGarnishListener(() => {
+      load();
+    });
+    return () => {
+      subAs.remove();
+      subIg.remove();
+    };
   }, [load]);
 
   const refresh = useCallback(async () => {
