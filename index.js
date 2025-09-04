@@ -1,9 +1,5 @@
 import { registerRootComponent } from 'expo';
-import { initDatabase } from './src/storage/sqlite';
 import App from './App';
-
-// initialize SQLite tables once at startup
-initDatabase();
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
