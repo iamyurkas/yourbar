@@ -41,11 +41,12 @@ const ShakerStack = createNativeStackNavigator();
 
 function InitialDataLoader({ children }) {
   useIngredientsData();
-  const { loading } = useIngredientUsage();
+  const { loading, importing } = useIngredientUsage();
   if (loading) {
-    return (
-      <SplashScreen message={'Importing default data…\nThis may take a moment'} />
-    );
+    const message = importing
+      ? 'Importing default data…\nThis may take a moment'
+      : undefined;
+    return <SplashScreen message={message} />;
   }
   return children;
 }
