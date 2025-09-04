@@ -31,7 +31,7 @@ import {
   updateIngredientById,
   updateIngredientFields,
 } from "../../storage/ingredientsStorage";
-import db from "../../storage/sqlite";
+import { withExclusiveWriteAsync } from "../../storage/sqlite";
 
 import { getAllCocktails } from "../../storage/cocktailsStorage";
 import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
@@ -430,9 +430,9 @@ export default function IngredientDetailsScreen() {
       });
 
       InteractionManager.runAfterInteractions(() => {
-        db.withTransactionAsync(async () => {
+        withExclusiveWriteAsync(async (tx) => {
           for (const item of updates) {
-            await saveIngredient(item);
+            await saveIngredient(item, tx);
           }
         });
       });

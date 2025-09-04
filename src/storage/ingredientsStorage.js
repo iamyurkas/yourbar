@@ -97,11 +97,11 @@ export function buildIndex(list) {
   }, {});
 }
 
-async function upsertIngredient(item) {
+async function upsertIngredient(item, tx) {
   initDatabase();
-  await withExclusiveWriteAsync(async (tx) => {
+  const run = async (innerTx) => {
     // console.log("[ingredientsStorage] upsertIngredient start", item.id, item.name);
-    await tx.runAsync(
+    await innerTx.runAsync(
       `INSERT OR REPLACE INTO ingredients (
         id, name, description, tags, baseIngredientId, usageCount,
         singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
@@ -120,7 +120,12 @@ async function upsertIngredient(item) {
       item.inShoppingList ? 1 : 0
     );
     // console.log("[ingredientsStorage] upsertIngredient done", item.id);
-  });
+  };
+  if (tx) {
+    await run(tx);
+  } else {
+    await withExclusiveWriteAsync(run);
+  }
 }
 
 export async function saveAllIngredients(ingredients, tx) {
@@ -187,13 +192,13 @@ function sanitizeIngredient(i) {
   };
 }
 
-export async function addIngredient(ingredient) {
+export async function addIngredient(ingredient, tx) {
   const item = sanitizeIngredient({ ...ingredient, id: ingredient?.id ?? genId() });
-  await upsertIngredient(item);
+  await upsertIngredient(item, tx);
   return item;
 }
 
-export async function saveIngredient(updated) {
+export async function saveIngredient(updated, tx) {
   initDatabase();
   if (!updated?.id) return;
   const name = String(updated.name ?? "").trim();
@@ -220,7 +225,7 @@ export async function saveIngredient(updated) {
   } else {
     item = sanitizeIngredient({ ...updated, name });
   }
-  await upsertIngredient(item);
+  await upsertIngredient(item, tx);
   // console.log("[ingredientsStorage] saveIngredient stored", item.id, item.name);
   return item;
 }
