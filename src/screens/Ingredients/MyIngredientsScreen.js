@@ -29,9 +29,9 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
   initIngredientsAvailability,
-  updateIngredientAvailability,
 } from "../../utils/ingredientsAvailabilityCache";
 import { sortByName } from "../../utils/sortByName";
+import { spawnThread } from "react-native-multithreading";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -167,10 +167,16 @@ export default function MyIngredientsScreen() {
       if (updated) {
         // Defer availability recompute to after interactions to keep UI snappy
         requestAnimationFrame(() => {
-          // Use the snapshot captured from the state update
           const arr = nextSnapshot ? Array.from(nextSnapshot.values()) : ingredients;
-          const map = updateIngredientAvailability(id, arr);
-          setAvailableMap(new Map(map));
+          spawnThread(
+            (fid, farr) => {
+              const { updateIngredientAvailability } = require("../../utils/ingredientsAvailabilityCache");
+              return Array.from(updateIngredientAvailability(fid, farr).entries());
+            },
+            [id, arr]
+          ).then((entries) => {
+            setAvailableMap(new Map(entries));
+          });
         });
         pendingUpdatesRef.current.push(updated);
         scheduleFlush();
