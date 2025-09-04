@@ -4,8 +4,7 @@ import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
-let writeQueue = Promise.resolve();
-const pendingSelects = new Set();
+let taskQueue = Promise.resolve();
 
 export function initDatabase() {
   if (!initPromise) {
@@ -61,50 +60,41 @@ export function initDatabase() {
   return initPromise;
 }
 
+function enqueue(work) {
+  const next = taskQueue.then(work, work);
+  taskQueue = next.catch((e) => {
+    console.warn("[sqlite] queue error", e);
+  });
+  return next;
+}
+
 export async function query(sql, params = []) {
-  // assume initDatabase() has been invoked at app startup
-  await initPromise;
-  const trimmed = sql.trim().toLowerCase();
-  if (trimmed.startsWith("select")) {
-    // Wait for pending writes to finish before starting a read to avoid
-    // "database is locked" errors when a SELECT races with a write
-    await writeQueue;
-    const promise = db.getAllAsync(sql, params);
-    pendingSelects.add(promise);
-    const rows = await promise.finally(() => pendingSelects.delete(promise));
-    return {
-      rows: {
-        _array: rows,
-        length: rows.length,
-        item: (i) => rows[i],
-      },
-    };
-  }
-  // Non-select queries should normally be executed via withExclusiveWriteAsync
-  // so we simply run them directly here.
-  return db.runAsync(sql, params);
+  return enqueue(async () => {
+    await initDatabase();
+    const trimmed = sql.trim().toLowerCase();
+    if (trimmed.startsWith("select")) {
+      const rows = await db.getAllAsync(sql, params);
+      return {
+        rows: {
+          _array: rows,
+          length: rows.length,
+          item: (i) => rows[i],
+        },
+      };
+    }
+    return db.runAsync(sql, params);
+  });
 }
 
 // Serialize all write operations across modules to avoid DB locked errors
 export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
-  const runner = async () => {
-    await initPromise;
-    await waitForSelects();
+  return enqueue(async () => {
+    await initDatabase();
     return SQLite.withExclusiveTransactionAsync
       ? SQLite.withExclusiveTransactionAsync(db, work)
       : db.withExclusiveTransactionAsync(work);
-  };
-  const next = writeQueue.then(runner, runner);
-  // Keep the chain alive even if an operation fails
-  writeQueue = next.catch((e) => {
-    console.warn("[sqlite] withExclusiveWriteAsync error", e);
   });
-  return next;
-}
-
-export function waitForSelects() {
-  return Promise.all(Array.from(pendingSelects));
 }
 
 export default db;
