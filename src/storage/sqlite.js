@@ -66,6 +66,7 @@ export async function query(sql, params = []) {
   await initPromise;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
+    await writeQueue.catch(() => {}); // дочекатися завершення поточних записів
     const promise = db.getAllAsync(sql, params);
     pendingSelects.add(promise);
     const rows = await promise.finally(() => pendingSelects.delete(promise));
