@@ -259,6 +259,7 @@ export default function EditCocktailScreen() {
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [pendingNav, setPendingNav] = useState(null);
   const initialHashRef = useRef("{}");
   const skipPromptRef = useRef(false);
@@ -281,7 +282,7 @@ export default function EditCocktailScreen() {
 
   const handleSave = useCallback(
     async (stay = false) => {
-      if (saving) return;
+      if (savingRef.current) return;
       // console.log("[EditCocktailScreen] handleSave start", {
       //   stay,
       //   cocktailId,
@@ -297,6 +298,7 @@ export default function EditCocktailScreen() {
         return;
       }
 
+      savingRef.current = true;
       setSaving(true);
 
       // Resolve missing selectedId by exact name match (unique)
@@ -413,7 +415,10 @@ export default function EditCocktailScreen() {
             nextCocktails
           )
         );
-        if (stay) setSaving(false);
+        if (stay) {
+          savingRef.current = false;
+          setSaving(false);
+        }
       });
 
       return cocktail;
@@ -435,7 +440,6 @@ export default function EditCocktailScreen() {
       setCocktails,
       setUsageMap,
       setIngredients,
-      saving,
       showInfo,
     ]
   );
