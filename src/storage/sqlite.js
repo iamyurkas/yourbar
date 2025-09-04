@@ -66,6 +66,9 @@ export async function query(sql, params = []) {
   await initPromise;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
+    // Delay starting a SELECT while a queued write is in progress
+    // to avoid racing with an upcoming exclusive transaction.
+    await writeQueue;
     const promise = db.getAllAsync(sql, params);
     pendingSelects.add(promise);
     const rows = await promise.finally(() => pendingSelects.delete(promise));
