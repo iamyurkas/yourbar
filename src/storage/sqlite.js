@@ -10,6 +10,8 @@ const pendingSelects = new Set();
 export function initDatabase() {
   if (!initPromise) {
     initPromise = db.execAsync(`
+      PRAGMA journal_mode = WAL;
+      PRAGMA synchronous = NORMAL;
       PRAGMA foreign_keys = ON;
       CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY NOT NULL,
