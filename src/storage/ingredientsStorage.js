@@ -1,4 +1,4 @@
-import db, { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+import { query, withExclusiveWriteAsync } from "./sqlite";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
@@ -8,7 +8,6 @@ const genId = () => now();
 
 export async function getAllIngredients() {
   // console.log("[ingredientsStorage] getAllIngredients start");
-  await initDatabase();
   const res = await query(
     "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
   );
@@ -36,7 +35,6 @@ export async function getIngredientsByIds(ids) {
   const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
   const res = await query(
     `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
     list.map((id) => String(id))
@@ -65,7 +63,6 @@ export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {
   const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
   const res = await query(
     `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,
     list.map((id) => String(id))
@@ -98,7 +95,6 @@ export function buildIndex(list) {
 }
 
 async function upsertIngredient(item) {
-  await initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     // console.log("[ingredientsStorage] upsertIngredient start", item.id, item.name);
     await tx.runAsync(
@@ -125,7 +121,6 @@ async function upsertIngredient(item) {
 
 export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
-  await initDatabase();
   const run = async (innerTx) => {
     // console.log("[ingredientsStorage] saveAllIngredients start", list.length);
     await innerTx.runAsync("DELETE FROM ingredients");
@@ -194,7 +189,6 @@ export async function addIngredient(ingredient) {
 }
 
 export async function saveIngredient(updated) {
-  await initDatabase();
   if (!updated?.id) return;
   const name = String(updated.name ?? "").trim();
   const searchName = normalizeSearch(name);
@@ -226,7 +220,6 @@ export async function saveIngredient(updated) {
 }
 
 export async function updateIngredientFields(id, fields) {
-  await initDatabase();
   if (!id || !fields || typeof fields !== "object") return;
   const entries = Object.entries(fields);
   if (!entries.length) return;
@@ -265,7 +258,6 @@ export async function updateIngredientFields(id, fields) {
 export async function flushPendingIngredients(list) {
   const items = Array.isArray(list) ? list : [];
   if (!items.length) return;
-  await initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     // console.log("[ingredientsStorage] flushPendingIngredients start", items.length);
     for (const u of items) {
@@ -298,7 +290,6 @@ export function getIngredientById(id, index) {
 }
 
 export async function deleteIngredient(id) {
-  await initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
   });

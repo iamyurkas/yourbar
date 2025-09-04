@@ -1,7 +1,7 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
-import { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
+import { query, withExclusiveWriteAsync } from "./sqlite";
 
 // --- utils ---
 
@@ -48,7 +48,6 @@ const sanitizeCocktail = (c) => {
 };
 
 async function readAll() {
-  await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
   );
@@ -92,7 +91,6 @@ async function readAll() {
 }
 
 async function upsertCocktail(item) {
-  await initDatabase();
   // console.log("[cocktailsStorage] upsertCocktail start", item.id);
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync(
@@ -145,7 +143,6 @@ export async function getAllCocktails() {
 
 /** Get single cocktail by id (number) */
 export async function getCocktailById(id) {
-  await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails WHERE id = ?`,
     [id]
@@ -197,7 +194,6 @@ export async function addCocktail(cocktail) {
 
 /** Update existing (upsert). Returns updated cocktail */
 export async function saveCocktail(updated) {
-  await initDatabase();
   const item = sanitizeCocktail(updated);
   await upsertCocktail(item);
   return item;
@@ -213,7 +209,6 @@ export function updateCocktailById(list, updated) {
 
 /** Delete by id */
 export async function deleteCocktail(id) {
-  await initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
     await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
@@ -229,7 +224,6 @@ export async function replaceAllCocktails(cocktails, tx) {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
-  await initDatabase();
   const run = async (innerTx) => {
     await innerTx.runAsync("DELETE FROM cocktail_ingredients");
     await innerTx.runAsync("DELETE FROM cocktails");
