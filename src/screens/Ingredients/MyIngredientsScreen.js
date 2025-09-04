@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  InteractionManager,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
@@ -165,12 +171,15 @@ export default function MyIngredientsScreen() {
         return next;
       });
       if (updated) {
-        // Defer availability recompute to after interactions to keep UI snappy
-        requestAnimationFrame(() => {
-          // Use the snapshot captured from the state update
-          const arr = nextSnapshot ? Array.from(nextSnapshot.values()) : ingredients;
-          const map = updateIngredientAvailability(id, arr);
-          setAvailableMap(new Map(map));
+        // Recompute availability after current interactions and frame commit
+        InteractionManager.runAfterInteractions(() => {
+          requestAnimationFrame(() => {
+            const arr = nextSnapshot
+              ? Array.from(nextSnapshot.values())
+              : ingredients;
+            const map = updateIngredientAvailability(id, arr);
+            setAvailableMap(new Map(map));
+          });
         });
         pendingUpdatesRef.current.push(updated);
         scheduleFlush();
