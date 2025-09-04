@@ -7,9 +7,14 @@ let initPromise;
 let writeQueue = Promise.resolve();
 const pendingSelects = new Set();
 
+function logQuery(sql, params) {
+  const p = Array.isArray(params) ? params : Array.from(params ?? []);
+  console.log("[sqlite] query", sql, p);
+}
+
 export function initDatabase() {
   if (!initPromise) {
-    initPromise = db.execAsync(`
+    const initSql = `
       PRAGMA foreign_keys = ON;
       CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY NOT NULL,
@@ -56,7 +61,9 @@ export function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_cocktail_ingredients_ingredientId ON cocktail_ingredients (ingredientId);
       CREATE INDEX IF NOT EXISTS idx_ingredients_searchName ON ingredients (searchName);
       CREATE INDEX IF NOT EXISTS idx_ingredients_inBar ON ingredients (inBar);
-    `);
+    `;
+    logQuery(initSql);
+    initPromise = db.execAsync(initSql);
   }
   return initPromise;
 }
@@ -64,6 +71,7 @@ export function initDatabase() {
 export async function query(sql, params = []) {
   // assume initDatabase() has been invoked at app startup
   await initPromise;
+  logQuery(sql, params);
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
     const promise = db.getAllAsync(sql, params);
@@ -85,9 +93,19 @@ export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
+    const wrapped = async (tx) => {
+      const original = tx.runAsync.bind(tx);
+      tx.runAsync = async (sql, ...args) => {
+        const params =
+          args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+        logQuery(sql, params);
+        return original(sql, ...args);
+      };
+      return work(tx);
+    };
     return SQLite.withExclusiveTransactionAsync
-      ? SQLite.withExclusiveTransactionAsync(db, work)
-      : db.withExclusiveTransactionAsync(work);
+      ? SQLite.withExclusiveTransactionAsync(db, wrapped)
+      : db.withExclusiveTransactionAsync(wrapped);
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails
