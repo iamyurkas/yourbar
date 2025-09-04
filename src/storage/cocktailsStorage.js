@@ -131,23 +131,34 @@ async function upsertCocktail(item) {
         `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
         item.id
       );
-      for (const ing of item.ingredients) {
+      if (item.ingredients.length > 0) {
+        const params = [];
+        const placeholders = item.ingredients
+          .map(() =>
+            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          )
+          .join(", ");
+        for (const ing of item.ingredients) {
+          params.push(
+            item.id,
+            ing.order,
+            ing.ingredientId != null ? String(ing.ingredientId) : null,
+            ing.name ?? null,
+            ing.amount ?? null,
+            ing.unitId ?? null,
+            ing.garnish ? 1 : 0,
+            ing.optional ? 1 : 0,
+            ing.allowBaseSubstitution ? 1 : 0,
+            ing.allowBrandedSubstitutes ? 1 : 0,
+            ing.substitutes ? JSON.stringify(ing.substitutes) : null
+          );
+        }
         await tx.runAsync(
           `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          item.id,
-          ing.order,
-          ing.ingredientId != null ? String(ing.ingredientId) : null,
-          ing.name ?? null,
-          ing.amount ?? null,
-          ing.unitId ?? null,
-          ing.garnish ? 1 : 0,
-          ing.optional ? 1 : 0,
-          ing.allowBaseSubstitution ? 1 : 0,
-          ing.allowBrandedSubstitutes ? 1 : 0,
-          ing.substitutes ? JSON.stringify(ing.substitutes) : null
+          ) VALUES ${placeholders}`,
+          params
         );
       }
     });
