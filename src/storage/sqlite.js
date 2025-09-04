@@ -4,7 +4,10 @@ import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabaseSync("yourbar.db");
 
 let initPromise;
-let writeQueue = Promise.resolve();
+// Global mutex that serializes writes and blocks new reads while a write is
+// pending.  Initialized as an already-resolved promise so `await writeLock`
+// continues immediately when no write is in progress.
+let writeLock = Promise.resolve();
 const pendingSelects = new Set();
 
 export function initDatabase() {
@@ -72,6 +75,8 @@ export function initDatabase() {
 export async function query(sql, params = []) {
   // assume initDatabase() has been invoked at app startup
   await initPromise;
+  // Block reads while a write transaction is pending.
+  await writeLock;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
     const promise = db.getAllAsync(sql, params);
@@ -98,9 +103,10 @@ export function withWriteTransactionAsync(work) {
       ? SQLite.withTransactionAsync(db, work)
       : db.withTransactionAsync(work);
   };
-  const next = writeQueue.then(runner, runner);
-  // Keep the chain alive even if an operation fails
-  writeQueue = next.catch((e) => {
+  const next = writeLock.then(runner, runner);
+  // Keep the chain alive even if an operation fails and unblock queued
+  // reads/writes once this transaction finishes.
+  writeLock = next.catch((e) => {
     console.warn("[sqlite] withWriteTransactionAsync error", e);
   });
   return next;
