@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -40,6 +40,7 @@ export default function AllIngredientsScreen() {
   // Use refs to buffer DB writes without triggering re-renders on each toggle
   const pendingUpdatesRef = React.useRef([]);
   const flushTimerRef = React.useRef(null);
+  const filteredRef = useRef([]);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
@@ -94,6 +95,7 @@ export default function AllIngredientsScreen() {
   }, [flushPending]);
 
   const filtered = useMemo(() => {
+    if (!isFocused) return filteredRef.current;
     const q = normalizeSearch(searchDebounced);
     let data = ingredients;
     if (q) data = data.filter((i) => i.searchName.includes(q));
@@ -103,8 +105,10 @@ export default function AllIngredientsScreen() {
           Array.isArray(i.tags) &&
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
-    return [...data].sort(sortByName);
-  }, [ingredients, searchDebounced, selectedTagIds]);
+    const res = [...data].sort(sortByName);
+    filteredRef.current = res;
+    return res;
+  }, [ingredients, searchDebounced, selectedTagIds, isFocused]);
 
   const toggleInBar = useCallback(
     (id) => {
