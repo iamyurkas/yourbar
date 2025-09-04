@@ -8,6 +8,7 @@ import {
   getAllIngredients,
   saveAllIngredients,
 } from "../src/storage/ingredientsStorage";
+import { initDatabase } from "../src/storage/sqlite";
 
 const IMPORT_FLAG_KEY = "ingredients_imported_flag";
 
@@ -63,6 +64,7 @@ function normalize(raw) {
 
 export async function importIngredients({ force = false } = {}) {
   try {
+    await initDatabase();
     // щоб не перезаливати на кожному старті
     if (!force) {
       const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);

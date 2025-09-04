@@ -11,6 +11,7 @@ export function initDatabase() {
   if (!initPromise) {
     initPromise = db.execAsync(`
       PRAGMA foreign_keys = ON;
+      PRAGMA journal_mode=WAL;
       CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY NOT NULL,
         name TEXT,
