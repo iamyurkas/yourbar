@@ -99,9 +99,10 @@ export function withWriteTransactionAsync(work) {
   const runner = async () => {
     await initPromise;
     await waitForSelects();
+    const callback = async () => work(db);
     return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(db, work)
-      : db.withTransactionAsync(work);
+      ? SQLite.withTransactionAsync(db, callback)
+      : db.withTransactionAsync(callback);
   };
   const next = writeLock.then(runner, runner);
   // Keep the chain alive even if an operation fails and unblock queued
