@@ -153,7 +153,7 @@ async function upsertCocktail(item) {
             ing.substitutes ? JSON.stringify(ing.substitutes) : null
           );
         }
-        await tx.runAsync(
+        await tx.execAsync(
           `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
