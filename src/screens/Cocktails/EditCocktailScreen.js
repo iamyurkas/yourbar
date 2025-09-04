@@ -376,11 +376,6 @@ export default function EditCocktailScreen() {
 
       initialHashRef.current = serialize();
       setDirty(false);
-      if (!stay) {
-        skipPromptRef.current = true;
-        navigation.goBack();
-      }
-
       InteractionManager.runAfterInteractions(async () => {
         const updated = await saveCocktail(cocktail);
         // Debug: read freshly saved cocktail from DB and log it
@@ -410,10 +405,16 @@ export default function EditCocktailScreen() {
           applyUsageMapToIngredients(
             globalIngredients,
             nextUsage,
-            nextCocktails
-          )
-        );
-        if (stay) setSaving(false);
+          nextCocktails
+        )
+      );
+        route.params?.onChange?.(updated);
+        if (stay) {
+          setSaving(false);
+        } else {
+          skipPromptRef.current = true;
+          navigation.goBack();
+        }
       });
 
       return cocktail;
@@ -437,6 +438,7 @@ export default function EditCocktailScreen() {
       setIngredients,
       saving,
       showInfo,
+      route,
     ]
   );
 

@@ -209,6 +209,7 @@ export default function CocktailDetailsScreen() {
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const showImperialLocked = useRef(false);
+  const pendingCocktailRef = useRef(null);
 
   const { ingMap, byBase, bySearch } = useMemo(
     () => buildIngredientIndex(ingredients),
@@ -228,7 +229,13 @@ export default function CocktailDetailsScreen() {
   }, [navigation, backToIngredientId]);
 
   const handleEdit = useCallback(() => {
-    navigation.navigate("EditCocktail", { id });
+    navigation.navigate("EditCocktail", {
+      id,
+      onChange: (updated) => {
+        setCocktail(updated);
+        pendingCocktailRef.current = updated;
+      },
+    });
   }, [navigation, id]);
 
   const handleClone = useCallback(() => {
@@ -325,10 +332,10 @@ export default function CocktailDetailsScreen() {
   );
 
   const load = useCallback(
-    async (refresh = false, showSpinner = true) => {
+    async (refresh = false, showSpinner = true, cocktailOverride = null) => {
       if (showSpinner) setLoading(true);
       const [loadedCocktail, useMetric, ig, allowSubs] = await Promise.all([
-        getCocktailById(id),
+        cocktailOverride ?? getCocktailById(id),
         getUseMetric(),
         getIgnoreGarnish(),
         getAllowSubstitutes(),
@@ -412,8 +419,10 @@ export default function CocktailDetailsScreen() {
     useCallback(() => {
       (async () => {
         try {
-          await load(false, !initialCocktail);
+          const override = pendingCocktailRef.current;
+          await load(false, override ? false : !initialCocktail, override);
         } catch {}
+        pendingCocktailRef.current = null;
       })();
     }, [load, initialCocktail])
   );
@@ -490,7 +499,7 @@ export default function CocktailDetailsScreen() {
       loadingMissingRef.current = true;
       (async () => {
         try {
-          await load(true, false);
+          await load(true, false, updated);
         } catch {}
         loadingMissingRef.current = false;
       })();
