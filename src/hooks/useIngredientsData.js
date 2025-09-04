@@ -30,11 +30,13 @@ export default function useIngredientsData() {
     ingredientTags,
     setIngredientTags,
     ingredientsByTag,
+    setImporting,
   } = useContext(IngredientUsageContext);
 
   const load = useCallback(
     async (force = false) => {
       setLoading(true);
+      setImporting(false);
       try {
         const [already, ingInitial, cocksInitial, allowSubs, customTags] =
           await Promise.all([
@@ -55,6 +57,7 @@ export default function useIngredientsData() {
           cocks.length === 0;
 
         if (needImport) {
+          setImporting(true);
           console.log(
             "Importing default data… This one-time operation may take a moment"
           );
@@ -106,6 +109,7 @@ export default function useIngredientsData() {
         if (changed) setIngredientTags(nextTags);
       } finally {
         setLoading(false);
+        setImporting(false);
       }
     },
     [
@@ -114,6 +118,7 @@ export default function useIngredientsData() {
       setUsageMap,
       setLoading,
       setIngredientTags,
+      setImporting,
       ingredientTags,
     ]
   );

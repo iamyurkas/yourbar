@@ -22,6 +22,8 @@ const IngredientUsageContext = createContext({
   setCocktails: () => {},
   loading: true,
   setLoading: () => {},
+  importing: false,
+  setImporting: () => {},
   baseIngredients: [],
   ingredientTags: [],
   setIngredientTags: () => {},
@@ -35,6 +37,7 @@ export function IngredientUsageProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [baseIngredients, setBaseIngredients] = useState([]);
   const [ingredientTags, setIngredientTags] = useState([]);
+  const [importing, setImporting] = useState(false);
 
   const ingredients = useMemo(
     () => Array.from(ingredientsMap.values()),
@@ -101,6 +104,8 @@ export function IngredientUsageProvider({ children }) {
         setCocktails,
         loading,
         setLoading,
+        importing,
+        setImporting,
         baseIngredients,
         ingredientTags,
         setIngredientTags,
