@@ -90,6 +90,7 @@ export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
+    await waitForSelects();
     return SQLite.withExclusiveTransactionAsync
       ? SQLite.withExclusiveTransactionAsync(db, work)
       : db.withExclusiveTransactionAsync(work);
