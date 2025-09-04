@@ -185,8 +185,8 @@ function IngredientRow({
               setOptimisticInBar(!currentInBar);
               // Defer heavy computations until after the current frame/interactions
               InteractionManager.runAfterInteractions(() => {
-                // Small timeout to ensure the frame commits before work
-                setTimeout(() => onToggleInBar(id), 0);
+                // Run work on the next frame so the checkbox updates immediately
+                requestAnimationFrame(() => onToggleInBar(id));
               });
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -204,7 +204,8 @@ function IngredientRow({
             onPress={() => {
               setOptimisticInShopping(!currentInShopping);
               InteractionManager.runAfterInteractions(() => {
-                setTimeout(() => onToggleShoppingList(id), 0);
+                // Use next frame to avoid blocking the checkbox update
+                requestAnimationFrame(() => onToggleShoppingList(id));
               });
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
