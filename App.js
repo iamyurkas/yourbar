@@ -181,7 +181,7 @@ export default function App() {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <StatusBar style="dark" backgroundColor="#fff" hidden={false} />
+          <StatusBar style="dark" hidden={false} />
           <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <SplashScreen />
           </SafeAreaView>
@@ -195,7 +195,7 @@ export default function App() {
       <PaperProvider theme={AppTheme}>
         <MenuProvider>
           <SafeAreaProvider>
-            <StatusBar style="dark" backgroundColor="#fff" hidden={false} />
+            <StatusBar style="dark" hidden={false} />
             <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
               <IngredientUsageProvider>
                 <InitialDataLoader>
