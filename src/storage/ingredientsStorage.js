@@ -1,9 +1,4 @@
-import db, {
-  query,
-  initDatabase,
-  withExclusiveWriteAsync,
-  waitForSelects,
-} from "./sqlite";
+import { query, initDatabase, withExclusiveWriteAsync } from "./sqlite";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
@@ -103,8 +98,7 @@ export function buildIndex(list) {
 }
 
 async function upsertIngredient(item) {
-  await initDatabase();
-  await waitForSelects();
+  initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     // console.log("[ingredientsStorage] upsertIngredient start", item.id, item.name);
     await tx.runAsync(
@@ -131,7 +125,7 @@ async function upsertIngredient(item) {
 
 export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
-  await initDatabase();
+  initDatabase();
   const run = async (innerTx) => {
     // console.log("[ingredientsStorage] saveAllIngredients start", list.length);
     await innerTx.runAsync("DELETE FROM ingredients");
@@ -160,7 +154,6 @@ export async function saveAllIngredients(ingredients, tx) {
   if (tx) {
     await run(tx);
   } else {
-    await waitForSelects();
     await withExclusiveWriteAsync(run);
   }
 }
@@ -201,7 +194,7 @@ export async function addIngredient(ingredient) {
 }
 
 export async function saveIngredient(updated) {
-  await initDatabase();
+  initDatabase();
   if (!updated?.id) return;
   const name = String(updated.name ?? "").trim();
   const searchName = normalizeSearch(name);
@@ -233,7 +226,7 @@ export async function saveIngredient(updated) {
 }
 
 export async function updateIngredientFields(id, fields) {
-  await initDatabase();
+  initDatabase();
   if (!id || !fields || typeof fields !== "object") return;
   const entries = Object.entries(fields);
   if (!entries.length) return;
@@ -263,7 +256,6 @@ export async function updateIngredientFields(id, fields) {
   if (!parts.length) return;
   params.push(String(id));
   const sql = `UPDATE ingredients SET ${parts.join(", ")} WHERE id = ?`;
-  await waitForSelects();
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync(sql, params);
   });
@@ -273,8 +265,7 @@ export async function updateIngredientFields(id, fields) {
 export async function flushPendingIngredients(list) {
   const items = Array.isArray(list) ? list : [];
   if (!items.length) return;
-  await initDatabase();
-  await waitForSelects();
+  initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     // console.log("[ingredientsStorage] flushPendingIngredients start", items.length);
     for (const u of items) {
@@ -307,8 +298,7 @@ export function getIngredientById(id, index) {
 }
 
 export async function deleteIngredient(id) {
-  await initDatabase();
-  await waitForSelects();
+  initDatabase();
   await withExclusiveWriteAsync(async (tx) => {
     await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
   });
