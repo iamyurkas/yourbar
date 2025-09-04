@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  InteractionManager,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
@@ -29,7 +35,7 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
   initIngredientsAvailability,
-  updateIngredientAvailability,
+  updateIngredientAvailabilityAsync,
 } from "../../utils/ingredientsAvailabilityCache";
 import { sortByName } from "../../utils/sortByName";
 
@@ -165,12 +171,13 @@ export default function MyIngredientsScreen() {
         return next;
       });
       if (updated) {
-        // Defer availability recompute to after interactions to keep UI snappy
-        requestAnimationFrame(() => {
+        // Defer availability recompute to a separate task to keep UI snappy
+        InteractionManager.runAfterInteractions(() => {
           // Use the snapshot captured from the state update
           const arr = nextSnapshot ? Array.from(nextSnapshot.values()) : ingredients;
-          const map = updateIngredientAvailability(id, arr);
-          setAvailableMap(new Map(map));
+          updateIngredientAvailabilityAsync(id, arr).then((map) => {
+            setAvailableMap(new Map(map));
+          });
         });
         pendingUpdatesRef.current.push(updated);
         scheduleFlush();

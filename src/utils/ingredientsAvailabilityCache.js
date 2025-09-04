@@ -91,3 +91,13 @@ export function updateIngredientAvailability(changedId, ingredients) {
 export function getIngredientsAvailability() {
   return cache;
 }
+
+// Run availability recomputation on the next tick to avoid blocking UI updates
+export function updateIngredientAvailabilityAsync(changedId, ingredients) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const map = updateIngredientAvailability(changedId, ingredients);
+      resolve(map);
+    }, 0);
+  });
+}
