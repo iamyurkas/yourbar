@@ -69,7 +69,6 @@ export async function importIngredients({ force = false } = {}) {
     if (!force) {
       const already = await AsyncStorage.getItem(IMPORT_FLAG_KEY);
       if (already === "true") {
-        //console.log("ℹ️ Ingredients already imported — skip");
         return;
       }
     }
@@ -78,7 +77,6 @@ export async function importIngredients({ force = false } = {}) {
     if (!force) {
       const existing = await getAllIngredients();
       if (existing.length > 0) {
-        //console.log("ℹ️ Ingredients present — skip import");
         await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
         return;
       }
@@ -88,7 +86,6 @@ export async function importIngredients({ force = false } = {}) {
     await saveAllIngredients(normalized);
     await AsyncStorage.setItem(IMPORT_FLAG_KEY, "true");
 
-    //console.log(`✅ Ingredients imported: ${normalized.length}`);
   } catch (error) {
     //console.error("❌ Error importing ingredients:", error);
   }

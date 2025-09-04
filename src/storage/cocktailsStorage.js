@@ -97,8 +97,7 @@ async function readAll() {
 
 async function upsertCocktail(item) {
   await initDatabase();
-   console.log("[cocktailsStorage] upsertCocktail start!", item.id);
-  await withWriteTransactionAsync(async (tx) => {
+   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
           id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
@@ -138,7 +137,6 @@ async function upsertCocktail(item) {
       );
     }
   });
-  console.log("[cocktailsStorage] upsertCocktail end", item.id);
 }
 
 // --- API ---
@@ -193,9 +191,7 @@ export async function getCocktailById(id) {
 /** Add new cocktail, returns created cocktail */
 export async function addCocktail(cocktail) {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
-  console.log("[cocktailsStorage] addCocktail", item);
   await upsertCocktail(item);
-  console.log("[cocktailsStorage] addCocktail stored", item);
   return item;
 }
 
