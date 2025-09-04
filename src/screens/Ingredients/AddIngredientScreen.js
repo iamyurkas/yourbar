@@ -52,7 +52,7 @@ import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
 import { withAlpha } from "../../utils/color";
 
 const IMAGE_SIZE = 150;
-const MENU_TOP_OFFSET = 150;
+const MENU_TOP_OFFSET = 70;
 
 export default function AddIngredientScreen() {
   const theme = useTheme();
@@ -373,7 +373,7 @@ export default function AddIngredientScreen() {
     if (!anchorRef.current) return;
     anchorRef.current.measureInWindow((x, y, w, h) => {
       setAnchorWidth(w);
-      const top = Math.max(0, headerHeight - MENU_TOP_OFFSET);
+      const top = MENU_TOP_OFFSET;
       setMenuAnchor({ x, y: top });
       setMenuVisible(true);
       requestAnimationFrame(() =>
