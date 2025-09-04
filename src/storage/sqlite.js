@@ -89,9 +89,13 @@ export function withExclusiveWriteAsync(work) {
     await initPromise;
     // Ensure no concurrent reads are active before starting a write
     await waitForSelects();
-    return SQLite.withExclusiveTransactionAsync
-      ? SQLite.withExclusiveTransactionAsync(db, work)
-      : db.withExclusiveTransactionAsync(work);
+    // Using a regular transaction is sufficient because the global queue
+    // guarantees no other operations run concurrently. Requesting an
+    // exclusive transaction occasionally fails with "database is locked"
+    // despite the queue, so we avoid the stricter lock level here.
+    return SQLite.withTransactionAsync
+      ? SQLite.withTransactionAsync(db, work)
+      : db.withTransactionAsync(work);
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails
