@@ -86,6 +86,8 @@ export function withExclusiveWriteAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
+    // ensure no SELECT queries are running before starting a write
+    await Promise.all(Array.from(pendingSelects)).catch(() => {});
     return SQLite.withExclusiveTransactionAsync
       ? SQLite.withExclusiveTransactionAsync(db, work)
       : db.withExclusiveTransactionAsync(work);
