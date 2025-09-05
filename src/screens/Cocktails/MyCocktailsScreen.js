@@ -91,9 +91,16 @@ export default function MyCocktailsScreen() {
     const list = pendingUpdatesRef.current;
     if (list && list.length) {
       pendingUpdatesRef.current = [];
+      setGlobalIngredients((prev) => {
+        let next = prev;
+        list.forEach((item) => {
+          next = updateIngredientById(next, item);
+        });
+        return next;
+      });
       flushPendingIngredients(list).catch(() => {});
     }
-  }, []);
+  }, [setGlobalIngredients]);
 
   const scheduleFlush = useCallback(() => {
     if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
@@ -259,20 +266,11 @@ export default function MyCocktailsScreen() {
         return updateIngredientById(prev, updated);
       });
       if (updated) {
-        // Defer global context update a tick to prioritize UI
-        requestAnimationFrame(() => {
-          setGlobalIngredients((list) =>
-            updateIngredientById(list, {
-              id,
-              inShoppingList: updated.inShoppingList,
-            })
-          );
-        });
         pendingUpdatesRef.current.push(updated);
         scheduleFlush();
       }
     },
-    [setGlobalIngredients, setIngredients, scheduleFlush]
+    [setIngredients, scheduleFlush]
   );
 
   const renderItem = useCallback(
