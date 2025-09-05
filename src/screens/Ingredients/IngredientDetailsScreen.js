@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Pressable,
   ScrollView,
   ActivityIndicator,
   Platform,
@@ -514,9 +515,17 @@ export default function IngredientDetailsScreen() {
       )}
 
       <View style={styles.iconRow}>
-        <TouchableOpacity
+        <Pressable
           onPress={toggleInShoppingList}
-          style={styles.iconButton}
+          android_ripple={{
+            color: withAlpha(theme.colors.tertiary, 0.35),
+            borderless: true,
+          }}
+          style={({ pressed }) => [
+            styles.iconButton,
+            pressed && styles.pressedIcon,
+          ]}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <MaterialIcons
             name={
@@ -529,9 +538,20 @@ export default function IngredientDetailsScreen() {
                 : theme.colors.onSurfaceVariant
             }
           />
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity onPress={toggleInBar} style={styles.iconButton}>
+        <Pressable
+          onPress={toggleInBar}
+          android_ripple={{
+            color: withAlpha(theme.colors.tertiary, 0.35),
+            borderless: true,
+          }}
+          style={({ pressed }) => [
+            styles.iconButton,
+            pressed && styles.pressedIcon,
+          ]}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <MaterialIcons
             name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
             size={24}
@@ -541,7 +561,7 @@ export default function IngredientDetailsScreen() {
                 : theme.colors.onSurfaceVariant
             }
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {Array.isArray(ingredient.tags) && ingredient.tags.length > 0 && (
@@ -781,6 +801,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   iconButton: { marginLeft: 12, padding: 4 },
+  pressedIcon: { opacity: 0.7, transform: [{ scale: 0.92 }] },
 
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
