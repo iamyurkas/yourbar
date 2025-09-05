@@ -22,6 +22,11 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
+import {
+  getIgnoreGarnish,
+  getAllowSubstitutes,
+} from "../../storage/settingsStorage";
+import { initIngredientsAvailability } from "../../utils/ingredientsAvailabilityCache";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -31,15 +36,15 @@ export default function AllIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients } = useIngredientsData();
+  const { ingredients, loading, setIngredients, cocktails, usageMap } =
+    useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  // Use refs to buffer DB writes without triggering re-renders on each toggle
+  // Buffer DB writes and flush them when leaving the screen
   const pendingUpdatesRef = React.useRef([]);
-  const flushTimerRef = React.useRef(null);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
@@ -64,32 +69,32 @@ export default function AllIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
+  const flushPending = useCallback(async () => {
     const list = pendingUpdatesRef.current;
     if (list && list.length) {
       pendingUpdatesRef.current = [];
-      flushPendingIngredients(list).catch(() => {});
+      try {
+        await flushPendingIngredients(list);
+      } catch {}
+      try {
+        const [ignore, allow] = await Promise.all([
+          getIgnoreGarnish(),
+          getAllowSubstitutes(),
+        ]);
+        initIngredientsAvailability(ingredients, cocktails, usageMap, ignore, allow);
+      } catch {}
     }
-  }, []);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-    flushTimerRef.current = setTimeout(() => {
-      flushTimerRef.current = null;
-      flushPending();
-    }, 300);
-  }, [flushPending]);
-
-  // No dependency-based effect needed: scheduling is handled via refs
+  }, [ingredients, cocktails, usageMap]);
 
   useEffect(() => {
-    if (!isFocused) flushPending();
+    if (!isFocused) {
+      flushPending().catch(() => {});
+    }
   }, [isFocused, flushPending]);
 
   useEffect(() => {
     return () => {
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-      flushPending();
+      flushPending().catch(() => {});
     };
   }, [flushPending]);
 
@@ -117,10 +122,9 @@ export default function AllIngredientsScreen() {
       });
       if (updated) {
         pendingUpdatesRef.current.push(updated);
-        scheduleFlush();
       }
     },
-    [setIngredients, scheduleFlush]
+    [setIngredients]
   );
 
   const onItemPress = useCallback(
