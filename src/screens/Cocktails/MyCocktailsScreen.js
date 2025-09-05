@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, InteractionManager } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
@@ -259,17 +259,17 @@ export default function MyCocktailsScreen() {
         return updateIngredientById(prev, updated);
       });
       if (updated) {
-        // Defer global context update a tick to prioritize UI
-        requestAnimationFrame(() => {
+        pendingUpdatesRef.current.push(updated);
+        // Defer heavy updates until after interactions complete
+        InteractionManager.runAfterInteractions(() => {
           setGlobalIngredients((list) =>
             updateIngredientById(list, {
               id,
               inShoppingList: updated.inShoppingList,
             })
           );
+          scheduleFlush();
         });
-        pendingUpdatesRef.current.push(updated);
-        scheduleFlush();
       }
     },
     [setGlobalIngredients, setIngredients, scheduleFlush]
