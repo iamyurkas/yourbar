@@ -67,10 +67,7 @@ import TinyDivider from "../../components/TinyDivider";
 import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
-import {
-  addCocktailToUsageMap,
-  applyUsageMapToIngredients,
-} from "../../utils/ingredientUsage";
+import { applyUsageMapToIngredients } from "../../utils/ingredientUsage";
 import { getAllowSubstitutes } from "../../storage/settingsStorage";
 import { getAllIngredients } from "../../storage/ingredientsStorage";
 
@@ -206,8 +203,7 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { cocktails, setCocktails, usageMap, setUsageMap } =
-    useIngredientUsage();
+  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
     useIngredientsData();
   const initialCocktail = route.params?.initialCocktail;
@@ -674,18 +670,16 @@ export default function AddCocktailScreen() {
       }
 
       const allowSubs = await getAllowSubstitutes();
-      setCocktails((prev) => {
-        const next = [...prev, created];
-        const nextUsage = addCocktailToUsageMap(
-          usageMap,
-          globalIngredients,
-          created,
-          { allowSubstitutes: !!allowSubs }
-        );
-        setUsageMap(nextUsage);
-        setIngredients(applyUsageMapToIngredients(globalIngredients, nextUsage, next));
-        return next;
+      const nextCocktails = [...cocktails, created];
+      const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+        prevCocktails: cocktails,
+        changedCocktailIds: [created.id],
+        allowSubstitutes: !!allowSubs,
       });
+      setCocktails(nextCocktails);
+      setIngredients(
+        applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
+      );
 
       if (fromIngredientFlow) {
         navigation.replace("CocktailDetails", {
@@ -712,10 +706,10 @@ export default function AddCocktailScreen() {
     instructions,
     glassId,
     ings,
-    usageMap,
+    cocktails,
     globalIngredients,
     setCocktails,
-    setUsageMap,
+    updateUsageMap,
     setIngredients,
     navigation,
     fromIngredientFlow,

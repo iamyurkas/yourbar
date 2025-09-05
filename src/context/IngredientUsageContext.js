@@ -7,7 +7,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { updateUsageMap as updateUsageMapUtil } from "../utils/ingredientUsage";
+import { updateUsageMap as updateUsageMapIncremental } from "../utils/ingredientUsage";
 import { sortByName } from "../utils/sortByName";
 import { groupIngredientsByTag } from "../utils/groupIngredientsByTag";
 
@@ -59,10 +59,13 @@ export function IngredientUsageProvider({ children }) {
   }, []);
 
   const updateUsageMap = useCallback(
-    (ingredients, cocktails, options) => {
-      setUsageMap((prev) =>
-        updateUsageMapUtil(prev, ingredients, cocktails, options)
-      );
+    (ingredients, cocktails, options = {}) => {
+      let next;
+      setUsageMap((prev) => {
+        next = updateUsageMapIncremental(prev, ingredients, cocktails, options);
+        return next;
+      });
+      return next;
     },
     []
   );
