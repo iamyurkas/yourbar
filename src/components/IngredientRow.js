@@ -167,15 +167,24 @@ function IngredientRow({
 
         {onRemove ? (
           <Pressable
-            onPress={() => onRemove(id)}
+            onPress={() => {
+              setOptimisticInShopping(!currentInShopping);
+              onRemove(id);
+            }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.removeButton, pressed && styles.pressedRemove]}
           >
             <MaterialIcons
-              name="remove-shopping-cart"
+              name={
+                currentInShopping ? "remove-shopping-cart" : "add-shopping-cart"
+              }
               size={22}
-              color={theme.colors.error}
+              color={
+                currentInShopping
+                  ? theme.colors.error
+                  : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         ) : onToggleInBar ? (
