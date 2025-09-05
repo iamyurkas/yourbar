@@ -60,9 +60,8 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  // Buffer shopping-list writes via refs to avoid extra renders
-  const pendingUpdatesRef = React.useRef([]);
-  const flushTimerRef = React.useRef(null);
+  // Collect shopping-list toggles and apply on screen exit
+  const pendingIdsRef = React.useRef(new Set());
   const { setIngredients: setGlobalIngredients } = useIngredientsData();
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
@@ -87,41 +86,46 @@ export default function MyCocktailsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    const list = pendingUpdatesRef.current;
-    if (list && list.length) {
-      pendingUpdatesRef.current = [];
+  const flushPending = useCallback(async () => {
+    const ids = Array.from(pendingIdsRef.current);
+    if (!ids.length) return;
+    pendingIdsRef.current = new Set();
+    let items = [];
+    setIngredients((prev) => {
+      const next = new Map(prev);
+      ids.forEach((id) => {
+        const item = next.get(id);
+        if (item) {
+          const updated = { ...item, inShoppingList: !item.inShoppingList };
+          next.set(id, updated);
+          items.push(updated);
+        }
+      });
+      return next;
+    });
+    if (items.length) {
       setGlobalIngredients((prev) => {
         let next = prev;
-        list.forEach((item) => {
+        items.forEach((item) => {
           next = updateIngredientById(next, item);
         });
         return next;
       });
-      flushPendingIngredients(list).catch(() => {});
+      try {
+        await flushPendingIngredients(items);
+      } catch {}
     }
-  }, [setGlobalIngredients]);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-    flushTimerRef.current = setTimeout(() => {
-      flushTimerRef.current = null;
-      flushPending();
-    }, 300);
-  }, [flushPending]);
-
-  // no dependency effect; scheduling via refs
+  }, [setIngredients, setGlobalIngredients]);
 
   useEffect(() => {
     if (!isFocused) {
-      flushPending();
+      flushPending().catch(() => {});
     }
   }, [isFocused, flushPending]);
 
   useEffect(() => {
     return () => {
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-      flushPending();
+      flushPending().catch(() => {});
     };
   }, [flushPending]);
 
@@ -256,22 +260,11 @@ export default function MyCocktailsScreen() {
     [navigation]
   );
 
-  const toggleShoppingList = useCallback(
-    (id) => {
-      let updated;
-      setIngredients((prev) => {
-        const item = prev.get(id);
-        if (!item) return prev;
-        updated = { ...item, inShoppingList: !item.inShoppingList };
-        return updateIngredientById(prev, updated);
-      });
-      if (updated) {
-        pendingUpdatesRef.current.push(updated);
-        scheduleFlush();
-      }
-    },
-    [setIngredients, scheduleFlush]
-  );
+  const toggleShoppingList = useCallback((id) => {
+    const set = pendingIdsRef.current;
+    if (set.has(id)) set.delete(id);
+    else set.add(id);
+  }, []);
 
   const renderItem = useCallback(
     ({ item }) => {
