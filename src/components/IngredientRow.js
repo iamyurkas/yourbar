@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { View, Text, Image, Pressable, StyleSheet, Platform, InteractionManager } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { withAlpha } from "../utils/color";
@@ -183,11 +183,7 @@ function IngredientRow({
             onPress={() => {
               // Update UI immediately
               setOptimisticInBar(!currentInBar);
-              // Defer heavy computations until after the current frame/interactions
-              InteractionManager.runAfterInteractions(() => {
-                // Small timeout to ensure the frame commits before work
-                setTimeout(() => onToggleInBar(id), 0);
-              });
+              onToggleInBar(id);
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
@@ -203,9 +199,7 @@ function IngredientRow({
           <Pressable
             onPress={() => {
               setOptimisticInShopping(!currentInShopping);
-              InteractionManager.runAfterInteractions(() => {
-                setTimeout(() => onToggleShoppingList(id), 0);
-              });
+              onToggleShoppingList(id);
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
