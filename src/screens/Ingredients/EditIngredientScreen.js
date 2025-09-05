@@ -52,6 +52,7 @@ import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
 import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
+import { withAlpha } from "../../utils/color";
 
 // ----------- helpers -----------
 const IMAGE_SIZE = 150;
@@ -82,7 +83,8 @@ export default function EditIngredientScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([]);
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
-  const [saving, setSaving] = useState(false);
+  // disable save button and display loader while ingredient updates persist
+  const [savingInProgress, setSavingInProgress] = useState(false);
 
   // reference lists / tags modal
   const {
@@ -354,7 +356,7 @@ export default function EditIngredientScreen() {
 
   const handleSave = useCallback(
     (stay = false) => {
-      if (saving) return;
+      if (savingInProgress) return;
       const trimmed = name.trim();
       if (!trimmed) {
         showInfo("Validation", "Please enter a name for the ingredient.");
@@ -362,7 +364,7 @@ export default function EditIngredientScreen() {
       }
       if (!ingredient) return;
 
-      setSaving(true);
+      setSavingInProgress(true);
 
       const updated = {
         ...ingredient,
@@ -415,8 +417,8 @@ export default function EditIngredientScreen() {
           else arr.splice(idx, 0, newItem);
           return new Map(arr.map((i) => [i.id, i]));
         });
-        saveIngredient(updated).catch(() => {});
-        if (stay) setSaving(false);
+        saveIngredient(updated).catch(() => setSavingInProgress(false));
+        if (stay) setSavingInProgress(false);
       });
 
       return updated;
@@ -435,7 +437,7 @@ export default function EditIngredientScreen() {
       setGlobalIngredients,
       saveIngredient,
       collator,
-      saving,
+      savingInProgress,
       showInfo,
     ]
   );
@@ -767,17 +769,17 @@ export default function EditIngredientScreen() {
             styles.saveButton,
             {
               backgroundColor: theme.colors.primary,
-              opacity: saving ? 0.7 : 1,
+              opacity: savingInProgress ? 0.7 : 1,
             },
           ]}
           onPress={() => handleSave(false)}
-          disabled={saving}
-          android_ripple={{ color: theme.colors.onPrimary }}
+          disabled={savingInProgress}
+          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Changes
           </Text>
-          {saving && (
+          {savingInProgress && (
             <ActivityIndicator
               size="small"
               color={theme.colors.onPrimary}

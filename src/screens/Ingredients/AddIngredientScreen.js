@@ -91,7 +91,8 @@ export default function AddIngredientScreen() {
     const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
     return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
-  const [saving, setSaving] = useState(false);
+  // disable the save button and show a spinner while persisting an ingredient
+  const [savingInProgress, setSavingInProgress] = useState(false);
 
   // tag helpers & modal state
   const {
@@ -298,13 +299,13 @@ export default function AddIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(() => {
-    if (saving) return;
+    if (savingInProgress) return;
     const trimmed = (name || "").trim();
     if (!trimmed) {
       showInfo("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    setSaving(true);
+    setSavingInProgress(true);
 
     const searchName = normalizeSearch(trimmed);
     const saved = {
@@ -348,8 +349,8 @@ export default function AddIngredientScreen() {
     setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
 
     InteractionManager.runAfterInteractions(() => {
-      addIngredient(saved).catch(() => {});
-    });
+    addIngredient(saved).catch(() => setSavingInProgress(false));
+  });
   }, [
     name,
     description,
@@ -364,7 +365,7 @@ export default function AddIngredientScreen() {
     setGlobalIngredients,
     setUsageMap,
     collator,
-    saving,
+    savingInProgress,
   ]);
 
   const openMenu = useCallback(() => {
@@ -664,17 +665,17 @@ export default function AddIngredientScreen() {
             styles.saveButton,
             {
               backgroundColor: theme.colors.primary,
-              opacity: saving ? 0.7 : 1,
+              opacity: savingInProgress ? 0.7 : 1,
             },
           ]}
           onPress={handleSave}
-          disabled={saving}
+          disabled={savingInProgress}
           android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
         >
           <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
             Save Ingredient
           </Text>
-          {saving && (
+          {savingInProgress && (
             <ActivityIndicator
               size="small"
               color={theme.colors.onPrimary}
