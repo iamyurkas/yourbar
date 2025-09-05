@@ -353,15 +353,13 @@ export default function IngredientDetailsScreen() {
     setIngredient(updated);
     // Defer heavier global updates and DB write until after interactions
     InteractionManager.runAfterInteractions(() => {
-      setTimeout(() => {
-        setIngredients((list) =>
-          updateIngredientById(list, {
-            id: updated.id,
-            inBar: updated.inBar,
-          })
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar });
-      }, 0);
+      setIngredients((list) =>
+        updateIngredientById(list, {
+          id: updated.id,
+          inBar: updated.inBar,
+        })
+      );
+      updateIngredientFields(updated.id, { inBar: updated.inBar });
     });
   }, [ingredient, setIngredients]);
 
@@ -373,19 +371,17 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write after interactions
+    // Defer global list update and DB write until after interactions
     InteractionManager.runAfterInteractions(() => {
-      setTimeout(() => {
-        setIngredients((list) =>
-          updateIngredientById(list, {
-            id: updated.id,
-            inShoppingList: updated.inShoppingList,
-          })
-        );
-        updateIngredientFields(updated.id, {
+      setIngredients((list) =>
+        updateIngredientById(list, {
+          id: updated.id,
           inShoppingList: updated.inShoppingList,
-        });
-      }, 0);
+        })
+      );
+      updateIngredientFields(updated.id, {
+        inShoppingList: updated.inShoppingList,
+      });
     });
   }, [ingredient, setIngredients]);
 
