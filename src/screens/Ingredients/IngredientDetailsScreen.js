@@ -58,7 +58,15 @@ import { withAlpha } from "../../utils/color";
 const PHOTO_SIZE = 150;
 const THUMB = 40;
 
-function buildDetails(all, cocktails, loaded, ig = true, allowSubs = true) {
+function buildDetails(
+  all,
+  cocktails,
+  loaded,
+  ig = true,
+  allowSubs = true,
+  byId,
+  byBase
+) {
   if (!loaded) return { children: [], base: null, used: [] };
   const children = all
     .filter((i) => i.baseIngredientId === loaded.id)
@@ -68,11 +76,13 @@ function buildDetails(all, cocktails, loaded, ig = true, allowSubs = true) {
     baseId != null ? all.find((i) => i.id === baseId) || null : null;
   const map = mapCocktailsByIngredient(all, cocktails, {
     allowSubstitutes: allowSubs,
+    byId,
+    byBase,
   });
-  const byId = new Map(cocktails.map((c) => [c.id, c]));
+  const cocktailById = new Map(cocktails.map((c) => [c.id, c]));
   const { ingMap, findBrand } = buildIngredientIndex(all);
   const list = (map[loaded.id] || [])
-    .map((cid) => byId.get(cid))
+    .map((cid) => cocktailById.get(cid))
     .filter(Boolean)
     .map((c) => {
       const { ingredientLine, isAllAvailable, hasBranded } =
@@ -168,6 +178,7 @@ export default function IngredientDetailsScreen() {
     ingredients = [],
     cocktails: cocktailsCtx = [],
     ingredientsById,
+    ingredientsByBase,
     updateUsageMap,
   } = useIngredientUsage();
 
@@ -176,7 +187,7 @@ export default function IngredientDetailsScreen() {
     children: initialChildren,
     base: initialBase,
     used: initialUsed,
-  } = buildDetails(ingredients, cocktailsCtx, initial);
+  } = buildDetails(ingredients, cocktailsCtx, initial, true, true, ingredientsById, ingredientsByBase);
 
   const [ingredient, setIngredient] = useState(initial);
   const [brandedChildren, setBrandedChildren] = useState(initialChildren);
@@ -193,7 +204,11 @@ export default function IngredientDetailsScreen() {
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
-      current
+      current,
+      true,
+      true,
+      ingredientsById,
+      ingredientsByBase
     );
     setBrandedChildren(children);
     setBaseIngredient(base);
@@ -203,6 +218,7 @@ export default function IngredientDetailsScreen() {
     ingredients,
     cocktailsCtx,
     ingredientsById,
+    ingredientsByBase,
     route.params?.initialIngredient,
   ]);
 
@@ -307,12 +323,21 @@ export default function IngredientDetailsScreen() {
       ]);
       const loaded = ingredientsById.get(id) || all.find((i) => i.id === id);
       setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
+      const byId = new Map(all.map((i) => [i.id, i]));
+      const byBase = new Map();
+      all.forEach((i) => {
+        const baseId = i.baseIngredientId ?? i.id;
+        if (!byBase.has(baseId)) byBase.set(baseId, []);
+        byBase.get(baseId).push(i);
+      });
       const { children, base, used } = buildDetails(
         all,
         cocktails,
         loaded,
         ig,
-        allowSubs
+        allowSubs,
+        byId,
+        byBase
       );
       setBrandedChildren(children);
       setBaseIngredient(base);
