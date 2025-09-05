@@ -44,6 +44,7 @@ import TagPill from "../../components/TagPill";
 import IngredientBaseRow, {
   INGREDIENT_BASE_ROW_HEIGHT,
 } from "../../components/IngredientBaseRow";
+import SaveButton from "../../components/SaveButton";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
@@ -762,29 +763,11 @@ export default function EditIngredientScreen() {
           multiline
         />
 
-        <Pressable
-          style={[
-            styles.saveButton,
-            {
-              backgroundColor: theme.colors.primary,
-              opacity: saving ? 0.7 : 1,
-            },
-          ]}
+        <SaveButton
+          title="Save Changes"
+          saving={saving}
           onPress={() => handleSave(false)}
-          disabled={saving}
-          android_ripple={{ color: theme.colors.onPrimary }}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Changes
-          </Text>
-          {saving && (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.onPrimary}
-              style={{ marginLeft: 8 }}
-            />
-          )}
-        </Pressable>
+        />
 
       </ScrollView>
     </View>
@@ -920,13 +903,4 @@ const styles = StyleSheet.create({
   },
   menuImg: { width: 40, height: 40, aspectRatio: 1, borderRadius: 8, resizeMode: "contain" },
 
-  saveButton: {
-    marginTop: 24,
-    paddingVertical: 12,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-    borderRadius: 8,
-  },
 });

@@ -16,7 +16,6 @@ import {
   ScrollView,
   FlatList,
   InteractionManager,
-  ActivityIndicator,
   Pressable,
   BackHandler,
   Dimensions,
@@ -43,6 +42,7 @@ import TagPill from "../../components/TagPill";
 import IngredientBaseRow, {
   INGREDIENT_BASE_ROW_HEIGHT,
 } from "../../components/IngredientBaseRow";
+import SaveButton from "../../components/SaveButton";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
 import { normalizeSearch } from "../../utils/normalizeSearch";
@@ -659,29 +659,11 @@ export default function AddIngredientScreen() {
           multiline
         />
 
-        <Pressable
-          style={[
-            styles.saveButton,
-            {
-              backgroundColor: theme.colors.primary,
-              opacity: saving ? 0.7 : 1,
-            },
-          ]}
+        <SaveButton
+          title="Save Ingredient"
+          saving={saving}
           onPress={handleSave}
-          disabled={saving}
-          android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
-        >
-          <Text style={{ color: theme.colors.onPrimary, fontWeight: "bold" }}>
-            Save Ingredient
-          </Text>
-          {saving && (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.onPrimary}
-              style={{ marginLeft: 8 }}
-            />
-          )}
-        </Pressable>
+        />
       </ScrollView>
     </View>
       <IngredientTagsModal
@@ -751,13 +733,4 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  saveButton: {
-    marginTop: 24,
-    paddingVertical: 12,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-    borderRadius: 8,
-  },
 });
