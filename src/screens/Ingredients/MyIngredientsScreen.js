@@ -12,10 +12,7 @@ import IngredientRow, {
 } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { toggleIngredientsInBar } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -47,8 +44,8 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  // Buffer DB writes in refs to avoid re-renders on every toggle
-  const pendingUpdatesRef = React.useRef([]);
+  // Collect toggled ingredient IDs and flush on screen exit
+  const pendingIdsRef = React.useRef(new Set());
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -96,14 +93,24 @@ export default function MyIngredientsScreen() {
   }, [search]);
 
   const flushPending = useCallback(async () => {
-    const list = pendingUpdatesRef.current;
-    if (list && list.length) {
-      pendingUpdatesRef.current = [];
+    const ids = Array.from(pendingIdsRef.current);
+    if (ids.length) {
+      pendingIdsRef.current = new Set();
       try {
-        await flushPendingIngredients(list);
+        await toggleIngredientsInBar(ids);
       } catch {}
+      let updatedList;
+      setIngredients((prev) => {
+        const next = new Map(prev);
+        ids.forEach((id) => {
+          const item = next.get(id);
+          if (item) next.set(id, { ...item, inBar: !item.inBar });
+        });
+        updatedList = Array.from(next.values());
+        return next;
+      });
       const map = initIngredientsAvailability(
-        ingredients,
+        updatedList,
         cocktails,
         usageMap,
         ignoreGarnish,
@@ -112,7 +119,7 @@ export default function MyIngredientsScreen() {
       setAvailableMap(new Map(map));
     }
   }, [
-    ingredients,
+    setIngredients,
     cocktails,
     usageMap,
     ignoreGarnish,
@@ -155,21 +162,11 @@ export default function MyIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback(
-    (id) => {
-      let updated;
-      setIngredients((prev) => {
-        const item = prev.get(id);
-        if (!item) return prev;
-        updated = { ...item, inBar: !item.inBar };
-        return updateIngredientById(prev, updated);
-      });
-      if (updated) {
-        pendingUpdatesRef.current.push(updated);
-      }
-    },
-    [setIngredients]
-  );
+  const toggleInBar = useCallback((id) => {
+    const set = pendingIdsRef.current;
+    if (set.has(id)) set.delete(id);
+    else set.add(id);
+  }, []);
 
   const onItemPress = useCallback(
     (id) => {

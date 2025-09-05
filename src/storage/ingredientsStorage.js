@@ -285,6 +285,21 @@ export async function flushPendingIngredients(list) {
   });
 }
 
+export async function toggleIngredientsInBar(ids) {
+  const list = Array.isArray(ids)
+    ? Array.from(new Set(ids.filter((id) => id != null)))
+    : [];
+  if (!list.length) return;
+  await initDatabase();
+  const placeholders = list.map(() => "?").join(", ");
+  await withWriteTransactionAsync(async (tx) => {
+    await tx.runAsync(
+      `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
+      list.map((id) => String(id))
+    );
+  });
+}
+
 export function getIngredientById(id, index) {
   return index ? index[id] : null;
 }

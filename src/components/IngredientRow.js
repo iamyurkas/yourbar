@@ -32,7 +32,7 @@ function IngredientRow({
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
 
-  // Optimistic local state: reflect checkbox immediately, then run heavy updates
+  // Optimistic local state: reflect checkbox immediately; DB writes are deferred
   const [optimisticInBar, setOptimisticInBar] = useState(null);
   const currentInBar = optimisticInBar != null ? optimisticInBar : inBar;
   const [optimisticInShopping, setOptimisticInShopping] = useState(null);
