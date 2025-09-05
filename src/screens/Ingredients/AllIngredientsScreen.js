@@ -12,16 +12,18 @@ import IngredientRow, {
 } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import {
-  flushPendingIngredients,
-  updateIngredientById,
-} from "../../storage/ingredientsStorage";
+import { toggleIngredientsInBar } from "../../storage/ingredientsStorage";
 import { getAllTags } from "../../storage/ingredientTagsStorage";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
+import {
+  getIgnoreGarnish,
+  getAllowSubstitutes,
+} from "../../storage/settingsStorage";
+import { initIngredientsAvailability } from "../../utils/ingredientsAvailabilityCache";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -31,15 +33,15 @@ export default function AllIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients } = useIngredientsData();
+  const { ingredients, loading, setIngredients, cocktails, usageMap } =
+    useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  // Use refs to buffer DB writes without triggering re-renders on each toggle
-  const pendingUpdatesRef = React.useRef([]);
-  const flushTimerRef = React.useRef(null);
+  // Collect toggled ingredient IDs and flush on screen exit
+  const pendingIdsRef = React.useRef(new Set());
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
@@ -64,32 +66,42 @@ export default function AllIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(() => {
-    const list = pendingUpdatesRef.current;
-    if (list && list.length) {
-      pendingUpdatesRef.current = [];
-      flushPendingIngredients(list).catch(() => {});
+  const flushPending = useCallback(async () => {
+    const ids = Array.from(pendingIdsRef.current);
+    if (ids.length) {
+      pendingIdsRef.current = new Set();
+      try {
+        await toggleIngredientsInBar(ids);
+      } catch {}
+      let updatedList;
+      setIngredients((prev) => {
+        const next = new Map(prev);
+        ids.forEach((id) => {
+          const item = next.get(id);
+          if (item) next.set(id, { ...item, inBar: !item.inBar });
+        });
+        updatedList = Array.from(next.values());
+        return next;
+      });
+      try {
+        const [ignore, allow] = await Promise.all([
+          getIgnoreGarnish(),
+          getAllowSubstitutes(),
+        ]);
+        initIngredientsAvailability(updatedList, cocktails, usageMap, ignore, allow);
+      } catch {}
     }
-  }, []);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-    flushTimerRef.current = setTimeout(() => {
-      flushTimerRef.current = null;
-      flushPending();
-    }, 300);
-  }, [flushPending]);
-
-  // No dependency-based effect needed: scheduling is handled via refs
+  }, [setIngredients, cocktails, usageMap]);
 
   useEffect(() => {
-    if (!isFocused) flushPending();
+    if (!isFocused) {
+      flushPending().catch(() => {});
+    }
   }, [isFocused, flushPending]);
 
   useEffect(() => {
     return () => {
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-      flushPending();
+      flushPending().catch(() => {});
     };
   }, [flushPending]);
 
@@ -106,22 +118,11 @@ export default function AllIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback(
-    (id) => {
-      let updated;
-      setIngredients((prev) => {
-        const item = prev.get(id);
-        if (!item) return prev;
-        updated = { ...item, inBar: !item.inBar };
-        return updateIngredientById(prev, updated);
-      });
-      if (updated) {
-        pendingUpdatesRef.current.push(updated);
-        scheduleFlush();
-      }
-    },
-    [setIngredients, scheduleFlush]
-  );
+  const toggleInBar = useCallback((id) => {
+    const set = pendingIdsRef.current;
+    if (set.has(id)) set.delete(id);
+    else set.add(id);
+  }, []);
 
   const onItemPress = useCallback(
     (id) => {

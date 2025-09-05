@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { View, Text, Image, Pressable, StyleSheet, Platform, InteractionManager } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { withAlpha } from "../utils/color";
@@ -32,7 +32,7 @@ function IngredientRow({
   const theme = useTheme();
   const isBranded = baseIngredientId != null;
 
-  // Optimistic local state: reflect checkbox immediately, then run heavy updates
+  // Optimistic local state: reflect checkbox immediately; DB writes are deferred
   const [optimisticInBar, setOptimisticInBar] = useState(null);
   const currentInBar = optimisticInBar != null ? optimisticInBar : inBar;
   const [optimisticInShopping, setOptimisticInShopping] = useState(null);
@@ -167,15 +167,24 @@ function IngredientRow({
 
         {onRemove ? (
           <Pressable
-            onPress={() => onRemove(id)}
+            onPress={() => {
+              setOptimisticInShopping(!currentInShopping);
+              onRemove(id);
+            }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
             style={({ pressed }) => [styles.removeButton, pressed && styles.pressedRemove]}
           >
             <MaterialIcons
-              name="remove-shopping-cart"
+              name={
+                currentInShopping ? "remove-shopping-cart" : "add-shopping-cart"
+              }
               size={22}
-              color={theme.colors.error}
+              color={
+                currentInShopping
+                  ? theme.colors.error
+                  : theme.colors.onSurfaceVariant
+              }
             />
           </Pressable>
         ) : onToggleInBar ? (
@@ -183,11 +192,7 @@ function IngredientRow({
             onPress={() => {
               // Update UI immediately
               setOptimisticInBar(!currentInBar);
-              // Defer heavy computations until after the current frame/interactions
-              InteractionManager.runAfterInteractions(() => {
-                // Small timeout to ensure the frame commits before work
-                setTimeout(() => onToggleInBar(id), 0);
-              });
+              onToggleInBar(id);
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
@@ -203,9 +208,7 @@ function IngredientRow({
           <Pressable
             onPress={() => {
               setOptimisticInShopping(!currentInShopping);
-              InteractionManager.runAfterInteractions(() => {
-                setTimeout(() => onToggleShoppingList(id), 0);
-              });
+              onToggleShoppingList(id);
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             android_ripple={{ ...ripple, borderless: true }}
