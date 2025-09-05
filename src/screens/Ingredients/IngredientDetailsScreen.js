@@ -420,6 +420,7 @@ export default function IngredientDetailsScreen() {
 
       getAllowSubstitutes().then((allow) => {
         updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+          prevIngredients: ingredients,
           changedIngredientIds: changedIds,
           allowSubstitutes: !!allow,
         });

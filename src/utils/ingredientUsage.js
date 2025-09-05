@@ -72,28 +72,93 @@ export function calculateIngredientUsage(ingredients, cocktails, options = {}) {
 }
 
 export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
-  const { changedIngredientIds = [], changedCocktailIds = [], allowSubstitutes = false } = options;
-  const fullMap = mapCocktailsByIngredient(ingredients, cocktails, { allowSubstitutes });
-  if (
-    changedIngredientIds.length === 0 &&
-    changedCocktailIds.length === 0
-  ) {
-    return fullMap;
-  }
-  const affected = new Set(changedIngredientIds);
-  if (changedCocktailIds.length > 0) {
-    for (const [ingId, ids] of Object.entries(fullMap)) {
-      if (ids.some((id) => changedCocktailIds.includes(id))) {
-        affected.add(Number(ingId));
+  const {
+    changedIngredientIds = [],
+    changedCocktailIds = [],
+    prevCocktails = [],
+    prevIngredients = [],
+    allowSubstitutes = false,
+  } = options;
+  let map = { ...prevMap };
+
+  const prevCocktailsById = new Map(prevCocktails.map((c) => [c.id, c]));
+  const nextCocktailsById = new Map(cocktails.map((c) => [c.id, c]));
+  const prevIngs = prevIngredients.length > 0 ? prevIngredients : ingredients;
+
+  // Handle changed cocktails (added/edited/removed)
+  changedCocktailIds.forEach((id) => {
+    const prevC = prevCocktailsById.get(id);
+    if (prevC) {
+      map = removeCocktailFromUsageMap(map, prevIngs, prevC, {
+        allowSubstitutes,
+      });
+    } else {
+      // Ensure removed id is not present
+      for (const ingId of Object.keys(map)) {
+        const arr = map[ingId];
+        const idx = arr.indexOf(id);
+        if (idx >= 0) {
+          arr.splice(idx, 1);
+          if (arr.length === 0) delete map[ingId];
+        }
       }
     }
-  }
-  const next = { ...prevMap };
-  affected.forEach((id) => {
-    if (fullMap[id]) next[id] = fullMap[id];
-    else delete next[id];
+    const nextC = nextCocktailsById.get(id);
+    if (nextC) {
+      map = addCocktailToUsageMap(map, ingredients, nextC, {
+        allowSubstitutes,
+      });
+    }
   });
-  return next;
+
+  // Handle changed ingredients
+  if (changedIngredientIds.length > 0) {
+    const changedSet = new Set(changedIngredientIds);
+    const prevIngsById = new Map(prevIngs.map((i) => [i.id, i]));
+    const nextIngsById = new Map(ingredients.map((i) => [i.id, i]));
+    const affectedCocktails = new Set();
+
+    cocktails.forEach((cocktail) => {
+      if (!Array.isArray(cocktail.ingredients)) return;
+      for (const r of cocktail.ingredients) {
+        const ingPrev = prevIngsById.get(r.ingredientId);
+        const ingNext = nextIngsById.get(r.ingredientId);
+        const basePrev = ingPrev?.baseIngredientId ?? ingPrev?.id;
+        const baseNext = ingNext?.baseIngredientId ?? ingNext?.id;
+        if (
+          changedSet.has(r.ingredientId) ||
+          changedSet.has(basePrev) ||
+          changedSet.has(baseNext)
+        ) {
+          affectedCocktails.add(cocktail.id);
+          break;
+        }
+        if (Array.isArray(r.substitutes)) {
+          if (r.substitutes.some((s) => changedSet.has(s.id))) {
+            affectedCocktails.add(cocktail.id);
+            break;
+          }
+        }
+      }
+    });
+
+    affectedCocktails.forEach((id) => {
+      const prevC = prevCocktailsById.get(id) || nextCocktailsById.get(id);
+      if (prevC) {
+        map = removeCocktailFromUsageMap(map, prevIngs, prevC, {
+          allowSubstitutes,
+        });
+      }
+      const nextC = nextCocktailsById.get(id);
+      if (nextC) {
+        map = addCocktailToUsageMap(map, ingredients, nextC, {
+          allowSubstitutes,
+        });
+      }
+    });
+  }
+
+  return map;
 }
 
 export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = {}) {
