@@ -17,6 +17,7 @@ const IngredientUsageContext = createContext({
   updateUsageMap: () => {},
   ingredients: [],
   ingredientsById: new Map(),
+  ingredientsByBase: new Map(),
   setIngredients: () => {},
   cocktails: [],
   setCocktails: () => {},
@@ -38,11 +39,22 @@ export function IngredientUsageProvider({ children }) {
   const [baseIngredients, setBaseIngredients] = useState([]);
   const [ingredientTags, setIngredientTags] = useState([]);
   const [importing, setImporting] = useState(false);
-
   const ingredients = useMemo(
     () => Array.from(ingredientsMap.values()),
     [ingredientsMap]
   );
+
+  const ingredientsById = useMemo(() => ingredientsMap, [ingredientsMap]);
+
+  const ingredientsByBase = useMemo(() => {
+    const map = new Map();
+    ingredients.forEach((i) => {
+      const baseId = i.baseIngredientId ?? i.id;
+      if (!map.has(baseId)) map.set(baseId, []);
+      map.get(baseId).push(i);
+    });
+    return map;
+  }, [ingredients]);
 
   const ingredientsByTag = useMemo(
     () => groupIngredientsByTag(ingredients, ingredientTags),
@@ -59,15 +71,48 @@ export function IngredientUsageProvider({ children }) {
   }, []);
 
   const updateUsageMap = useCallback(
-    (ingredients, cocktails, options = {}) => {
+    (ings, cocks, options = {}) => {
+      const useCached = ings === ingredients;
+      const byId =
+        options.byId || (useCached ? ingredientsById : new Map(ings.map((i) => [i.id, i])));
+      const byBase =
+        options.byBase ||
+        (useCached
+          ? ingredientsByBase
+          : (() => {
+              const map = new Map();
+              ings.forEach((i) => {
+                const baseId = i.baseIngredientId ?? i.id;
+                if (!map.has(baseId)) map.set(baseId, []);
+                map.get(baseId).push(i);
+              });
+              return map;
+            })());
+      const opts = { ...options, byId, byBase };
+      if (options.prevIngredients && !options.prevById && !options.prevByBase) {
+        const prevById = new Map(
+          options.prevIngredients.map((i) => [i.id, i])
+        );
+        const prevByBase = (() => {
+          const map = new Map();
+          options.prevIngredients.forEach((i) => {
+            const baseId = i.baseIngredientId ?? i.id;
+            if (!map.has(baseId)) map.set(baseId, []);
+            map.get(baseId).push(i);
+          });
+          return map;
+        })();
+        opts.prevById = prevById;
+        opts.prevByBase = prevByBase;
+      }
       let next;
       setUsageMap((prev) => {
-        next = updateUsageMapIncremental(prev, ingredients, cocktails, options);
+        next = updateUsageMapIncremental(prev, ings, cocks, opts);
         return next;
       });
       return next;
     },
-    []
+    [ingredients, ingredientsById, ingredientsByBase]
   );
 
   const baseRef = useRef([]);
@@ -101,7 +146,8 @@ export function IngredientUsageProvider({ children }) {
         setUsageMap,
         updateUsageMap,
         ingredients,
-        ingredientsById: ingredientsMap,
+        ingredientsById,
+        ingredientsByBase,
         setIngredients,
         cocktails,
         setCocktails,

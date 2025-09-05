@@ -1,12 +1,17 @@
-export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
-  const { allowSubstitutes = false } = options;
-  const byId = new Map(ingredients.map((i) => [i.id, i]));
-  const byBase = new Map();
+function buildByBase(ingredients) {
+  const map = new Map();
   ingredients.forEach((i) => {
     const baseId = i.baseIngredientId ?? i.id;
-    if (!byBase.has(baseId)) byBase.set(baseId, []);
-    byBase.get(baseId).push(i);
+    if (!map.has(baseId)) map.set(baseId, []);
+    map.get(baseId).push(i);
   });
+  return map;
+}
+
+export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
+  const { allowSubstitutes = false, byId, byBase } = options;
+  const byIdMap = byId || new Map(ingredients.map((i) => [i.id, i]));
+  const byBaseMap = byBase || buildByBase(ingredients);
 
   const usageMap = new Map();
   const add = (id, cocktailId) => {
@@ -23,10 +28,10 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
     if (!Array.isArray(c.ingredients)) return;
     c.ingredients.forEach((r) => {
       if (r.ingredientId == null) return;
-      const ing = byId.get(r.ingredientId);
+      const ing = byIdMap.get(r.ingredientId);
       if (!ing) return;
       const baseId = ing.baseIngredientId ?? ing.id;
-      const group = byBase.get(baseId) || [];
+      const group = byBaseMap.get(baseId) || [];
 
       // direct usage
       add(ing.id, c.id);
@@ -78,12 +83,20 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
     prevCocktails = [],
     prevIngredients = [],
     allowSubstitutes = false,
+    byId,
+    byBase,
+    prevById,
+    prevByBase,
   } = options;
   let map = { ...prevMap };
 
   const prevCocktailsById = new Map(prevCocktails.map((c) => [c.id, c]));
   const nextCocktailsById = new Map(cocktails.map((c) => [c.id, c]));
   const prevIngs = prevIngredients.length > 0 ? prevIngredients : ingredients;
+  const nextById = byId || new Map(ingredients.map((i) => [i.id, i]));
+  const nextByBase = byBase || buildByBase(ingredients);
+  const prevByIdMap = prevById || new Map(prevIngs.map((i) => [i.id, i]));
+  const prevByBaseMap = prevByBase || buildByBase(prevIngs);
 
   // Handle changed cocktails (added/edited/removed)
   changedCocktailIds.forEach((id) => {
@@ -91,6 +104,8 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
     if (prevC) {
       map = removeCocktailFromUsageMap(map, prevIngs, prevC, {
         allowSubstitutes,
+        byId: prevByIdMap,
+        byBase: prevByBaseMap,
       });
     } else {
       // Ensure removed id is not present
@@ -107,6 +122,8 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
     if (nextC) {
       map = addCocktailToUsageMap(map, ingredients, nextC, {
         allowSubstitutes,
+        byId: nextById,
+        byBase: nextByBase,
       });
     }
   });
@@ -114,8 +131,8 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
   // Handle changed ingredients
   if (changedIngredientIds.length > 0) {
     const changedSet = new Set(changedIngredientIds);
-    const prevIngsById = new Map(prevIngs.map((i) => [i.id, i]));
-    const nextIngsById = new Map(ingredients.map((i) => [i.id, i]));
+    const prevIngsById = prevByIdMap;
+    const nextIngsById = nextById;
     const affectedCocktails = new Set();
 
     cocktails.forEach((cocktail) => {
@@ -147,12 +164,16 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
       if (prevC) {
         map = removeCocktailFromUsageMap(map, prevIngs, prevC, {
           allowSubstitutes,
+          byId: prevByIdMap,
+          byBase: prevByBaseMap,
         });
       }
       const nextC = nextCocktailsById.get(id);
       if (nextC) {
         map = addCocktailToUsageMap(map, ingredients, nextC, {
           allowSubstitutes,
+          byId: nextById,
+          byBase: nextByBase,
         });
       }
     });
@@ -162,15 +183,10 @@ export function updateUsageMap(prevMap, ingredients, cocktails, options = {}) {
 }
 
 export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = {}) {
-  const { allowSubstitutes = false } = options;
+  const { allowSubstitutes = false, byId, byBase } = options;
   const map = { ...prevMap };
-  const byId = new Map(ingredients.map((i) => [i.id, i]));
-  const byBase = new Map();
-  ingredients.forEach((i) => {
-    const baseId = i.baseIngredientId ?? i.id;
-    if (!byBase.has(baseId)) byBase.set(baseId, []);
-    byBase.get(baseId).push(i);
-  });
+  const byIdMap = byId || new Map(ingredients.map((i) => [i.id, i]));
+  const byBaseMap = byBase || buildByBase(ingredients);
   const add = (id) => {
     if (id == null) return;
     if (map[id]) {
@@ -182,10 +198,10 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = 
   if (Array.isArray(cocktail.ingredients)) {
     cocktail.ingredients.forEach((r) => {
       if (r.ingredientId == null) return;
-      const ing = byId.get(r.ingredientId);
+      const ing = byIdMap.get(r.ingredientId);
       if (!ing) return;
       const baseId = ing.baseIngredientId ?? ing.id;
-      const group = byBase.get(baseId) || [];
+      const group = byBaseMap.get(baseId) || [];
 
       add(ing.id);
 
@@ -211,16 +227,11 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = 
 }
 
 export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, options = {}) {
-  const { allowSubstitutes = false } = options;
+  const { allowSubstitutes = false, byId, byBase } = options;
   const map = { ...prevMap };
   if (!cocktail) return map;
-  const byId = new Map(ingredients.map((i) => [i.id, i]));
-  const byBase = new Map();
-  ingredients.forEach((i) => {
-    const baseId = i.baseIngredientId ?? i.id;
-    if (!byBase.has(baseId)) byBase.set(baseId, []);
-    byBase.get(baseId).push(i);
-  });
+  const byIdMap = byId || new Map(ingredients.map((i) => [i.id, i]));
+  const byBaseMap = byBase || buildByBase(ingredients);
   const remove = (id) => {
     if (id == null) return;
     const arr = map[id];
@@ -232,10 +243,10 @@ export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, optio
   if (Array.isArray(cocktail.ingredients)) {
     cocktail.ingredients.forEach((r) => {
       if (r.ingredientId == null) return;
-      const ing = byId.get(r.ingredientId);
+      const ing = byIdMap.get(r.ingredientId);
       if (!ing) return;
       const baseId = ing.baseIngredientId ?? ing.id;
-      const group = byBase.get(baseId) || [];
+      const group = byBaseMap.get(baseId) || [];
 
       remove(ing.id);
 
