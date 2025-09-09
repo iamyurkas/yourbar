@@ -13,11 +13,7 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../domain/cocktails";
-import {
-  getAllIngredients,
-  setIngredientsInShoppingList,
-  updateIngredientById,
-} from "../../domain/ingredients";
+import { getAllIngredients } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -31,7 +27,6 @@ import { getAllCocktailTags } from "../../data/cocktailTags";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../../components/CocktailRow";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
-import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
@@ -60,10 +55,8 @@ export default function MyCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  // Buffer shopping-list writes via refs to avoid extra renders
-  const pendingUpdatesRef = React.useRef([]);
-  const flushTimerRef = React.useRef(null);
-  const { setIngredients: setGlobalIngredients } = useIngredientsData();
+  // Local memory of shopping-list changes
+  const [shoppingListChanges, setShoppingListChanges] = useState(new Map());
   const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
     useIngredientUsage();
 
@@ -86,45 +79,6 @@ export default function MyCocktailsScreen() {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
-
-  const flushPending = useCallback(() => {
-    const list = pendingUpdatesRef.current;
-    if (list && list.length) {
-      pendingUpdatesRef.current = [];
-      const add = [];
-      const remove = [];
-      list.forEach((u) => {
-        (u.inShoppingList ? add : remove).push(u.id);
-      });
-      if (add.length)
-        setIngredientsInShoppingList(add, true).catch(() => {});
-      if (remove.length)
-        setIngredientsInShoppingList(remove, false).catch(() => {});
-    }
-  }, []);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-    flushTimerRef.current = setTimeout(() => {
-      flushTimerRef.current = null;
-      flushPending();
-    }, 300);
-  }, [flushPending]);
-
-  // no dependency effect; scheduling via refs
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending();
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-      flushPending();
-    };
-  }, [flushPending]);
 
   const firstLoad = useRef(true);
   useEffect(() => {
@@ -259,34 +213,19 @@ export default function MyCocktailsScreen() {
 
   const toggleShoppingList = useCallback(
     (id) => {
-      // Heavy recompute of cocktail availability makes the UI feel sluggish
-      // when executed immediately on press. Defer the actual state update to
-      // the next animation frame while the row itself applies an optimistic
-      // update (see IngredientRow) so the icon flips instantly.
       requestAnimationFrame(() => {
-        let updated;
-        setIngredients((prev) => {
-          const item = prev.get(id);
-          if (!item) return prev;
-          updated = { ...item, inShoppingList: !item.inShoppingList };
-          return updateIngredientById(prev, updated);
+        setShoppingListChanges((prev) => {
+          const next = new Map(prev);
+          const original = ingredients.get(id)?.inShoppingList || false;
+          const current = next.has(id) ? next.get(id) : original;
+          const updated = !current;
+          if (updated === original) next.delete(id);
+          else next.set(id, updated);
+          return next;
         });
-        if (updated) {
-          setGlobalIngredients((list) =>
-            updateIngredientById(list, {
-              id,
-              inShoppingList: updated.inShoppingList,
-            })
-          );
-          pendingUpdatesRef.current.push({
-            id,
-            inShoppingList: updated.inShoppingList,
-          });
-          scheduleFlush();
-        }
       });
     },
-    [setGlobalIngredients, setIngredients, scheduleFlush]
+    [ingredients]
   );
 
   const renderItem = useCallback(
@@ -311,6 +250,9 @@ export default function MyCocktailsScreen() {
       }
       if (item.type === "ingredient") {
         const ing = item.ingredient;
+        const inShopping = shoppingListChanges.has(ing.id)
+          ? shoppingListChanges.get(ing.id)
+          : ing.inShoppingList;
         return (
           <IngredientRow
             id={ing.id}
@@ -321,7 +263,7 @@ export default function MyCocktailsScreen() {
             singleCocktailName={item.cocktails[0]?.name}
             showMake
             inBar={ing.inBar}
-            inShoppingList={ing.inShoppingList}
+            inShoppingList={inShopping}
             baseIngredientId={ing.baseIngredientId}
             onPress={handleIngredientPress}
             onToggleShoppingList={toggleShoppingList}
@@ -342,6 +284,7 @@ export default function MyCocktailsScreen() {
       navigatingId,
       handleIngredientPress,
       toggleShoppingList,
+      shoppingListChanges,
       theme.colors.onSurfaceVariant,
       theme.colors.inversePrimary,
     ]
