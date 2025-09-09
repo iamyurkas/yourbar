@@ -13,7 +13,7 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../domain/cocktails";
-import { getAllIngredients } from "../../domain/ingredients";
+import { getAllIngredients, setIngredientsInShoppingList } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -57,8 +57,16 @@ export default function MyCocktailsScreen() {
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   // Local memory of shopping-list changes
   const [shoppingListChanges, setShoppingListChanges] = useState(new Map());
-  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
-    useIngredientUsage();
+  const {
+    cocktails: globalCocktails = [],
+    ingredients: globalIngredients = [],
+    setIngredients: setGlobalIngredients,
+  } = useIngredientUsage();
+
+  const shoppingListChangesRef = useRef(shoppingListChanges);
+  useEffect(() => {
+    shoppingListChangesRef.current = shoppingListChanges;
+  }, [shoppingListChanges]);
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "My");
@@ -118,6 +126,51 @@ export default function MyCocktailsScreen() {
       subAs.remove();
     };
   }, [isFocused, globalCocktails, globalIngredients]);
+
+  useEffect(() => {
+    const unsub = navigation.addListener("blur", () => {
+      const changes = shoppingListChangesRef.current;
+      if (!changes.size) return;
+      const toAdd = [];
+      const toRemove = [];
+      changes.forEach((value, id) => {
+        (value ? toAdd : toRemove).push(id);
+      });
+      shoppingListChangesRef.current = new Map();
+      setShoppingListChanges(new Map());
+      (async () => {
+        if (toAdd.length) await setIngredientsInShoppingList(toAdd, true);
+        if (toRemove.length) await setIngredientsInShoppingList(toRemove, false);
+      })();
+      if (toAdd.length || toRemove.length) {
+        setIngredients((prev) => {
+          const next = new Map(prev);
+          toAdd.forEach((id) => {
+            const ing = next.get(id);
+            if (ing) next.set(id, { ...ing, inShoppingList: true });
+          });
+          toRemove.forEach((id) => {
+            const ing = next.get(id);
+            if (ing) next.set(id, { ...ing, inShoppingList: false });
+          });
+          return next;
+        });
+        setGlobalIngredients?.((prev) => {
+          const next = new Map(prev);
+          toAdd.forEach((id) => {
+            const ing = next.get(id);
+            if (ing) next.set(id, { ...ing, inShoppingList: true });
+          });
+          toRemove.forEach((id) => {
+            const ing = next.get(id);
+            if (ing) next.set(id, { ...ing, inShoppingList: false });
+          });
+          return next;
+        });
+      }
+    });
+    return unsub;
+  }, [navigation, setIngredients, setGlobalIngredients]);
 
   const processed = useMemo(() => {
     const ingredientArr = Array.from(ingredients.values());
