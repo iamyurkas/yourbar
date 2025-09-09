@@ -21,7 +21,7 @@ import FavoritesRatingModal from "./FavoritesRatingModal";
 import StartScreenModal from "./StartScreenModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import useIngredientsData from "../hooks/useIngredientsData";
-import { exportAllData, importAllData, exportAllPhotos } from "../storage/backupStorage";
+import { exportAllData, importAllData, exportAllPhotos } from "../data/backup";
 import { useTheme } from "react-native-paper";
 
 import {
@@ -40,7 +40,7 @@ import {
   setAllowSubstitutes as saveAllowSubstitutes,
   getStartScreen,
   setStartScreen as saveStartScreen,
-} from "../storage/settingsStorage";
+} from "../data/settings";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;

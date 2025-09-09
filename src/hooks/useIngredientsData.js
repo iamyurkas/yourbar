@@ -1,17 +1,17 @@
 import { useCallback, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getAllIngredients } from "../storage/ingredientsStorage";
-import { getAllCocktails } from "../storage/cocktailsStorage";
-import { mapCocktailsByIngredient } from "../utils/ingredientUsage";
+import { getAllIngredients } from "../domain/ingredients";
+import { getAllCocktails } from "../domain/cocktails";
+import { mapCocktailsByIngredient } from "../domain/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import IngredientUsageContext from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
-} from "../storage/settingsStorage";
+} from "../data/settings";
 import { sortByName } from "../utils/sortByName";
-import { getAllTags } from "../storage/ingredientTagsStorage";
+import { getAllTags } from "../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
 const IMPORT_FLAG_KEY = "default_data_imported_flag";

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { getAllTags } from "../storage/ingredientTagsStorage";
+import { getAllTags } from "../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
 export default function useIngredientTags() {

@@ -1,6 +1,6 @@
-import { getUnitById, formatUnit } from "../constants/measureUnits";
-import { formatAmount, toMetric, toImperial } from "./units";
-import { normalizeSearch } from "./normalizeSearch";
+import { getUnitById, formatUnit } from "../constants/measureUnits.js";
+import { formatAmount, toMetric, toImperial } from "../utils/units.js";
+import { normalizeSearch } from "../utils/normalizeSearch.js";
 
 export function buildIngredientIndex(ingredients = []) {
   const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));

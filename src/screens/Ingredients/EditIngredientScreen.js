@@ -37,7 +37,7 @@ import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
-import { deleteIngredient, saveIngredient } from "../../storage/ingredientsStorage";
+import { deleteIngredient, saveIngredient } from "../../domain/ingredients";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import TagPill from "../../components/TagPill";

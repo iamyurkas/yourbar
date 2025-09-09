@@ -12,18 +12,18 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
-import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { getAllCocktails } from "../../domain/cocktails";
+import { getAllIngredients } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
   getAllowSubstitutes,
   addAllowSubstitutesListener,
-} from "../../storage/settingsStorage";
+} from "../../data/settings";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TagFilterMenu from "../../components/TagFilterMenu";
-import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
+import { getAllCocktailTags } from "../../data/cocktailTags";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
 } from "../../components/CocktailRow";
@@ -33,7 +33,7 @@ import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
-} from "../../utils/cocktailIngredients";
+} from "../../domain/cocktailIngredients";
 import { sortByName } from "../../utils/sortByName";
 
 export default function AllCocktailsScreen() {

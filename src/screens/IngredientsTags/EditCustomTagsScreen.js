@@ -18,7 +18,7 @@ import {
   Chip,
 } from "react-native-paper";
 
-import { getUserTags, saveUserTags } from "../../storage/ingredientTagsStorage";
+import { getUserTags, saveUserTags } from "../../data/ingredientTags";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { AppTheme, TAG_COLORS } from "../../theme";
 

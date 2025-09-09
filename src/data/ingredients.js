@@ -2,10 +2,10 @@ import db, {
   query,
   initDatabase,
   withWriteTransactionAsync,
-} from "./sqlite";
-import { normalizeSearch } from "../utils/normalizeSearch";
-import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
-import { sortByName } from "../utils/sortByName";
+} from "./sqlite.js";
+import { normalizeSearch } from "../utils/normalizeSearch.js";
+import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch.js";
+import { sortByName } from "../utils/sortByName.js";
 
 const now = () => Date.now();
 const genId = () => now();

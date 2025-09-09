@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 
-import { getUserTags, saveUserTags } from "../storage/ingredientTagsStorage";
+import { getUserTags, saveUserTags } from "../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 import { useNavigation } from "@react-navigation/native";
 import WheelColorPicker from "react-native-wheel-color-picker";

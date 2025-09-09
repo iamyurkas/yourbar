@@ -5,12 +5,12 @@ import JSZip from 'jszip';
 import slugify from 'slugify';
 import { Image } from 'react-native';
 
-import { ASSET_MAP } from '../../scripts/assetMap';
-import { getAllIngredients, saveAllIngredients } from './ingredientsStorage';
-import { getAllCocktails, replaceAllCocktails } from './cocktailsStorage';
-import { withWriteTransactionAsync } from './sqlite';
-import { stripFalse } from './stripFalse';
-import { normalizeImportData } from './normalizeBackupData';
+import { ASSET_MAP } from '../../scripts/assetMap.js';
+import { getAllIngredients, saveAllIngredients } from './ingredients.js';
+import { getAllCocktails, replaceAllCocktails } from './cocktails.js';
+import { withWriteTransactionAsync } from './sqlite.js';
+import { stripFalse } from './stripFalse.js';
+import { normalizeImportData } from './normalizeBackupData.js';
 
 const getExt = (uri) => {
   const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri || '');

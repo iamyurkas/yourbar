@@ -31,10 +31,10 @@ import {
   saveIngredient,
   updateIngredientById,
   updateIngredientFields,
-} from "../../storage/ingredientsStorage";
+} from "../../domain/ingredients";
 
-import { getAllCocktails } from "../../storage/cocktailsStorage";
-import { mapCocktailsByIngredient } from "../../utils/ingredientUsage";
+import { getAllCocktails } from "../../domain/cocktails";
+import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
@@ -44,7 +44,7 @@ import {
   addIgnoreGarnishListener,
   getAllowSubstitutes,
   addAllowSubstitutesListener,
-} from "../../storage/settingsStorage";
+} from "../../data/settings";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
@@ -52,7 +52,7 @@ import ExpandableText from "../../components/ExpandableText";
 import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
-} from "../../utils/cocktailIngredients";
+} from "../../domain/cocktailIngredients";
 import { withAlpha } from "../../utils/color";
 
 const PHOTO_SIZE = 150;

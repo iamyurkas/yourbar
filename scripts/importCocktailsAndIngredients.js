@@ -5,12 +5,12 @@ import { BUILTIN_COCKTAIL_TAGS } from "../src/constants/cocktailTags";
 import {
   replaceAllCocktails,
   getAllCocktails,
-} from "../src/storage/cocktailsStorage";
+} from "../src/data/cocktails";
 import {
   getAllIngredients,
   saveAllIngredients,
-} from "../src/storage/ingredientsStorage";
-import { initDatabase } from "../src/storage/sqlite";
+} from "../src/data/ingredients";
+import { initDatabase } from "../src/data/sqlite";
 import { normalizeSearch } from "../src/utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../src/utils/wordPrefixMatch";
 import { Image } from "react-native";

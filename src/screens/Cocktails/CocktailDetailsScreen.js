@@ -31,11 +31,11 @@ import {
   getCocktailById,
   saveCocktail,
   updateCocktailById,
-} from "../../storage/cocktailsStorage";
+} from "../../domain/cocktails";
 import {
   getIngredientsByIds,
   getIngredientsByBaseIds,
-} from "../../storage/ingredientsStorage";
+} from "../../domain/ingredients";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getGlassById } from "../../constants/glassware";
 import { withAlpha } from "../../utils/color";
@@ -47,13 +47,13 @@ import {
   addKeepAwakeListener,
   getAllowSubstitutes,
   addAllowSubstitutesListener,
-} from "../../storage/settingsStorage";
+} from "../../data/settings";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import ExpandableText from "../../components/ExpandableText";
 import {
   buildIngredientIndex,
   getCocktailIngredientRows,
-} from "../../utils/cocktailIngredients";
+} from "../../domain/cocktailIngredients";
 
 /* ---------- Ingredient row (like AllIngredients) ---------- */
 const IMAGE_SIZE = 50;
