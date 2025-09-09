@@ -8,18 +8,23 @@ import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import useAvailableByIngredient from "../hooks/useAvailableByIngredient";
-import { normalizeSearch } from "../utils/normalizeSearch";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
   getIgnoreGarnish,
   addIgnoreGarnishListener,
 } from "../data/settings";
+import {
+  buildShakerListData,
+  computeRecipeMatches,
+  computeAvailableCocktails,
+} from "../domain/shakerService";
+import type { ShakerListItem } from "../types/models";
 
 type ShakerScreenProps = { navigation: any; };
 
 
-export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Element {
+export default function ShakerScreen({ navigation }: ShakerScreenProps) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {
@@ -37,47 +42,17 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Ele
   const [allowSubstitutes, setAllowSubstitutes] = useState<boolean>(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState<boolean>(false);
 
-  const grouped = ingredientsByTag;
-
-  const filteredGrouped = useMemo(() => {
-    const q = normalizeSearch(search);
-    if (!q) return grouped;
-    const map = new Map();
-    grouped.forEach((items, id) => {
-      const filtered = items.filter((i) => i.searchName.includes(q));
-      if (filtered.length) map.set(id, filtered);
-    });
-    return map;
-  }, [grouped, search]);
-
-  const displayGrouped = useMemo(() => {
-    if (!inStockOnly) return filteredGrouped;
-    const map = new Map();
-    filteredGrouped.forEach((items, id) => {
-      const filtered = items.filter((i) => i.inBar);
-      if (filtered.length) map.set(id, filtered);
-    });
-    return map;
-  }, [filteredGrouped, inStockOnly]);
-
-  const listData = useMemo(() => {
-    const arr = [];
-    ingredientTags.forEach((tag) => {
-      const items = displayGrouped.get(tag.id) || [];
-      if (items.length === 0) return;
-      arr.push({ type: "TAG", tag });
-      if (expanded[tag.id]) {
-        items.forEach((ing, idx) => {
-          arr.push({
-            type: "ING",
-            ingredient: ing,
-            isLast: idx === items.length - 1,
-          });
-        });
-      }
-    });
-    return arr;
-  }, [ingredientTags, displayGrouped, expanded]);
+  const listData = useMemo<ShakerListItem[]>(
+    () =>
+      buildShakerListData({
+        ingredientTags,
+        ingredientsByTag,
+        search,
+        inStockOnly,
+        expanded,
+      }),
+    [ingredientTags, ingredientsByTag, search, inStockOnly, expanded]
+  );
 
   const toggleTag = (id: number): void => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -119,7 +94,7 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Ele
   );
 
   const renderItem = useCallback(
-    ({ item }) => {
+    ({ item }: { item: ShakerListItem }) => {
       if (item.type === "TAG") {
         const { tag } = item;
         const isOpen = expanded[tag.id];
@@ -172,90 +147,32 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Ele
     ]
   );
 
-  const keyExtractor = useCallback((item) => {
+  const keyExtractor = useCallback((item: ShakerListItem) => {
     if (item.type === "TAG") return `tag-${item.tag.id}`;
     return `ing-${item.ingredient.id}`;
   }, []);
 
-  const { recipesCount, recipeIds } = useMemo(() => {
-    if (selectedIds.length === 0) return { recipesCount: 0, recipeIds: [] };
+  const { recipesCount, recipeIds } = useMemo(
+    () =>
+      computeRecipeMatches({
+        selectedIds,
+        ingredientsByTag,
+        usageMap,
+      }),
+    [selectedIds, ingredientsByTag, usageMap]
+  );
 
-    const groups = new Map();
-    grouped.forEach((items, tagId) => {
-      const selected = items
-        .filter((ing) => selectedIds.includes(ing.id))
-        .map((ing) => ing.id);
-      if (selected.length > 0) groups.set(tagId, selected);
-    });
-
-    if (groups.size === 0) return { recipesCount: 0, recipeIds: [] };
-
-    let intersection;
-    groups.forEach((ids) => {
-      const union = new Set();
-      ids.forEach((id) => {
-        (usageMap[id] || []).forEach((cid) => union.add(cid));
-      });
-      if (!intersection) {
-        intersection = union;
-      } else {
-        intersection = new Set(
-          [...intersection].filter((cid) => union.has(cid))
-        );
-      }
-    });
-
-    const result = intersection ? [...intersection] : [];
-    return { recipesCount: result.length, recipeIds: result };
-  }, [selectedIds, usageMap, grouped]);
-
-  const { availableCount, availableCocktailIds } = useMemo(() => {
-    if (recipeIds.length === 0)
-      return { availableCount: 0, availableCocktailIds: [] };
-
-    const ingMap = new Map((ingredients || []).map((i) => [String(i.id), i]));
-    const findBrand = (baseId) =>
-      ingredients.find(
-        (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
-      );
-
-    const isSatisfied = (r) => {
-      const ing = ingMap.get(String(r.ingredientId));
-      if (ing?.inBar) return true;
-      const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-      if (allowSubstitutes || r.allowBaseSubstitution) {
-        const base = ingMap.get(baseId);
-        if (base?.inBar) return true;
-      }
-      const isBaseIngredient = ing?.baseIngredientId == null;
-      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
-        const brand = findBrand(baseId);
-        if (brand) return true;
-      }
-      if (Array.isArray(r.substitutes)) {
-        for (const s of r.substitutes) {
-          const candidate = ingMap.get(String(s.id));
-          if (candidate?.inBar) return true;
-        }
-      }
-      return false;
-    };
-
-    const ids = [];
-    (cocktails || []).forEach((c) => {
-      if (!recipeIds.includes(c.id)) return;
-      const required = (c.ingredients || []).filter(
-        (r) => !r.optional && !(ignoreGarnish && r.garnish)
-      );
-      if (required.length === 0) return;
-      for (const r of required) {
-        if (!isSatisfied(r)) return;
-      }
-      ids.push(c.id);
-    });
-
-    return { availableCount: ids.length, availableCocktailIds: ids };
-  }, [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]);
+  const { availableCount, availableCocktailIds } = useMemo(
+    () =>
+      computeAvailableCocktails({
+        recipeIds,
+        cocktails: cocktails || [],
+        ingredients: ingredients || [],
+        allowSubstitutes,
+        ignoreGarnish,
+      }),
+    [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]
+  );
 
   const handleClear = (): void => setSelectedIds([]);
 

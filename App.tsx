@@ -15,7 +15,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
-import ShakerScreen from "./src/screens/ShakerScreen";
+import ShakerScreen from "./src/presentation/ShakerScreen";
 import IngredientDetailsScreen from "./src/screens/Ingredients/IngredientDetailsScreen";
 import EditIngredientScreen from "./src/screens/Ingredients/EditIngredientScreen";
 import CocktailDetailsScreen from "./src/screens/Cocktails/CocktailDetailsScreen";
