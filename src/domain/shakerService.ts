@@ -6,6 +6,65 @@ import type {
   Cocktail,
 } from "../types/models";
 
+// cache for normalizeSearch results
+const searchNormalizeCache = new Map<string, string>();
+
+// cache for maps filtered by stock and search
+let inBarCache:
+  | { src: Map<number, Ingredient[]>; map: Map<number, Ingredient[]> }
+  | undefined;
+const searchMapCache = new Map<string, Map<number, Ingredient[]>>();
+
+// memoization cache for final list
+const listCache = new Map<string, ShakerListItem[]>();
+
+let lastIngredientsByTag: Map<number, Ingredient[]> | undefined;
+
+function getNormalizedSearch(s: string): string {
+  const cached = searchNormalizeCache.get(s);
+  if (cached != null) return cached;
+  const norm = normalizeSearch(s);
+  searchNormalizeCache.set(s, norm);
+  return norm;
+}
+
+function getInBarMap(
+  ingredientsByTag: Map<number, Ingredient[]>
+): Map<number, Ingredient[]> {
+  if (inBarCache && inBarCache.src === ingredientsByTag) return inBarCache.map;
+  const map = new Map<number, Ingredient[]>();
+  ingredientsByTag.forEach((items, id) => {
+    const filtered = items.filter((i) => i.inBar);
+    if (filtered.length) map.set(id, filtered);
+  });
+  inBarCache = { src: ingredientsByTag, map };
+  return map;
+}
+
+function getSearchMap(
+  base: Map<number, Ingredient[]>,
+  q: string,
+  stockKey: string
+): Map<number, Ingredient[]> {
+  const key = `${stockKey}|${q}`;
+  const cached = searchMapCache.get(key);
+  if (cached) return cached;
+  const map = new Map<number, Ingredient[]>();
+  base.forEach((items, id) => {
+    const filtered = items.filter((i) => i.searchName.includes(q));
+    if (filtered.length) map.set(id, filtered);
+  });
+  searchMapCache.set(key, map);
+  return map;
+}
+
+function expandedKey(expanded: Record<number, boolean>): string {
+  return Object.keys(expanded)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((k) => `${k}:${expanded[Number(k)] ? 1 : 0}`)
+    .join(",");
+}
+
 export function buildShakerListData({
   ingredientTags,
   ingredientsByTag,
@@ -19,14 +78,21 @@ export function buildShakerListData({
   inStockOnly: boolean;
   expanded: Record<number, boolean>;
 }): ShakerListItem[] {
-  const q = normalizeSearch(search);
-  const filtered = new Map<number, Ingredient[]>();
+  if (lastIngredientsByTag !== ingredientsByTag) {
+    // underlying data changed – clear caches dependent on ingredients
+    searchMapCache.clear();
+    listCache.clear();
+    inBarCache = undefined;
+    lastIngredientsByTag = ingredientsByTag;
+  }
 
-  ingredientsByTag.forEach((items, id) => {
-    const bySearch = q ? items.filter((i) => i.searchName.includes(q)) : items;
-    const byStock = inStockOnly ? bySearch.filter((i) => i.inBar) : bySearch;
-    if (byStock.length) filtered.set(id, byStock);
-  });
+  const q = getNormalizedSearch(search);
+  const base = inStockOnly ? getInBarMap(ingredientsByTag) : ingredientsByTag;
+  const filtered = q ? getSearchMap(base, q, inStockOnly ? "1" : "0") : base;
+
+  const memoKey = `${q}|${inStockOnly ? 1 : 0}|${expandedKey(expanded)}`;
+  const memo = listCache.get(memoKey);
+  if (memo) return memo;
 
   const arr: ShakerListItem[] = [];
   ingredientTags.forEach((tag) => {
@@ -44,6 +110,7 @@ export function buildShakerListData({
     }
   });
 
+  listCache.set(memoKey, arr);
   return arr;
 }
 
