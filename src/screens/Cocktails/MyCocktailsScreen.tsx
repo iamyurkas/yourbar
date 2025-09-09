@@ -385,7 +385,9 @@ export default function MyCocktailsScreen() {
         }
         ListEmptyComponent={
           loading ? (
+
             <ListSkeleton height={ITEM_HEIGHT} imageSize={IMAGE_SIZE} />
+
           ) : (
             <View style={{ padding: 24 }}>
               <Text style={{ color: theme.colors.onSurfaceVariant }}>
