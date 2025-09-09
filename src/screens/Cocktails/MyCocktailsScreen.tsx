@@ -251,26 +251,29 @@ export default function MyCocktailsScreen() {
 
   const toggleShoppingList = useCallback(
     (id) => {
-      let updated;
-      setIngredients((prev) => {
-        const item = prev.get(id);
-        if (!item) return prev;
-        updated = { ...item, inShoppingList: !item.inShoppingList };
-        return updateIngredientById(prev, updated);
-      });
-      if (updated) {
-        // Defer global context update a tick to prioritize UI
-        requestAnimationFrame(() => {
+      // Heavy recompute of cocktail availability makes the UI feel sluggish
+      // when executed immediately on press. Defer the actual state update to
+      // the next animation frame while the row itself applies an optimistic
+      // update (see IngredientRow) so the icon flips instantly.
+      requestAnimationFrame(() => {
+        let updated;
+        setIngredients((prev) => {
+          const item = prev.get(id);
+          if (!item) return prev;
+          updated = { ...item, inShoppingList: !item.inShoppingList };
+          return updateIngredientById(prev, updated);
+        });
+        if (updated) {
           setGlobalIngredients((list) =>
             updateIngredientById(list, {
               id,
               inShoppingList: updated.inShoppingList,
             })
           );
-        });
-        pendingUpdatesRef.current.push(updated);
-        scheduleFlush();
-      }
+          pendingUpdatesRef.current.push(updated);
+          scheduleFlush();
+        }
+      });
     },
     [setGlobalIngredients, setIngredients, scheduleFlush]
   );
