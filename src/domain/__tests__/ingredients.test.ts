@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { __setDataLayer, getAllIngredients } from "../ingredients.js";
+import { __setDataLayer, getAllIngredients } from "../ingredients";
 
 test("getAllIngredients returns an array", async () => {
   __setDataLayer({ getAllIngredients: async () => [] });

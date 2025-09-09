@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { groupIngredientsByTag } from "../groupIngredientsByTag.js";
+import { groupIngredientsByTag } from "../groupIngredientsByTag";
 
 test("groups ingredients by tag and sorts by name", () => {
   const ingredients = [

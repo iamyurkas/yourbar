@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { sortByName } from '../sortByName.js';
+import { sortByName } from '../sortByName';
 
 test('orders by name ascending ignoring case', () => {
   const arr = [{ name: 'b' }, { name: 'A' }];

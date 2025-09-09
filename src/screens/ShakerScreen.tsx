@@ -19,8 +19,10 @@ import {
   addIgnoreGarnishListener,
 } from "../data/settings";
 
+type ShakerScreenProps = { navigation: any; };
 
-export default function ShakerScreen({ navigation }) {
+
+export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {
@@ -31,12 +33,12 @@ export default function ShakerScreen({ navigation }) {
     ingredientTags,
     ingredientsByTag,
   } = useIngredientsData();
-  const [expanded, setExpanded] = useState({});
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [search, setSearch] = useState("");
-  const [inStockOnly, setInStockOnly] = useState(true);
-  const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const [ignoreGarnish, setIgnoreGarnish] = useState(false);
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [inStockOnly, setInStockOnly] = useState<boolean>(true);
+  const [allowSubstitutes, setAllowSubstitutes] = useState<boolean>(false);
+  const [ignoreGarnish, setIgnoreGarnish] = useState<boolean>(false);
 
   const grouped = ingredientsByTag;
 
@@ -80,11 +82,11 @@ export default function ShakerScreen({ navigation }) {
     return arr;
   }, [ingredientTags, displayGrouped, expanded]);
 
-  const toggleTag = (id) => {
+  const toggleTag = (id: number): void => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleIngredient = (id) => {
+  const toggleIngredient = (id: number): void => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
@@ -278,9 +280,9 @@ export default function ShakerScreen({ navigation }) {
     return { availableCount: ids.length, availableCocktailIds: ids };
   }, [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]);
 
-  const handleClear = () => setSelectedIds([]);
+  const handleClear = (): void => setSelectedIds([]);
 
-  const handleShow = () => {
+  const handleShow = (): void => {
     if (recipeIds.length === 0) return;
     navigation.navigate("ShakerResults", {
       availableIds: availableCocktailIds,

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { wordPrefixMatch } from '../wordPrefixMatch.js';
+import { wordPrefixMatch } from '../wordPrefixMatch';
 
 test('matches sequential prefixes in order', () => {
   assert.equal(wordPrefixMatch(['hello', 'world'], ['he', 'wo']), true);

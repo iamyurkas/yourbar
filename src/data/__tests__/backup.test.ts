@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { stripFalse } from '../stripFalse.js';
-import { normalizeImportData } from '../normalizeBackupData.js';
+import { stripFalse } from '../stripFalse';
+import { normalizeImportData } from '../normalizeBackupData';
 
 test('stripFalse removes empty arrays, objects, and null values', () => {
 

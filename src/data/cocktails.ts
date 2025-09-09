@@ -1,11 +1,12 @@
 // src/storage/cocktailsStorage.js
-import { normalizeSearch } from "../utils/normalizeSearch.js";
-import { sortByName } from "../utils/sortByName.js";
+import { normalizeSearch } from "../utils/normalizeSearch";
+import { sortByName } from "../utils/sortByName";
+import { CocktailRecord } from "./types";
 import db, {
   query,
   initDatabase,
   withWriteTransactionAsync,
-} from "./sqlite.js";
+} from "./sqlite";
 
 // --- utils ---
 
@@ -95,7 +96,7 @@ async function readAll() {
   return Array.from(map.values()).sort(sortByName);
 }
 
-async function upsertCocktail(item) {
+async function upsertCocktail(item: CocktailRecord): Promise<void> {
   await initDatabase();
    await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
@@ -141,12 +142,12 @@ async function upsertCocktail(item) {
 
 // --- API ---
 /** Return all cocktails (array) */
-export async function getAllCocktails() {
+export async function getAllCocktails(): Promise<CocktailRecord[]> {
   return await readAll();
 }
 
 /** Get single cocktail by id (number) */
-export async function getCocktailById(id) {
+export async function getCocktailById(id: number): Promise<CocktailRecord | undefined> {
   await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails WHERE id = ?`,
@@ -189,21 +190,21 @@ export async function getCocktailById(id) {
 }
 
 /** Add new cocktail, returns created cocktail */
-export async function addCocktail(cocktail) {
+export async function addCocktail(cocktail: CocktailRecord): Promise<void> {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   await upsertCocktail(item);
   return item;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
-export async function saveCocktail(updated) {
+export async function saveCocktail(updated: CocktailRecord): Promise<void> {
   await initDatabase();
   const item = sanitizeCocktail(updated);
   await upsertCocktail(item);
   return item;
 }
 
-export function updateCocktailById(list, updated) {
+export function updateCocktailById(list: CocktailRecord[], updated: CocktailRecord): CocktailRecord[] {
   const index = list.findIndex((c) => c.id === updated.id);
   if (index === -1) return list;
   const next = [...list];
@@ -212,7 +213,7 @@ export function updateCocktailById(list, updated) {
 }
 
 /** Delete by id */
-export async function deleteCocktail(id) {
+export async function deleteCocktail(id: number): Promise<void> {
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
@@ -220,12 +221,12 @@ export async function deleteCocktail(id) {
   });
 }
 
-export function removeCocktail(list, id) {
+export function removeCocktail(list: CocktailRecord[], id: number): CocktailRecord[] {
   return list.filter((item) => item.id !== id);
 }
 
 /** Replace whole storage (use carefully) */
-export async function replaceAllCocktails(cocktails, tx) {
+export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any): Promise<void> {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
@@ -279,7 +280,7 @@ export async function replaceAllCocktails(cocktails, tx) {
 }
 
 /** Simple search by name substring (case-insensitive) */
-export async function searchCocktails(query) {
+export async function searchCocktails(query: string): Promise<CocktailRecord[]> {
   const q = normalizeSearch(String(query || "").trim());
   if (!q) return getAllCocktails();
   const list = await readAll();
