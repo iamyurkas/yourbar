@@ -16,7 +16,6 @@ import {
   ScrollView,
   FlatList,
   InteractionManager,
-  ActivityIndicator,
   Pressable,
   BackHandler,
   Dimensions,
@@ -40,6 +39,7 @@ import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import TagPill from "../../components/TagPill";
+import Skeleton from "../../components/Skeleton";
 import IngredientBaseRow, {
   INGREDIENT_BASE_ROW_HEIGHT,
 } from "../../components/IngredientBaseRow";
@@ -91,7 +91,7 @@ export default function AddIngredientScreen() {
     const other = BUILTIN_INGREDIENT_TAGS.find((t) => t.id === 10);
     return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
-  // disable the save button and show a spinner while persisting an ingredient
+  // disable the save button and show a skeleton while persisting an ingredient
   const [savingInProgress, setSavingInProgress] = useState(false);
 
   // tag helpers & modal state
@@ -676,10 +676,10 @@ export default function AddIngredientScreen() {
             Save Ingredient
           </Text>
           {savingInProgress && (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.onPrimary}
-              style={{ marginLeft: 8 }}
+            <Skeleton
+              width={16}
+              height={16}
+              style={{ marginLeft: 8, borderRadius: 8 }}
             />
           )}
         </Pressable>

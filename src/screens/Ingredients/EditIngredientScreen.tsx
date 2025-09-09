@@ -41,6 +41,7 @@ import { deleteIngredient, saveIngredient } from "../../domain/ingredients";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import TagPill from "../../components/TagPill";
+import Skeleton from "../../components/Skeleton";
 import IngredientBaseRow, {
   INGREDIENT_BASE_ROW_HEIGHT,
 } from "../../components/IngredientBaseRow";
@@ -83,7 +84,7 @@ export default function EditIngredientScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [tags, setTags] = useState([]);
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
-  // disable save button and display loader while ingredient updates persist
+  // disable save button and show a skeleton while ingredient updates persist
   const [savingInProgress, setSavingInProgress] = useState(false);
 
   // reference lists / tags modal
@@ -780,10 +781,10 @@ export default function EditIngredientScreen() {
             Save Changes
           </Text>
           {savingInProgress && (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.onPrimary}
-              style={{ marginLeft: 8 }}
+            <Skeleton
+              width={16}
+              height={16}
+              style={{ marginLeft: 8, borderRadius: 8 }}
             />
           )}
         </Pressable>

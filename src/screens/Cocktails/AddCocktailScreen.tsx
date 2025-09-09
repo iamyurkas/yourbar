@@ -21,7 +21,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  ActivityIndicator,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -46,6 +45,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useInfoDialog from "../../hooks/useInfoDialog";
 import useDebounced from "../../hooks/useDebounced";
+import Skeleton from "../../components/Skeleton";
 
 import {
   Menu,
@@ -322,6 +322,7 @@ export default function AddCocktailScreen() {
     initialCocktail?.glassId || "cocktail_glass"
   );
 
+  // disable the save button and show a skeleton while persisting a cocktail
   const [saving, setSaving] = useState(false);
 
   const createBaseRow = (ing) => ({
@@ -1142,10 +1143,10 @@ export default function AddCocktailScreen() {
               Save cocktail
             </Text>
             {saving && (
-              <ActivityIndicator
-                size="small"
-                color={theme.colors.onPrimary}
-                style={{ marginLeft: 8 }}
+              <Skeleton
+                width={16}
+                height={16}
+                style={{ marginLeft: 8, borderRadius: 8 }}
               />
             )}
           </Pressable>

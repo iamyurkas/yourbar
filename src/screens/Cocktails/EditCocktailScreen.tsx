@@ -22,7 +22,6 @@ import {
   Keyboard,
   BackHandler,
   InteractionManager,
-  ActivityIndicator,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -43,6 +42,7 @@ import {
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
+import Skeleton from "../../components/Skeleton";
 
 import {
   Menu,
@@ -253,6 +253,7 @@ export default function EditCocktailScreen() {
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // disable the save button and show a skeleton while persisting a cocktail
   const [saving, setSaving] = useState(false);
   const [pendingNav, setPendingNav] = useState(null);
   const initialHashRef = useRef("{}");
@@ -1145,10 +1146,10 @@ export default function EditCocktailScreen() {
               Save changes
             </Text>
             {saving && (
-              <ActivityIndicator
-                size="small"
-                color={theme.colors.onPrimary}
-                style={{ marginLeft: 8 }}
+              <Skeleton
+                width={16}
+                height={16}
+                style={{ marginLeft: 8, borderRadius: 8 }}
               />
             )}
           </Pressable>
