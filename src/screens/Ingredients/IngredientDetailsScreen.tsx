@@ -377,8 +377,8 @@ export default function IngredientDetailsScreen() {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write until after interactions
-    InteractionManager.runAfterInteractions(() => {
+    // Defer heavier global updates and DB write to allow UI to update first
+    setTimeout(() => {
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -386,7 +386,7 @@ export default function IngredientDetailsScreen() {
         })
       );
       updateIngredientFields(updated.id, { inBar: updated.inBar });
-    });
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
@@ -397,8 +397,8 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write until after interactions
-    InteractionManager.runAfterInteractions(() => {
+    // Defer global list update and DB write to allow UI to update first
+    setTimeout(() => {
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -408,7 +408,7 @@ export default function IngredientDetailsScreen() {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-    });
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
