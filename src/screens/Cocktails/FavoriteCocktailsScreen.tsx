@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import HeaderWithSearch from "../../components/HeaderWithSearch";
@@ -29,7 +29,9 @@ import TagFilterMenu from "../../components/TagFilterMenu";
 import { getAllCocktailTags } from "../../data/cocktailTags";
 import CocktailRow, {
   COCKTAIL_ROW_HEIGHT as ITEM_HEIGHT,
+  IMAGE_SIZE,
 } from "../../components/CocktailRow";
+import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
@@ -214,9 +216,9 @@ export default function FavoriteCocktailsScreen() {
         getItemType={() => "COCKTAIL"}
         ListEmptyComponent={
           loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
-            </View>
+
+            <ListSkeleton height={ITEM_HEIGHT} imageSize={IMAGE_SIZE} />
+
           ) : (
             <View style={{ padding: 24 }}>
               <Text style={{ color: theme.colors.onSurfaceVariant }}>
@@ -235,7 +237,6 @@ export default function FavoriteCocktailsScreen() {
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1 },
 });
 
