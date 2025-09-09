@@ -34,6 +34,9 @@ export async function updateIngredientFields(id, fields) {
 export async function flushPendingIngredients(list) {
   return (await ensure()).flushPendingIngredients(list);
 }
+export async function setIngredientsInShoppingList(ids, inShoppingList) {
+  return (await ensure()).setIngredientsInShoppingList(ids, inShoppingList);
+}
 export async function toggleIngredientsInBar(ids) {
   return (await ensure()).toggleIngredientsInBar(ids);
 }

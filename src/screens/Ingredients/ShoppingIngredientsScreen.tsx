@@ -12,7 +12,7 @@ import IngredientRow, {
 } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { flushPendingIngredients } from "../../domain/ingredients";
+import { setIngredientsInShoppingList } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -64,24 +64,19 @@ export default function ShoppingIngredientsScreen() {
     const ids = Array.from(pendingIdsRef.current);
     if (!ids.length) return;
     pendingIdsRef.current = new Set();
-    let items = [];
     setIngredients((prev) => {
       const next = new Map(prev);
       ids.forEach((id) => {
         const item = next.get(id);
         if (item) {
-          const updated = { ...item, inShoppingList: false };
-          next.set(id, updated);
-          items.push(updated);
+          next.set(id, { ...item, inShoppingList: false });
         }
       });
       return next;
     });
-    if (items.length) {
-      try {
-        await flushPendingIngredients(items);
-      } catch {}
-    }
+    try {
+      await setIngredientsInShoppingList(ids, false);
+    } catch {}
   }, [setIngredients]);
 
   useEffect(() => {

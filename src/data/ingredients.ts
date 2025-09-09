@@ -286,6 +286,22 @@ export async function flushPendingIngredients(list) {
   });
 }
 
+export async function setIngredientsInShoppingList(ids, inShoppingList) {
+  const list = Array.isArray(ids)
+    ? Array.from(new Set(ids.filter((id) => id != null)))
+    : [];
+  if (!list.length) return;
+  await initDatabase();
+  const placeholders = list.map(() => "?").join(", ");
+  const value = inShoppingList ? 1 : 0;
+  await withWriteTransactionAsync(async (tx) => {
+    await tx.runAsync(
+      `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
+      [value, ...list.map((id) => String(id))]
+    );
+  });
+}
+
 export async function toggleIngredientsInBar(ids) {
   const list = Array.isArray(ids)
     ? Array.from(new Set(ids.filter((id) => id != null)))
