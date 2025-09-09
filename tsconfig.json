@@ -16,5 +16,10 @@
     "src/screens/ShakerScreen.tsx",
     "src/types/**/*"
   ],
-  "exclude": ["node_modules", "dist", "src/**/__tests__/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/__tests__/**"
+  ],
+  "extends": "expo/tsconfig.base"
 }
