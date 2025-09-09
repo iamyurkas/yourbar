@@ -1,4 +1,4 @@
-import { normalizeSearch } from "./normalizeSearch";
+import { normalizeSearch } from "../utils/normalizeSearch.js";
 
 // Build lookup maps for ingredients list
 export function buildIngredientIndexes(ingredients) {

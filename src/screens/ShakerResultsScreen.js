@@ -7,19 +7,19 @@ import HeaderWithSearch from "../components/HeaderWithSearch";
 import TagFilterMenu from "../components/TagFilterMenu";
 import CocktailRow, { COCKTAIL_ROW_HEIGHT } from "../components/CocktailRow";
 import useIngredientsData from "../hooks/useIngredientsData";
-import { getAllCocktailTags } from "../storage/cocktailTagsStorage";
+import { getAllCocktailTags } from "../data/cocktailTags";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
   getIgnoreGarnish,
   addIgnoreGarnishListener,
-} from "../storage/settingsStorage";
+} from "../data/settings";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
 import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
-} from "../utils/cocktailIngredients";
+} from "../domain/cocktailIngredients";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { availableIds = [], recipeIds = [] } = route.params || {};

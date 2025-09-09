@@ -55,9 +55,9 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import { addCocktail } from "../../storage/cocktailsStorage";
+import { addCocktail } from "../../domain/cocktails";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
-import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
+import { getAllCocktailTags } from "../../data/cocktailTags";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
@@ -67,9 +67,9 @@ import TinyDivider from "../../components/TinyDivider";
 import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
-import { applyUsageMapToIngredients } from "../../utils/ingredientUsage";
-import { getAllowSubstitutes } from "../../storage/settingsStorage";
-import { getAllIngredients } from "../../storage/ingredientsStorage";
+import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
+import { getAllowSubstitutes } from "../../data/settings";
+import { getAllIngredients } from "../../domain/ingredients";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
 const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {

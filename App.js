@@ -31,7 +31,7 @@ import CocktailIcon from "./assets/cocktail.svg";
 import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 import useIngredientsData from "./src/hooks/useIngredientsData";
-import { getStartScreen } from "./src/storage/settingsStorage";
+import { getStartScreen } from "./src/data/settings";
 import PlainHeader from "./src/components/PlainHeader";
 
 

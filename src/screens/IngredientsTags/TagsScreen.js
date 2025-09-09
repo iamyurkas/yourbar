@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
-import { getUserTags } from "../storage/ingredientTagsStorage";
+import { getUserTags } from "../data/ingredientTags";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
 import useInfoDialog from "../../hooks/useInfoDialog";

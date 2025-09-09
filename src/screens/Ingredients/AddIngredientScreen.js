@@ -35,7 +35,7 @@ import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
-import { addIngredient } from "../../storage/ingredientsStorage";
+import { addIngredient } from "../../domain/ingredients";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";

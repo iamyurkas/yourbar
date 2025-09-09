@@ -14,7 +14,7 @@ import {
   getCustomCocktailTags,
   upsertCocktailTag,
   deleteCocktailTag,
-} from "../storage/cocktailTagsStorage";
+} from "../data/cocktailTags";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { TAG_COLORS } from "../theme";
 

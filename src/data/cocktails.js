@@ -1,11 +1,11 @@
 // src/storage/cocktailsStorage.js
-import { normalizeSearch } from "../utils/normalizeSearch";
-import { sortByName } from "../utils/sortByName";
+import { normalizeSearch } from "../utils/normalizeSearch.js";
+import { sortByName } from "../utils/sortByName.js";
 import db, {
   query,
   initDatabase,
   withWriteTransactionAsync,
-} from "./sqlite";
+} from "./sqlite.js";
 
 // --- utils ---
 

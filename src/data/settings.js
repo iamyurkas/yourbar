@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter } from "react-native";
-import { createBooleanSetting } from "./createBooleanSetting";
+import { createBooleanSetting } from "./createBooleanSetting.js";
 
 const USE_METRIC_KEY = "useMetric";
 const IGNORE_GARNISH_KEY = "ignoreGarnish";

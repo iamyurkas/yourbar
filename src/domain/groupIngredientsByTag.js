@@ -1,4 +1,4 @@
-import { sortByName } from "./sortByName.js";
+import { sortByName } from "../utils/sortByName.js";
 
 export function groupIngredientsByTag(ingredients, tags) {
   const map = new Map();

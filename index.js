@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-import { initDatabase } from './src/storage/sqlite';
+import { initDatabase } from './src/data/sqlite';
 import App from './App';
 
 // initialize SQLite tables once at startup

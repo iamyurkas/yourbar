@@ -58,9 +58,9 @@ import {
   deleteCocktail,
   updateCocktailById,
   removeCocktail,
-} from "../../storage/cocktailsStorage";
+} from "../../domain/cocktails";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
-import { getAllCocktailTags } from "../../storage/cocktailTagsStorage";
+import { getAllCocktailTags } from "../../data/cocktailTags";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
 import { GLASSWARE, getGlassById } from "../../constants/glassware";
 
@@ -72,8 +72,8 @@ import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useInfoDialog from "../../hooks/useInfoDialog";
-import { applyUsageMapToIngredients } from "../../utils/ingredientUsage";
-import { getAllowSubstitutes } from "../../storage/settingsStorage";
+import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
+import { getAllowSubstitutes } from "../../data/settings";
 import useDebounced from "../../hooks/useDebounced";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */

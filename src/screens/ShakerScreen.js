@@ -11,13 +11,13 @@ import { normalizeSearch } from "../utils/normalizeSearch";
 import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
-} from "../utils/cocktailIngredients";
+} from "../domain/cocktailIngredients";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
   getIgnoreGarnish,
   addIgnoreGarnishListener,
-} from "../storage/settingsStorage";
+} from "../data/settings";
 
 
 export default function ShakerScreen({ navigation }) {

@@ -12,8 +12,8 @@ import IngredientRow, {
 } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { toggleIngredientsInBar } from "../../storage/ingredientsStorage";
-import { getAllTags } from "../../storage/ingredientTagsStorage";
+import { toggleIngredientsInBar } from "../../domain/ingredients";
+import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
@@ -22,8 +22,8 @@ import { sortByName } from "../../utils/sortByName";
 import {
   getIgnoreGarnish,
   getAllowSubstitutes,
-} from "../../storage/settingsStorage";
-import { initIngredientsAvailability } from "../../utils/ingredientsAvailabilityCache";
+} from "../../data/settings";
+import { initIngredientsAvailability } from "../../domain/ingredientsAvailabilityCache";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();

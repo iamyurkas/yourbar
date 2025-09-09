@@ -7,9 +7,9 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { updateUsageMap as updateUsageMapIncremental } from "../utils/ingredientUsage";
+import { updateUsageMap as updateUsageMapIncremental } from "../domain/ingredientUsage";
 import { sortByName } from "../utils/sortByName";
-import { groupIngredientsByTag } from "../utils/groupIngredientsByTag";
+import { groupIngredientsByTag } from "../domain/groupIngredientsByTag";
 
 const IngredientUsageContext = createContext({
   usageMap: {},

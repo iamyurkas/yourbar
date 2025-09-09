@@ -12,8 +12,8 @@ import IngredientRow, {
 } from "../../components/IngredientRow";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { flushPendingIngredients } from "../../storage/ingredientsStorage";
-import { getAllTags } from "../../storage/ingredientTagsStorage";
+import { flushPendingIngredients } from "../../domain/ingredients";
+import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";

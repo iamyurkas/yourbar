@@ -45,5 +45,8 @@
     "@babel/core": "^7.20.0",
     "@types/react": "~19.0.10"
   },
-  "private": true
+  "private": true,
+  "imports": {
+    "expo-sqlite": "./src/data/__mocks__/expo-sqlite.js"
+  }
 }

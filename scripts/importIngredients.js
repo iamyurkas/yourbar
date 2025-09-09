@@ -7,8 +7,8 @@ import { ASSET_MAP } from "./assetMap";
 import {
   getAllIngredients,
   saveAllIngredients,
-} from "../src/storage/ingredientsStorage";
-import { initDatabase } from "../src/storage/sqlite";
+} from "../src/data/ingredients";
+import { initDatabase } from "../src/data/sqlite";
 
 const IMPORT_FLAG_KEY = "ingredients_imported_flag";
 
