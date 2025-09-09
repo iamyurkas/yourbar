@@ -7,11 +7,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
+import useAvailableByIngredient from "../hooks/useAvailableByIngredient";
 import { normalizeSearch } from "../utils/normalizeSearch";
-import {
-  buildIngredientIndex,
-  getCocktailIngredientInfo,
-} from "../domain/cocktailIngredients";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
@@ -113,33 +110,13 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps): JSX.Ele
     };
   }, []);
 
-  const availableByIngredient = useMemo(() => {
-    if (!Array.isArray(ingredients) || !Array.isArray(cocktails)) {
-      return new Map();
-    }
-    const { ingMap, findBrand } = buildIngredientIndex(ingredients);
-    const nameMap = new Map(cocktails.map((c) => [c.id, c.name]));
-    const availableSet = new Set();
-    cocktails.forEach((c) => {
-      const { isAllAvailable } = getCocktailIngredientInfo(c, {
-        ingMap,
-        findBrand,
-        allowSubstitutes,
-        ignoreGarnish,
-      });
-      if (isAllAvailable) availableSet.add(c.id);
-    });
-    const map = new Map();
-    ingredients.forEach((ing) => {
-      const list = usageMap[ing.id] || [];
-      const avail = list.filter((id) => availableSet.has(id));
-      map.set(ing.id, {
-        count: avail.length,
-        name: avail.length === 1 ? nameMap.get(avail[0]) : null,
-      });
-    });
-    return map;
-  }, [ingredients, cocktails, usageMap, allowSubstitutes, ignoreGarnish]);
+  const availableByIngredient = useAvailableByIngredient(
+    ingredients,
+    cocktails,
+    usageMap,
+    allowSubstitutes,
+    ignoreGarnish
+  );
 
   const renderItem = useCallback(
     ({ item }) => {
