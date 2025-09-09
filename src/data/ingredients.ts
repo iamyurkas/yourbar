@@ -138,12 +138,13 @@ export async function saveAllIngredients(ingredients, tx) {
   await initDatabase();
   const run = async (innerTx) => {
     await innerTx.runAsync("DELETE FROM ingredients");
-    for (const item of list) {
-      await innerTx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
-          id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    if (list.length) {
+      const placeholders = list
+        .map(() =>
+          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+        .join(", ");
+      const params = list.flatMap((item) => [
         String(item.id),
         item.name ?? null,
         item.description ?? null,
@@ -155,7 +156,14 @@ export async function saveAllIngredients(ingredients, tx) {
         item.searchTokens ? JSON.stringify(item.searchTokens) : null,
         item.photoUri ?? null,
         item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
+        item.inShoppingList ? 1 : 0,
+      ]);
+      await innerTx.runAsync(
+        `INSERT OR REPLACE INTO ingredients (
+          id, name, description, tags, baseIngredientId, usageCount,
+          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+        ) VALUES ${placeholders}`,
+        params
       );
     }
   };

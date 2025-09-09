@@ -17,7 +17,7 @@ export const TABS_ON_TOP_EVENT = "tabsOnTopChanged";
 export const ALLOW_SUBSTITUTES_EVENT = "allowSubstitutesChanged";
 
 export const { get: getUseMetric, set: setUseMetric } =
-  createBooleanSetting(USE_METRIC_KEY, true);
+  createBooleanSetting(USE_METRIC_KEY, true, undefined);
 
 export const {
   get: getIgnoreGarnish,
