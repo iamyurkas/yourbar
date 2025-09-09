@@ -11,27 +11,38 @@ import { IngredientRecord } from "./types";
 const now = () => Date.now();
 const genId = () => now();
 
-export async function getAllIngredients(): Promise<IngredientRecord[]> {
+// Supports optional LIMIT/OFFSET for pagination to avoid loading the entire table
+export async function getAllIngredients({
+  limit,
+  offset,
+}: { limit?: number; offset?: number } = {}): Promise<IngredientRecord[]> {
   await initDatabase();
-  const res = await query(
-    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
-  );
-  const list = res.rows._array
-    .map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      description: r.description,
-      tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-      usageCount: r.usageCount ?? 0,
-      singleCocktailName: r.singleCocktailName,
-      searchName: r.searchName,
-      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-      photoUri: r.photoUri,
-      inBar: !!r.inBar,
-      inShoppingList: !!r.inShoppingList,
-    }))
-    .sort(sortByName);
+  let sql =
+    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients ORDER BY name";
+  const params: string[] = [];
+  if (typeof limit === "number") {
+    sql += " LIMIT ?";
+    params.push(String(limit));
+  }
+  if (typeof offset === "number") {
+    sql += " OFFSET ?";
+    params.push(String(offset));
+  }
+  const res = await query(sql, params);
+  const list = res.rows._array.map((r) => ({
+    id: Number(r.id),
+    name: r.name,
+    description: r.description,
+    tags: r.tags ? JSON.parse(r.tags) : [],
+    baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
+    usageCount: r.usageCount ?? 0,
+    singleCocktailName: r.singleCocktailName,
+    searchName: r.searchName,
+    searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
+    photoUri: r.photoUri,
+    inBar: !!r.inBar,
+    inShoppingList: !!r.inShoppingList,
+  }));
   return list;
 }
 

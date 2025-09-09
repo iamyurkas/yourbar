@@ -10,8 +10,8 @@ async function ensure() {
 }
 
 /** Domain-level services for ingredients */
-export async function getAllIngredients() {
-  return (await ensure()).getAllIngredients();
+export async function getAllIngredients(opts?: { limit?: number; offset?: number }) {
+  return (await ensure()).getAllIngredients(opts);
 }
 export async function getIngredientsByIds(ids) {
   return (await ensure()).getIngredientsByIds(ids);
