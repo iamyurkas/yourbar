@@ -141,17 +141,6 @@ export default function ShoppingIngredientsScreen() {
 
   const keyExtractor = useCallback((item) => String(item.id), []);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={{ marginTop: 12, color: theme.colors.onSurface }}>
-          Loading ingredients...
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <TabSwipe navigation={navigation}>
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -177,11 +166,20 @@ export default function ShoppingIngredientsScreen() {
         initialNumToRender={12}
         getItemType={() => "ING"}
         ListEmptyComponent={
-          <View style={{ padding: 24 }}>
-            <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              No ingredients found
-            </Text>
-          </View>
+          loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <Text style={{ marginTop: 12, color: theme.colors.onSurface }}>
+                Loading ingredients...
+              </Text>
+            </View>
+          ) : (
+            <View style={{ padding: 24 }}>
+              <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                No ingredients found
+              </Text>
+            </View>
+          )
         }
         contentContainerStyle={{
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
