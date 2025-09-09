@@ -52,7 +52,7 @@ const sanitizeCocktail = (c) => {
   };
 };
 
-async function readAll() {
+async function readAll(): Promise<CocktailRecord[]> {
   await initDatabase();
   const res = await query(
     `SELECT id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt FROM cocktails`
@@ -70,16 +70,16 @@ async function readAll() {
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
   }));
-  const map = new Map(cocktails.map((c) => [c.id, c]));
+  const map = new Map<number, any>(cocktails.map((c) => [c.id, c]));
   const ingRes = await query(
     `SELECT cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
        FROM cocktail_ingredients ORDER BY cocktailId, orderNum`
   );
-  for (const r of ingRes.rows._array) {
-    const c = map.get(r.cocktailId);
-    if (c) {
-      c.ingredients.push({
+    for (const r of ingRes.rows._array) {
+      const c: any = map.get(r.cocktailId);
+      if (c) {
+        c.ingredients.push({
         order: r.orderNum,
         ingredientId: r.ingredientId != null ? Number(r.ingredientId) : null,
         name: r.name,
@@ -93,10 +93,10 @@ async function readAll() {
       });
     }
   }
-  return Array.from(map.values()).sort(sortByName);
+  return Array.from(map.values()).sort(sortByName) as CocktailRecord[];
 }
 
-async function upsertCocktail(item: CocktailRecord): Promise<void> {
+async function upsertCocktail(item: any): Promise<void> {
   await initDatabase();
    await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
@@ -116,14 +116,15 @@ async function upsertCocktail(item: CocktailRecord): Promise<void> {
     );
     await tx.runAsync(
       `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
-      item.id
+      [item.id]
     );
-    for (const ing of item.ingredients) {
-      await tx.runAsync(
-        `INSERT INTO cocktail_ingredients (
-            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
-            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    if (item.ingredients.length) {
+      const placeholders = item.ingredients
+        .map(() =>
+          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+        .join(", ");
+      const params = item.ingredients.flatMap((ing) => [
         item.id,
         ing.order,
         ing.ingredientId != null ? String(ing.ingredientId) : null,
@@ -134,7 +135,14 @@ async function upsertCocktail(item: CocktailRecord): Promise<void> {
         ing.optional ? 1 : 0,
         ing.allowBaseSubstitution ? 1 : 0,
         ing.allowBrandedSubstitutes ? 1 : 0,
-        ing.substitutes ? JSON.stringify(ing.substitutes) : null
+        ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+      ]);
+      await tx.runAsync(
+        `INSERT INTO cocktail_ingredients (
+            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+          ) VALUES ${placeholders}`,
+        params
       );
     }
   });
@@ -155,7 +163,7 @@ export async function getCocktailById(id: number): Promise<CocktailRecord | unde
   );
   if (res.rows.length === 0) return null;
   const row = res.rows.item(0);
-  const cocktail = {
+  const cocktail: any = {
     id: row.id,
     name: row.name,
     photoUri: row.photoUri,
@@ -186,22 +194,26 @@ export async function getCocktailById(id: number): Promise<CocktailRecord | unde
     allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
     substitutes: r.substitutes ? JSON.parse(r.substitutes) : [],
   }));
-  return cocktail;
+  return cocktail as CocktailRecord;
 }
 
 /** Add new cocktail, returns created cocktail */
-export async function addCocktail(cocktail: CocktailRecord): Promise<void> {
+export async function addCocktail(
+  cocktail: CocktailRecord
+): Promise<CocktailRecord> {
   const item = sanitizeCocktail({ ...cocktail, id: cocktail?.id ?? genId() });
   await upsertCocktail(item);
-  return item;
+  return item as unknown as CocktailRecord;
 }
 
 /** Update existing (upsert). Returns updated cocktail */
-export async function saveCocktail(updated: CocktailRecord): Promise<void> {
+export async function saveCocktail(
+  updated: CocktailRecord
+): Promise<CocktailRecord> {
   await initDatabase();
   const item = sanitizeCocktail(updated);
   await upsertCocktail(item);
-  return item;
+  return item as unknown as CocktailRecord;
 }
 
 export function updateCocktailById(list: CocktailRecord[], updated: CocktailRecord): CocktailRecord[] {
@@ -226,7 +238,10 @@ export function removeCocktail(list: CocktailRecord[], id: number): CocktailReco
 }
 
 /** Replace whole storage (use carefully) */
-export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any): Promise<void> {
+export async function replaceAllCocktails(
+  cocktails: CocktailRecord[],
+  tx: any
+): Promise<CocktailRecord[]> {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
     : [];
@@ -234,11 +249,13 @@ export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any):
   const run = async (innerTx) => {
     await innerTx.runAsync("DELETE FROM cocktail_ingredients");
     await innerTx.runAsync("DELETE FROM cocktails");
-    for (const item of normalized) {
-      await innerTx.runAsync(
-        `INSERT OR REPLACE INTO cocktails (
-            id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    if (normalized.length) {
+      const cocktailPlaceholders = normalized
+        .map(() =>
+          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+        .join(", ");
+      const cocktailParams = normalized.flatMap((item) => [
         item.id,
         item.name,
         item.photoUri ?? null,
@@ -248,15 +265,25 @@ export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any):
         item.description ?? null,
         item.instructions ?? null,
         item.createdAt ?? null,
-        item.updatedAt ?? null
+        item.updatedAt ?? null,
+      ]);
+      await innerTx.runAsync(
+        `INSERT OR REPLACE INTO cocktails (
+            id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
+          ) VALUES ${cocktailPlaceholders}`,
+        cocktailParams
       );
-      for (const ing of item.ingredients) {
-        await innerTx.runAsync(
-          `INSERT INTO cocktail_ingredients (
-            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
-            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          item.id,
+      const allIngredients = normalized.flatMap((item) =>
+        item.ingredients.map((ing) => ({ ...ing, cocktailId: item.id }))
+      );
+      if (allIngredients.length) {
+        const ingPlaceholders = allIngredients
+          .map(() =>
+            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          )
+          .join(", ");
+        const ingParams = allIngredients.flatMap((ing) => [
+          ing.cocktailId,
           ing.order,
           ing.ingredientId != null ? String(ing.ingredientId) : null,
           ing.name ?? null,
@@ -266,7 +293,14 @@ export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any):
           ing.optional ? 1 : 0,
           ing.allowBaseSubstitution ? 1 : 0,
           ing.allowBrandedSubstitutes ? 1 : 0,
-          ing.substitutes ? JSON.stringify(ing.substitutes) : null
+          ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+        ]);
+        await innerTx.runAsync(
+          `INSERT INTO cocktail_ingredients (
+            cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
+            allowBaseSubstitution, allowBrandedSubstitutes, substitutes
+          ) VALUES ${ingPlaceholders}`,
+          ingParams
         );
       }
     }
@@ -276,8 +310,8 @@ export async function replaceAllCocktails(cocktails: CocktailRecord[], tx: any):
   } else {
     await withWriteTransactionAsync(run);
   }
-  return normalized;
-}
+    return normalized as unknown as CocktailRecord[];
+  }
 
 /** Simple search by name substring (case-insensitive) */
 export async function searchCocktails(query: string): Promise<CocktailRecord[]> {
