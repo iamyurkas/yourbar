@@ -15,7 +15,7 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../domain/cocktails";
 import {
   getAllIngredients,
-  flushPendingIngredients,
+  setIngredientsInShoppingList,
   updateIngredientById,
 } from "../../domain/ingredients";
 import {
@@ -91,7 +91,15 @@ export default function MyCocktailsScreen() {
     const list = pendingUpdatesRef.current;
     if (list && list.length) {
       pendingUpdatesRef.current = [];
-      flushPendingIngredients(list).catch(() => {});
+      const add = [];
+      const remove = [];
+      list.forEach((u) => {
+        (u.inShoppingList ? add : remove).push(u.id);
+      });
+      if (add.length)
+        setIngredientsInShoppingList(add, true).catch(() => {});
+      if (remove.length)
+        setIngredientsInShoppingList(remove, false).catch(() => {});
     }
   }, []);
 
@@ -270,7 +278,10 @@ export default function MyCocktailsScreen() {
               inShoppingList: updated.inShoppingList,
             })
           );
-          pendingUpdatesRef.current.push(updated);
+          pendingUpdatesRef.current.push({
+            id,
+            inShoppingList: updated.inShoppingList,
+          });
           scheduleFlush();
         }
       });
