@@ -349,13 +349,6 @@ export default function MyCocktailsScreen() {
     return `t${index}`;
   }, []);
 
-  if (loading)
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-
   return (
     <TabSwipe navigation={navigation}>
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -387,11 +380,17 @@ export default function MyCocktailsScreen() {
             : "TEXT"
         }
         ListEmptyComponent={
-          <View style={{ padding: 24 }}>
-            <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              No cocktails available
-            </Text>
-          </View>
+          loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+            </View>
+          ) : (
+            <View style={{ padding: 24 }}>
+              <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                No cocktails available
+              </Text>
+            </View>
+          )
         }
         contentContainerStyle={{
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,

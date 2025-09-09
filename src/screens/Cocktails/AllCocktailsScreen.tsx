@@ -179,13 +179,6 @@ export default function AllCocktailsScreen() {
 
   const keyExtractor = useCallback((item) => String(item.id), []);
 
-  if (loading)
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-
   return (
     <TabSwipe navigation={navigation}>
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -211,11 +204,17 @@ export default function AllCocktailsScreen() {
         initialNumToRender={12}
         getItemType={() => "COCKTAIL"}
         ListEmptyComponent={
-          <View style={{ padding: 24 }}>
-            <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              No cocktails found
-            </Text>
-          </View>
+          loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+            </View>
+          ) : (
+            <View style={{ padding: 24 }}>
+              <Text style={{ color: theme.colors.onSurfaceVariant }}>
+                No cocktails found
+              </Text>
+            </View>
+          )
         }
         contentContainerStyle={{
           paddingBottom: 56 + (tabsOnTop ? 0 : 56) + insets.bottom,
