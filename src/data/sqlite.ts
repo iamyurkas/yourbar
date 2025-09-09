@@ -1,8 +1,36 @@
 import * as SQLite from "expo-sqlite";
 
+function logQuery(sql: string, params?: any) {
+  const timestamp = new Date().toISOString();
+  if (params === undefined || params.length === 0) {
+    console.log(`[${timestamp}] ${sql}`);
+  } else {
+    console.log(`[${timestamp}] ${sql}`, params);
+  }
+}
+
+function attachLogging(db: any) {
+  const methods = ["execAsync", "runAsync", "getAllAsync", "getFirstAsync"] as const;
+  for (const name of methods) {
+    const original = db[name];
+    if (typeof original === "function") {
+      db[name] = (...args: any[]) => {
+        const [sql, ...rest] = args;
+        if (typeof sql === "string") {
+          logQuery(sql, rest.length === 1 ? rest[0] : rest);
+        }
+        return original.apply(db, args);
+      };
+    }
+  }
+}
+
 // Use separate connections for reads and writes.
 const readDb = SQLite.openDatabaseSync("yourbar.db");
 const writeDb = SQLite.openDatabaseSync("yourbar.db");
+
+attachLogging(readDb);
+attachLogging(writeDb);
 
 // Disable verbose SQL query logging if the tracer API is available.
 if (typeof SQLite.setTracer === "function") {
