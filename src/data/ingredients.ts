@@ -136,28 +136,28 @@ async function upsertIngredient(item: IngredientRecord): Promise<void> {
 export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
+  const placeholders = list
+    .map(() =>
+      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    )
+    .join(", ");
+  const params = list.flatMap((item) => [
+    String(item.id),
+    item.name ?? null,
+    item.description ?? null,
+    item.tags ? JSON.stringify(item.tags) : null,
+    item.baseIngredientId ?? null,
+    item.usageCount ?? 0,
+    item.singleCocktailName ?? null,
+    item.searchName ?? null,
+    item.searchTokens ? JSON.stringify(item.searchTokens) : null,
+    item.photoUri ?? null,
+    item.inBar ? 1 : 0,
+    item.inShoppingList ? 1 : 0,
+  ]);
   const run = async (innerTx) => {
     await innerTx.runAsync("DELETE FROM ingredients");
     if (list.length) {
-      const placeholders = list
-        .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-        .join(", ");
-      const params = list.flatMap((item) => [
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0,
-      ]);
       await innerTx.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
@@ -277,12 +277,11 @@ export async function updateIngredientFields(id, fields) {
 }
 
 export async function flushPendingIngredients(list) {
-  const items = Array.isArray(list) ? list : [];
+  const items = Array.isArray(list) ? list.map(sanitizeIngredient) : [];
   if (!items.length) return;
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
-    for (const u of items) {
-      const item = sanitizeIngredient(u);
+    for (const item of items) {
       await tx.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
@@ -313,10 +312,11 @@ export async function setIngredientsInShoppingList(ids, inShoppingList) {
   await initDatabase();
   const placeholders = list.map(() => "?").join(", ");
   const value = inShoppingList ? 1 : 0;
+  const params = [value, ...list.map((id) => String(id))];
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
-      [value, ...list.map((id) => String(id))]
+      params
     );
   });
 }
@@ -328,10 +328,11 @@ export async function toggleIngredientsInBar(ids) {
   if (!list.length) return;
   await initDatabase();
   const placeholders = list.map(() => "?").join(", ");
+  const params = list.map((id) => String(id));
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
-      list.map((id) => String(id))
+      params
     );
   });
 }
@@ -342,8 +343,9 @@ export function getIngredientById(id, index) {
 
 export async function deleteIngredient(id) {
   await initDatabase();
+  const params = [String(id)];
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
+    await tx.runAsync("DELETE FROM ingredients WHERE id = ?", params);
   });
 }
 
