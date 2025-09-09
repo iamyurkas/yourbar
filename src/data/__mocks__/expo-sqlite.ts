@@ -4,6 +4,7 @@ export function openDatabaseSync() {
     getAllAsync: async () => [],
     runAsync: async () => {},
     withTransactionAsync: async (cb) => cb(),
+    closeAsync: async () => {},
   };
 }
 export function setTracer() {}

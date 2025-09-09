@@ -1,7 +1,10 @@
 import * as SQLite from "expo-sqlite";
 
-// Initialize and export a shared SQLite instance for the app.
+// Initialize and export shared SQLite instances for the app.
 const db = SQLite.openDatabaseSync("yourbar.db");
+// Read-only connection used for SELECT queries so they do not wait on the
+// write mutex.  Cast to `any` for compatibility with older type defs.
+const readDb = (SQLite.openDatabaseSync as any)("yourbar.db", { readOnly: true });
 
 // Disable verbose SQL query logging if the tracer API is available.
 if (typeof SQLite.setTracer === "function") {
@@ -25,6 +28,10 @@ export function initDatabase() {
         console.warn("[sqlite] failed to enable WAL", e);
       }
       await db.execAsync("PRAGMA busy_timeout = 5000;");
+      // Ensure the read-only connection has an appropriate busy timeout as
+      // well.  This does not modify the database file and is safe for a
+      // read-only connection.
+      await readDb.execAsync("PRAGMA busy_timeout = 5000;");
       await db.execAsync(`
         CREATE TABLE IF NOT EXISTS cocktails (
           id INTEGER PRIMARY KEY NOT NULL,
@@ -80,11 +87,11 @@ export function initDatabase() {
 export async function query(sql, params = []) {
   // assume initDatabase() has been invoked at app startup
   await initPromise;
-  // Block reads while a write transaction is pending.
-  await writeLock;
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
-    const promise = db.getAllAsync(sql, params);
+    // Run SELECT queries on the read-only connection without waiting for the
+    // write lock.
+    const promise = readDb.getAllAsync(sql, params);
     pendingSelects.add(promise);
     const rows = await promise.finally(() => pendingSelects.delete(promise));
     return {
@@ -95,6 +102,8 @@ export async function query(sql, params = []) {
       },
     };
   }
+  // All non-SELECT statements should still respect the write mutex.
+  await writeLock;
   return db.runAsync(sql, params);
 }
 
@@ -120,6 +129,25 @@ export function withWriteTransactionAsync(work) {
 
 export function waitForSelects() {
   return Promise.all(Array.from(pendingSelects));
+}
+
+export async function closeDatabases() {
+  // Wait for any in-flight reads to complete before closing.
+  await waitForSelects();
+  if (typeof db.closeAsync === "function") {
+    try {
+      await db.closeAsync();
+    } catch (e) {
+      console.warn("[sqlite] failed to close write DB", e);
+    }
+  }
+  if (typeof readDb.closeAsync === "function") {
+    try {
+      await readDb.closeAsync();
+    } catch (e) {
+      console.warn("[sqlite] failed to close read DB", e);
+    }
+  }
 }
 
 export default db;
