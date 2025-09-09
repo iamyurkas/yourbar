@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { Provider as PaperProvider, useTheme } from "react-native-paper";
 import { MenuProvider } from "react-native-popup-menu";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { InteractionManager } from "react-native";
 
 import CocktailsTabsScreen from "./src/screens/Cocktails/CocktailsTabsScreen";
 import ShakerScreen from "./src/screens/ShakerScreen";
@@ -34,6 +35,16 @@ import useIngredientsData from "./src/hooks/useIngredientsData";
 import { getStartScreen } from "./src/data/settings";
 import PlainHeader from "./src/components/PlainHeader";
 
+
+if (__DEV__) {
+  try {
+    // @ts-ignore optional dependency for development
+    require("react-native-flipper");
+  } catch (e) {
+    // Flipper is optional; ignore if not installed
+    console.warn("Flipper not installed", e);
+  }
+}
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
@@ -171,6 +182,9 @@ export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [startScreen, setStartScreen] = useState(null);
 
+  const navigationRef = useRef<any>(null);
+  const routeNameRef = useRef<string>();
+
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
     getStartScreen().then((v) => setStartScreen(v));
@@ -200,7 +214,52 @@ export default function App() {
               <IngredientUsageProvider>
                 <InitialDataLoader>
                   <TabMemoryProvider>
-                    <NavigationContainer>
+                    <NavigationContainer
+                      ref={navigationRef}
+                      onReady={() => {
+                        const current = navigationRef.current?.getCurrentRoute();
+                        if (current) {
+                          const start =
+                            globalThis.performance?.now() ?? Date.now();
+                          InteractionManager.runAfterInteractions(() => {
+                            const end =
+                              globalThis.performance?.now() ?? Date.now();
+                            const memory =
+                              (globalThis as any).performance?.memory
+                                ?.usedJSHeapSize ?? 0;
+                            const duration = end - start;
+                            console.log(
+                              `[Perf] ${current.name} render: ${duration.toFixed(
+                                2
+                              )}ms, memory: ${memory}`
+                            );
+                          });
+                          routeNameRef.current = current.name;
+                        }
+                      }}
+                      onStateChange={() => {
+                        const previous = routeNameRef.current;
+                        const current = navigationRef.current?.getCurrentRoute();
+                        if (current && previous !== current.name) {
+                          const start =
+                            globalThis.performance?.now() ?? Date.now();
+                          InteractionManager.runAfterInteractions(() => {
+                            const end =
+                              globalThis.performance?.now() ?? Date.now();
+                            const memory =
+                              (globalThis as any).performance?.memory
+                                ?.usedJSHeapSize ?? 0;
+                            const duration = end - start;
+                            console.log(
+                              `[Perf] ${current.name} render: ${duration.toFixed(
+                                2
+                              )}ms, memory: ${memory}`
+                            );
+                          });
+                          routeNameRef.current = current.name;
+                        }
+                      }}
+                    >
                       <RootStack.Navigator
                         screenOptions={{ header: (props) => <PlainHeader {...props} /> }}
                       >
