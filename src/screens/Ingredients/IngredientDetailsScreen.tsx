@@ -375,16 +375,40 @@ export default function IngredientDetailsScreen() {
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
+    console.time("toggleInBar:state");
+    let nextList;
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    setIngredients((list) =>
-      updateIngredientById(list, {
+    setIngredients((list) => {
+      nextList = updateIngredientById(list, {
         id: updated.id,
         inBar: updated.inBar,
-      })
-    );
-    updateIngredientFields(updated.id, { inBar: updated.inBar });
-  }, [ingredient, setIngredients]);
+      });
+      return nextList;
+    });
+    console.timeEnd("toggleInBar:state");
+
+    console.time("toggleInBar:usageMap");
+    getAllowSubstitutes().then((allow) => {
+      updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+        prevIngredients: ingredients,
+        changedIngredientIds: [updated.id],
+        allowSubstitutes: !!allow,
+      });
+      console.timeEnd("toggleInBar:usageMap");
+    });
+
+    console.time("toggleInBar:db");
+    updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(() => {
+      console.timeEnd("toggleInBar:db");
+    });
+  }, [
+    ingredient,
+    setIngredients,
+    updateUsageMap,
+    cocktailsCtx,
+    ingredients,
+  ]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
@@ -392,6 +416,7 @@ export default function IngredientDetailsScreen() {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
+    console.time("toggleShopping:state");
     // Optimistic local update for instant icon change
     setIngredient(updated);
     setIngredients((list) =>
@@ -400,8 +425,13 @@ export default function IngredientDetailsScreen() {
         inShoppingList: updated.inShoppingList,
       })
     );
+    console.timeEnd("toggleShopping:state");
+
+    console.time("toggleShopping:db");
     updateIngredientFields(updated.id, {
       inShoppingList: updated.inShoppingList,
+    }).finally(() => {
+      console.timeEnd("toggleShopping:db");
     });
   }, [ingredient, setIngredients]);
 

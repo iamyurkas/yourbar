@@ -318,12 +318,14 @@ export async function setIngredientsInShoppingList(ids, inShoppingList) {
   const placeholders = list.map(() => "?").join(", ");
   const value = inShoppingList ? 1 : 0;
   const params = [value, ...list.map((id) => String(id))];
+  console.time("setIngredientsInShoppingList:db");
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
       params
     );
   });
+  console.timeEnd("setIngredientsInShoppingList:db");
 }
 
 export async function toggleIngredientsInBar(ids) {
@@ -334,12 +336,14 @@ export async function toggleIngredientsInBar(ids) {
   await initDatabase();
   const placeholders = list.map(() => "?").join(", ");
   const params = list.map((id) => String(id));
+  console.time("toggleIngredientsInBar:db");
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
       params
     );
   });
+  console.timeEnd("toggleIngredientsInBar:db");
 }
 
 export function getIngredientById(id, index) {
