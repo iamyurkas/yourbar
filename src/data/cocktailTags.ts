@@ -1,6 +1,6 @@
 // src/storage/cocktailTagsStorage.js
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BUILTIN_COCKTAIL_TAGS } from "../constants/cocktailTags.js";
+import { BUILTIN_COCKTAIL_TAGS } from "../constants/cocktailTags";
 
 const STORAGE_KEY = "cocktail_tags_custom_v1";
 

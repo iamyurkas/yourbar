@@ -2,15 +2,16 @@ import db, {
   query,
   initDatabase,
   withWriteTransactionAsync,
-} from "./sqlite.js";
-import { normalizeSearch } from "../utils/normalizeSearch.js";
-import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch.js";
-import { sortByName } from "../utils/sortByName.js";
+} from "./sqlite";
+import { normalizeSearch } from "../utils/normalizeSearch";
+import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
+import { sortByName } from "../utils/sortByName";
+import { IngredientRecord } from "./types";
 
 const now = () => Date.now();
 const genId = () => now();
 
-export async function getAllIngredients() {
+export async function getAllIngredients(): Promise<IngredientRecord[]> {
   await initDatabase();
   const res = await query(
     "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients"
@@ -34,7 +35,7 @@ export async function getAllIngredients() {
   return list;
 }
 
-export async function getIngredientsByIds(ids) {
+export async function getIngredientsByIds(ids: number[]): Promise<IngredientRecord[]> {
   const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
@@ -62,7 +63,7 @@ export async function getIngredientsByIds(ids) {
   return rows;
 }
 
-export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {}) {
+export async function getIngredientsByBaseIds(baseIds: number[], { inBarOnly = false }: { inBarOnly?: boolean } = {}): Promise<IngredientRecord[]> {
   const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
   if (list.length === 0) return [];
   const placeholders = list.map(() => "?").join(", ");
@@ -90,14 +91,14 @@ export async function getIngredientsByBaseIds(baseIds, { inBarOnly = false } = {
   return rows;
 }
 
-export function buildIndex(list) {
+export function buildIndex(list: IngredientRecord[]): Record<number, IngredientRecord> {
   return list.reduce((acc, item) => {
     acc[item.id] = item;
     return acc;
   }, {});
 }
 
-async function upsertIngredient(item) {
+async function upsertIngredient(item: IngredientRecord): Promise<void> {
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
@@ -162,7 +163,7 @@ export function updateIngredientById(map, updated) {
   return next;
 }
 
-function sanitizeIngredient(i) {
+function sanitizeIngredient(i: Partial<IngredientRecord>): IngredientRecord {
   const id = Number(i?.id ?? genId());
   const name = String(i?.name ?? "").trim();
   const searchName = normalizeSearch(name);

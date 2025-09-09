@@ -4,7 +4,7 @@ export function __setDataLayer(mock) {
 }
 async function ensure() {
   if (!data) {
-    data = await import("../data/cocktails.js");
+    data = await import("../data/cocktails");
   }
   return data;
 }
