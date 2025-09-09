@@ -212,6 +212,8 @@ export async function addIngredient(ingredient) {
 export async function saveIngredient(updated) {
   await initDatabase();
   if (!updated?.id) return;
+  const log = `[saveIngredient ${updated.id}]`;
+  console.time(`${log} sanitize`);
   const name = String(updated.name ?? "").trim();
   const searchName = normalizeSearch(name);
   let item;
@@ -236,7 +238,10 @@ export async function saveIngredient(updated) {
   } else {
     item = sanitizeIngredient({ ...updated, name });
   }
+  console.timeEnd(`${log} sanitize`);
+  console.time(`${log} sql`);
   await upsertIngredient(item);
+  console.timeEnd(`${log} sql`);
   return item;
 }
 

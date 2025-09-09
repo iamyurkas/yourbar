@@ -418,7 +418,7 @@ export default function IngredientDetailsScreen() {
         ...brandedList.map((b) => b.id),
       ];
       if (updates.length === 0) return;
-
+      console.time("unlinkIngredients:state");
       let nextList;
       setIngredients((list) => {
         nextList = list;
@@ -436,20 +436,25 @@ export default function IngredientDetailsScreen() {
           setBrandedChildren((prev) => prev.filter((c) => c.id !== item.id));
         }
       });
+      console.timeEnd("unlinkIngredients:state");
 
+      console.time("unlinkIngredients:usageMap");
       getAllowSubstitutes().then((allow) => {
         updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
           prevIngredients: ingredients,
           changedIngredientIds: changedIds,
           allowSubstitutes: !!allow,
         });
+        console.timeEnd("unlinkIngredients:usageMap");
       });
 
+      console.time("unlinkIngredients:db");
       InteractionManager.runAfterInteractions(() => {
         (async () => {
           for (const item of updates) {
             await saveIngredient(item);
           }
+          console.timeEnd("unlinkIngredients:db");
         })();
       });
     },
