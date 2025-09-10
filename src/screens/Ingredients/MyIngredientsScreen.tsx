@@ -104,19 +104,14 @@ export default function MyIngredientsScreen() {
       try {
         await toggleIngredientsInBar(ids);
       } catch {}
-      let updatedList;
+      let list;
       setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
+        list = Array.from(prev.values());
+        return prev;
       });
       let map;
       ids.forEach((id) => {
-        map = updateIngredientAvailability(id, updatedList);
+        map = updateIngredientAvailability(id, list);
       });
       setAvailableMap(new Map(map));
     }
@@ -158,11 +153,23 @@ export default function MyIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  const toggleInBar = useCallback(
+    (id) => {
+      const set = pendingIdsRef.current;
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+
+      setIngredients((prev) => {
+        const next = new Map(prev);
+        const item = next.get(id);
+        if (item) next.set(id, { ...item, inBar: !item.inBar });
+        return next;
+      });
+
+      setTimeout(() => flushPending().catch(() => {}), 0);
+    },
+    [setIngredients, flushPending]
+  );
 
   const onItemPress = useCallback(
     (id) => {
