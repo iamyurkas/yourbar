@@ -98,18 +98,12 @@ export default function MyIngredientsScreen() {
     const ids = Array.from(pendingIdsRef.current);
     if (ids.length) {
       pendingIdsRef.current = new Set();
-      try {
-        await toggleIngredientsInBar(ids);
-      } catch {}
+      // persist changes without blocking UI
+      toggleIngredientsInBar(ids).catch(() => {});
       let updatedList;
       setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
+        updatedList = Array.from(prev.values());
+        return prev;
       });
       const map = initIngredientsAvailability(
         updatedList,
@@ -164,11 +158,20 @@ export default function MyIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  const toggleInBar = useCallback(
+    (id) => {
+      const set = pendingIdsRef.current;
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      setIngredients((prev) => {
+        const next = new Map(prev);
+        const item = next.get(id);
+        if (item) next.set(id, { ...item, inBar: !item.inBar });
+        return next;
+      });
+    },
+    [setIngredients]
+  );
 
   const onItemPress = useCallback(
     (id) => {
