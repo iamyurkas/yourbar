@@ -370,7 +370,9 @@ export default function IngredientDetailsScreen() {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write to allow UI to update first
+    // Defer global updates and run DB write on a later tick so any heavy
+    // CPU work (e.g. mapCocktailsByIngredient) runs outside the
+    // transaction window
     setTimeout(() => {
       setIngredients((list) =>
         updateIngredientById(list, {
@@ -378,7 +380,9 @@ export default function IngredientDetailsScreen() {
           inBar: updated.inBar,
         })
       );
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
+      setTimeout(() => {
+        updateIngredientFields(updated.id, { inBar: updated.inBar });
+      }, 0);
     }, 0);
   }, [ingredient, setIngredients]);
 
@@ -390,7 +394,8 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write to allow UI to update first
+    // Defer global update and schedule DB write after a tick so heavy CPU
+    // work completes before the transaction begins
     setTimeout(() => {
       setIngredients((list) =>
         updateIngredientById(list, {
@@ -398,9 +403,11 @@ export default function IngredientDetailsScreen() {
           inShoppingList: updated.inShoppingList,
         })
       );
-      updateIngredientFields(updated.id, {
-        inShoppingList: updated.inShoppingList,
-      });
+      setTimeout(() => {
+        updateIngredientFields(updated.id, {
+          inShoppingList: updated.inShoppingList,
+        });
+      }, 0);
     }, 0);
   }, [ingredient, setIngredients]);
 
