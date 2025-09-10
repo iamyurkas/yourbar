@@ -386,7 +386,7 @@ export default function IngredientDetailsScreen() {
         })
       );
       updateIngredientFields(updated.id, { inBar: updated.inBar });
-    }, 100);
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
@@ -408,7 +408,7 @@ export default function IngredientDetailsScreen() {
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
       });
-    }, 100);
+    }, 0);
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
