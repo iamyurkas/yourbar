@@ -100,7 +100,7 @@ export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
-    const callback = async () => work(writeDb);
+    const callback = (tx) => work(tx);
     return SQLite.withTransactionAsync
       ? SQLite.withTransactionAsync(writeDb, callback)
       : writeDb.withTransactionAsync(callback);
