@@ -367,13 +367,23 @@ export default function IngredientDetailsScreen() {
 
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
-    const updated = { ...ingredient, inBar: !ingredient.inBar };
+    const next = !ingredient.inBar;
+    console.log(
+      `[IngredientDetails] tap inBar id=${ingredient.id} next=${next}`
+    );
+    const updated = { ...ingredient, inBar: next };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
+    console.log(
+      `[IngredientDetails] local inBar=${updated.inBar} for ${updated.id}`
+    );
     // Defer global updates and run DB write on a later tick so any heavy
     // CPU work (e.g. mapCocktailsByIngredient) runs outside the
     // transaction window
     setTimeout(() => {
+      console.log(
+        `[IngredientDetails] global inBar update for ${updated.id}`
+      );
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -381,6 +391,9 @@ export default function IngredientDetailsScreen() {
         })
       );
       setTimeout(() => {
+        console.log(
+          `[IngredientDetails] persist inBar=${updated.inBar} for ${updated.id}`
+        );
         updateIngredientFields(updated.id, { inBar: updated.inBar });
       }, 0);
     }, 0);
@@ -388,15 +401,25 @@ export default function IngredientDetailsScreen() {
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
+    const next = !ingredient.inShoppingList;
+    console.log(
+      `[IngredientDetails] tap shopping id=${ingredient.id} next=${next}`
+    );
     const updated = {
       ...ingredient,
-      inShoppingList: !ingredient.inShoppingList,
+      inShoppingList: next,
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
+    console.log(
+      `[IngredientDetails] local inShoppingList=${updated.inShoppingList} for ${updated.id}`
+    );
     // Defer global update and schedule DB write after a tick so heavy CPU
     // work completes before the transaction begins
     setTimeout(() => {
+      console.log(
+        `[IngredientDetails] global inShoppingList update for ${updated.id}`
+      );
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -404,6 +427,9 @@ export default function IngredientDetailsScreen() {
         })
       );
       setTimeout(() => {
+        console.log(
+          `[IngredientDetails] persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
+        );
         updateIngredientFields(updated.id, {
           inShoppingList: updated.inShoppingList,
         });
