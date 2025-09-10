@@ -1,11 +1,18 @@
 import * as SQLite from "expo-sqlite";
 
+function logWithTime(message: string, ...args: any[]) {
+  console.log(`[${new Date().toISOString()}] ${message}`, ...args);
+}
+
+function warnWithTime(message: string, ...args: any[]) {
+  console.warn(`[${new Date().toISOString()}] ${message}`, ...args);
+}
+
 function logQuery(sql: string, params?: any) {
-  const timestamp = new Date().toISOString();
   if (params === undefined || params.length === 0) {
-    console.log(`[${timestamp}] ${sql}`);
+    logWithTime(sql);
   } else {
-    console.log(`[${timestamp}] ${sql}`, params);
+    logWithTime(sql, params);
   }
 }
 
@@ -52,7 +59,7 @@ export function initDatabase() {
       try {
         await writeDb.execAsync("PRAGMA journal_mode=WAL;");
       } catch (e) {
-        console.warn("[sqlite] failed to enable WAL", e);
+        warnWithTime("[sqlite] failed to enable WAL", e);
       }
       await writeDb.execAsync(`
         CREATE TABLE IF NOT EXISTS cocktails (
@@ -131,7 +138,7 @@ export function withWriteTransactionAsync(work) {
   const runner = async () => {
     await initPromise;
     const start = Date.now();
-    console.log(`[sqlite] tx queued. pending=${queueLength}`);
+    logWithTime(`[sqlite] tx queued. pending=${queueLength}`);
 
     let firstRunAt;
     let inTx = false;
@@ -139,7 +146,7 @@ export function withWriteTransactionAsync(work) {
     const beginTx = async () => {
       if (!inTx) {
         inTx = true;
-        console.log(`[sqlite] begin transaction after ${Date.now() - start}ms`);
+        logWithTime(`[sqlite] begin transaction after ${Date.now() - start}ms`);
         await writeDb.execAsync("BEGIN IMMEDIATE");
       }
     };
@@ -151,7 +158,7 @@ export function withWriteTransactionAsync(work) {
           return async (...args: any[]) => {
             if (!firstRunAt) {
               firstRunAt = Date.now();
-              console.log(
+              logWithTime(
                 `[sqlite] first ${prop} after ${firstRunAt - start}ms`
               );
             }
@@ -173,12 +180,12 @@ export function withWriteTransactionAsync(work) {
         try {
           await writeDb.execAsync("ROLLBACK");
         } catch (err) {
-          console.warn("[sqlite] rollback error", err);
+          warnWithTime("[sqlite] rollback error", err);
         }
       }
       throw e;
     } finally {
-      console.log(`[sqlite] tx finished in ${Date.now() - start}ms`);
+      logWithTime(`[sqlite] tx finished in ${Date.now() - start}ms`);
     }
   };
 
@@ -187,7 +194,7 @@ export function withWriteTransactionAsync(work) {
   // Keep the chain alive even if an operation fails and unblock queued writes
   writeQueue = next
     .catch((e) => {
-      console.warn("[sqlite] withWriteTransactionAsync error", e);
+      warnWithTime("[sqlite] withWriteTransactionAsync error", e);
     })
     .finally(() => {
       queueLength--;
