@@ -10,7 +10,6 @@ import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
 } from "../data/settings";
-import { sortByName } from "../utils/sortByName";
 import { getAllTags } from "../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
 
@@ -68,21 +67,21 @@ export default function useIngredientsData() {
           ]);
         }
 
-        const sorted = [...ing].sort(sortByName);
-        const byId = new Map(sorted.map((i) => [i.id, i]));
+        // getAllIngredients must return ingredients sorted alphabetically.
+        const byId = new Map(ing.map((i) => [i.id, i]));
         const byBase = new Map();
-        sorted.forEach((i) => {
+        ing.forEach((i) => {
           const baseId = i.baseIngredientId ?? i.id;
           if (!byBase.has(baseId)) byBase.set(baseId, []);
           byBase.get(baseId).push(i);
         });
-        const map = mapCocktailsByIngredient(sorted, cocks, {
+        const map = mapCocktailsByIngredient(ing, cocks, {
           allowSubstitutes: !!allowSubs,
           byId,
           byBase,
         });
         const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));
-        const withUsage = sorted.map((item) => {
+        const withUsage = ing.map((item) => {
           const ids = map[item.id] || [];
           const usageCount = ids.length;
           const singleCocktailName =
