@@ -11,6 +11,10 @@ import { IngredientRecord } from "./types";
 const now = () => Date.now();
 const genId = () => now();
 
+function logIngredientQuery(sql: string, params: unknown[] = []) {
+  console.log("[ingredients] SQL:", sql, params);
+}
+
 // Supports optional LIMIT/OFFSET for pagination to avoid loading the entire table
 export async function getAllIngredients({
   limit,
@@ -112,11 +116,11 @@ export function buildIndex(list: IngredientRecord[]): Record<number, IngredientR
 async function upsertIngredient(item: IngredientRecord): Promise<void> {
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `INSERT OR REPLACE INTO ingredients (
+    const sql = `INSERT OR REPLACE INTO ingredients (
         id, name, description, tags, baseIngredientId, usageCount,
         singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const params = [
       String(item.id),
       item.name ?? null,
       item.description ?? null,
@@ -128,8 +132,10 @@ async function upsertIngredient(item: IngredientRecord): Promise<void> {
       item.searchTokens ? JSON.stringify(item.searchTokens) : null,
       item.photoUri ?? null,
       item.inBar ? 1 : 0,
-      item.inShoppingList ? 1 : 0
-    );
+      item.inShoppingList ? 1 : 0,
+    ];
+    logIngredientQuery(sql, params);
+    await tx.runAsync(sql, params);
   });
 }
 
@@ -137,7 +143,9 @@ export async function saveAllIngredients(ingredients, tx) {
   const list = Array.isArray(ingredients) ? ingredients : [];
   await initDatabase();
   const run = async (innerTx) => {
-    await innerTx.runAsync("DELETE FROM ingredients");
+    const deleteSql = "DELETE FROM ingredients";
+    logIngredientQuery(deleteSql);
+    await innerTx.runAsync(deleteSql);
     if (list.length) {
       const placeholders = list
         .map(() =>
@@ -158,13 +166,12 @@ export async function saveAllIngredients(ingredients, tx) {
         item.inBar ? 1 : 0,
         item.inShoppingList ? 1 : 0,
       ]);
-      await innerTx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
+      const insertSql = `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES ${placeholders}`,
-        params
-      );
+        ) VALUES ${placeholders}`;
+      logIngredientQuery(insertSql, params);
+      await innerTx.runAsync(insertSql, params);
     }
   };
   if (tx) {
@@ -272,6 +279,7 @@ export async function updateIngredientFields(id, fields) {
   params.push(String(id));
   const sql = `UPDATE ingredients SET ${parts.join(", ")} WHERE id = ?`;
   await withWriteTransactionAsync(async (tx) => {
+    logIngredientQuery(sql, params);
     await tx.runAsync(sql, params);
   });
 }
@@ -283,11 +291,11 @@ export async function flushPendingIngredients(list) {
   await withWriteTransactionAsync(async (tx) => {
     for (const u of items) {
       const item = sanitizeIngredient(u);
-      await tx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
+      const sql = `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
           singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const params = [
         String(item.id),
         item.name ?? null,
         item.description ?? null,
@@ -299,8 +307,10 @@ export async function flushPendingIngredients(list) {
         item.searchTokens ? JSON.stringify(item.searchTokens) : null,
         item.photoUri ?? null,
         item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
-      );
+        item.inShoppingList ? 1 : 0,
+      ];
+      logIngredientQuery(sql, params);
+      await tx.runAsync(sql, params);
     }
   });
 }
@@ -314,10 +324,10 @@ export async function setIngredientsInShoppingList(ids, inShoppingList) {
   const placeholders = list.map(() => "?").join(", ");
   const value = inShoppingList ? 1 : 0;
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
-      [value, ...list.map((id) => String(id))]
-    );
+    const sql = `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`;
+    const params = [value, ...list.map((id) => String(id))];
+    logIngredientQuery(sql, params);
+    await tx.runAsync(sql, params);
   });
 }
 
@@ -329,10 +339,10 @@ export async function toggleIngredientsInBar(ids) {
   await initDatabase();
   const placeholders = list.map(() => "?").join(", ");
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
-      list.map((id) => String(id))
-    );
+    const sql = `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`;
+    const params = list.map((id) => String(id));
+    logIngredientQuery(sql, params);
+    await tx.runAsync(sql, params);
   });
 }
 
@@ -343,7 +353,10 @@ export function getIngredientById(id, index) {
 export async function deleteIngredient(id) {
   await initDatabase();
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
+    const sql = "DELETE FROM ingredients WHERE id = ?";
+    const params = [String(id)];
+    logIngredientQuery(sql, params);
+    await tx.runAsync(sql, params);
   });
 }
 
