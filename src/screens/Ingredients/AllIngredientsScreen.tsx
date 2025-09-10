@@ -21,11 +21,7 @@ import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
-import {
-  getIgnoreGarnish,
-  getAllowSubstitutes,
-} from "../../data/settings";
-import { initIngredientsAvailability } from "../../domain/ingredientsAvailabilityCache";
+import { updateIngredientAvailability } from "../../domain/ingredientsAvailabilityCache";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -35,8 +31,7 @@ export default function AllIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients, cocktails, usageMap } =
-    useIngredientsData();
+  const { ingredients, loading, setIngredients } = useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
@@ -86,14 +81,12 @@ export default function AllIngredientsScreen() {
         return next;
       });
       try {
-        const [ignore, allow] = await Promise.all([
-          getIgnoreGarnish(),
-          getAllowSubstitutes(),
-        ]);
-        initIngredientsAvailability(updatedList, cocktails, usageMap, ignore, allow);
+        ids.forEach((id) => {
+          updateIngredientAvailability(id, updatedList);
+        });
       } catch {}
     }
-  }, [setIngredients, cocktails, usageMap]);
+  }, [setIngredients]);
 
   useEffect(() => {
     if (!isFocused) {

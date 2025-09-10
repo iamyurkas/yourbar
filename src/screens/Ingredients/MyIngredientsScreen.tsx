@@ -26,7 +26,10 @@ import {
 } from "../../data/settings";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
-import { initIngredientsAvailability } from "../../domain/ingredientsAvailabilityCache";
+import {
+  initIngredientsAvailability,
+  updateIngredientAvailability,
+} from "../../domain/ingredientsAvailabilityCache";
 import { sortByName } from "../../utils/sortByName";
 
 export default function MyIngredientsScreen() {
@@ -111,22 +114,13 @@ export default function MyIngredientsScreen() {
         updatedList = Array.from(next.values());
         return next;
       });
-      const map = initIngredientsAvailability(
-        updatedList,
-        cocktails,
-        usageMap,
-        ignoreGarnish,
-        allowSubstitutes
-      );
+      let map;
+      ids.forEach((id) => {
+        map = updateIngredientAvailability(id, updatedList);
+      });
       setAvailableMap(new Map(map));
     }
-  }, [
-    setIngredients,
-    cocktails,
-    usageMap,
-    ignoreGarnish,
-    allowSubstitutes,
-  ]);
+  }, [setIngredients]);
 
   useEffect(() => {
     if (!isFocused) {
