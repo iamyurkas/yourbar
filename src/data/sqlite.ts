@@ -4,9 +4,13 @@ import * as SQLite from "expo-sqlite";
 const readDb = SQLite.openDatabaseSync("yourbar.db");
 const writeDb = SQLite.openDatabaseSync("yourbar.db");
 
-// Disable verbose SQL query logging if the tracer API is available.
+// Log every SQL query with a timestamp (including milliseconds) if the tracer API is available.
 if (typeof SQLite.setTracer === "function") {
-  SQLite.setTracer(() => {});
+  SQLite.setTracer((sql, params) => {
+    const ts = new Date().toISOString();
+    const paramsStr = params && params.length ? ` | params: ${JSON.stringify(params)}` : "";
+    console.log(`[sqlite] ${ts} | query: ${sql}${paramsStr}`);
+  });
 }
 
 let initPromise;
