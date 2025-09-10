@@ -3,7 +3,7 @@ import React, {
   useState,
   useLayoutEffect,
   useCallback,
-  useMemo,
+  useRef,
   memo,
 } from "react";
 import {
@@ -32,7 +32,6 @@ import {
   updateIngredientById,
   updateIngredientFields,
 } from "../../domain/ingredients";
-import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
@@ -167,20 +166,11 @@ export default function IngredientDetailsScreen() {
     ingredientsById,
     ingredientsByBase,
     updateUsageMap,
+    usageMap,
   } = useIngredientUsage();
 
   const [ignoreGarnish, setIgnoreGarnish] = useState(true);
   const [allowSubs, setAllowSubs] = useState(true);
-
-  const usageMap = useMemo(
-    () =>
-      mapCocktailsByIngredient(ingredients, cocktailsCtx, {
-        allowSubstitutes: allowSubs,
-        byId: ingredientsById,
-        byBase: ingredientsByBase,
-      }),
-    [ingredients, cocktailsCtx, ingredientsById, ingredientsByBase, allowSubs]
-  );
 
   const initial = initialIngredient || ingredientsById.get(id) || null;
   const {
@@ -204,19 +194,37 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const prevIngredientRef = useRef(initial);
 
   useEffect(() => {
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
-    setIngredient((prev) => ({ ...prev, ...current }));
+
+    const prev = prevIngredientRef.current;
+    prevIngredientRef.current = current;
+
+    setIngredient((prevState) => ({ ...prevState, ...current }));
+
+    // Skip expensive detail rebuild if only inShoppingList changed
+    if (prev && prev.inShoppingList !== current.inShoppingList) {
+      const keys = new Set([...Object.keys(prev), ...Object.keys(current)]);
+      if (
+        Array.from(keys).every(
+          (k) => k === "inShoppingList" || prev[k] === current[k]
+        )
+      ) {
+        return;
+      }
+    }
+
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
       current,
       usageMap,
-      true,
-      true
+      ignoreGarnish,
+      allowSubs
     );
     setBrandedChildren(children);
     setBaseIngredient(base);
@@ -228,6 +236,8 @@ export default function IngredientDetailsScreen() {
     usageMap,
     ingredientsById,
     route.params?.initialIngredient,
+    ignoreGarnish,
+    allowSubs,
   ]);
 
   const handleGoBack = useCallback(() => {
@@ -323,7 +333,25 @@ export default function IngredientDetailsScreen() {
 
   const load = useCallback(() => {
     const loaded = ingredientsById.get(id) || null;
-    setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
+    if (!loaded) return;
+
+    const prev = prevIngredientRef.current;
+    prevIngredientRef.current = loaded;
+
+    setIngredient((prevState) => ({ ...prevState, ...loaded }));
+
+    // Skip detail rebuild when only inShoppingList changes
+    if (prev && prev.inShoppingList !== loaded.inShoppingList) {
+      const keys = new Set([...Object.keys(prev), ...Object.keys(loaded)]);
+      if (
+        Array.from(keys).every(
+          (k) => k === "inShoppingList" || prev[k] === loaded[k]
+        )
+      ) {
+        return;
+      }
+    }
+
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
