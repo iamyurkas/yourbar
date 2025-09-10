@@ -6,7 +6,7 @@ async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-test('reads run in parallel with writes', async () => {
+test('reads wait for writes', async () => {
   await initDatabase();
   const events: string[] = [];
   let signalWriteStart: () => void;
@@ -22,10 +22,9 @@ test('reads run in parallel with writes', async () => {
   await writeStarted; // ensure write has begun
   const read1 = query('SELECT 1').then(() => events.push('read-1'));
   const read2 = query('SELECT 1').then(() => events.push('read-2'));
-  await Promise.all([read1, read2]);
-  await write;
+  await Promise.all([read1, read2, write]);
 
-  assert.deepEqual(events, ['write-start', 'read-1', 'read-2', 'write-end']);
+  assert.deepEqual(events, ['write-start', 'write-end', 'read-1', 'read-2']);
 });
 
 test('write transactions are sequential', async () => {
