@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { makeProfiler } from "../utils/profile";
 
 function logWithTime(message: string, ...args: any[]) {
   console.log(`[${new Date().toISOString()}] ${message}`, ...args);
@@ -137,16 +138,16 @@ export function withWriteTransactionAsync(work) {
 
   const runner = async () => {
     await initPromise;
-    const start = Date.now();
-    logWithTime(`[sqlite] tx queued. pending=${queueLength}`);
+    const profiler = makeProfiler("[sqlite]");
+    profiler.step(`tx queued. pending=${queueLength}`);
 
-    let firstRunAt;
+    let hasRun = false;
     let inTx = false;
 
     const beginTx = async () => {
       if (!inTx) {
         inTx = true;
-        logWithTime(`[sqlite] begin transaction after ${Date.now() - start}ms`);
+        profiler.step("begin transaction");
         await writeDb.execAsync("BEGIN IMMEDIATE");
       }
     };
@@ -156,11 +157,9 @@ export function withWriteTransactionAsync(work) {
       get(target, prop, receiver) {
         if (typeof prop === "string" && methods.includes(prop)) {
           return async (...args: any[]) => {
-            if (!firstRunAt) {
-              firstRunAt = Date.now();
-              logWithTime(
-                `[sqlite] first ${prop} after ${firstRunAt - start}ms`
-              );
+            if (!hasRun) {
+              hasRun = true;
+              profiler.step(`first ${prop}`);
             }
             await beginTx();
             return (target as any)[prop](...args);
@@ -173,19 +172,23 @@ export function withWriteTransactionAsync(work) {
 
     try {
       const result = await work(tx);
-      if (inTx) await writeDb.execAsync("COMMIT");
+      if (inTx) {
+        await writeDb.execAsync("COMMIT");
+        profiler.step("COMMIT");
+      }
       return result;
     } catch (e) {
       if (inTx) {
         try {
           await writeDb.execAsync("ROLLBACK");
+          profiler.step("ROLLBACK");
         } catch (err) {
           warnWithTime("[sqlite] rollback error", err);
         }
       }
       throw e;
     } finally {
-      logWithTime(`[sqlite] tx finished in ${Date.now() - start}ms`);
+      profiler.step("tx finished");
     }
   };
 

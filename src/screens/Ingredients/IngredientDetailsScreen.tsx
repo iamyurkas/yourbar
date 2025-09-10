@@ -53,12 +53,11 @@ import {
   getCocktailIngredientInfo,
 } from "../../domain/cocktailIngredients";
 import { withAlpha } from "../../utils/color";
+import { makeProfiler } from "../../utils/profile";
 
 const PHOTO_SIZE = 150;
 const THUMB = 40;
 
-const log = (message: string) =>
-  console.log(`[${new Date().toISOString()}] ${message}`);
 
 function buildDetails(all, cocktails, loaded, map, ig = true, allowSubs = true) {
   if (!loaded) return { children: [], base: null, used: [] };
@@ -370,17 +369,18 @@ export default function IngredientDetailsScreen() {
 
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
+    const profiler = makeProfiler("[IngredientDetails] toggleInBar");
     const next = !ingredient.inBar;
-    log(`[IngredientDetails] tap inBar id=${ingredient.id} next=${next}`);
+    profiler.step(`tap id=${ingredient.id} next=${next}`);
     const updated = { ...ingredient, inBar: next };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    log(`[IngredientDetails] local inBar=${updated.inBar} for ${updated.id}`);
+    profiler.step(`local inBar=${updated.inBar} for ${updated.id}`);
     // Defer global updates and run DB write on a later tick so any heavy
     // CPU work (e.g. mapCocktailsByIngredient) runs outside the
     // transaction window
     setTimeout(() => {
-      log(`[IngredientDetails] global inBar update for ${updated.id}`);
+      profiler.step(`global inBar update for ${updated.id}`);
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -388,33 +388,34 @@ export default function IngredientDetailsScreen() {
         })
       );
       setTimeout(() => {
-        log(
-          `[IngredientDetails] persist inBar=${updated.inBar} for ${updated.id}`
+        profiler.step(
+          `persist inBar=${updated.inBar} for ${updated.id}`
         );
-        updateIngredientFields(updated.id, { inBar: updated.inBar });
+        updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(
+          () => profiler.step("persist done")
+        );
       }, 0);
     }, 0);
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
+    const profiler = makeProfiler("[IngredientDetails] toggleShopping");
     const next = !ingredient.inShoppingList;
-    log(`[IngredientDetails] tap shopping id=${ingredient.id} next=${next}`);
+    profiler.step(`tap shopping id=${ingredient.id} next=${next}`);
     const updated = {
       ...ingredient,
       inShoppingList: next,
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    log(
-      `[IngredientDetails] local inShoppingList=${updated.inShoppingList} for ${updated.id}`
+    profiler.step(
+      `local inShoppingList=${updated.inShoppingList} for ${updated.id}`
     );
     // Defer global update and schedule DB write after a tick so heavy CPU
     // work completes before the transaction begins
     setTimeout(() => {
-      log(
-        `[IngredientDetails] global inShoppingList update for ${updated.id}`
-      );
+      profiler.step(`global inShoppingList update for ${updated.id}`);
       setIngredients((list) =>
         updateIngredientById(list, {
           id: updated.id,
@@ -422,12 +423,12 @@ export default function IngredientDetailsScreen() {
         })
       );
       setTimeout(() => {
-        log(
-          `[IngredientDetails] persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
+        profiler.step(
+          `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
         );
         updateIngredientFields(updated.id, {
           inShoppingList: updated.inShoppingList,
-        });
+        }).finally(() => profiler.step("persist done"));
       }, 0);
     }, 0);
   }, [ingredient, setIngredients]);
