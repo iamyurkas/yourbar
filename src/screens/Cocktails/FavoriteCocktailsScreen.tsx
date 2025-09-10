@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { View, Text, StyleSheet } from "react-native";
@@ -12,8 +11,6 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
-import { getAllCocktails } from "../../domain/cocktails";
-import { getAllIngredients } from "../../domain/ingredients";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import {
   getIgnoreGarnish,
@@ -47,8 +44,11 @@ export default function FavoriteCocktailsScreen() {
   const { setTab } = useTabMemory();
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
-  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
-    useIngredientUsage();
+  const {
+    cocktails: globalCocktails = [],
+    ingredients: globalIngredients = [],
+    loading: globalLoading,
+  } = useIngredientUsage();
 
   const [cocktails, setCocktails] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -82,34 +82,31 @@ export default function FavoriteCocktailsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const firstLoad = useRef(true);
   useEffect(() => {
-    let cancel = false;
+    setCocktails(globalCocktails);
+  }, [globalCocktails]);
+
+  useEffect(() => {
+    setIngredients(globalIngredients);
+  }, [globalIngredients]);
+
+  useEffect(() => {
+    setLoading(globalLoading);
+  }, [globalLoading]);
+
+  useEffect(() => {
     if (!isFocused) return;
+    let cancel = false;
     (async () => {
-      if (firstLoad.current) setLoading(true);
-      const cocktailPromise =
-        globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
-      const ingredientPromise =
-        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig, favMin, allowSubs] =
-        await Promise.all([
-          cocktailPromise,
-          ingredientPromise,
-          getIgnoreGarnish(),
-          getFavoritesMinRating(),
-          getAllowSubstitutes(),
-        ]);
+      const [ig, favMin, allowSubs] = await Promise.all([
+        getIgnoreGarnish(),
+        getFavoritesMinRating(),
+        getAllowSubstitutes(),
+      ]);
       if (cancel) return;
-      setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
-      setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
       setMinRating(favMin || 0);
       setAllowSubstitutes(!!allowSubs);
-      if (firstLoad.current) {
-        setLoading(false);
-        firstLoad.current = false;
-      }
     })();
     const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     const subFav = addFavoritesMinRatingListener(setMinRating);
@@ -120,7 +117,7 @@ export default function FavoriteCocktailsScreen() {
       subFav.remove();
       subAs.remove();
     };
-  }, [isFocused, globalCocktails, globalIngredients]);
+  }, [isFocused]);
 
   const filtered = useMemo(() => {
     const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);

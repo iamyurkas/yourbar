@@ -291,10 +291,7 @@ export default function EditCocktailScreen() {
       setSaving(true);
 
       // Resolve missing selectedId by exact name match (unique)
-      let allKnown = [];
-      try {
-        allKnown = await getAllIngredients();
-      } catch {}
+      const allKnown = globalIngredients;
       const bySearch = new Map();
       allKnown.forEach((i) => {
         const key = i.searchName || normalizeSearch(i.name || "");

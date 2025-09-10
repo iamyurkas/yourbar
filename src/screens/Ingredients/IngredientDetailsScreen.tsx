@@ -23,17 +23,15 @@ import {
   useRoute,
   useFocusEffect,
   CommonActions,
+  useIsFocused,
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
 import {
-  getAllIngredients,
   saveIngredient,
   updateIngredientById,
   updateIngredientFields,
 } from "../../domain/ingredients";
-
-import { getAllCocktails } from "../../domain/cocktails";
 import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -313,54 +311,39 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(
-    async (refresh = false) => {
-      const [all, cocktails, ig, allowSubs] = await Promise.all([
-        !refresh && ingredients.length ? ingredients : getAllIngredients(),
-        !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
-        getIgnoreGarnish(),
-        getAllowSubstitutes(),
-      ]);
-      const loaded = ingredientsById.get(id) || all.find((i) => i.id === id);
-      setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
-      const byId = new Map(all.map((i) => [i.id, i]));
-      const byBase = new Map();
-      all.forEach((i) => {
-        const baseId = i.baseIngredientId ?? i.id;
-        if (!byBase.has(baseId)) byBase.set(baseId, []);
-        byBase.get(baseId).push(i);
-      });
-      const { children, base, used } = buildDetails(
-        all,
-        cocktails,
-        loaded,
-        ig,
-        allowSubs,
-        byId,
-        byBase
-      );
-      setBrandedChildren(children);
-      setBaseIngredient(base);
-      setUsedCocktails(used);
-    },
-    [id, ingredientsById, ingredients, cocktailsCtx]
-  );
+  const load = useCallback(async () => {
+    const [ig, allowSubs] = await Promise.all([
+      getIgnoreGarnish(),
+      getAllowSubstitutes(),
+    ]);
+    const loaded = ingredientsById.get(id) || null;
+    setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
+    const { children, base, used } = buildDetails(
+      ingredients,
+      cocktailsCtx,
+      loaded,
+      ig,
+      allowSubs,
+      ingredientsById,
+      ingredientsByBase
+    );
+    setBrandedChildren(children);
+    setBaseIngredient(base);
+    setUsedCocktails(used);
+  }, [
+    id,
+    ingredients,
+    cocktailsCtx,
+    ingredientsById,
+    ingredientsByBase,
+  ]);
 
-  const shouldLoad = !ingredients.length || !cocktailsCtx.length;
-  useFocusEffect(
-    useCallback(() => {
-      if (!shouldLoad) return;
-      let cancelled = false;
-      (async () => {
-        try {
-          if (!cancelled) await load();
-        } catch {}
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }, [load, shouldLoad])
-  );
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      load();
+    }
+  }, [isFocused, load]);
 
   useEffect(() => {
     const sub = addIgnoreGarnishListener(() => load());
