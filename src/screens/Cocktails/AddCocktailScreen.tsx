@@ -667,7 +667,7 @@ export default function AddCocktailScreen() {
 
       const allowSubs = await getAllowSubstitutes();
       const nextCocktails = [...cocktails, created];
-      const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+      const nextUsage = await updateUsageMap(globalIngredients, nextCocktails, {
         prevCocktails: cocktails,
         changedCocktailIds: [created.id],
         allowSubstitutes: !!allowSubs,

@@ -7,6 +7,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
+import { InteractionManager } from "react-native";
 import { updateUsageMap as updateUsageMapIncremental } from "../domain/ingredientUsage";
 import { sortByName } from "../utils/sortByName";
 import { groupIngredientsByTag } from "../domain/groupIngredientsByTag";
@@ -105,12 +106,21 @@ export function IngredientUsageProvider({ children }) {
         opts.prevById = prevById;
         opts.prevByBase = prevByBase;
       }
-      let next;
-      setUsageMap((prev) => {
-        next = updateUsageMapIncremental(prev, ings, cocks, opts);
-        return next;
+      return new Promise((resolve) => {
+        const run = () => {
+          let next;
+          setUsageMap((prev) => {
+            next = updateUsageMapIncremental(prev, ings, cocks, opts);
+            return next;
+          });
+          resolve(next);
+        };
+        if (typeof InteractionManager !== "undefined" && InteractionManager.runAfterInteractions) {
+          InteractionManager.runAfterInteractions(run);
+        } else {
+          setTimeout(run, 0);
+        }
       });
-      return next;
     },
     [ingredients, ingredientsById, ingredientsByBase]
   );

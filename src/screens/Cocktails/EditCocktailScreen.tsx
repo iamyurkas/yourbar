@@ -377,7 +377,7 @@ export default function EditCocktailScreen() {
         }
         const nextCocktails = updateCocktailById(cocktails, updated);
         const allowSubs = await getAllowSubstitutes();
-        const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+        const nextUsage = await updateUsageMap(globalIngredients, nextCocktails, {
           prevCocktails: cocktails,
           changedCocktailIds: [updated.id],
           allowSubstitutes: !!allowSubs,
@@ -1296,7 +1296,7 @@ export default function EditCocktailScreen() {
           InteractionManager.runAfterInteractions(async () => {
             await deleteCocktail(cocktailId);
             const allowSubs = await getAllowSubstitutes();
-            const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+            const nextUsage = await updateUsageMap(globalIngredients, nextCocktails, {
               prevCocktails: cocktails,
               changedCocktailIds: [cocktailId],
               allowSubstitutes: !!allowSubs,

@@ -437,20 +437,16 @@ export default function IngredientDetailsScreen() {
         }
       });
 
-      getAllowSubstitutes().then((allow) => {
-        updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+      InteractionManager.runAfterInteractions(async () => {
+        for (const item of updates) {
+          await saveIngredient(item);
+        }
+        const allow = await getAllowSubstitutes();
+        await updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
           prevIngredients: ingredients,
           changedIngredientIds: changedIds,
           allowSubstitutes: !!allow,
         });
-      });
-
-      InteractionManager.runAfterInteractions(() => {
-        (async () => {
-          for (const item of updates) {
-            await saveIngredient(item);
-          }
-        })();
       });
     },
     [
