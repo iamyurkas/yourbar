@@ -3,6 +3,7 @@ import React, {
   useState,
   useLayoutEffect,
   useCallback,
+  useMemo,
   memo,
 } from "react";
 import {
@@ -56,15 +57,7 @@ import { withAlpha } from "../../utils/color";
 const PHOTO_SIZE = 150;
 const THUMB = 40;
 
-function buildDetails(
-  all,
-  cocktails,
-  loaded,
-  ig = true,
-  allowSubs = true,
-  byId,
-  byBase
-) {
+function buildDetails(all, cocktails, loaded, map, ig = true, allowSubs = true) {
   if (!loaded) return { children: [], base: null, used: [] };
   const children = all
     .filter((i) => i.baseIngredientId === loaded.id)
@@ -72,11 +65,6 @@ function buildDetails(
   const baseId = loaded.baseIngredientId;
   const base =
     baseId != null ? all.find((i) => i.id === baseId) || null : null;
-  const map = mapCocktailsByIngredient(all, cocktails, {
-    allowSubstitutes: allowSubs,
-    byId,
-    byBase,
-  });
   const cocktailById = new Map(cocktails.map((c) => [c.id, c]));
   const { ingMap, findBrand } = buildIngredientIndex(all);
   const list = (map[loaded.id] || [])
@@ -180,12 +168,34 @@ export default function IngredientDetailsScreen() {
     updateUsageMap,
   } = useIngredientUsage();
 
+  const [ignoreGarnish, setIgnoreGarnish] = useState(true);
+  const [allowSubs, setAllowSubs] = useState(true);
+
+  const usageMap = useMemo(
+    () =>
+      mapCocktailsByIngredient(ingredients, cocktailsCtx, {
+        allowSubstitutes: allowSubs,
+        byId: ingredientsById,
+        byBase: ingredientsByBase,
+      }),
+    [ingredients, cocktailsCtx, ingredientsById, ingredientsByBase, allowSubs]
+  );
+
   const initial = initialIngredient || ingredientsById.get(id) || null;
   const {
     children: initialChildren,
     base: initialBase,
     used: initialUsed,
-  } = buildDetails(ingredients, cocktailsCtx, initial, true, true, ingredientsById, ingredientsByBase);
+  } = buildDetails(ingredients, cocktailsCtx, initial, usageMap, true, true);
+
+  useEffect(() => {
+    Promise.all([getIgnoreGarnish(), getAllowSubstitutes()]).then(
+      ([ig, allow]) => {
+        setIgnoreGarnish(!!ig);
+        setAllowSubs(!!allow);
+      }
+    );
+  }, []);
 
   const [ingredient, setIngredient] = useState(initial);
   const [brandedChildren, setBrandedChildren] = useState(initialChildren);
@@ -203,10 +213,9 @@ export default function IngredientDetailsScreen() {
       ingredients,
       cocktailsCtx,
       current,
+      usageMap,
       true,
-      true,
-      ingredientsById,
-      ingredientsByBase
+      true
     );
     setBrandedChildren(children);
     setBaseIngredient(base);
@@ -215,8 +224,8 @@ export default function IngredientDetailsScreen() {
     id,
     ingredients,
     cocktailsCtx,
+    usageMap,
     ingredientsById,
-    ingredientsByBase,
     route.params?.initialIngredient,
   ]);
 
@@ -311,21 +320,16 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(async () => {
-    const [ig, allowSubs] = await Promise.all([
-      getIgnoreGarnish(),
-      getAllowSubstitutes(),
-    ]);
+  const load = useCallback(() => {
     const loaded = ingredientsById.get(id) || null;
     setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
       loaded,
-      ig,
-      allowSubs,
-      ingredientsById,
-      ingredientsByBase
+      usageMap,
+      ignoreGarnish,
+      allowSubs
     );
     setBrandedChildren(children);
     setBaseIngredient(base);
@@ -334,8 +338,10 @@ export default function IngredientDetailsScreen() {
     id,
     ingredients,
     cocktailsCtx,
+    usageMap,
     ingredientsById,
-    ingredientsByBase,
+    ignoreGarnish,
+    allowSubs,
   ]);
 
   const isFocused = useIsFocused();
@@ -346,14 +352,18 @@ export default function IngredientDetailsScreen() {
   }, [isFocused, load]);
 
   useEffect(() => {
-    const sub = addIgnoreGarnishListener(() => load());
+    const sub = addIgnoreGarnishListener(() => {
+      getIgnoreGarnish().then(setIgnoreGarnish);
+    });
     return () => sub.remove();
-  }, [load]);
+  }, []);
 
   useEffect(() => {
-    const sub = addAllowSubstitutesListener(() => load());
+    const sub = addAllowSubstitutesListener(() => {
+      getAllowSubstitutes().then(setAllowSubs);
+    });
     return () => sub.remove();
-  }, [load]);
+  }, []);
 
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
