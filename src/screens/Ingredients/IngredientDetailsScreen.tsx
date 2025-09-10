@@ -4,6 +4,8 @@ import React, {
   useLayoutEffect,
   useCallback,
   memo,
+  useMemo,
+  useRef,
 } from "react";
 import {
   View,
@@ -181,44 +183,45 @@ export default function IngredientDetailsScreen() {
   } = useIngredientUsage();
 
   const initial = initialIngredient || ingredientsById.get(id) || null;
-  const {
-    children: initialChildren,
-    base: initialBase,
-    used: initialUsed,
-  } = buildDetails(ingredients, cocktailsCtx, initial, true, true, ingredientsById, ingredientsByBase);
-
-  const [ingredient, setIngredient] = useState(initial);
-  const [brandedChildren, setBrandedChildren] = useState(initialChildren);
-  const [baseIngredient, setBaseIngredient] = useState(initialBase);
-  const [usedCocktails, setUsedCocktails] = useState(initialUsed);
-  const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
-  const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
-
-  useEffect(() => {
-    const current =
-      ingredientsById.get(id) || route.params?.initialIngredient || null;
-    if (!current) return;
-    setIngredient((prev) => ({ ...prev, ...current }));
+  const initialDetailsRef = useRef(null);
+  if (initialDetailsRef.current == null) {
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
-      current,
+      initial,
       true,
       true,
       ingredientsById,
       ingredientsByBase
     );
-    setBrandedChildren(children);
-    setBaseIngredient(base);
-    setUsedCocktails(used);
-  }, [
-    id,
-    ingredients,
-    cocktailsCtx,
-    ingredientsById,
-    ingredientsByBase,
-    route.params?.initialIngredient,
-  ]);
+    initialDetailsRef.current = { children, base, used };
+  }
+
+  const [ingredient, setIngredient] = useState(initial);
+  const [brandedChildren, setBrandedChildren] = useState(
+    initialDetailsRef.current.children
+  );
+  const [baseIngredient, setBaseIngredient] = useState(
+    initialDetailsRef.current.base
+  );
+  const [usedCocktails, setUsedCocktails] = useState(
+    initialDetailsRef.current.used
+  );
+  const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
+  const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+
+  const ingredientsKey = useMemo(
+    () =>
+      ingredients
+        .map(
+          (i) =>
+            `${i.id}-${i.baseIngredientId ?? ""}-${i.name}-${
+              i.photoUri ?? ""
+            }-${i.inBar ? 1 : 0}`
+        )
+        .join("|"),
+    [ingredients]
+  );
 
   const handleGoBack = useCallback(() => {
     goBack(navigation);
@@ -330,13 +333,7 @@ export default function IngredientDetailsScreen() {
     setBrandedChildren(children);
     setBaseIngredient(base);
     setUsedCocktails(used);
-  }, [
-    id,
-    ingredients,
-    cocktailsCtx,
-    ingredientsById,
-    ingredientsByBase,
-  ]);
+  }, [id, cocktailsCtx, ingredientsKey]);
 
   const isFocused = useIsFocused();
   useEffect(() => {
