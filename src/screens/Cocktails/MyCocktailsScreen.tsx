@@ -12,8 +12,7 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
-import { getAllCocktails } from "../../domain/cocktails";
-import { getAllIngredients, setIngredientsInShoppingList } from "../../domain/ingredients";
+import { setIngredientsInShoppingList } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -64,6 +63,7 @@ export default function MyCocktailsScreen() {
   const {
     cocktails: globalCocktails = [],
     ingredients: globalIngredients = [],
+    loading: globalLoading,
     setIngredients: setGlobalIngredients,
   } = useIngredientUsage();
 
@@ -92,35 +92,29 @@ export default function MyCocktailsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const firstLoad = useRef(true);
   useEffect(() => {
-    let cancel = false;
+    setCocktails(globalCocktails);
+  }, [globalCocktails]);
+
+  useEffect(() => {
+    setIngredients(new Map(globalIngredients.map((i) => [i.id, i])));
+  }, [globalIngredients]);
+
+  useEffect(() => {
+    setLoading(globalLoading);
+  }, [globalLoading]);
+
+  useEffect(() => {
     if (!isFocused) return;
+    let cancel = false;
     (async () => {
-      if (firstLoad.current) setLoading(true);
-      const cocktailPromise =
-        globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
-      const ingredientPromise =
-        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig, allowSubs] = await Promise.all([
-        cocktailPromise,
-        ingredientPromise,
+      const [ig, allowSubs] = await Promise.all([
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
       if (cancel) return;
-      setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
-      setIngredients(
-        new Map(
-          (Array.isArray(ingredientsList) ? ingredientsList : []).map((i) => [i.id, i])
-        )
-      );
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
-      if (firstLoad.current) {
-        setLoading(false);
-        firstLoad.current = false;
-      }
     })();
     const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     const subAs = addAllowSubstitutesListener(setAllowSubstitutes);
@@ -129,7 +123,7 @@ export default function MyCocktailsScreen() {
       subIg.remove();
       subAs.remove();
     };
-  }, [isFocused, globalCocktails, globalIngredients]);
+  }, [isFocused]);
 
   useEffect(() => {
     const unsub = navigation.addListener("blur", () => {

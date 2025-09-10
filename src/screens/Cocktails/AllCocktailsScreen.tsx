@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { View, Text, StyleSheet } from "react-native";
@@ -12,8 +11,6 @@ import HeaderWithSearch from "../../components/HeaderWithSearch";
 import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
-import { getAllCocktails } from "../../domain/cocktails";
-import { getAllIngredients } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -56,8 +53,11 @@ export default function AllCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const { cocktails: globalCocktails = [], ingredients: globalIngredients = [] } =
-    useIngredientUsage();
+  const {
+    cocktails: globalCocktails = [],
+    ingredients: globalIngredients = [],
+    loading: globalLoading,
+  } = useIngredientUsage();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "All");
@@ -79,31 +79,29 @@ export default function AllCocktailsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const firstLoad = useRef(true);
   useEffect(() => {
-    let cancel = false;
+    setCocktails(globalCocktails);
+  }, [globalCocktails]);
+
+  useEffect(() => {
+    setIngredients(globalIngredients);
+  }, [globalIngredients]);
+
+  useEffect(() => {
+    setLoading(globalLoading);
+  }, [globalLoading]);
+
+  useEffect(() => {
     if (!isFocused) return;
+    let cancel = false;
     (async () => {
-      if (firstLoad.current) setLoading(true);
-      const cocktailPromise =
-        globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
-      const ingredientPromise =
-        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig, allowSubs] = await Promise.all([
-        cocktailPromise,
-        ingredientPromise,
+      const [ig, allowSubs] = await Promise.all([
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
       if (cancel) return;
-      setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
-      setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
-      if (firstLoad.current) {
-        setLoading(false);
-        firstLoad.current = false;
-      }
     })();
     const subIg = addIgnoreGarnishListener(setIgnoreGarnish);
     const subAs = addAllowSubstitutesListener(setAllowSubstitutes);
@@ -112,7 +110,7 @@ export default function AllCocktailsScreen() {
       subIg.remove();
       subAs.remove();
     };
-  }, [isFocused, globalCocktails, globalIngredients]);
+  }, [isFocused]);
 
   const filtered = useMemo(() => {
     const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
