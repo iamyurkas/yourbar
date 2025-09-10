@@ -122,7 +122,8 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
     const startedAt = new Date(start).toISOString();
     if (!nameAnchorRef.current) {
       const duration = Date.now() - start;
-      console.log(`[recalcPlacement] start=${startedAt} duration=${duration}ms`);
+      const endedAt = new Date().toISOString();
+      console.log(`[${endedAt}] recalcPlacement start=${startedAt} duration=${duration}ms`);
       return;
     }
     nameAnchorRef.current.measureInWindow((x, y, w, h) => {
@@ -156,7 +157,8 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
       setNameWidth(w || nameWidth);
 
       const duration = Date.now() - start;
-      console.log(`[recalcPlacement] start=${startedAt} duration=${duration}ms`);
+      const endedAt = new Date().toISOString();
+      console.log(`[${endedAt}] recalcPlacement start=${startedAt} duration=${duration}ms`);
     });
   }, [kbHeight, suggestions.length, nameWidth]);
 
