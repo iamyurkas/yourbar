@@ -10,9 +10,67 @@ function buildByBase(ingredients) {
   return map;
 }
 
+// Simple numeric hashes to detect relevant changes in inputs. They intentionally
+// ignore fields like `inShoppingList` which do not affect ingredient usage.
+function hashIngredients(ingredients) {
+  let h = 0;
+  for (const i of ingredients) {
+    h = (h * 31 + Number(i.id)) | 0;
+    const base = i.baseIngredientId ?? i.id;
+    h = (h * 31 + Number(base)) | 0;
+  }
+  return h >>> 0;
+}
+
+function hashCocktails(cocktails) {
+  let h = 0;
+  for (const c of cocktails) {
+    h = (h * 31 + Number(c.id)) | 0;
+    if (!Array.isArray(c.ingredients)) continue;
+    for (const r of c.ingredients) {
+      h = (h * 31 + Number(r.ingredientId)) | 0;
+      h = (h * 31 + (r.allowBrandedSubstitutes ? 1 : 0)) | 0;
+      if (Array.isArray(r.substitutes)) {
+        for (const s of r.substitutes) {
+          h = (h * 31 + Number(s.id)) | 0;
+        }
+      }
+    }
+  }
+  return h >>> 0;
+}
+
+let usageCache = {
+  allowSubstitutes: null,
+  ingHash: 0,
+  cockHash: 0,
+  result: null,
+};
+
+export function clearMapCocktailsByIngredientCache() {
+  usageCache = {
+    allowSubstitutes: null,
+    ingHash: 0,
+    cockHash: 0,
+    result: null,
+  };
+}
+
 export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
-  return profile("mapCocktailsByIngredient", () => {
-    const { allowSubstitutes = false, byId, byBase } = options;
+  const { allowSubstitutes = false } = options;
+  const ingHash = hashIngredients(ingredients);
+  const cockHash = hashCocktails(cocktails);
+  if (
+    usageCache.result &&
+    usageCache.allowSubstitutes === allowSubstitutes &&
+    usageCache.ingHash === ingHash &&
+    usageCache.cockHash === cockHash
+  ) {
+    return usageCache.result;
+  }
+
+  const result = profile("mapCocktailsByIngredient", () => {
+    const { byId, byBase } = options;
     const byIdMap = byId || new Map(ingredients.map((i) => [i.id, i]));
     const byBaseMap = byBase || buildByBase(ingredients);
 
@@ -61,13 +119,21 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
       });
     });
 
-    const result = {};
+    const out = {};
     ingredients.forEach((i) => {
       const set = usageMap.get(i.id);
-      result[i.id] = set ? Array.from(set) : [];
+      out[i.id] = set ? Array.from(set) : [];
     });
-    return result;
+    return out;
   });
+
+  usageCache = {
+    allowSubstitutes,
+    ingHash,
+    cockHash,
+    result,
+  };
+  return result;
 }
 
 export function calculateIngredientUsage(ingredients, cocktails, options = {}) {
