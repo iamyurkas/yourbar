@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
   memo,
+  useRef,
 } from "react";
 import {
   View,
@@ -203,11 +204,16 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const skipReload = useRef(0);
 
   useEffect(() => {
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
+    if (skipReload.current > 0) {
+      skipReload.current--;
+      return;
+    }
     setIngredient((prev) => ({ ...prev, ...current }));
     const { children, base, used } = buildDetails(
       ingredients,
@@ -346,6 +352,10 @@ export default function IngredientDetailsScreen() {
 
   const isFocused = useIsFocused();
   useEffect(() => {
+    if (skipReload.current > 0) {
+      skipReload.current--;
+      return;
+    }
     if (isFocused) {
       load();
     }
@@ -384,6 +394,7 @@ export default function IngredientDetailsScreen() {
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
+    skipReload.current = 2;
     const updated = {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
