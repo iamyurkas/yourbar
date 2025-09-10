@@ -17,7 +17,6 @@ import {
   ActivityIndicator,
   Platform,
   BackHandler,
-  InteractionManager,
 } from "react-native";
 import {
   useNavigation,
@@ -473,12 +472,10 @@ export default function IngredientDetailsScreen() {
         });
       });
 
-      InteractionManager.runAfterInteractions(() => {
-        (async () => {
-          for (const item of updates) {
-            await saveIngredient(item);
-          }
-        })();
+      queueMicrotask(async () => {
+        for (const item of updates) {
+          await saveIngredient(item);
+        }
       });
     },
     [
