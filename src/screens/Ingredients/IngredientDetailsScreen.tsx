@@ -89,6 +89,18 @@ function buildDetails(all, cocktails, loaded, map, ig = true, allowSubs = true) 
   return { children, base, used: list };
 }
 
+function isShoppingOnlyChange(prev, next) {
+  if (!prev) return false;
+  const { inShoppingList: _p, updatedAt: __p, ...prevRest } = prev;
+  const { inShoppingList: _n, updatedAt: __n, ...nextRest } = next;
+  const keys = Object.keys(prevRest);
+  if (keys.length !== Object.keys(nextRest).length) return false;
+  for (const k of keys) {
+    if (prevRest[k] !== nextRest[k]) return false;
+  }
+  return true;
+}
+
 /** Gray-square photo (no icon/initials), uses theme */
 const PhotoThumb = memo(function PhotoThumb({ uri }) {
   const theme = useTheme();
@@ -206,16 +218,8 @@ export default function IngredientDetailsScreen() {
 
     setIngredient((prevState) => ({ ...prevState, ...current }));
 
-    // Skip expensive detail rebuild if only inShoppingList changed
-    if (prev && prev.inShoppingList !== current.inShoppingList) {
-      const keys = new Set([...Object.keys(prev), ...Object.keys(current)]);
-      if (
-        Array.from(keys).every(
-          (k) => k === "inShoppingList" || prev[k] === current[k]
-        )
-      ) {
-        return;
-      }
+    if (isShoppingOnlyChange(prev, current)) {
+      return;
     }
 
     const { children, base, used } = buildDetails(
@@ -340,16 +344,8 @@ export default function IngredientDetailsScreen() {
 
     setIngredient((prevState) => ({ ...prevState, ...loaded }));
 
-    // Skip detail rebuild when only inShoppingList changes
-    if (prev && prev.inShoppingList !== loaded.inShoppingList) {
-      const keys = new Set([...Object.keys(prev), ...Object.keys(loaded)]);
-      if (
-        Array.from(keys).every(
-          (k) => k === "inShoppingList" || prev[k] === loaded[k]
-        )
-      ) {
-        return;
-      }
+    if (isShoppingOnlyChange(prev, loaded)) {
+      return;
     }
 
     const { children, base, used } = buildDetails(
