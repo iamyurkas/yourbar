@@ -3,7 +3,6 @@ import React, {
   useState,
   useLayoutEffect,
   useCallback,
-  useRef,
   memo,
 } from "react";
 import {
@@ -89,17 +88,6 @@ function buildDetails(all, cocktails, loaded, map, ig = true, allowSubs = true) 
   return { children, base, used: list };
 }
 
-function isShoppingOnlyChange(prev, next) {
-  if (!prev) return false;
-  const { inShoppingList: _p, updatedAt: __p, ...prevRest } = prev;
-  const { inShoppingList: _n, updatedAt: __n, ...nextRest } = next;
-  const keys = Object.keys(prevRest);
-  if (keys.length !== Object.keys(nextRest).length) return false;
-  for (const k of keys) {
-    if (prevRest[k] !== nextRest[k]) return false;
-  }
-  return true;
-}
 
 /** Gray-square photo (no icon/initials), uses theme */
 const PhotoThumb = memo(function PhotoThumb({ uri }) {
@@ -206,21 +194,13 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
-  const prevIngredientRef = useRef(initial);
 
   useEffect(() => {
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
 
-    const prev = prevIngredientRef.current;
-    prevIngredientRef.current = current;
-
     setIngredient((prevState) => ({ ...prevState, ...current }));
-
-    if (isShoppingOnlyChange(prev, current)) {
-      return;
-    }
 
     const { children, base, used } = buildDetails(
       ingredients,
@@ -339,14 +319,7 @@ export default function IngredientDetailsScreen() {
     const loaded = ingredientsById.get(id) || null;
     if (!loaded) return;
 
-    const prev = prevIngredientRef.current;
-    prevIngredientRef.current = loaded;
-
     setIngredient((prevState) => ({ ...prevState, ...loaded }));
-
-    if (isShoppingOnlyChange(prev, loaded)) {
-      return;
-    }
 
     const { children, base, used } = buildDetails(
       ingredients,
@@ -399,27 +372,11 @@ export default function IngredientDetailsScreen() {
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
     profiler.step(`local inBar=${updated.inBar} for ${updated.id}`);
-    // Defer global updates and run DB write on a later tick so any heavy
-    // CPU work (e.g. mapCocktailsByIngredient) runs outside the
-    // transaction window
-    setTimeout(() => {
-      profiler.step(`global inBar update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inBar=${updated.inBar} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(
-          () => profiler.step("persist done")
-        );
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+    profiler.step(`persist inBar=${updated.inBar} for ${updated.id}`);
+    updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(() =>
+      profiler.step("persist done")
+    );
+  }, [ingredient]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
@@ -435,26 +392,13 @@ export default function IngredientDetailsScreen() {
     profiler.step(
       `local inShoppingList=${updated.inShoppingList} for ${updated.id}`
     );
-    // Defer global update and schedule DB write after a tick so heavy CPU
-    // work completes before the transaction begins
-    setTimeout(() => {
-      profiler.step(`global inShoppingList update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, {
-          inShoppingList: updated.inShoppingList,
-        }).finally(() => profiler.step("persist done"));
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+    profiler.step(
+      `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
+    );
+    updateIngredientFields(updated.id, {
+      inShoppingList: updated.inShoppingList,
+    }).finally(() => profiler.step("persist done"));
+  }, [ingredient]);
 
   const unlinkIngredients = useCallback(
     ({ base, brandeds }) => {
