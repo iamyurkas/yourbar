@@ -27,13 +27,10 @@ import {
 import { goBack } from "../../utils/navigation";
 
 import {
-  getAllIngredients,
   saveIngredient,
   updateIngredientById,
   updateIngredientFields,
 } from "../../domain/ingredients";
-
-import { getAllCocktails } from "../../domain/cocktails";
 import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -313,14 +310,13 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(
-    async (refresh = false) => {
-      const [all, cocktails, ig, allowSubs] = await Promise.all([
-        !refresh && ingredients.length ? ingredients : getAllIngredients(),
-        !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
+  const load = useCallback(async () => {
+      const [ig, allowSubs] = await Promise.all([
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
+      const all = ingredients;
+      const cocktails = cocktailsCtx;
       const loaded = ingredientsById.get(id) || all.find((i) => i.id === id);
       setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
       const byId = new Map(all.map((i) => [i.id, i]));
@@ -346,10 +342,8 @@ export default function IngredientDetailsScreen() {
     [id, ingredientsById, ingredients, cocktailsCtx]
   );
 
-  const shouldLoad = !ingredients.length || !cocktailsCtx.length;
   useFocusEffect(
     useCallback(() => {
-      if (!shouldLoad) return;
       let cancelled = false;
       (async () => {
         try {
@@ -359,7 +353,7 @@ export default function IngredientDetailsScreen() {
       return () => {
         cancelled = true;
       };
-    }, [load, shouldLoad])
+    }, [load])
   );
 
   useEffect(() => {

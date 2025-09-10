@@ -69,7 +69,6 @@ import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
 import { getAllowSubstitutes } from "../../data/settings";
-import { getAllIngredients } from "../../domain/ingredients";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
 const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
@@ -590,10 +589,7 @@ export default function AddCocktailScreen() {
 
     try {
     // Resolve missing selectedId by exact name match (unique)
-    let allKnown = [];
-    try {
-      allKnown = await getAllIngredients();
-    } catch {}
+    const allKnown = globalIngredients;
     const bySearch = new Map();
     allKnown.forEach((i) => {
       const key = i.searchName || normalizeSearch(i.name || "");
