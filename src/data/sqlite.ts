@@ -1,11 +1,19 @@
 import * as SQLite from "expo-sqlite";
+import { makeProfiler } from "../utils/profile";
+
+function logWithTime(message: string, ...args: any[]) {
+  console.log(`[${new Date().toISOString()}] ${message}`, ...args);
+}
+
+function warnWithTime(message: string, ...args: any[]) {
+  console.warn(`[${new Date().toISOString()}] ${message}`, ...args);
+}
 
 function logQuery(sql: string, params?: any) {
-  const timestamp = new Date().toISOString();
   if (params === undefined || params.length === 0) {
-    console.log(`[${timestamp}] ${sql}`);
+    logWithTime(sql);
   } else {
-    console.log(`[${timestamp}] ${sql}`, params);
+    logWithTime(sql, params);
   }
 }
 
@@ -40,6 +48,7 @@ if (typeof SQLite.setTracer === "function") {
 let initPromise;
 // Simple queue that serializes write transactions.
 let writeQueue = Promise.resolve();
+let queueLength = 0;
 
 export function initDatabase() {
   if (!initPromise) {
@@ -51,7 +60,7 @@ export function initDatabase() {
       try {
         await writeDb.execAsync("PRAGMA journal_mode=WAL;");
       } catch (e) {
-        console.warn("[sqlite] failed to enable WAL", e);
+        warnWithTime("[sqlite] failed to enable WAL", e);
       }
       await writeDb.execAsync(`
         CREATE TABLE IF NOT EXISTS cocktails (
@@ -126,18 +135,73 @@ export async function query(sql, params = []) {
 // Serialize all write operations across modules to avoid DB locked errors
 export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
+
   const runner = async () => {
     await initPromise;
-    const callback = async () => work(writeDb);
-    return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(writeDb, callback)
-      : writeDb.withTransactionAsync(callback);
+    const profiler = makeProfiler("[sqlite]");
+    profiler.step(`tx queued. pending=${queueLength}`);
+
+    let hasRun = false;
+    let inTx = false;
+
+    const beginTx = async () => {
+      if (!inTx) {
+        inTx = true;
+        profiler.step("begin transaction");
+        await writeDb.execAsync("BEGIN IMMEDIATE");
+      }
+    };
+
+    const methods = ["runAsync", "execAsync", "getAllAsync", "getFirstAsync"];
+    const tx = new Proxy(writeDb, {
+      get(target, prop, receiver) {
+        if (typeof prop === "string" && methods.includes(prop)) {
+          return async (...args: any[]) => {
+            if (!hasRun) {
+              hasRun = true;
+              profiler.step(`first ${prop}`);
+            }
+            await beginTx();
+            return (target as any)[prop](...args);
+          };
+        }
+        const value = (target as any)[prop];
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+
+    try {
+      const result = await work(tx);
+      if (inTx) {
+        await writeDb.execAsync("COMMIT");
+        profiler.step("COMMIT");
+      }
+      return result;
+    } catch (e) {
+      if (inTx) {
+        try {
+          await writeDb.execAsync("ROLLBACK");
+          profiler.step("ROLLBACK");
+        } catch (err) {
+          warnWithTime("[sqlite] rollback error", err);
+        }
+      }
+      throw e;
+    } finally {
+      profiler.step("tx finished");
+    }
   };
+
+  queueLength++;
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails and unblock queued writes
-  writeQueue = next.catch((e) => {
-    console.warn("[sqlite] withWriteTransactionAsync error", e);
-  });
+  writeQueue = next
+    .catch((e) => {
+      warnWithTime("[sqlite] withWriteTransactionAsync error", e);
+    })
+    .finally(() => {
+      queueLength--;
+    });
   return next;
 }
 
