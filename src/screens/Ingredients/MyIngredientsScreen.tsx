@@ -114,10 +114,7 @@ export default function MyIngredientsScreen() {
         updatedList = Array.from(next.values());
         return next;
       });
-      let map;
-      ids.forEach((id) => {
-        map = updateIngredientAvailability(id, updatedList);
-      });
+      const map = updateIngredientAvailability(ids, updatedList);
       setAvailableMap(new Map(map));
     }
   }, [setIngredients]);

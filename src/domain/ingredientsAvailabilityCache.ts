@@ -74,13 +74,16 @@ export function initIngredientsAvailability(ingredients, cocktails, usageMap, ig
   return cache;
 }
 
-export function updateIngredientAvailability(changedId, ingredients) {
+export function updateIngredientAvailability(changedIds, ingredients) {
   ingredientsMap = new Map(ingredients.map((i) => [String(i.id), i]));
-  const affected = new Set([changedId]);
-  const relatedCocktails = usage[changedId] || [];
-  relatedCocktails.forEach((cid) => {
-    const cocktail = cocktailMap.get(cid);
-    (cocktail?.ingredients || []).forEach((r) => affected.add(r.ingredientId));
+  const list = Array.isArray(changedIds) ? changedIds : [changedIds];
+  const affected = new Set(list);
+  list.forEach((changedId) => {
+    const relatedCocktails = usage[changedId] || [];
+    relatedCocktails.forEach((cid) => {
+      const cocktail = cocktailMap.get(cid);
+      (cocktail?.ingredients || []).forEach((r) => affected.add(r.ingredientId));
+    });
   });
   affected.forEach((id) => {
     cache.set(id, computeForIngredient(id));

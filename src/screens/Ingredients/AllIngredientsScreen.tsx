@@ -81,9 +81,7 @@ export default function AllIngredientsScreen() {
         return next;
       });
       try {
-        ids.forEach((id) => {
-          updateIngredientAvailability(id, updatedList);
-        });
+        updateIngredientAvailability(ids, updatedList);
       } catch {}
     }
   }, [setIngredients]);
