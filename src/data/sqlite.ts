@@ -1,8 +1,7 @@
 import * as SQLite from "expo-sqlite";
 
-// Use separate connections for reads and writes.
-const readDb = SQLite.openDatabaseSync("yourbar.db");
-const writeDb = SQLite.openDatabaseSync("yourbar.db");
+// Initialize and export a shared SQLite instance for the app.
+const db = SQLite.openDatabaseSync("yourbar.db");
 
 // Disable verbose SQL query logging if the tracer API is available.
 if (typeof SQLite.setTracer === "function") {
@@ -10,22 +9,23 @@ if (typeof SQLite.setTracer === "function") {
 }
 
 let initPromise;
-// Simple queue that serializes write transactions.
-let writeQueue = Promise.resolve();
+// Global mutex that serializes writes and blocks new reads while a write is
+// pending. Initialized as an already-resolved promise so `await writeLock`
+// continues immediately when no write is in progress.
+let writeLock = Promise.resolve();
+const pendingSelects = new Set();
 
 export function initDatabase() {
   if (!initPromise) {
     initPromise = (async () => {
-      for (const db of [readDb, writeDb]) {
-        await db.execAsync("PRAGMA foreign_keys = ON;");
-        await db.execAsync("PRAGMA busy_timeout = 5000;");
-      }
+      await db.execAsync("PRAGMA foreign_keys = ON;");
       try {
-        await writeDb.execAsync("PRAGMA journal_mode=WAL;");
+        await db.execAsync("PRAGMA journal_mode=WAL;");
       } catch (e) {
         console.warn("[sqlite] failed to enable WAL", e);
       }
-      await writeDb.execAsync(`
+      await db.execAsync("PRAGMA busy_timeout = 5000;");
+      await db.execAsync(`
         CREATE TABLE IF NOT EXISTS cocktails (
           id INTEGER PRIMARY KEY NOT NULL,
           name TEXT,
@@ -80,10 +80,14 @@ export function initDatabase() {
 }
 
 export async function query(sql, params = []) {
-  await initPromise; // assume initDatabase() invoked at app startup
+  await initPromise; // assume initDatabase() has been invoked at app startup
   const trimmed = sql.trim().toLowerCase();
   if (trimmed.startsWith("select")) {
-    const rows = await readDb.getAllAsync(sql, params);
+    // Block reads while a write transaction is pending.
+    await writeLock;
+    const promise = db.getAllAsync(sql, params);
+    pendingSelects.add(promise);
+    const rows = await promise.finally(() => pendingSelects.delete(promise));
     return {
       rows: {
         _array: rows,
@@ -92,7 +96,7 @@ export async function query(sql, params = []) {
       },
     };
   }
-  return withWriteTransactionAsync((db) => db.runAsync(sql, params));
+  return withWriteTransactionAsync((tx) => tx.runAsync(sql, params));
 }
 
 // Serialize all write operations across modules to avoid DB locked errors
@@ -100,18 +104,23 @@ export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
-    const callback = async () => work(writeDb);
+    await waitForSelects();
+    const callback = async () => work(db);
     return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(writeDb, callback)
-      : writeDb.withTransactionAsync(callback);
+      ? SQLite.withTransactionAsync(db, callback)
+      : db.withTransactionAsync(callback);
   };
-  const next = writeQueue.then(runner, runner);
-  // Keep the chain alive even if an operation fails and unblock queued writes
-  writeQueue = next.catch((e) => {
+  const next = writeLock.then(runner, runner);
+  // Keep the chain alive even if an operation fails and unblock queued
+  // reads/writes once this transaction finishes.
+  writeLock = next.catch((e) => {
     console.warn("[sqlite] withWriteTransactionAsync error", e);
   });
   return next;
 }
 
-export default readDb;
+export function waitForSelects() {
+  return Promise.all(Array.from(pendingSelects));
+}
 
+export default db;
