@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useCallback,
   memo,
+  useRef,
 } from "react";
 import {
   View,
@@ -193,6 +194,7 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+  const skipNextLoad = useRef(false);
 
   useEffect(() => {
     const current =
@@ -341,7 +343,11 @@ export default function IngredientDetailsScreen() {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      load();
+      if (skipNextLoad.current) {
+        skipNextLoad.current = false;
+      } else {
+        load();
+      }
     }
   }, [isFocused, load]);
 
@@ -379,6 +385,7 @@ export default function IngredientDetailsScreen() {
       inShoppingList: !ingredient.inShoppingList,
     };
     // Optimistic local update for instant icon change
+    skipNextLoad.current = true;
     setIngredient(updated);
     // Defer global list update and DB write to allow UI to update first
     setTimeout(() => {
