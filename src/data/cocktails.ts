@@ -98,7 +98,26 @@ async function readAll(): Promise<CocktailRecord[]> {
 
 async function upsertCocktail(item: any): Promise<void> {
   await initDatabase();
-   await withWriteTransactionAsync(async (tx) => {
+  const ingredients = Array.isArray(item.ingredients) ? item.ingredients : [];
+  const ingPlaceholders = ingredients
+    .map(() =>
+      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    )
+    .join(", ");
+  const ingParams = ingredients.flatMap((ing) => [
+    item.id,
+    ing.order,
+    ing.ingredientId != null ? String(ing.ingredientId) : null,
+    ing.name ?? null,
+    ing.amount ?? null,
+    ing.unitId ?? null,
+    ing.garnish ? 1 : 0,
+    ing.optional ? 1 : 0,
+    ing.allowBaseSubstitution ? 1 : 0,
+    ing.allowBrandedSubstitutes ? 1 : 0,
+    ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+  ]);
+  await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
       `INSERT OR REPLACE INTO cocktails (
           id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
@@ -118,31 +137,13 @@ async function upsertCocktail(item: any): Promise<void> {
       `DELETE FROM cocktail_ingredients WHERE cocktailId = ?`,
       [item.id]
     );
-    if (item.ingredients.length) {
-      const placeholders = item.ingredients
-        .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-        .join(", ");
-      const params = item.ingredients.flatMap((ing) => [
-        item.id,
-        ing.order,
-        ing.ingredientId != null ? String(ing.ingredientId) : null,
-        ing.name ?? null,
-        ing.amount ?? null,
-        ing.unitId ?? null,
-        ing.garnish ? 1 : 0,
-        ing.optional ? 1 : 0,
-        ing.allowBaseSubstitution ? 1 : 0,
-        ing.allowBrandedSubstitutes ? 1 : 0,
-        ing.substitutes ? JSON.stringify(ing.substitutes) : null,
-      ]);
+    if (ingredients.length) {
       await tx.runAsync(
         `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,
             allowBaseSubstitution, allowBrandedSubstitutes, substitutes
-          ) VALUES ${placeholders}`,
-        params
+          ) VALUES ${ingPlaceholders}`,
+        ingParams
       );
     }
   });
@@ -227,9 +228,10 @@ export function updateCocktailById(list: CocktailRecord[], updated: CocktailReco
 /** Delete by id */
 export async function deleteCocktail(id: number): Promise<void> {
   await initDatabase();
+  const params = [id];
   await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", id);
-    await tx.runAsync("DELETE FROM cocktails WHERE id = ?", id);
+    await tx.runAsync("DELETE FROM cocktail_ingredients WHERE cocktailId = ?", params);
+    await tx.runAsync("DELETE FROM cocktails WHERE id = ?", params);
   });
 }
 
@@ -246,55 +248,55 @@ export async function replaceAllCocktails(
     ? cocktails.map(sanitizeCocktail)
     : [];
   await initDatabase();
+  const cocktailPlaceholders = normalized
+    .map(() =>
+      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    )
+    .join(", ");
+  const cocktailParams = normalized.flatMap((item) => [
+    item.id,
+    item.name,
+    item.photoUri ?? null,
+    item.glassId ?? null,
+    item.rating ?? 0,
+    item.tags ? JSON.stringify(item.tags) : null,
+    item.description ?? null,
+    item.instructions ?? null,
+    item.createdAt ?? null,
+    item.updatedAt ?? null,
+  ]);
+  const allIngredients = normalized.flatMap((item) =>
+    item.ingredients.map((ing) => ({ ...ing, cocktailId: item.id }))
+  );
+  const ingPlaceholders = allIngredients
+    .map(() =>
+      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    )
+    .join(", ");
+  const ingParams = allIngredients.flatMap((ing) => [
+    ing.cocktailId,
+    ing.order,
+    ing.ingredientId != null ? String(ing.ingredientId) : null,
+    ing.name ?? null,
+    ing.amount ?? null,
+    ing.unitId ?? null,
+    ing.garnish ? 1 : 0,
+    ing.optional ? 1 : 0,
+    ing.allowBaseSubstitution ? 1 : 0,
+    ing.allowBrandedSubstitutes ? 1 : 0,
+    ing.substitutes ? JSON.stringify(ing.substitutes) : null,
+  ]);
   const run = async (innerTx) => {
     await innerTx.runAsync("DELETE FROM cocktail_ingredients");
     await innerTx.runAsync("DELETE FROM cocktails");
     if (normalized.length) {
-      const cocktailPlaceholders = normalized
-        .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-        .join(", ");
-      const cocktailParams = normalized.flatMap((item) => [
-        item.id,
-        item.name,
-        item.photoUri ?? null,
-        item.glassId ?? null,
-        item.rating ?? 0,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.description ?? null,
-        item.instructions ?? null,
-        item.createdAt ?? null,
-        item.updatedAt ?? null,
-      ]);
       await innerTx.runAsync(
         `INSERT OR REPLACE INTO cocktails (
             id, name, photoUri, glassId, rating, tags, description, instructions, createdAt, updatedAt
           ) VALUES ${cocktailPlaceholders}`,
         cocktailParams
       );
-      const allIngredients = normalized.flatMap((item) =>
-        item.ingredients.map((ing) => ({ ...ing, cocktailId: item.id }))
-      );
       if (allIngredients.length) {
-        const ingPlaceholders = allIngredients
-          .map(() =>
-            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-          )
-          .join(", ");
-        const ingParams = allIngredients.flatMap((ing) => [
-          ing.cocktailId,
-          ing.order,
-          ing.ingredientId != null ? String(ing.ingredientId) : null,
-          ing.name ?? null,
-          ing.amount ?? null,
-          ing.unitId ?? null,
-          ing.garnish ? 1 : 0,
-          ing.optional ? 1 : 0,
-          ing.allowBaseSubstitution ? 1 : 0,
-          ing.allowBrandedSubstitutes ? 1 : 0,
-          ing.substitutes ? JSON.stringify(ing.substitutes) : null,
-        ]);
         await innerTx.runAsync(
           `INSERT INTO cocktail_ingredients (
             cocktailId, orderNum, ingredientId, name, amount, unitId, garnish, optional,

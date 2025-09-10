@@ -375,19 +375,40 @@ export default function IngredientDetailsScreen() {
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const updated = { ...ingredient, inBar: !ingredient.inBar };
+    console.time("toggleInBar:state");
+    let nextList;
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write to allow UI to update first
-    setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
-    }, 100);
-  }, [ingredient, setIngredients]);
+    setIngredients((list) => {
+      nextList = updateIngredientById(list, {
+        id: updated.id,
+        inBar: updated.inBar,
+      });
+      return nextList;
+    });
+    console.timeEnd("toggleInBar:state");
+
+    console.time("toggleInBar:usageMap");
+    getAllowSubstitutes().then((allow) => {
+      updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+        prevIngredients: ingredients,
+        changedIngredientIds: [updated.id],
+        allowSubstitutes: !!allow,
+      });
+      console.timeEnd("toggleInBar:usageMap");
+    });
+
+    console.time("toggleInBar:db");
+    updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(() => {
+      console.timeEnd("toggleInBar:db");
+    });
+  }, [
+    ingredient,
+    setIngredients,
+    updateUsageMap,
+    cocktailsCtx,
+    ingredients,
+  ]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
@@ -395,20 +416,23 @@ export default function IngredientDetailsScreen() {
       ...ingredient,
       inShoppingList: !ingredient.inShoppingList,
     };
+    console.time("toggleShopping:state");
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write to allow UI to update first
-    setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      updateIngredientFields(updated.id, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
+        id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
-    }, 100);
+      })
+    );
+    console.timeEnd("toggleShopping:state");
+
+    console.time("toggleShopping:db");
+    updateIngredientFields(updated.id, {
+      inShoppingList: updated.inShoppingList,
+    }).finally(() => {
+      console.timeEnd("toggleShopping:db");
+    });
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
@@ -424,7 +448,7 @@ export default function IngredientDetailsScreen() {
         ...brandedList.map((b) => b.id),
       ];
       if (updates.length === 0) return;
-
+      console.time("unlinkIngredients:state");
       let nextList;
       setIngredients((list) => {
         nextList = list;
@@ -442,20 +466,25 @@ export default function IngredientDetailsScreen() {
           setBrandedChildren((prev) => prev.filter((c) => c.id !== item.id));
         }
       });
+      console.timeEnd("unlinkIngredients:state");
 
+      console.time("unlinkIngredients:usageMap");
       getAllowSubstitutes().then((allow) => {
         updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
           prevIngredients: ingredients,
           changedIngredientIds: changedIds,
           allowSubstitutes: !!allow,
         });
+        console.timeEnd("unlinkIngredients:usageMap");
       });
 
+      console.time("unlinkIngredients:db");
       InteractionManager.runAfterInteractions(() => {
         (async () => {
           for (const item of updates) {
             await saveIngredient(item);
           }
+          console.timeEnd("unlinkIngredients:db");
         })();
       });
     },
