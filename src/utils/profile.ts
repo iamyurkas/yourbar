@@ -5,7 +5,8 @@ export function profile<T>(id: string, fn: () => T): T {
     return fn();
   } finally {
     const duration = Date.now() - startTime;
-    console.log(`[${id}] start=${startedAt} duration=${duration}ms`);
+    const endedAt = new Date().toISOString();
+    console.log(`[${endedAt}] ${id} start=${startedAt} duration=${duration}ms`);
   }
 }
 
@@ -16,6 +17,7 @@ export async function profileAsync<T>(id: string, fn: () => Promise<T>): Promise
     return await fn();
   } finally {
     const duration = Date.now() - startTime;
-    console.log(`[${id}] start=${startedAt} duration=${duration}ms`);
+    const endedAt = new Date().toISOString();
+    console.log(`[${endedAt}] ${id} start=${startedAt} duration=${duration}ms`);
   }
 }
