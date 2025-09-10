@@ -46,7 +46,7 @@ export function initDatabase() {
     initPromise = (async () => {
       for (const db of [readDb, writeDb]) {
         await db.execAsync("PRAGMA foreign_keys = ON;");
-        await db.execAsync("PRAGMA busy_timeout = 5000;");
+        await db.execAsync("PRAGMA busy_timeout = 0;");
       }
       try {
         await writeDb.execAsync("PRAGMA journal_mode=WAL;");
