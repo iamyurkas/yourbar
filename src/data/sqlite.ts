@@ -100,10 +100,14 @@ export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
   const runner = async () => {
     await initPromise;
-    const callback = (tx) => work(tx);
-    return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(writeDb, callback)
-      : writeDb.withTransactionAsync(callback);
+    const runWithTx = (tx) => work(tx);
+    if (typeof SQLite.withTransactionAsync === "function") {
+      return SQLite.withTransactionAsync(writeDb, runWithTx);
+    }
+    if (typeof writeDb.withExclusiveTransactionAsync === "function") {
+      return writeDb.withExclusiveTransactionAsync(runWithTx);
+    }
+    return writeDb.withTransactionAsync(() => work(writeDb));
   };
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails and unblock queued writes
