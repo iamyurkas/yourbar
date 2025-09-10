@@ -1,8 +1,7 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllIngredients } from "../domain/ingredients";
 import { getAllCocktails } from "../domain/cocktails";
-import { mapCocktailsByIngredient } from "../domain/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import IngredientUsageContext from "../context/IngredientUsageContext";
@@ -23,7 +22,7 @@ export default function useIngredientsData() {
     cocktails,
     setCocktails,
     usageMap,
-    setUsageMap,
+    updateUsageMap,
     loading,
     setLoading,
     baseIngredients,
@@ -32,6 +31,11 @@ export default function useIngredientsData() {
     ingredientsByTag,
     setImporting,
   } = useContext(IngredientUsageContext);
+
+  const prevIngredientsRef = useRef([]);
+  const prevCocktailsRef = useRef([]);
+  const prevByIdRef = useRef(new Map());
+  const prevByBaseRef = useRef(new Map());
 
   const load = useCallback(
     async (force = false) => {
@@ -76,10 +80,49 @@ export default function useIngredientsData() {
           if (!byBase.has(baseId)) byBase.set(baseId, []);
           byBase.get(baseId).push(i);
         });
-        const map = mapCocktailsByIngredient(sorted, cocks, {
+
+        const prevIngredients = prevIngredientsRef.current;
+        const prevCocktails = prevCocktailsRef.current;
+        const prevById = prevByIdRef.current;
+        const prevByBase = prevByBaseRef.current;
+
+        const changedIngredientIds = [] as string[];
+        sorted.forEach((i) => {
+          const prev = prevById.get(i.id);
+          if (
+            !prev ||
+            prev.name !== i.name ||
+            prev.baseIngredientId !== i.baseIngredientId
+          ) {
+            changedIngredientIds.push(i.id);
+          }
+        });
+        prevById.forEach((_, id) => {
+          if (!byId.has(id)) changedIngredientIds.push(id);
+        });
+
+        const prevCocktailMap = new Map(prevCocktails.map((c) => [c.id, c]));
+        const changedCocktailIds = [] as string[];
+        cocks.forEach((c) => {
+          const prev = prevCocktailMap.get(c.id);
+          if (!prev || JSON.stringify(prev) !== JSON.stringify(c)) {
+            changedCocktailIds.push(c.id);
+          }
+        });
+        prevCocktailMap.forEach((_, id) => {
+          if (!cocks.some((c) => c.id === id)) changedCocktailIds.push(id);
+        });
+
+        const map = updateUsageMap(sorted, cocks, {
           allowSubstitutes: !!allowSubs,
           byId,
           byBase,
+          prevIngredients,
+          prevCocktails,
+          prevById,
+          prevByBase,
+          changedIngredientIds,
+          changedCocktailIds,
         });
         const cocktailMap = new Map(cocks.map((c) => [c.id, c.name]));
         const withUsage = sorted.map((item) => {
@@ -99,7 +142,6 @@ export default function useIngredientsData() {
         });
         setIngredients(withUsage);
         setCocktails(cocks);
-        setUsageMap(map);
         const nextTags = [
           ...BUILTIN_INGREDIENT_TAGS,
           ...((customTags || [])),
@@ -113,6 +155,11 @@ export default function useIngredientsData() {
               t.color !== nextTags[idx].color
           );
         if (changed) setIngredientTags(nextTags);
+
+        prevIngredientsRef.current = sorted;
+        prevCocktailsRef.current = cocks;
+        prevByIdRef.current = byId;
+        prevByBaseRef.current = byBase;
       } finally {
         setLoading(false);
         setImporting(false);
@@ -121,7 +168,7 @@ export default function useIngredientsData() {
     [
       setIngredients,
       setCocktails,
-      setUsageMap,
+      updateUsageMap,
       setLoading,
       setIngredientTags,
       setImporting,
