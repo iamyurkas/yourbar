@@ -118,7 +118,13 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
 
   // перерахунок placement/maxHeight/позиції (від контейнера навколо інпута)
   const recalcPlacement = useCallback(() => {
-    if (!nameAnchorRef.current) return;
+    const start = Date.now();
+    const startedAt = new Date(start).toISOString();
+    if (!nameAnchorRef.current) {
+      const duration = Date.now() - start;
+      console.log(`[recalcPlacement] start=${startedAt} duration=${duration}ms`);
+      return;
+    }
     nameAnchorRef.current.measureInWindow((x, y, w, h) => {
       const screenH = Dimensions.get("window").height;
       const SAFE = 8;
@@ -148,6 +154,9 @@ const CocktailIngredientRow = memo(function CocktailIngredientRow({
         left: x,
       }));
       setNameWidth(w || nameWidth);
+
+      const duration = Date.now() - start;
+      console.log(`[recalcPlacement] start=${startedAt} duration=${duration}ms`);
     });
   }, [kbHeight, suggestions.length, nameWidth]);
 
