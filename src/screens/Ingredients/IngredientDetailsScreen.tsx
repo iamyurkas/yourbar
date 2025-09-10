@@ -371,15 +371,16 @@ export default function IngredientDetailsScreen() {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write to allow UI to update first
+    // Write to DB first to avoid blocking the transaction with rendering work
     setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
+      updateIngredientFields(updated.id, { inBar: updated.inBar }).then(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inBar: updated.inBar,
+          })
+        );
+      });
     }, 0);
   }, [ingredient, setIngredients]);
 
@@ -391,16 +392,17 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write to allow UI to update first
+    // Write to DB before updating global list to keep the transaction fast
     setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
+      }).then(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inShoppingList: updated.inShoppingList,
+          })
+        );
       });
     }, 0);
   }, [ingredient, setIngredients]);
