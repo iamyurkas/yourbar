@@ -3,7 +3,6 @@ import React, {
   useState,
   useLayoutEffect,
   useCallback,
-  useMemo,
   memo,
 } from "react";
 import {
@@ -32,7 +31,6 @@ import {
   updateIngredientById,
   updateIngredientFields,
 } from "../../domain/ingredients";
-import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
 import CocktailRow from "../../components/CocktailRow";
@@ -89,6 +87,7 @@ function buildDetails(all, cocktails, loaded, map, ig = true, allowSubs = true) 
     .sort(sortByName);
   return { children, base, used: list };
 }
+
 
 /** Gray-square photo (no icon/initials), uses theme */
 const PhotoThumb = memo(function PhotoThumb({ uri }) {
@@ -167,20 +166,11 @@ export default function IngredientDetailsScreen() {
     ingredientsById,
     ingredientsByBase,
     updateUsageMap,
+    usageMap,
   } = useIngredientUsage();
 
   const [ignoreGarnish, setIgnoreGarnish] = useState(true);
   const [allowSubs, setAllowSubs] = useState(true);
-
-  const usageMap = useMemo(
-    () =>
-      mapCocktailsByIngredient(ingredients, cocktailsCtx, {
-        allowSubstitutes: allowSubs,
-        byId: ingredientsById,
-        byBase: ingredientsByBase,
-      }),
-    [ingredients, cocktailsCtx, ingredientsById, ingredientsByBase, allowSubs]
-  );
 
   const initial = initialIngredient || ingredientsById.get(id) || null;
   const {
@@ -209,14 +199,16 @@ export default function IngredientDetailsScreen() {
     const current =
       ingredientsById.get(id) || route.params?.initialIngredient || null;
     if (!current) return;
-    setIngredient((prev) => ({ ...prev, ...current }));
+
+    setIngredient((prevState) => ({ ...prevState, ...current }));
+
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
       current,
       usageMap,
-      true,
-      true
+      ignoreGarnish,
+      allowSubs
     );
     setBrandedChildren(children);
     setBaseIngredient(base);
@@ -228,6 +220,8 @@ export default function IngredientDetailsScreen() {
     usageMap,
     ingredientsById,
     route.params?.initialIngredient,
+    ignoreGarnish,
+    allowSubs,
   ]);
 
   const handleGoBack = useCallback(() => {
@@ -323,7 +317,10 @@ export default function IngredientDetailsScreen() {
 
   const load = useCallback(() => {
     const loaded = ingredientsById.get(id) || null;
-    setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
+    if (!loaded) return;
+
+    setIngredient((prevState) => ({ ...prevState, ...loaded }));
+
     const { children, base, used } = buildDetails(
       ingredients,
       cocktailsCtx,
@@ -375,27 +372,11 @@ export default function IngredientDetailsScreen() {
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
     profiler.step(`local inBar=${updated.inBar} for ${updated.id}`);
-    // Defer global updates and run DB write on a later tick so any heavy
-    // CPU work (e.g. mapCocktailsByIngredient) runs outside the
-    // transaction window
-    setTimeout(() => {
-      profiler.step(`global inBar update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inBar=${updated.inBar} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(
-          () => profiler.step("persist done")
-        );
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+    profiler.step(`persist inBar=${updated.inBar} for ${updated.id}`);
+    updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(() =>
+      profiler.step("persist done")
+    );
+  }, [ingredient]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
@@ -411,26 +392,13 @@ export default function IngredientDetailsScreen() {
     profiler.step(
       `local inShoppingList=${updated.inShoppingList} for ${updated.id}`
     );
-    // Defer global update and schedule DB write after a tick so heavy CPU
-    // work completes before the transaction begins
-    setTimeout(() => {
-      profiler.step(`global inShoppingList update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, {
-          inShoppingList: updated.inShoppingList,
-        }).finally(() => profiler.step("persist done"));
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+    profiler.step(
+      `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
+    );
+    updateIngredientFields(updated.id, {
+      inShoppingList: updated.inShoppingList,
+    }).finally(() => profiler.step("persist done"));
+  }, [ingredient]);
 
   const unlinkIngredients = useCallback(
     ({ base, brandeds }) => {
