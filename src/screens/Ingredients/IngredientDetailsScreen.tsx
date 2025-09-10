@@ -357,16 +357,13 @@ export default function IngredientDetailsScreen() {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write to allow UI to update first
-    setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
-    }, 0);
+    setIngredients((list) =>
+      updateIngredientById(list, {
+        id: updated.id,
+        inBar: updated.inBar,
+      })
+    );
+    updateIngredientFields(updated.id, { inBar: updated.inBar });
   }, [ingredient, setIngredients]);
 
   const toggleInShoppingList = useCallback(() => {
@@ -377,18 +374,15 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write to allow UI to update first
-    setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      updateIngredientFields(updated.id, {
+    setIngredients((list) =>
+      updateIngredientById(list, {
+        id: updated.id,
         inShoppingList: updated.inShoppingList,
-      });
-    }, 0);
+      })
+    );
+    updateIngredientFields(updated.id, {
+      inShoppingList: updated.inShoppingList,
+    });
   }, [ingredient, setIngredients]);
 
   const unlinkIngredients = useCallback(
