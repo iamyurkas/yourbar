@@ -27,13 +27,10 @@ import {
 import { goBack } from "../../utils/navigation";
 
 import {
-  getAllIngredients,
   saveIngredient,
   updateIngredientById,
   updateIngredientFields,
 } from "../../domain/ingredients";
-
-import { getAllCocktails } from "../../domain/cocktails";
 import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -313,14 +310,13 @@ export default function IngredientDetailsScreen() {
     }, [handleGoBack])
   );
 
-  const load = useCallback(
-    async (refresh = false) => {
-      const [all, cocktails, ig, allowSubs] = await Promise.all([
-        !refresh && ingredients.length ? ingredients : getAllIngredients(),
-        !refresh && cocktailsCtx.length ? cocktailsCtx : getAllCocktails(),
+  const load = useCallback(async () => {
+      const [ig, allowSubs] = await Promise.all([
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
+      const all = ingredients;
+      const cocktails = cocktailsCtx;
       const loaded = ingredientsById.get(id) || all.find((i) => i.id === id);
       setIngredient((prev) => (loaded ? { ...prev, ...loaded } : prev));
       const byId = new Map(all.map((i) => [i.id, i]));
@@ -346,10 +342,8 @@ export default function IngredientDetailsScreen() {
     [id, ingredientsById, ingredients, cocktailsCtx]
   );
 
-  const shouldLoad = !ingredients.length || !cocktailsCtx.length;
   useFocusEffect(
     useCallback(() => {
-      if (!shouldLoad) return;
       let cancelled = false;
       (async () => {
         try {
@@ -359,7 +353,7 @@ export default function IngredientDetailsScreen() {
       return () => {
         cancelled = true;
       };
-    }, [load, shouldLoad])
+    }, [load])
   );
 
   useEffect(() => {
@@ -377,15 +371,16 @@ export default function IngredientDetailsScreen() {
     const updated = { ...ingredient, inBar: !ingredient.inBar };
     // Optimistic local update for instant UI feedback
     setIngredient(updated);
-    // Defer heavier global updates and DB write to allow UI to update first
+    // Write to DB first to avoid blocking the transaction with rendering work
     setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      updateIngredientFields(updated.id, { inBar: updated.inBar });
+      updateIngredientFields(updated.id, { inBar: updated.inBar }).then(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inBar: updated.inBar,
+          })
+        );
+      });
     }, 0);
   }, [ingredient, setIngredients]);
 
@@ -397,16 +392,17 @@ export default function IngredientDetailsScreen() {
     };
     // Optimistic local update for instant icon change
     setIngredient(updated);
-    // Defer global list update and DB write to allow UI to update first
+    // Write to DB before updating global list to keep the transaction fast
     setTimeout(() => {
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
       updateIngredientFields(updated.id, {
         inShoppingList: updated.inShoppingList,
+      }).then(() => {
+        setIngredients((list) =>
+          updateIngredientById(list, {
+            id: updated.id,
+            inShoppingList: updated.inShoppingList,
+          })
+        );
       });
     }, 0);
   }, [ingredient, setIngredients]);
@@ -443,20 +439,16 @@ export default function IngredientDetailsScreen() {
         }
       });
 
-      getAllowSubstitutes().then((allow) => {
-        updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
+      InteractionManager.runAfterInteractions(async () => {
+        for (const item of updates) {
+          await saveIngredient(item);
+        }
+        const allow = await getAllowSubstitutes();
+        await updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
           prevIngredients: ingredients,
           changedIngredientIds: changedIds,
           allowSubstitutes: !!allow,
         });
-      });
-
-      InteractionManager.runAfterInteractions(() => {
-        (async () => {
-          for (const item of updates) {
-            await saveIngredient(item);
-          }
-        })();
       });
     },
     [

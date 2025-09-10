@@ -32,10 +32,6 @@ import {
   saveCocktail,
   updateCocktailById,
 } from "../../domain/cocktails";
-import {
-  getIngredientsByIds,
-  getIngredientsByBaseIds,
-} from "../../domain/ingredients";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import { getGlassById } from "../../constants/glassware";
 import { withAlpha } from "../../utils/color";
@@ -199,20 +195,22 @@ export default function CocktailDetailsScreen() {
     ingredients: globalIngredients = [],
     cocktails: globalCocktails = [],
     setCocktails: setGlobalCocktails,
+    ingredientsById: ingMap,
+    ingredientsByBase: byBase,
   } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(initialCocktail || null);
-  const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(!initialCocktail);
   const [showImperial, setShowImperial] = useState(false);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const showImperialLocked = useRef(false);
+  const loadingRef = useRef(false);
 
-  const { ingMap, byBase, bySearch } = useMemo(
-    () => buildIngredientIndex(ingredients),
-    [ingredients]
+  const bySearch = useMemo(
+    () => buildIngredientIndex(globalIngredients).bySearch,
+    [globalIngredients]
   );
 
   const handleGoBack = useCallback(() => {
@@ -326,84 +324,33 @@ export default function CocktailDetailsScreen() {
 
   const load = useCallback(
     async (refresh = false, showSpinner = true) => {
+      if (loadingRef.current) return;
+      loadingRef.current = true;
       if (showSpinner) setLoading(true);
-      const [loadedCocktail, useMetric, ig, allowSubs] = await Promise.all([
-        getCocktailById(id),
-        getUseMetric(),
-        getIgnoreGarnish(),
-        getAllowSubstitutes(),
-      ]);
-      // If DB hasn't yet persisted ingredients, fall back to existing state/route data
-      setCocktail((prev) => {
-        if (!loadedCocktail) return prev;
-        if (!prev) return loadedCocktail;
-        const mergedIngs = (loadedCocktail.ingredients && loadedCocktail.ingredients.length)
-          ? loadedCocktail.ingredients
-          : (prev.ingredients || []);
-        return { ...loadedCocktail, ingredients: mergedIngs, rating: prev.rating };
-      });
-      const fallbackRows = (loadedCocktail?.ingredients && loadedCocktail.ingredients.length)
-        ? loadedCocktail.ingredients
-        : (initialCocktail?.ingredients || []);
-      const ingredientIds = Array.from(
-        new Set(
-          (fallbackRows || [])
-            .flatMap((r) => [
-              r.ingredientId,
-              ...(Array.isArray(r.substitutes)
-                ? r.substitutes.map((s) => s.id)
-                : []),
-            ])
-            .filter(Boolean)
-        )
-      );
-      let allIngredients = [];
-      if (ingredientIds.length) {
-        allIngredients = await getIngredientsByIds(ingredientIds);
-        const allowBaseSubs =
-          allowSubs ||
-          (loadedCocktail?.ingredients || []).some(
-            (r) => r.allowBaseSubstitution
-          );
-        if (allowBaseSubs) {
-          const baseMap = new Map(
-            allIngredients.map((i) => [i.id, i.baseIngredientId])
-          );
-          const baseIds = Array.from(
-            new Set(
-              (loadedCocktail?.ingredients || [])
-                .filter((r) => allowSubs || r.allowBaseSubstitution)
-                .map((r) => baseMap.get(r.ingredientId))
-                .filter(
-                  (bid) => bid != null && !ingredientIds.includes(bid)
-                )
-            )
-          );
-          if (baseIds.length) {
-            const baseIngredients = await getIngredientsByIds(baseIds);
-            allIngredients = allIngredients.concat(baseIngredients);
-          }
-        }
-
-        const brandBaseIds = Array.from(
-          new Set(allIngredients.map((i) => i.baseIngredientId ?? i.id))
-        );
-        if (brandBaseIds.length) {
-          const branded = await getIngredientsByBaseIds(brandBaseIds, {
-            inBarOnly: true,
-          });
-          if (branded.length) {
-            const map = new Map(allIngredients.map((i) => [i.id, i]));
-            for (const b of branded) map.set(b.id, b);
-            allIngredients = Array.from(map.values());
-          }
-        }
+      try {
+        const [loadedCocktail, useMetric, ig, allowSubs] = await Promise.all([
+          getCocktailById(id),
+          getUseMetric(),
+          getIgnoreGarnish(),
+          getAllowSubstitutes(),
+        ]);
+        // If DB hasn't yet persisted ingredients, fall back to existing state/route data
+        setCocktail((prev) => {
+          if (!loadedCocktail) return prev;
+          if (!prev) return loadedCocktail;
+          const mergedIngs =
+            loadedCocktail.ingredients && loadedCocktail.ingredients.length
+              ? loadedCocktail.ingredients
+              : prev.ingredients || [];
+          return { ...loadedCocktail, ingredients: mergedIngs, rating: prev.rating };
+        });
+        if (!showImperialLocked.current) setShowImperial(!useMetric);
+        setIgnoreGarnish(!!ig);
+        setAllowSubstitutes(!!allowSubs);
+      } finally {
+        if (showSpinner) setLoading(false);
+        loadingRef.current = false;
       }
-      setIngredients(allIngredients);
-      if (!showImperialLocked.current) setShowImperial(!useMetric);
-      setIgnoreGarnish(!!ig);
-      setAllowSubstitutes(!!allowSubs);
-      if (showSpinner) setLoading(false);
     },
     [id]
   );
@@ -451,14 +398,6 @@ export default function CocktailDetailsScreen() {
     const sub = addAllowSubstitutesListener(setAllowSubstitutes);
     return () => sub.remove();
   }, []);
-
-  // Hydrate ingredients list from global cache only if we don't have any yet.
-  useEffect(() => {
-    if (ingredients.length === 0 && globalIngredients.length) {
-      setIngredients(globalIngredients);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalIngredients, ingredients.length]);
 
   // When the global cocktail list updates, merge the item into local state.
   // If the cocktail references ingredient ids that we don't have cached yet,
@@ -513,6 +452,7 @@ export default function CocktailDetailsScreen() {
       cocktail,
       ingMap,
       byBase,
+      bySearch,
       allowSubstitutes,
       ignoreGarnish,
       showImperial,

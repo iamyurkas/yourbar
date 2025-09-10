@@ -13,7 +13,6 @@ import TopTabBar from "../../components/TopTabBar";
 import { useTabMemory } from "../../context/TabMemoryContext";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { getAllCocktails } from "../../domain/cocktails";
-import { getAllIngredients } from "../../domain/ingredients";
 import {
   getIgnoreGarnish,
   addIgnoreGarnishListener,
@@ -47,7 +46,6 @@ export default function AllCocktailsScreen() {
   const insets = useSafeAreaInsets();
 
   const [cocktails, setCocktails] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -87,17 +85,13 @@ export default function AllCocktailsScreen() {
       if (firstLoad.current) setLoading(true);
       const cocktailPromise =
         globalCocktails.length ? Promise.resolve(globalCocktails) : getAllCocktails();
-      const ingredientPromise =
-        globalIngredients.length ? Promise.resolve(globalIngredients) : getAllIngredients();
-      const [cocktailsList, ingredientsList, ig, allowSubs] = await Promise.all([
+      const [cocktailsList, ig, allowSubs] = await Promise.all([
         cocktailPromise,
-        ingredientPromise,
         getIgnoreGarnish(),
         getAllowSubstitutes(),
       ]);
       if (cancel) return;
       setCocktails(Array.isArray(cocktailsList) ? cocktailsList : []);
-      setIngredients(Array.isArray(ingredientsList) ? ingredientsList : []);
       setIgnoreGarnish(!!ig);
       setAllowSubstitutes(!!allowSubs);
       if (firstLoad.current) {
@@ -112,10 +106,10 @@ export default function AllCocktailsScreen() {
       subIg.remove();
       subAs.remove();
     };
-  }, [isFocused, globalCocktails, globalIngredients]);
+  }, [isFocused, globalCocktails]);
 
   const filtered = useMemo(() => {
-    const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
+    const { ingMap, findBrand } = buildIngredientIndex(globalIngredients || []);
     const q = normalizeSearch(searchDebounced);
     let list = cocktails;
     if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
@@ -144,7 +138,7 @@ export default function AllCocktailsScreen() {
       .sort(sortByName);
   }, [
     cocktails,
-    ingredients,
+    globalIngredients,
     searchDebounced,
     selectedTagIds,
     ignoreGarnish,
