@@ -40,6 +40,7 @@ if (typeof SQLite.setTracer === "function") {
 let initPromise;
 // Simple queue that serializes write transactions.
 let writeQueue = Promise.resolve();
+let queueLength = 0;
 
 export function initDatabase() {
   if (!initPromise) {
@@ -126,18 +127,71 @@ export async function query(sql, params = []) {
 // Serialize all write operations across modules to avoid DB locked errors
 export function withWriteTransactionAsync(work) {
   if (typeof work !== "function") throw new Error("work must be a function");
+
   const runner = async () => {
     await initPromise;
-    const callback = async () => work(writeDb);
-    return SQLite.withTransactionAsync
-      ? SQLite.withTransactionAsync(writeDb, callback)
-      : writeDb.withTransactionAsync(callback);
+    const start = Date.now();
+    console.log(`[sqlite] tx queued. pending=${queueLength}`);
+
+    let firstRunAt;
+    let inTx = false;
+
+    const beginTx = async () => {
+      if (!inTx) {
+        inTx = true;
+        console.log(`[sqlite] begin transaction after ${Date.now() - start}ms`);
+        await writeDb.execAsync("BEGIN IMMEDIATE");
+      }
+    };
+
+    const methods = ["runAsync", "execAsync", "getAllAsync", "getFirstAsync"];
+    const tx = new Proxy(writeDb, {
+      get(target, prop, receiver) {
+        if (typeof prop === "string" && methods.includes(prop)) {
+          return async (...args: any[]) => {
+            if (!firstRunAt) {
+              firstRunAt = Date.now();
+              console.log(
+                `[sqlite] first ${prop} after ${firstRunAt - start}ms`
+              );
+            }
+            await beginTx();
+            return (target as any)[prop](...args);
+          };
+        }
+        const value = (target as any)[prop];
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+
+    try {
+      const result = await work(tx);
+      if (inTx) await writeDb.execAsync("COMMIT");
+      return result;
+    } catch (e) {
+      if (inTx) {
+        try {
+          await writeDb.execAsync("ROLLBACK");
+        } catch (err) {
+          console.warn("[sqlite] rollback error", err);
+        }
+      }
+      throw e;
+    } finally {
+      console.log(`[sqlite] tx finished in ${Date.now() - start}ms`);
+    }
   };
+
+  queueLength++;
   const next = writeQueue.then(runner, runner);
   // Keep the chain alive even if an operation fails and unblock queued writes
-  writeQueue = next.catch((e) => {
-    console.warn("[sqlite] withWriteTransactionAsync error", e);
-  });
+  writeQueue = next
+    .catch((e) => {
+      console.warn("[sqlite] withWriteTransactionAsync error", e);
+    })
+    .finally(() => {
+      queueLength--;
+    });
   return next;
 }
 
