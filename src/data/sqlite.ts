@@ -108,6 +108,7 @@ export function initDatabase() {
         CREATE INDEX IF NOT EXISTS idx_cocktail_ingredients_ingredientId ON cocktail_ingredients (ingredientId);
         CREATE INDEX IF NOT EXISTS idx_ingredients_searchName ON ingredients (searchName);
         CREATE INDEX IF NOT EXISTS idx_ingredients_inBar ON ingredients (inBar);
+        CREATE INDEX IF NOT EXISTS idx_ingredients_inShoppingList ON ingredients (inShoppingList);
         CREATE INDEX IF NOT EXISTS idx_ingredients_name ON ingredients (name);
         CREATE INDEX IF NOT EXISTS idx_ingredients_baseIngredientId ON ingredients (baseIngredientId);
       `);
