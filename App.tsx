@@ -32,6 +32,7 @@ import ShakerIcon from "./assets/shaker.svg";
 import IngredientIcon from "./assets/lemon.svg";
 import useIngredientsData from "./src/hooks/useIngredientsData";
 import { getStartScreen } from "./src/data/settings";
+import { startIngredientCommandQueue } from "./src/services/IngredientCommandQueue";
 import PlainHeader from "./src/components/PlainHeader";
 
 
@@ -175,6 +176,12 @@ export default function App() {
     const timer = setTimeout(() => setShowSplash(false), 2000);
     getStartScreen().then((v) => setStartScreen(v));
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    startIngredientCommandQueue().catch((error) => {
+      console.warn("Failed to start ingredient command queue", error);
+    });
   }, []);
 
   if (showSplash || !startScreen) {

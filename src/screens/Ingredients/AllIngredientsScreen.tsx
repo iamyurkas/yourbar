@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -14,7 +14,6 @@ import IngredientRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { toggleIngredientsInBar } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -22,6 +21,7 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
 import { updateIngredientAvailability } from "../../domain/ingredientsAvailabilityCache";
+import { enqueueToggleInBar } from "../../services/IngredientCommandQueue";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -37,9 +37,6 @@ export default function AllIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  // Collect toggled ingredient IDs and flush on screen exit
-  const pendingIdsRef = React.useRef(new Set());
-
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
   }, [isFocused, setTab]);
@@ -63,41 +60,6 @@ export default function AllIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(async () => {
-    const ids = Array.from(pendingIdsRef.current);
-    if (ids.length) {
-      pendingIdsRef.current = new Set();
-      try {
-        await toggleIngredientsInBar(ids);
-      } catch {}
-      let updatedList;
-      setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
-      });
-      try {
-        updateIngredientAvailability(ids, updatedList);
-      } catch {}
-    }
-  }, [setIngredients]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending().catch(() => {});
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending().catch(() => {});
-    };
-  }, [flushPending]);
-
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
     let data = ingredients;
@@ -111,11 +73,32 @@ export default function AllIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  const toggleInBar = useCallback(
+    (id) => {
+      let updatedList;
+      setIngredients((prev) => {
+        if (!(prev instanceof Map)) return prev;
+        const next = new Map(prev);
+        const item = next.get(id);
+        if (!item) return prev;
+        const updated = { ...item, inBar: !item.inBar };
+        next.set(id, updated);
+        updatedList = Array.from(next.values());
+        return next;
+      });
+      if (updatedList) {
+        try {
+          updateIngredientAvailability([id], updatedList);
+        } catch (error) {
+          console.warn("Failed to update availability for ingredient", error);
+        }
+        enqueueToggleInBar([id]).catch((error) =>
+          console.warn("Failed to enqueue ingredient toggle", error)
+        );
+      }
+    },
+    [setIngredients]
+  );
 
   const onItemPress = useCallback(
     (id) => {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -14,7 +14,6 @@ import IngredientRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { toggleIngredientsInBar } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -31,6 +30,7 @@ import {
   updateIngredientAvailability,
 } from "../../domain/ingredientsAvailabilityCache";
 import { sortByName } from "../../utils/sortByName";
+import { enqueueToggleInBar } from "../../services/IngredientCommandQueue";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -49,8 +49,6 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  // Collect toggled ingredient IDs and flush on screen exit
-  const pendingIdsRef = React.useRef(new Set());
   const [availableMap, setAvailableMap] = useState(new Map());
 
   useEffect(() => {
@@ -97,40 +95,6 @@ export default function MyIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(async () => {
-    const ids = Array.from(pendingIdsRef.current);
-    if (ids.length) {
-      pendingIdsRef.current = new Set();
-      try {
-        await toggleIngredientsInBar(ids);
-      } catch {}
-      let updatedList;
-      setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
-      });
-      const map = updateIngredientAvailability(ids, updatedList);
-      setAvailableMap(new Map(map));
-    }
-  }, [setIngredients]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending().catch(() => {});
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending().catch(() => {});
-    };
-  }, [flushPending]);
-
   useEffect(() => {
     const map = initIngredientsAvailability(
       ingredients,
@@ -155,11 +119,29 @@ export default function MyIngredientsScreen() {
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
 
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  const toggleInBar = useCallback(
+    (id) => {
+      let updatedList;
+      setIngredients((prev) => {
+        if (!(prev instanceof Map)) return prev;
+        const next = new Map(prev);
+        const item = next.get(id);
+        if (!item) return prev;
+        const updated = { ...item, inBar: !item.inBar };
+        next.set(id, updated);
+        updatedList = Array.from(next.values());
+        return next;
+      });
+      if (updatedList) {
+        const map = updateIngredientAvailability([id], updatedList);
+        setAvailableMap(new Map(map));
+        enqueueToggleInBar([id]).catch((error) =>
+          console.warn("Failed to enqueue ingredient toggle", error)
+        );
+      }
+    },
+    [setIngredients]
+  );
 
   const onItemPress = useCallback(
     (id) => {
