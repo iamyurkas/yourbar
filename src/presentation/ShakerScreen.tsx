@@ -8,6 +8,8 @@ import HeaderWithSearch from "../components/HeaderWithSearch";
 import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../components/IngredientRow";
 import useIngredientsData from "../hooks/useIngredientsData";
 import useAvailableByIngredient from "../hooks/useAvailableByIngredient";
+import useAvailabilityIngredientsSnapshot from "../hooks/useAvailabilityIngredientsSnapshot";
+import { makeIngredientAvailabilityKey } from "../utils/ingredientKeys";
 import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
@@ -85,12 +87,23 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps) {
     };
   }, []);
 
+  const ingredientsKey = useMemo(
+    () => makeIngredientAvailabilityKey(ingredients),
+    [ingredients]
+  );
+
+  const ingredientsForAvailability = useAvailabilityIngredientsSnapshot(
+    ingredients || [],
+    ingredientsKey
+  );
+
   const availableByIngredient = useAvailableByIngredient(
-    ingredients,
+    ingredientsForAvailability,
     cocktails,
     usageMap,
     allowSubstitutes,
-    ignoreGarnish
+    ignoreGarnish,
+    ingredientsKey
   );
 
   const renderItem = useCallback(
@@ -167,11 +180,18 @@ export default function ShakerScreen({ navigation }: ShakerScreenProps) {
       computeAvailableCocktails({
         recipeIds,
         cocktails: cocktails || [],
-        ingredients: ingredients || [],
+        ingredients: ingredientsForAvailability,
         allowSubstitutes,
         ignoreGarnish,
       }),
-    [recipeIds, cocktails, ingredients, allowSubstitutes, ignoreGarnish]
+    [
+      recipeIds,
+      cocktails,
+      ingredientsKey,
+      allowSubstitutes,
+      ignoreGarnish,
+      ingredientsForAvailability,
+    ]
   );
 
   const handleClear = (): void => setSelectedIds([]);

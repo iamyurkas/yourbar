@@ -10,7 +10,8 @@ export default function useAvailableByIngredient(
   cocktails: any,
   usageMap: Record<string, number[]>,
   allowSubstitutes: boolean,
-  ignoreGarnish: boolean
+  ignoreGarnish: boolean,
+  ingredientKey?: number
 ) {
   const compute = useMemo(() => {
     return () => {
@@ -40,7 +41,7 @@ export default function useAvailableByIngredient(
       });
       return map;
     };
-  }, [ingredients, cocktails, usageMap, allowSubstitutes, ignoreGarnish]);
+  }, [ingredients, cocktails, usageMap, allowSubstitutes, ignoreGarnish, ingredientKey]);
 
   const [result, setResult] = useState(
     new Map<number, { count: number; name: string | null }>()

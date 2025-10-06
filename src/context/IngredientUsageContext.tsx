@@ -10,6 +10,7 @@ import React, {
 import { updateUsageMap as updateUsageMapIncremental } from "../domain/ingredientUsage";
 import { sortByName } from "../utils/sortByName";
 import { groupIngredientsByTag } from "../domain/groupIngredientsByTag";
+import { makeIngredientAvailabilityKey } from "../utils/ingredientKeys";
 
 const IngredientUsageContext = createContext({
   usageMap: {},
@@ -29,6 +30,7 @@ const IngredientUsageContext = createContext({
   ingredientTags: [],
   setIngredientTags: () => {},
   ingredientsByTag: new Map(),
+  ingredientAvailabilityKey: 0,
 });
 
 export function IngredientUsageProvider({ children }) {
@@ -42,6 +44,11 @@ export function IngredientUsageProvider({ children }) {
   const ingredients = useMemo(
     () => Array.from(ingredientsMap.values()),
     [ingredientsMap]
+  );
+
+  const ingredientAvailabilityKey = useMemo(
+    () => makeIngredientAvailabilityKey(ingredients),
+    [ingredients]
   );
 
   const ingredientsById = useMemo(() => ingredientsMap, [ingredientsMap]);
@@ -155,12 +162,13 @@ export function IngredientUsageProvider({ children }) {
         setLoading,
         importing,
         setImporting,
-        baseIngredients,
-        ingredientTags,
-        setIngredientTags,
-        ingredientsByTag,
-      }}
-    >
+      baseIngredients,
+      ingredientTags,
+      setIngredientTags,
+      ingredientsByTag,
+      ingredientAvailabilityKey,
+    }}
+  >
       {children}
     </IngredientUsageContext.Provider>
   );

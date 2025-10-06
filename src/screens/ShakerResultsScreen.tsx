@@ -20,6 +20,8 @@ import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
 } from "../domain/cocktailIngredients";
+import { makeIngredientAvailabilityKey } from "../utils/ingredientKeys";
+import useAvailabilityIngredientsSnapshot from "../hooks/useAvailabilityIngredientsSnapshot";
 
 export default function ShakerResultsScreen({ route, navigation }) {
   const { availableIds = [], recipeIds = [] } = route.params || {};
@@ -63,8 +65,18 @@ export default function ShakerResultsScreen({ route, navigation }) {
     };
   }, []);
 
+  const ingredientsKey = useMemo(
+    () => makeIngredientAvailabilityKey(ingredients),
+    [ingredients]
+  );
+
+  const ingredientsForAvailability = useAvailabilityIngredientsSnapshot(
+    ingredients || [],
+    ingredientsKey
+  );
+
   const data = useMemo(() => {
-    const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
+    const { ingMap, findBrand } = buildIngredientIndex(ingredientsForAvailability);
     const availableSet = new Set(availableIds);
     const q = normalizeSearch(search);
     let list = cocktails.filter((c) => recipeIds.includes(c.id));
@@ -97,7 +109,8 @@ export default function ShakerResultsScreen({ route, navigation }) {
     });
   }, [
     cocktails,
-    ingredients,
+    ingredientsForAvailability,
+    ingredientsKey,
     recipeIds,
     availableIds,
     search,
