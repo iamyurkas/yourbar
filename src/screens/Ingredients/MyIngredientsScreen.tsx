@@ -14,7 +14,6 @@ import IngredientRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { toggleIngredientsInBar } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
@@ -28,9 +27,12 @@ import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import {
   initIngredientsAvailability,
-  updateIngredientAvailability,
+  getIngredientsAvailability,
 } from "../../domain/ingredientsAvailabilityCache";
 import { sortByName } from "../../utils/sortByName";
+import ingredientFlagsStore, {
+  useIngredientFlags,
+} from "../../state/ingredients.store";
 
 export default function MyIngredientsScreen() {
   const theme = useTheme();
@@ -40,7 +42,7 @@ export default function MyIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients, cocktails, usageMap } =
+  const { ingredients, loading, cocktails, usageMap } =
     useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -49,9 +51,8 @@ export default function MyIngredientsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  // Collect toggled ingredient IDs and flush on screen exit
-  const pendingIdsRef = React.useRef(new Set());
   const [availableMap, setAvailableMap] = useState(new Map());
+  const inBarMap = useIngredientFlags((state) => state.inBarMap);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "My");
@@ -97,40 +98,6 @@ export default function MyIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(async () => {
-    const ids = Array.from(pendingIdsRef.current);
-    if (ids.length) {
-      pendingIdsRef.current = new Set();
-      try {
-        await toggleIngredientsInBar(ids);
-      } catch {}
-      let updatedList;
-      setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
-      });
-      const map = updateIngredientAvailability(ids, updatedList);
-      setAvailableMap(new Map(map));
-    }
-  }, [setIngredients]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending().catch(() => {});
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending().catch(() => {});
-    };
-  }, [flushPending]);
-
   useEffect(() => {
     const map = initIngredientsAvailability(
       ingredients,
@@ -142,9 +109,31 @@ export default function MyIngredientsScreen() {
     setAvailableMap(new Map(map));
   }, [cocktails, usageMap, ignoreGarnish, allowSubstitutes, ingredients.length]);
 
+  useEffect(() => {
+    const unsubscribe = ingredientFlagsStore.subscribe(
+      (state) => state.inBarMap,
+      (next, prev) => {
+        const keys = new Set([
+          ...Object.keys(next || {}),
+          ...Object.keys(prev || {}),
+        ]);
+        let changed = false;
+        keys.forEach((key) => {
+          if ((next as Record<string, boolean>)[key] !== (prev as Record<string, boolean>)[key]) {
+            changed = true;
+          }
+        });
+        if (changed) {
+          setAvailableMap(new Map(getIngredientsAvailability()));
+        }
+      }
+    );
+    return unsubscribe;
+  }, []);
+
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
-    let data = ingredients.filter((i) => i.inBar);
+    let data = ingredients.filter((i) => inBarMap[String(i.id)]);
     if (q) data = data.filter((i) => i.searchName.includes(q));
     if (selectedTagIds.length > 0)
       data = data.filter(
@@ -153,13 +142,7 @@ export default function MyIngredientsScreen() {
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
     return [...data].sort(sortByName);
-  }, [ingredients, searchDebounced, selectedTagIds]);
-
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  }, [ingredients, inBarMap, searchDebounced, selectedTagIds]);
 
   const onItemPress = useCallback(
     (id) => {
@@ -182,16 +165,13 @@ export default function MyIngredientsScreen() {
           usageCount={info.count}
           singleCocktailName={info.single}
           showMake
-          inBar={item.inBar}
-          inShoppingList={item.inShoppingList}
           baseIngredientId={item.baseIngredientId}
           onPress={onItemPress}
-          onToggleInBar={toggleInBar}
           isNavigating={navigatingId === item.id}
         />
       );
     },
-    [onItemPress, toggleInBar, navigatingId, availableMap]
+    [onItemPress, navigatingId, availableMap]
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);

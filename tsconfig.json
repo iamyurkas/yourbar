@@ -9,18 +9,19 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "noResolve": true
+    "noResolve": true,
+    "noEmit": false
   },
   "include": [
     "src/data/**/*",
     "src/domain/shakerService.ts",
     "src/presentation/**/*",
+    "src/state/**/*",
     "src/types/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "src/**/__tests__/**"
+    "dist"
   ],
   "extends": "expo/tsconfig.base"
 }

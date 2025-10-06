@@ -5,6 +5,7 @@ import { getAllCocktails } from "../domain/cocktails";
 import { mapCocktailsByIngredient } from "../domain/ingredientUsage";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
+import ingredientFlagsStore from "../state/ingredients.store";
 import IngredientUsageContext from "../context/IngredientUsageContext";
 import {
   getAllowSubstitutes,
@@ -96,6 +97,14 @@ export default function useIngredientsData() {
             singleCocktailName,
           };
         });
+        const flagMap = new Map<string, { inBar: boolean; inShopping: boolean }>();
+        for (const item of withUsage) {
+          flagMap.set(String(item.id), {
+            inBar: !!item.inBar,
+            inShopping: !!item.inShoppingList,
+          });
+        }
+        ingredientFlagsStore.getState().bulkApplyFlags(flagMap);
         setIngredients(withUsage);
         setCocktails(cocks);
         setUsageMap(map);
