@@ -26,6 +26,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { resizeImage } from "../../utils/images";
+import { waitForInteractions } from "../../utils/waitForInteractions";
 import {
   useNavigation,
   useRoute,
@@ -342,9 +343,9 @@ export default function EditIngredientScreen() {
       showInfo("Permission required", "Allow access to media library");
       return;
     }
-    await InteractionManager.runAfterInteractions();
+    await waitForInteractions();
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 0.7,
     });
