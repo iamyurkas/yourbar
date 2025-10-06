@@ -36,6 +36,8 @@ import {
   buildIngredientIndex,
   getCocktailIngredientInfo,
 } from "../../domain/cocktailIngredients";
+import { makeIngredientAvailabilityKey } from "../../utils/ingredientKeys";
+import useAvailabilityIngredientsSnapshot from "../../hooks/useAvailabilityIngredientsSnapshot";
 
 export default function FavoriteCocktailsScreen() {
   const theme = useTheme();
@@ -119,8 +121,18 @@ export default function FavoriteCocktailsScreen() {
     };
   }, [isFocused]);
 
+  const ingredientsKey = useMemo(
+    () => makeIngredientAvailabilityKey(ingredients),
+    [ingredients]
+  );
+
+  const ingredientsForAvailability = useAvailabilityIngredientsSnapshot(
+    ingredients || [],
+    ingredientsKey
+  );
+
   const filtered = useMemo(() => {
-    const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
+    const { ingMap, findBrand } = buildIngredientIndex(ingredientsForAvailability);
     const q = normalizeSearch(searchDebounced);
     let list = cocktails.filter((c) => c.rating > 0 && c.rating >= minRating);
     if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
@@ -149,7 +161,8 @@ export default function FavoriteCocktailsScreen() {
       .sort(sortByName);
   }, [
     cocktails,
-    ingredients,
+    ingredientsForAvailability,
+    ingredientsKey,
     searchDebounced,
     selectedTagIds,
     ignoreGarnish,

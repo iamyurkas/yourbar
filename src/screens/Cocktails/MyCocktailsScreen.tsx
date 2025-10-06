@@ -37,6 +37,8 @@ import {
   getCocktailIngredientInfo,
 } from "../../domain/cocktailIngredients";
 import { sortByName } from "../../utils/sortByName";
+import { makeIngredientAvailabilityKey } from "../../utils/ingredientKeys";
+import useAvailabilityIngredientsSnapshot from "../../hooks/useAvailabilityIngredientsSnapshot";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -170,9 +172,23 @@ export default function MyCocktailsScreen() {
     return unsub;
   }, [navigation, setIngredients, setGlobalIngredients]);
 
+  const ingredientList = useMemo(
+    () => Array.from(ingredients.values()),
+    [ingredients]
+  );
+
+  const ingredientAvailabilityKey = useMemo(
+    () => makeIngredientAvailabilityKey(ingredientList),
+    [ingredientList]
+  );
+
+  const ingredientsForAvailability = useAvailabilityIngredientsSnapshot(
+    ingredientList,
+    ingredientAvailabilityKey
+  );
+
   const processed = useMemo(() => {
-    const ingredientArr = Array.from(ingredients.values());
-    const { ingMap, findBrand } = buildIngredientIndex(ingredientArr);
+    const { ingMap, findBrand } = buildIngredientIndex(ingredientsForAvailability);
     const q = normalizeSearch(searchDebounced);
     let list = cocktails;
     if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
@@ -206,7 +222,8 @@ export default function MyCocktailsScreen() {
       .sort(sortByName);
   }, [
     cocktails,
-    ingredients,
+    ingredientsForAvailability,
+    ingredientAvailabilityKey,
     searchDebounced,
     selectedTagIds,
     ignoreGarnish,
