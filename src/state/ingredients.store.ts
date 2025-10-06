@@ -309,12 +309,21 @@ const ingredientFlagsStore = createStore<IngredientFlagStore>((set, get) => ({
       const inBarMap = { ...state.inBarMap };
       const inShoppingMap = { ...state.inShoppingMap };
       for (const [id, values] of flags.entries()) {
-        inBarMap[id] = values.inBar;
-        inShoppingMap[id] = values.inShopping;
+        const pending = pendingMutations.get(id);
+        const nextInBar =
+          pending && pending.target.inBar !== undefined
+            ? pending.target.inBar
+            : values.inBar;
+        const nextInShopping =
+          pending && pending.target.inShopping !== undefined
+            ? pending.target.inShopping
+            : values.inShopping;
+        inBarMap[id] = nextInBar;
+        inShoppingMap[id] = nextInShopping;
         persistedFlags.set(id, { ...values });
         if (USE_MMKV_FLAGS) {
-          setFlag(id, "in_bar", values.inBar);
-          setFlag(id, "in_shopping", values.inShopping);
+          setFlag(id, "in_bar", nextInBar);
+          setFlag(id, "in_shopping", nextInShopping);
         }
       }
       return { inBarMap, inShoppingMap };

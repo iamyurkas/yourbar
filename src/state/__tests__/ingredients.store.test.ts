@@ -41,3 +41,16 @@ test("multiple toggles collapse into final state", async () => {
   assert.equal(calls, 1);
 });
 
+test("bulkApplyFlags keeps optimistic values for pending ids", async () => {
+  __resetIngredientFlagsStore();
+  setPersistenceWriter(async () => {});
+  ingredientFlagsStore.getState().bulkApplyFlags(
+    new Map([["9", { inBar: false, inShopping: false }]])
+  );
+  toggleInBar("9");
+  ingredientFlagsStore.getState().bulkApplyFlags(
+    new Map([["9", { inBar: false, inShopping: false }]])
+  );
+  assert.equal(ingredientFlagsStore.getState().inBarMap["9"], true);
+});
+
