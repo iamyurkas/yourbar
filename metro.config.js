@@ -1,3 +1,4 @@
+// metro.config.js
 const { getDefaultConfig } = require("expo/metro-config");
 
 module.exports = (() => {
@@ -6,7 +7,8 @@ module.exports = (() => {
 
   config.transformer = {
     ...transformer,
-    babelTransformerPath: require.resolve("react-native-svg-transformer"),
+    // КЛЮЧОВЕ: використовуємо expo-версію трансформера
+    babelTransformerPath: require.resolve("react-native-svg-transformer/expo"),
   };
   config.resolver = {
     ...resolver,
