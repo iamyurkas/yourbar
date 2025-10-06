@@ -95,13 +95,19 @@ function notifyListeners() {
   });
 }
 
-async function persist() {
-  try {
-    const serialized = JSON.stringify(Array.from(state.map.values()));
-    await storage.setItem(STORAGE_KEY, serialized);
-  } catch (error) {
-    console.warn("[ingredients] persist failed", error);
-  }
+async function persistState() {
+  const serialized = JSON.stringify(Array.from(state.map.values()));
+  await storage.setItem(STORAGE_KEY, serialized);
+}
+
+let persistQueue: Promise<void> = Promise.resolve();
+
+function queuePersist() {
+  persistQueue = persistQueue
+    .then(() => persistState())
+    .catch((error) => {
+      console.warn("[ingredients] persist failed", error);
+    });
 }
 
 async function migrateFromLegacy(): Promise<IngredientRecord[] | null> {
@@ -140,7 +146,11 @@ async function ensureLoaded(): Promise<void> {
               state.map.set(item.id, item);
             });
             state.dirty = true;
-            await persist();
+            try {
+              await persistState();
+            } catch (error) {
+              console.warn("[ingredients] persist failed", error);
+            }
           }
         }
       } catch (error) {
@@ -162,8 +172,8 @@ async function runWrite<T>(mutation: Mutation<T>): Promise<T | undefined> {
     if (result.changed) {
       state.map = draft;
       state.dirty = true;
-      await persist();
       notifyListeners();
+      queuePersist();
     }
     return result.value;
   });
