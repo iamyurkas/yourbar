@@ -55,7 +55,7 @@ export default function useIngredientsData() {
           ing.length === 0 ||
           cocks.length === 0;
 
-        if (true) {
+        if (needImport) {
           setImporting(true);
           const { importCocktailsAndIngredients } = await import(
             "../../scripts/importCocktailsAndIngredients"
