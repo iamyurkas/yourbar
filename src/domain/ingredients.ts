@@ -13,6 +13,9 @@ async function ensure() {
 export async function getAllIngredients(opts?: { limit?: number; offset?: number }) {
   return (await ensure()).getAllIngredients(opts);
 }
+export async function observeAllIngredients(listener) {
+  return (await ensure()).observeAllIngredients(listener);
+}
 export async function getIngredientsByIds(ids) {
   return (await ensure()).getIngredientsByIds(ids);
 }

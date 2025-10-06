@@ -240,7 +240,7 @@ export function removeCocktail(list: CocktailRecord[], id: number): CocktailReco
 /** Replace whole storage (use carefully) */
 export async function replaceAllCocktails(
   cocktails: CocktailRecord[],
-  tx: any
+  tx?: any
 ): Promise<CocktailRecord[]> {
   const normalized = Array.isArray(cocktails)
     ? cocktails.map(sanitizeCocktail)
