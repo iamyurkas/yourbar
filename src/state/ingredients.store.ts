@@ -33,6 +33,12 @@ type IngredientFlagActions = {
 
 type IngredientFlagStore = IngredientFlagState & IngredientFlagActions;
 
+export type FlagFlushEvent = {
+  id: string;
+  duration: number;
+  target: FlagUpdate;
+};
+
 type PendingEntry = {
   id: string;
   target: FlagUpdate;
@@ -42,6 +48,8 @@ type PendingEntry = {
 
 const persistedFlags = new Map<string, FlagPair>();
 const pendingMutations = new Map<string, PendingEntry>();
+
+const flushListeners = new Set<(event: FlagFlushEvent) => void>();
 
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
 let flushPromise: Promise<void> | null = null;
@@ -104,6 +112,22 @@ function scheduleFlush(delay = FLAG_WRITE_BATCH_WINDOW_MS) {
   }, delay);
 }
 
+function notifyFlush(event: FlagFlushEvent) {
+  if (!flushListeners.size) return;
+  for (const listener of flushListeners) {
+    listener(event);
+  }
+}
+
+export function subscribeToFlagFlush(
+  listener: (event: FlagFlushEvent) => void
+) {
+  flushListeners.add(listener);
+  return () => {
+    flushListeners.delete(listener);
+  };
+}
+
 type PersistenceWriter = typeof applyFlagsBatch;
 
 let persistFlags: PersistenceWriter = applyFlagsBatch;
@@ -156,6 +180,11 @@ async function flushQueue() {
         }
         persistedFlags.set(entry.id, persisted);
         pendingMutations.delete(entry.id);
+        notifyFlush({
+          id: entry.id,
+          duration: Date.now() - start,
+          target: { ...entry.target },
+        });
       }
       log(`flush success duration=${Date.now() - start}ms`);
     } catch (error) {
