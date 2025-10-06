@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "module": "es2015",
+    "module": "es2020",
     "jsx": "react-jsx",
     "strict": false,
     "allowJs": true,

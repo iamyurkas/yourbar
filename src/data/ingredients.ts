@@ -1,177 +1,143 @@
-import db, {
-  query,
-  initDatabase,
-  withWriteTransactionAsync,
-} from "./sqlite";
-import { normalizeSearch } from "../utils/normalizeSearch";
-import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
-import { sortByName } from "../utils/sortByName";
-import { IngredientRecord } from "./types";
+import type { IngredientRecord } from "./types";
 
-const now = () => Date.now();
-const genId = () => now();
+type IngredientModule = {
+  getAllIngredients: (
+    opts?: { limit?: number; offset?: number }
+  ) => Promise<IngredientRecord[]>;
+  getIngredientsByIds: (ids: number[]) => Promise<IngredientRecord[]>;
+  getIngredientsByBaseIds: (
+    baseIds: number[],
+    opts?: { inBarOnly?: boolean }
+  ) => Promise<IngredientRecord[]>;
+  saveAllIngredients: (ingredients: any, tx?: any) => Promise<void>;
+  addIngredient: (ingredient: any) => Promise<IngredientRecord>;
+  saveIngredient: (ingredient: any) => Promise<IngredientRecord | void>;
+  updateIngredientFields: (id: number, fields: Record<string, unknown>) => Promise<void>;
+  flushPendingIngredients: (list: any[]) => Promise<void>;
+  setIngredientsInShoppingList: (ids: number[], inShoppingList: boolean) => Promise<void>;
+  toggleIngredientsInBar: (ids: number[]) => Promise<void>;
+  deleteIngredient: (id: number) => Promise<void>;
+  observeAllIngredients?: (
+    callback: (records: IngredientRecord[]) => void
+  ) => (() => void) | Promise<() => void>;
+  observeIngredientById?: (
+    id: number,
+    callback: (record: IngredientRecord | null) => void
+  ) => (() => void) | Promise<() => void>;
+};
 
-// Supports optional LIMIT/OFFSET for pagination to avoid loading the entire table
-export async function getAllIngredients({
-  limit,
-  offset,
-}: { limit?: number; offset?: number } = {}): Promise<IngredientRecord[]> {
-  await initDatabase();
-  let sql =
-    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients ORDER BY name";
-  const params: string[] = [];
-  if (typeof limit === "number") {
-    sql += " LIMIT ?";
-    params.push(String(limit));
+let backendPromise: Promise<IngredientModule> | null = null;
+
+async function loadBackend(): Promise<IngredientModule> {
+  if (!backendPromise) {
+    backendPromise = (async () => {
+      try {
+        const realmModule = await import("./ingredients/realmStore");
+        if (typeof realmModule.ensureRealm === "function") {
+          await realmModule.ensureRealm();
+        }
+        return realmModule as unknown as IngredientModule;
+      } catch (error) {
+        console.warn(
+          "[ingredients] Falling back to SQLite store because Realm failed to initialise",
+          error
+        );
+        const sqliteModule = await import("./ingredients/sqliteStore");
+        return sqliteModule as unknown as IngredientModule;
+      }
+    })();
   }
-  if (typeof offset === "number") {
-    sql += " OFFSET ?";
-    params.push(String(offset));
-  }
-  const res = await query(sql, params);
-  const list = res.rows._array.map((r) => ({
-    id: Number(r.id),
-    name: r.name,
-    description: r.description,
-    tags: r.tags ? JSON.parse(r.tags) : [],
-    baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-    usageCount: r.usageCount ?? 0,
-    singleCocktailName: r.singleCocktailName,
-    searchName: r.searchName,
-    searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-    photoUri: r.photoUri,
-    inBar: !!r.inBar,
-    inShoppingList: !!r.inShoppingList,
-  }));
-  return list;
+  return backendPromise;
 }
 
-export async function getIngredientsByIds(ids: number[]): Promise<IngredientRecord[]> {
-  const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
-  if (list.length === 0) return [];
-  const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
-  const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
-    list.map((id) => String(id))
-  );
-  const rows = res.rows._array
-    .map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      description: r.description,
-      tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-      usageCount: r.usageCount ?? 0,
-      singleCocktailName: r.singleCocktailName,
-      searchName: r.searchName,
-      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-      photoUri: r.photoUri,
-      inBar: !!r.inBar,
-      inShoppingList: !!r.inShoppingList,
-    }))
-    .sort(sortByName);
-  return rows;
+export async function getAllIngredients(opts?: { limit?: number; offset?: number }) {
+  return (await loadBackend()).getAllIngredients(opts);
 }
 
-export async function getIngredientsByBaseIds(baseIds: number[], { inBarOnly = false }: { inBarOnly?: boolean } = {}): Promise<IngredientRecord[]> {
-  const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
-  if (list.length === 0) return [];
-  const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
-  const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,
-    list.map((id) => String(id))
-  );
-  const rows = res.rows._array
-    .map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      description: r.description,
-      tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-      usageCount: r.usageCount ?? 0,
-      singleCocktailName: r.singleCocktailName,
-      searchName: r.searchName,
-      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-      photoUri: r.photoUri,
-      inBar: !!r.inBar,
-      inShoppingList: !!r.inShoppingList,
-    }))
-    .sort(sortByName);
-  return rows;
+export async function getIngredientsByIds(ids: number[]) {
+  return (await loadBackend()).getIngredientsByIds(ids);
+}
+
+export async function getIngredientsByBaseIds(
+  baseIds: number[],
+  opts?: { inBarOnly?: boolean }
+) {
+  return (await loadBackend()).getIngredientsByBaseIds(baseIds, opts);
+}
+
+export async function saveAllIngredients(ingredients: any, tx?: any) {
+  return (await loadBackend()).saveAllIngredients(ingredients, tx);
+}
+
+export async function addIngredient(ingredient: any) {
+  return (await loadBackend()).addIngredient(ingredient);
+}
+
+export async function saveIngredient(updated: any) {
+  return (await loadBackend()).saveIngredient(updated);
+}
+
+export async function updateIngredientFields(
+  id: number,
+  fields: Record<string, unknown>
+) {
+  return (await loadBackend()).updateIngredientFields(id, fields);
+}
+
+export async function flushPendingIngredients(list: any[]) {
+  return (await loadBackend()).flushPendingIngredients(list);
+}
+
+export async function setIngredientsInShoppingList(ids: number[], inShoppingList: boolean) {
+  return (await loadBackend()).setIngredientsInShoppingList(ids, inShoppingList);
+}
+
+export async function toggleIngredientsInBar(ids: number[]) {
+  return (await loadBackend()).toggleIngredientsInBar(ids);
+}
+
+export async function deleteIngredient(id: number) {
+  return (await loadBackend()).deleteIngredient(id);
+}
+
+export async function observeAllIngredients(
+  callback: (records: IngredientRecord[]) => void
+): Promise<() => void> {
+  const backend = await loadBackend();
+  if (backend.observeAllIngredients) {
+    const disposer = backend.observeAllIngredients(callback);
+    if (disposer instanceof Promise) {
+      return await disposer;
+    }
+    return disposer;
+  }
+  const dispose = () => {};
+  callback(await backend.getAllIngredients());
+  return dispose;
+}
+
+export async function observeIngredientById(
+  id: number,
+  callback: (record: IngredientRecord | null) => void
+): Promise<() => void> {
+  const backend = await loadBackend();
+  if (backend.observeIngredientById) {
+    const disposer = backend.observeIngredientById(id, callback);
+    if (disposer instanceof Promise) {
+      return await disposer;
+    }
+    return disposer;
+  }
+  const [record] = await backend.getIngredientsByIds([id]);
+  callback(record ?? null);
+  return () => {};
 }
 
 export function buildIndex(list: IngredientRecord[]): Record<number, IngredientRecord> {
   return list.reduce((acc, item) => {
     acc[item.id] = item;
     return acc;
-  }, {});
-}
-
-async function upsertIngredient(item: IngredientRecord): Promise<void> {
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `INSERT OR REPLACE INTO ingredients (
-        id, name, description, tags, baseIngredientId, usageCount,
-        singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      String(item.id),
-      item.name ?? null,
-      item.description ?? null,
-      item.tags ? JSON.stringify(item.tags) : null,
-      item.baseIngredientId ?? null,
-      item.usageCount ?? 0,
-      item.singleCocktailName ?? null,
-      item.searchName ?? null,
-      item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-      item.photoUri ?? null,
-      item.inBar ? 1 : 0,
-      item.inShoppingList ? 1 : 0
-    );
-  });
-}
-
-export async function saveAllIngredients(ingredients, tx) {
-  const list = Array.isArray(ingredients) ? ingredients : [];
-  await initDatabase();
-  const run = async (innerTx) => {
-    await innerTx.runAsync("DELETE FROM ingredients");
-    if (list.length) {
-      const placeholders = list
-        .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-        .join(", ");
-      const params = list.flatMap((item) => [
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0,
-      ]);
-      await innerTx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
-          id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES ${placeholders}`,
-        params
-      );
-    }
-  };
-  if (tx) {
-    await run(tx);
-  } else {
-    await withWriteTransactionAsync(run);
-  }
+  }, {} as Record<number, IngredientRecord>);
 }
 
 export function updateIngredientById(map, updated) {
@@ -182,171 +148,14 @@ export function updateIngredientById(map, updated) {
   return next;
 }
 
-function sanitizeIngredient(i: Partial<IngredientRecord>): IngredientRecord {
-  const id = Number(i?.id ?? genId());
-  const name = String(i?.name ?? "").trim();
-  const searchName = normalizeSearch(name);
-  const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-  return {
-    id,
-    name,
-    description: i?.description ?? null,
-    tags: Array.isArray(i?.tags) ? i.tags : [],
-    baseIngredientId: i?.baseIngredientId ?? null,
-    usageCount: Number(i?.usageCount ?? 0),
-    singleCocktailName: i?.singleCocktailName ?? null,
-    searchName,
-    searchTokens,
-    photoUri: i?.photoUri ?? null,
-    inBar: !!i?.inBar,
-    inShoppingList: !!i?.inShoppingList,
-  };
-}
-
-export async function addIngredient(ingredient) {
-  const item = sanitizeIngredient({ ...ingredient, id: ingredient?.id ?? genId() });
-  await upsertIngredient(item);
-  return item;
-}
-
-export async function saveIngredient(updated) {
-  await initDatabase();
-  if (!updated?.id) return;
-  const name = String(updated.name ?? "").trim();
-  const searchName = normalizeSearch(name);
-  let item;
-  if (
-    updated.searchName === searchName &&
-    Array.isArray(updated.searchTokens)
-  ) {
-    item = {
-      id: Number(updated.id),
-      name,
-      description: updated.description ?? null,
-      tags: Array.isArray(updated.tags) ? updated.tags : [],
-      baseIngredientId: updated.baseIngredientId ?? null,
-      usageCount: Number(updated.usageCount ?? 0),
-      singleCocktailName: updated.singleCocktailName ?? null,
-      searchName,
-      searchTokens: updated.searchTokens,
-      photoUri: updated.photoUri ?? null,
-      inBar: !!updated.inBar,
-      inShoppingList: !!updated.inShoppingList,
-    };
-  } else {
-    item = sanitizeIngredient({ ...updated, name });
-  }
-  await upsertIngredient(item);
-  return item;
-}
-
-export async function updateIngredientFields(id, fields) {
-  await initDatabase();
-  if (!id || !fields || typeof fields !== "object") return;
-  const entries = Object.entries(fields);
-  if (!entries.length) return;
-
-  const converters = {
-    name: (v) => v ?? null,
-    description: (v) => v ?? null,
-    tags: (v) => (v ? JSON.stringify(v) : null),
-    baseIngredientId: (v) => v ?? null,
-    usageCount: (v) => Number(v ?? 0),
-    singleCocktailName: (v) => v ?? null,
-    searchName: (v) => v ?? null,
-    searchTokens: (v) => (v ? JSON.stringify(v) : null),
-    photoUri: (v) => v ?? null,
-    inBar: (v) => (v ? 1 : 0),
-    inShoppingList: (v) => (v ? 1 : 0),
-  };
-
-  const parts = [];
-  const params = [];
-  for (const [key, value] of entries) {
-    if (converters[key]) {
-      parts.push(`${key} = ?`);
-      params.push(converters[key](value));
-    }
-  }
-  if (!parts.length) return;
-  params.push(String(id));
-  const sql = `UPDATE ingredients SET ${parts.join(", ")} WHERE id = ?`;
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(sql, params);
-  });
-}
-
-export async function flushPendingIngredients(list) {
-  const items = Array.isArray(list) ? list : [];
-  if (!items.length) return;
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    for (const u of items) {
-      const item = sanitizeIngredient(u);
-      await tx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
-          id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
-      );
-    }
-  });
-}
-
-export async function setIngredientsInShoppingList(ids, inShoppingList) {
-  const list = Array.isArray(ids)
-    ? Array.from(new Set(ids.filter((id) => id != null)))
-    : [];
-  if (!list.length) return;
-  await initDatabase();
-  const placeholders = list.map(() => "?").join(", ");
-  const value = inShoppingList ? 1 : 0;
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
-      [value, ...list.map((id) => String(id))]
-    );
-  });
-}
-
-export async function toggleIngredientsInBar(ids) {
-  const list = Array.isArray(ids)
-    ? Array.from(new Set(ids.filter((id) => id != null)))
-    : [];
-  if (!list.length) return;
-  await initDatabase();
-  const placeholders = list.map(() => "?").join(", ");
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
-      list.map((id) => String(id))
-    );
-  });
-}
-
 export function getIngredientById(id, index) {
   return index ? index[id] : null;
 }
 
-export async function deleteIngredient(id) {
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
-  });
-}
-
 export function removeIngredient(list, id) {
   return list.filter((item) => item.id !== id);
+}
+
+export function __setBackend(mock: IngredientModule | null) {
+  backendPromise = mock ? Promise.resolve(mock) : null;
 }
