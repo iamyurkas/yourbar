@@ -8,7 +8,6 @@ import { Image } from 'react-native';
 import { ASSET_MAP } from '../../scripts/assetMap';
 import { getAllIngredients, saveAllIngredients } from './ingredients';
 import { getAllCocktails, replaceAllCocktails } from './cocktails';
-import { withWriteTransactionAsync } from './sqlite';
 import { stripFalse } from './stripFalse';
 import { normalizeImportData } from './normalizeBackupData';
 
@@ -158,10 +157,8 @@ export async function importAllData() {
     });
     const data = JSON.parse(contents);
     const { ingredients, cocktails } = normalizeImportData(data, resolvePhoto);
-    await withWriteTransactionAsync(async (tx) => {
-      await saveAllIngredients(ingredients, tx);
-      await replaceAllCocktails(cocktails, tx);
-    });
+    await saveAllIngredients(ingredients);
+    await replaceAllCocktails(cocktails);
     return true;
   } catch (e) {
     console.error('Import failed', e);
