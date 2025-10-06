@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@expo/metro-config": "^54.0.6",
     "@react-native/metro-babel-transformer": "^0.81.1",
     "@types/react": "~19.1.10",
     "react-native-svg-transformer": "^1.5.1",
