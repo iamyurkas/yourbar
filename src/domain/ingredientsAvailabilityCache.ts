@@ -1,14 +1,28 @@
 let cache = new Map();
 let ingredientsMap = new Map();
 let cocktailMap = new Map();
+let cocktailAvailability = new Map();
+let brandByBaseId = new Map();
 let usage = {};
 let settings = { ignoreGarnish: false, allowSubstitutes: false };
 
-function findBrand(baseId) {
-  for (const ing of ingredientsMap.values()) {
-    if (ing.inBar && String(ing.baseIngredientId) === String(baseId)) return ing;
+function rebuildIngredientLookups(ingredients = []) {
+  const list = Array.isArray(ingredients) ? ingredients : [];
+  ingredientsMap = new Map(list.map((i) => [String(i.id), i]));
+  brandByBaseId = new Map();
+  for (const ing of list) {
+    if (!ing?.inBar) continue;
+    const baseId = ing.baseIngredientId;
+    if (baseId == null) continue;
+    const key = String(baseId);
+    if (!brandByBaseId.has(key)) {
+      brandByBaseId.set(key, ing);
+    }
   }
-  return null;
+}
+
+function findBrand(baseId) {
+  return brandByBaseId.get(String(baseId)) ?? null;
 }
 
 function isCocktailAvailable(cocktail) {
@@ -54,7 +68,15 @@ function computeForIngredient(id) {
   let singleName = null;
   ids.forEach((cid) => {
     const cocktail = cocktailMap.get(cid);
-    if (cocktail && isCocktailAvailable(cocktail)) {
+    if (!cocktail) return;
+    let available;
+    if (cocktailAvailability.has(cid)) {
+      available = cocktailAvailability.get(cid);
+    } else {
+      available = isCocktailAvailable(cocktail);
+      cocktailAvailability.set(cid, available);
+    }
+    if (available) {
       count++;
       singleName = cocktail.name;
     }
@@ -63,11 +85,15 @@ function computeForIngredient(id) {
 }
 
 export function initIngredientsAvailability(ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes) {
-  ingredientsMap = new Map(ingredients.map((i) => [String(i.id), i]));
+  rebuildIngredientLookups(ingredients);
   cocktailMap = new Map(cocktails.map((c) => [c.id, c]));
   usage = usageMap || {};
   settings = { ignoreGarnish: !!ignoreGarnish, allowSubstitutes: !!allowSubstitutes };
   cache = new Map();
+  cocktailAvailability = new Map();
+  cocktails.forEach((cocktail) => {
+    cocktailAvailability.set(cocktail.id, isCocktailAvailable(cocktail));
+  });
   ingredients.forEach((ing) => {
     cache.set(ing.id, computeForIngredient(ing.id));
   });
@@ -75,15 +101,22 @@ export function initIngredientsAvailability(ingredients, cocktails, usageMap, ig
 }
 
 export function updateIngredientAvailability(changedIds, ingredients) {
-  ingredientsMap = new Map(ingredients.map((i) => [String(i.id), i]));
+  rebuildIngredientLookups(ingredients);
   const list = Array.isArray(changedIds) ? changedIds : [changedIds];
   const affected = new Set(list);
+  const affectedCocktails = new Set();
   list.forEach((changedId) => {
     const relatedCocktails = usage[changedId] || [];
     relatedCocktails.forEach((cid) => {
+      affectedCocktails.add(cid);
       const cocktail = cocktailMap.get(cid);
       (cocktail?.ingredients || []).forEach((r) => affected.add(r.ingredientId));
     });
+  });
+  affectedCocktails.forEach((cid) => {
+    const cocktail = cocktailMap.get(cid);
+    if (!cocktail) return;
+    cocktailAvailability.set(cid, isCocktailAvailable(cocktail));
   });
   affected.forEach((id) => {
     cache.set(id, computeForIngredient(id));
