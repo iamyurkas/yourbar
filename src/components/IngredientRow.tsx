@@ -1,8 +1,27 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
-import { View, Text, Image, Pressable, StyleSheet, Platform } from "react-native";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { withAlpha } from "../utils/color";
+import {
+  selectors,
+  toggleInBar as toggleInBarAction,
+  toggleInShopping as toggleInShoppingAction,
+} from "../state/ingredients.store";
+import { ENABLE_FLAG_INSTRUMENTATION } from "../constants/featureFlags";
 
 export const IMAGE_SIZE = 50;
 const ROW_VERTICAL = 8;
@@ -10,7 +29,83 @@ const ROW_BORDER = 1;
 export const INGREDIENT_ROW_HEIGHT =
   ROW_VERTICAL * 2 + Math.max(IMAGE_SIZE, 40) + ROW_BORDER;
 
-function IngredientRow({
+type IngredientRowProps = {
+  id: string | number;
+  name: string;
+  photoUri?: string | null;
+  tags?: Array<{ id: string; color: string }> | null;
+  usageCount: number;
+  singleCocktailName?: string | null;
+  showMake?: boolean;
+  inBar?: boolean;
+  inShoppingList?: boolean;
+  baseIngredientId?: string | number | null;
+  onPress: (id: string | number) => void;
+  onDetails?: (id: string | number) => void;
+  onToggleInBar?: (id: string | number) => void;
+  onToggleShoppingList?: (id: string | number) => void;
+  onRemove?: (id: string | number) => void;
+  isNavigating?: boolean;
+  highlightColor?: string;
+};
+
+type FlagPillProps = {
+  active: boolean;
+  iconActive: string;
+  iconInactive: string;
+  colorActive: string;
+  colorInactive: string;
+  onPress: () => void;
+};
+
+const FlagPill = memo(function FlagPill({
+  active,
+  iconActive,
+  iconInactive,
+  colorActive,
+  colorInactive,
+  onPress,
+}: FlagPillProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      android_ripple={{ borderless: true }}
+      style={({ pressed }) => [
+        styles.checkButton,
+        pressed && styles.pressedCheck,
+      ]}
+    >
+      <MaterialIcons
+        name={active ? iconActive : iconInactive}
+        size={22}
+        color={active ? colorActive : colorInactive}
+      />
+    </Pressable>
+  );
+});
+
+const areRowPropsEqual = (prev: IngredientRowProps, next: IngredientRowProps) => {
+  return (
+    prev.id === next.id &&
+    prev.name === next.name &&
+    prev.photoUri === next.photoUri &&
+    prev.usageCount === next.usageCount &&
+    prev.singleCocktailName === next.singleCocktailName &&
+    prev.showMake === next.showMake &&
+    prev.baseIngredientId === next.baseIngredientId &&
+    prev.onPress === next.onPress &&
+    prev.onDetails === next.onDetails &&
+    prev.onToggleInBar === next.onToggleInBar &&
+    prev.onToggleShoppingList === next.onToggleShoppingList &&
+    prev.onRemove === next.onRemove &&
+    prev.isNavigating === next.isNavigating &&
+    prev.highlightColor === next.highlightColor &&
+    prev.tags === next.tags
+  );
+};
+
+const IngredientRow = memo(function IngredientRow({
   id,
   name,
   photoUri,
@@ -18,8 +113,6 @@ function IngredientRow({
   usageCount,
   singleCocktailName,
   showMake,
-  inBar,
-  inShoppingList,
   baseIngredientId,
   onPress,
   onDetails,
@@ -28,36 +121,53 @@ function IngredientRow({
   onRemove,
   isNavigating,
   highlightColor,
-}) {
+}: IngredientRowProps) {
   const theme = useTheme();
-  const isBranded = baseIngredientId != null;
+  const stringId = useMemo(() => String(id), [id]);
+  const inBar = selectors.useInBar(stringId);
+  const inShopping = selectors.useInShopping(stringId);
 
-  // Optimistic local state: reflect checkbox immediately; DB writes are deferred
-  const [optimisticInBar, setOptimisticInBar] = useState(null);
-  const currentInBar = optimisticInBar != null ? optimisticInBar : inBar;
-  const [optimisticInShopping, setOptimisticInShopping] = useState(null);
-  const currentInShopping =
-    optimisticInShopping != null ? optimisticInShopping : inShoppingList;
+  const handlePress = useCallback(() => onPress(id), [onPress, id]);
 
-  // When parent prop changes (after DB/compute), clear the optimistic override
-  useEffect(() => {
-    setOptimisticInBar(null);
-  }, [inBar]);
-  useEffect(() => {
-    setOptimisticInShopping(null);
-  }, [inShoppingList]);
+  const handleToggleInBar = useCallback(() => {
+    if (onToggleInBar) onToggleInBar(id);
+    else toggleInBarAction(stringId);
+  }, [id, onToggleInBar, stringId]);
+
+  const handleToggleShopping = useCallback(() => {
+    if (onToggleShoppingList) onToggleShoppingList(id);
+    else toggleInShoppingAction(stringId);
+  }, [id, onToggleShoppingList, stringId]);
+
+  const handleRemove = useCallback(() => {
+    onRemove?.(id);
+  }, [id, onRemove]);
 
   const ripple = useMemo(
     () => ({ color: withAlpha(theme.colors.tertiary, 0.35) }),
     [theme.colors.tertiary]
   );
 
+  const renderCountRef = useRef(0);
+  useEffect(() => {
+    if (__DEV__ && ENABLE_FLAG_INSTRUMENTATION) {
+      renderCountRef.current += 1;
+      if (renderCountRef.current > 1) {
+        console.log(
+          `[IngredientRow] re-render ${renderCountRef.current} times for ${stringId}`
+        );
+      }
+    }
+  });
+
+  const isBranded = baseIngredientId != null;
+
   return (
     <View
       style={[
-        currentInBar ? styles.highlightWrapper : styles.normalWrapper,
+        inBar ? styles.highlightWrapper : styles.normalWrapper,
         { borderBottomColor: theme.colors.background },
-        currentInBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
+        inBar && { backgroundColor: withAlpha(theme.colors.secondary, 0.25) },
         highlightColor && { backgroundColor: highlightColor },
       ]}
     >
@@ -68,14 +178,14 @@ function IngredientRow({
             ...styles.brandedStripe,
             borderLeftColor: theme.colors.primary,
           },
-          !currentInBar && !highlightColor && styles.dimmed,
+          !inBar && !highlightColor && styles.dimmed,
           isNavigating && {
             ...styles.navigatingRow,
             backgroundColor: withAlpha(theme.colors.tertiary, 0.3),
           },
         ]}
       >
-        {inShoppingList && !onToggleShoppingList && !onRemove && (
+        {inShopping && !onToggleShoppingList && !onRemove && (
           <MaterialIcons
             name="shopping-cart"
             size={16}
@@ -85,7 +195,7 @@ function IngredientRow({
         )}
 
         <Pressable
-          onPress={() => onPress(id)}
+          onPress={handlePress}
           android_ripple={ripple}
           style={({ pressed }) => [styles.leftTapZone, pressed && styles.pressedLeft]}
           hitSlop={{ top: 4, bottom: 4, left: 0, right: 8 }}
@@ -166,71 +276,39 @@ function IngredientRow({
         )}
 
         {onRemove ? (
-          <Pressable
-            onPress={() => {
-              setOptimisticInShopping(!currentInShopping);
-              onRemove(id);
-            }}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            android_ripple={{ ...ripple, borderless: true }}
-            style={({ pressed }) => [styles.removeButton, pressed && styles.pressedRemove]}
-          >
-            <MaterialIcons
-              name={
-                currentInShopping ? "remove-shopping-cart" : "add-shopping-cart"
-              }
-              size={22}
-              color={
-                currentInShopping
-                  ? theme.colors.error
-                  : theme.colors.onSurfaceVariant
-              }
-            />
-          </Pressable>
-        ) : onToggleInBar ? (
-          <Pressable
-            onPress={() => {
-              // Update UI immediately
-              setOptimisticInBar(!currentInBar);
-              onToggleInBar(id);
-            }}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            android_ripple={{ ...ripple, borderless: true }}
-            style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
-          >
-            <MaterialIcons
-              name={currentInBar ? "check-circle" : "radio-button-unchecked"}
-              size={22}
-              color={currentInBar ? theme.colors.primary : theme.colors.onSurfaceVariant}
-            />
-          </Pressable>
+          <FlagPill
+            active={inShopping}
+            iconActive="remove-shopping-cart"
+            iconInactive="add-shopping-cart"
+            colorActive={theme.colors.error}
+            colorInactive={theme.colors.onSurfaceVariant}
+            onPress={handleRemove}
+          />
         ) : onToggleShoppingList ? (
-          <Pressable
-            onPress={() => {
-              setOptimisticInShopping(!currentInShopping);
-              onToggleShoppingList(id);
-            }}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            android_ripple={{ ...ripple, borderless: true }}
-            style={({ pressed }) => [styles.checkButton, pressed && styles.pressedCheck]}
-          >
-            <MaterialIcons
-              name={currentInShopping ? "shopping-cart" : "add-shopping-cart"}
-              size={22}
-              color={
-                currentInShopping
-                  ? theme.colors.primary
-                  : theme.colors.onSurfaceVariant
-              }
-            />
-          </Pressable>
-        ) : null}
+          <FlagPill
+            active={inShopping}
+            iconActive="shopping-cart"
+            iconInactive="add-shopping-cart"
+            colorActive={theme.colors.primary}
+            colorInactive={theme.colors.onSurfaceVariant}
+            onPress={handleToggleShopping}
+          />
+        ) : (
+          <FlagPill
+            active={inBar}
+            iconActive="check-circle"
+            iconInactive="radio-button-unchecked"
+            colorActive={theme.colors.primary}
+            colorInactive={theme.colors.onSurfaceVariant}
+            onPress={handleToggleInBar}
+          />
+        )}
       </View>
     </View>
   );
-}
+}, areRowPropsEqual);
 
-export default memo(IngredientRow);
+export default IngredientRow;
 
 const styles = StyleSheet.create({
   highlightWrapper: { borderBottomWidth: ROW_BORDER },
@@ -275,6 +353,5 @@ const styles = StyleSheet.create({
   brandedStripe: { borderLeftWidth: 4, paddingLeft: 8 },
   checkButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
   pressedCheck: { opacity: 0.7, transform: [{ scale: 0.92 }] },
-  removeButton: { marginLeft: 8, paddingVertical: 6, paddingHorizontal: 4 },
-  pressedRemove: { opacity: 0.7, transform: [{ scale: 0.92 }] },
 });
+

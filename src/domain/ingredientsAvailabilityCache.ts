@@ -1,3 +1,5 @@
+import { registerDerivedUpdater } from "../data/derived";
+
 let cache = new Map();
 let ingredientsMap = new Map();
 let cocktailMap = new Map();
@@ -62,6 +64,32 @@ function computeForIngredient(id) {
   return { count, single: count === 1 ? singleName : null };
 }
 
+function updateAvailabilityForIds(ids) {
+  const list = Array.isArray(ids) ? ids.map(String) : [String(ids)];
+  const affected = new Set(list);
+  list.forEach((changedId) => {
+    const relatedCocktails = usage[changedId] || [];
+    relatedCocktails.forEach((cid) => {
+      const cocktail = cocktailMap.get(cid);
+      (cocktail?.ingredients || []).forEach((r) => affected.add(String(r.ingredientId)));
+    });
+  });
+  affected.forEach((id) => {
+    cache.set(id, computeForIngredient(id));
+  });
+  return cache;
+}
+
+registerDerivedUpdater((id, flags) => {
+  const key = String(id);
+  const existing = ingredientsMap.get(key);
+  if (existing) {
+    ingredientsMap.set(key, { ...existing, inBar: flags.inBar });
+  }
+  updateAvailabilityForIds([key]);
+  return undefined;
+});
+
 export function initIngredientsAvailability(ingredients, cocktails, usageMap, ignoreGarnish, allowSubstitutes) {
   ingredientsMap = new Map(ingredients.map((i) => [String(i.id), i]));
   cocktailMap = new Map(cocktails.map((c) => [c.id, c]));
@@ -74,21 +102,8 @@ export function initIngredientsAvailability(ingredients, cocktails, usageMap, ig
   return cache;
 }
 
-export function updateIngredientAvailability(changedIds, ingredients) {
-  ingredientsMap = new Map(ingredients.map((i) => [String(i.id), i]));
-  const list = Array.isArray(changedIds) ? changedIds : [changedIds];
-  const affected = new Set(list);
-  list.forEach((changedId) => {
-    const relatedCocktails = usage[changedId] || [];
-    relatedCocktails.forEach((cid) => {
-      const cocktail = cocktailMap.get(cid);
-      (cocktail?.ingredients || []).forEach((r) => affected.add(r.ingredientId));
-    });
-  });
-  affected.forEach((id) => {
-    cache.set(id, computeForIngredient(id));
-  });
-  return cache;
+export function updateIngredientAvailability(changedIds) {
+  return updateAvailabilityForIds(changedIds);
 }
 
 export function getIngredientsAvailability() {

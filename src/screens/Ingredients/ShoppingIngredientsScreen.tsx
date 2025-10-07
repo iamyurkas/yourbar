@@ -14,13 +14,13 @@ import IngredientRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { setIngredientsInShoppingList } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
+import { useIngredientFlags, toggleInShopping } from "../../state/ingredients.store";
 
 export default function ShoppingIngredientsScreen() {
   const theme = useTheme();
@@ -30,14 +30,13 @@ export default function ShoppingIngredientsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const { ingredients, loading, setIngredients } = useIngredientsData();
+  const { ingredients, loading } = useIngredientsData();
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  // Collect ingredient IDs to remove and flush on screen exit
-  const pendingIdsRef = React.useRef(new Set());
+  const inShoppingMap = useIngredientFlags((state) => state.inShoppingMap);
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "Shopping");
@@ -62,40 +61,9 @@ export default function ShoppingIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(async () => {
-    const ids = Array.from(pendingIdsRef.current);
-    if (!ids.length) return;
-    pendingIdsRef.current = new Set();
-    setIngredients((prev) => {
-      const next = new Map(prev);
-      ids.forEach((id) => {
-        const item = next.get(id);
-        if (item) {
-          next.set(id, { ...item, inShoppingList: false });
-        }
-      });
-      return next;
-    });
-    try {
-      await setIngredientsInShoppingList(ids, false);
-    } catch {}
-  }, [setIngredients]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending().catch(() => {});
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending().catch(() => {});
-    };
-  }, [flushPending]);
-
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
-    let data = ingredients.filter((i) => i.inShoppingList);
+    let data = ingredients.filter((i) => inShoppingMap[String(i.id)]);
     if (q) data = data.filter((i) => i.searchName.includes(q));
     if (selectedTagIds.length > 0)
       data = data.filter(
@@ -104,13 +72,14 @@ export default function ShoppingIngredientsScreen() {
           i.tags.some((t) => selectedTagIds.includes(t.id))
       );
     return [...data].sort(sortByName);
-  }, [ingredients, searchDebounced, selectedTagIds]);
+  }, [ingredients, inShoppingMap, searchDebounced, selectedTagIds]);
 
-  const removeFromList = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
+  const handleToggleShopping = useCallback(
+    (id) => {
+      toggleInShopping(String(id));
+    },
+    []
+  );
 
   const onItemPress = useCallback(
     (id) => {
@@ -130,15 +99,13 @@ export default function ShoppingIngredientsScreen() {
         tags={item.tags}
         usageCount={item.usageCount}
         singleCocktailName={item.singleCocktailName}
-        inBar={item.inBar}
-        inShoppingList={item.inShoppingList}
         baseIngredientId={item.baseIngredientId}
         onPress={onItemPress}
-        onRemove={removeFromList}
+        onToggleShoppingList={handleToggleShopping}
         isNavigating={navigatingId === item.id}
       />
     ),
-    [onItemPress, removeFromList, navigatingId]
+    [onItemPress, handleToggleShopping, navigatingId]
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);

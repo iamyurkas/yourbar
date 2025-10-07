@@ -14,14 +14,12 @@ import IngredientRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { toggleIngredientsInBar } from "../../domain/ingredients";
 import { getAllTags } from "../../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useTabsOnTop from "../../hooks/useTabsOnTop";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { sortByName } from "../../utils/sortByName";
-import { updateIngredientAvailability } from "../../domain/ingredientsAvailabilityCache";
 
 export default function AllIngredientsScreen() {
   const theme = useTheme();
@@ -37,8 +35,6 @@ export default function AllIngredientsScreen() {
   const [navigatingId, setNavigatingId] = useState(null);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  // Collect toggled ingredient IDs and flush on screen exit
-  const pendingIdsRef = React.useRef(new Set());
 
   useEffect(() => {
     if (isFocused) setTab("ingredients", "All");
@@ -63,41 +59,6 @@ export default function AllIngredientsScreen() {
     return () => clearTimeout(h);
   }, [search]);
 
-  const flushPending = useCallback(async () => {
-    const ids = Array.from(pendingIdsRef.current);
-    if (ids.length) {
-      pendingIdsRef.current = new Set();
-      try {
-        await toggleIngredientsInBar(ids);
-      } catch {}
-      let updatedList;
-      setIngredients((prev) => {
-        const next = new Map(prev);
-        ids.forEach((id) => {
-          const item = next.get(id);
-          if (item) next.set(id, { ...item, inBar: !item.inBar });
-        });
-        updatedList = Array.from(next.values());
-        return next;
-      });
-      try {
-        updateIngredientAvailability(ids, updatedList);
-      } catch {}
-    }
-  }, [setIngredients]);
-
-  useEffect(() => {
-    if (!isFocused) {
-      flushPending().catch(() => {});
-    }
-  }, [isFocused, flushPending]);
-
-  useEffect(() => {
-    return () => {
-      flushPending().catch(() => {});
-    };
-  }, [flushPending]);
-
   const filtered = useMemo(() => {
     const q = normalizeSearch(searchDebounced);
     let data = ingredients;
@@ -110,12 +71,6 @@ export default function AllIngredientsScreen() {
       );
     return [...data].sort(sortByName);
   }, [ingredients, searchDebounced, selectedTagIds]);
-
-  const toggleInBar = useCallback((id) => {
-    const set = pendingIdsRef.current;
-    if (set.has(id)) set.delete(id);
-    else set.add(id);
-  }, []);
 
   const onItemPress = useCallback(
     (id) => {
@@ -135,15 +90,12 @@ export default function AllIngredientsScreen() {
         tags={item.tags}
         usageCount={item.usageCount}
         singleCocktailName={item.singleCocktailName}
-        inBar={item.inBar}
-        inShoppingList={item.inShoppingList}
         baseIngredientId={item.baseIngredientId}
         onPress={onItemPress}
-        onToggleInBar={toggleInBar}
         isNavigating={navigatingId === item.id}
       />
     ),
-    [onItemPress, toggleInBar, navigatingId]
+    [onItemPress, navigatingId]
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);

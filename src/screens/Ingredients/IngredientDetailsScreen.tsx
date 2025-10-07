@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
   memo,
+  useRef,
 } from "react";
 import {
   View,
@@ -27,11 +28,7 @@ import {
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
-import {
-  saveIngredient,
-  updateIngredientById,
-  updateIngredientFields,
-} from "../../domain/ingredients";
+import { saveIngredient, updateIngredientById } from "../../domain/ingredients";
 import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -53,6 +50,14 @@ import {
 } from "../../domain/cocktailIngredients";
 import { withAlpha } from "../../utils/color";
 import { makeProfiler } from "../../utils/profile";
+import {
+  selectors,
+  subscribeToFlagFlush,
+  toggleInBar as toggleInBarAction,
+  toggleInShopping as toggleInShoppingAction,
+  type FlagFlushEvent,
+} from "../../state/ingredients.store";
+import { ENABLE_FLAG_INSTRUMENTATION } from "../../constants/featureFlags";
 
 const PHOTO_SIZE = 150;
 const THUMB = 40;
@@ -204,6 +209,15 @@ export default function IngredientDetailsScreen() {
   const [usedCocktails, setUsedCocktails] = useState(initialUsed);
   const [unlinkBaseVisible, setUnlinkBaseVisible] = useState(false);
   const [unlinkChildTarget, setUnlinkChildTarget] = useState(null);
+
+  const stringId = useMemo(() => String(id), [id]);
+  const inBarFlag = selectors.useInBar(stringId);
+  const inShoppingFlag = selectors.useInShopping(stringId);
+
+  const toggleTimingsRef = useRef<{
+    inBar?: { start: number; next: boolean; acked: boolean };
+    inShopping?: { start: number; next: boolean; acked: boolean };
+  }>({});
 
   useEffect(() => {
     const current =
@@ -369,68 +383,107 @@ export default function IngredientDetailsScreen() {
   const toggleInBar = useCallback(() => {
     if (!ingredient) return;
     const profiler = makeProfiler("[IngredientDetails] toggleInBar");
-    const next = !ingredient.inBar;
+    const next = !inBarFlag;
     profiler.step(`tap id=${ingredient.id} next=${next}`);
-    const updated = { ...ingredient, inBar: next };
-    // Optimistic local update for instant UI feedback
-    setIngredient(updated);
-    profiler.step(`local inBar=${updated.inBar} for ${updated.id}`);
-    // Defer global updates and run DB write on a later tick so any heavy
-    // CPU work (e.g. mapCocktailsByIngredient) runs outside the
-    // transaction window
-    setTimeout(() => {
-      profiler.step(`global inBar update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inBar=${updated.inBar} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(
-          () => profiler.step("persist done")
-        );
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+    toggleInBarAction(stringId);
+    profiler.step(`optimistic inBar=${next} for ${ingredient.id}`);
+    setIngredient((prev) => (prev ? { ...prev, inBar: next } : prev));
+    if (ENABLE_FLAG_INSTRUMENTATION) {
+      toggleTimingsRef.current.inBar = {
+        start: Date.now(),
+        next,
+        acked: false,
+      };
+    }
+  }, [ingredient, inBarFlag, stringId]);
 
   const toggleInShoppingList = useCallback(() => {
     if (!ingredient) return;
     const profiler = makeProfiler("[IngredientDetails] toggleShopping");
-    const next = !ingredient.inShoppingList;
+    const next = !inShoppingFlag;
     profiler.step(`tap shopping id=${ingredient.id} next=${next}`);
-    const updated = {
-      ...ingredient,
-      inShoppingList: next,
-    };
-    // Optimistic local update for instant icon change
-    setIngredient(updated);
+    toggleInShoppingAction(stringId);
     profiler.step(
-      `local inShoppingList=${updated.inShoppingList} for ${updated.id}`
+      `optimistic inShoppingList=${next} for ${ingredient.id}`
     );
-    // Defer global update and schedule DB write after a tick so heavy CPU
-    // work completes before the transaction begins
-    setTimeout(() => {
-      profiler.step(`global inShoppingList update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
+    setIngredient((prev) => (prev ? { ...prev, inShoppingList: next } : prev));
+    if (ENABLE_FLAG_INSTRUMENTATION) {
+      toggleTimingsRef.current.inShopping = {
+        start: Date.now(),
+        next,
+        acked: false,
+      };
+    }
+  }, [ingredient, inShoppingFlag, stringId]);
+
+  useEffect(() => {
+    const pending = toggleTimingsRef.current.inBar;
+    if (!pending) return;
+    if (pending.next === inBarFlag && !pending.acked) {
+      if (ENABLE_FLAG_INSTRUMENTATION) {
+        const now = Date.now();
+        console.log(
+          `[IngredientDetails] toggleInBar selector ack id=${stringId} start=${new Date(
+            pending.start
+          ).toISOString()} +${now - pending.start}ms`
         );
-        updateIngredientFields(updated.id, {
-          inShoppingList: updated.inShoppingList,
-        }).finally(() => profiler.step("persist done"));
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+      }
+      toggleTimingsRef.current.inBar = { ...pending, acked: true };
+    }
+  }, [inBarFlag, stringId]);
+
+  useEffect(() => {
+    const pending = toggleTimingsRef.current.inShopping;
+    if (!pending) return;
+    if (pending.next === inShoppingFlag && !pending.acked) {
+      if (ENABLE_FLAG_INSTRUMENTATION) {
+        const now = Date.now();
+        console.log(
+          `[IngredientDetails] toggleInShopping selector ack id=${stringId} start=${new Date(
+            pending.start
+          ).toISOString()} +${now - pending.start}ms`
+        );
+      }
+      toggleTimingsRef.current.inShopping = { ...pending, acked: true };
+    }
+  }, [inShoppingFlag, stringId]);
+
+  useEffect(() => {
+    if (!ENABLE_FLAG_INSTRUMENTATION) return;
+    const unsubscribe = subscribeToFlagFlush((event: FlagFlushEvent) => {
+      if (event.id !== stringId) return;
+      const now = Date.now();
+      if (event.target.inBar !== undefined) {
+        const pending = toggleTimingsRef.current.inBar;
+        if (pending) {
+          const start = pending.start;
+          console.log(
+            `[IngredientDetails] toggleInBar persist inBar=${event.target.inBar} for ${event.id} start=${new Date(
+              start
+            ).toISOString()} +${now - start}ms`
+          );
+          if (pending.next === event.target.inBar) {
+            toggleTimingsRef.current.inBar = undefined;
+          }
+        }
+      }
+      if (event.target.inShopping !== undefined) {
+        const pending = toggleTimingsRef.current.inShopping;
+        if (pending) {
+          const start = pending.start;
+          console.log(
+            `[IngredientDetails] toggleInShopping persist inShoppingList=${event.target.inShopping} for ${event.id} start=${new Date(
+              start
+            ).toISOString()} +${now - start}ms`
+          );
+          if (pending.next === event.target.inShopping) {
+            toggleTimingsRef.current.inShopping = undefined;
+          }
+        }
+      }
+    });
+    return unsubscribe;
+  }, [stringId]);
 
   const unlinkIngredients = useCallback(
     ({ base, brandeds }) => {
@@ -574,11 +627,11 @@ export default function IngredientDetailsScreen() {
         >
           <MaterialIcons
             name={
-              ingredient.inShoppingList ? "shopping-cart" : "add-shopping-cart"
+              inShoppingFlag ? "shopping-cart" : "add-shopping-cart"
             }
             size={24}
             color={
-              ingredient.inShoppingList
+              inShoppingFlag
                 ? theme.colors.primary
                 : theme.colors.onSurfaceVariant
             }
@@ -598,10 +651,10 @@ export default function IngredientDetailsScreen() {
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <MaterialIcons
-            name={ingredient.inBar ? "check-circle" : "radio-button-unchecked"}
+            name={inBarFlag ? "check-circle" : "radio-button-unchecked"}
             size={24}
             color={
-              ingredient.inBar
+              inBarFlag
                 ? theme.colors.primary
                 : theme.colors.onSurfaceVariant
             }
@@ -851,3 +904,4 @@ const styles = StyleSheet.create({
   headerBackBtn: { paddingHorizontal: 8, paddingVertical: 4 },
   headerEditBtn: { paddingHorizontal: 8, paddingVertical: 4 },
 });
+
