@@ -31,8 +31,16 @@ export async function getFlags(
 ): Promise<Record<string, { inBar: boolean; inShopping: boolean }>> {
   if (!ids.length) return {};
   const placeholders = ids.map(() => "?").join(",");
-  const rows = await runReadImpl<{ id: string; in_bar: number; in_shopping: number }>(
-    `SELECT id, in_bar, in_shopping FROM ingredients WHERE id IN (${placeholders})`,
+  const rows = await runReadImpl<{
+    id: string;
+    in_bar: number;
+    in_shopping: number;
+  }>(
+    `SELECT id,
+            COALESCE(in_bar, inBar, 0)   AS in_bar,
+            COALESCE(in_shopping, inShoppingList, 0) AS in_shopping
+       FROM ingredients
+      WHERE id IN (${placeholders})`,
     ids
   );
   const result: Record<string, { inBar: boolean; inShopping: boolean }> = {};
@@ -52,12 +60,14 @@ export async function applyFlagsBatch(updates: IngredientFlagUpdate[]) {
       const assignments: string[] = [];
       const params: Array<string | number> = [];
       if (typeof update.inBar === "boolean") {
-        assignments.push("in_bar = ?");
-        params.push(update.inBar ? 1 : 0);
+        assignments.push("in_bar = ?", "inBar = ?");
+        const value = update.inBar ? 1 : 0;
+        params.push(value, value);
       }
       if (typeof update.inShopping === "boolean") {
-        assignments.push("in_shopping = ?");
-        params.push(update.inShopping ? 1 : 0);
+        assignments.push("in_shopping = ?", "inShoppingList = ?");
+        const value = update.inShopping ? 1 : 0;
+        params.push(value, value);
       }
       if (!assignments.length) continue;
       params.push(update.id);

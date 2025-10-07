@@ -24,11 +24,17 @@ test("applyFlagsBatch generates targeted updates", async () => {
     { id: "def", inShopping: false },
   ]);
   assert.equal(statements.length, 4);
-  assert.match(statements[0].sql, /UPDATE ingredients SET in_bar = \?/);
-  assert.deepEqual(statements[0].params, [1, "abc"]);
+  assert.match(
+    statements[0].sql,
+    /UPDATE ingredients SET in_bar = \?, inBar = \? WHERE id = \?/
+  );
+  assert.deepEqual(statements[0].params, [1, 1, "abc"]);
   assert.match(statements[1].sql, /INSERT INTO events/);
-  assert.match(statements[2].sql, /UPDATE ingredients SET in_shopping = \?/);
-  assert.deepEqual(statements[2].params, [0, "def"]);
+  assert.match(
+    statements[2].sql,
+    /UPDATE ingredients SET in_shopping = \?, inShoppingList = \? WHERE id = \?/
+  );
+  assert.deepEqual(statements[2].params, [0, 0, "def"]);
   __setDbAdapters({ transaction: runTransaction });
 });
 

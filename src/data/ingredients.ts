@@ -18,7 +18,7 @@ export async function getAllIngredients({
 }: { limit?: number; offset?: number } = {}): Promise<IngredientRecord[]> {
   await initDatabase();
   let sql =
-    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients ORDER BY name";
+    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, COALESCE(in_bar, inBar, 0) AS inBar, COALESCE(in_shopping, inShoppingList, 0) AS inShoppingList FROM ingredients ORDER BY name";
   const params: string[] = [];
   if (typeof limit === "number") {
     sql += " LIMIT ?";
@@ -52,7 +52,7 @@ export async function getIngredientsByIds(ids: number[]): Promise<IngredientReco
   const placeholders = list.map(() => "?").join(", ");
   await initDatabase();
   const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
+    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, COALESCE(in_bar, inBar, 0) AS inBar, COALESCE(in_shopping, inShoppingList, 0) AS inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
     list.map((id) => String(id))
   );
   const rows = res.rows._array
@@ -80,7 +80,7 @@ export async function getIngredientsByBaseIds(baseIds: number[], { inBarOnly = f
   const placeholders = list.map(() => "?").join(", ");
   await initDatabase();
   const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,
+    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, COALESCE(in_bar, inBar, 0) AS inBar, COALESCE(in_shopping, inShoppingList, 0) AS inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND COALESCE(in_bar, inBar, 0) = 1' : ''}`,
     list.map((id) => String(id))
   );
   const rows = res.rows._array
@@ -115,8 +115,9 @@ async function upsertIngredient(item: IngredientRecord): Promise<void> {
     await tx.runAsync(
       `INSERT OR REPLACE INTO ingredients (
         id, name, description, tags, baseIngredientId, usageCount,
-        singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        singleCocktailName, searchName, searchTokens, photoUri,
+        inBar, inShoppingList, in_bar, in_shopping
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       String(item.id),
       item.name ?? null,
       item.description ?? null,
@@ -127,6 +128,8 @@ async function upsertIngredient(item: IngredientRecord): Promise<void> {
       item.searchName ?? null,
       item.searchTokens ? JSON.stringify(item.searchTokens) : null,
       item.photoUri ?? null,
+      item.inBar ? 1 : 0,
+      item.inShoppingList ? 1 : 0,
       item.inBar ? 1 : 0,
       item.inShoppingList ? 1 : 0
     );
@@ -141,7 +144,7 @@ export async function saveAllIngredients(ingredients, tx) {
     if (list.length) {
       const placeholders = list
         .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )
         .join(", ");
       const params = list.flatMap((item) => [
@@ -157,11 +160,14 @@ export async function saveAllIngredients(ingredients, tx) {
         item.photoUri ?? null,
         item.inBar ? 1 : 0,
         item.inShoppingList ? 1 : 0,
+        item.inBar ? 1 : 0,
+        item.inShoppingList ? 1 : 0,
       ]);
       await innerTx.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
+          singleCocktailName, searchName, searchTokens, photoUri,
+          inBar, inShoppingList, in_bar, in_shopping
         ) VALUES ${placeholders}`,
         params
       );
@@ -263,6 +269,18 @@ export async function updateIngredientFields(id, fields) {
   const parts = [];
   const params = [];
   for (const [key, value] of entries) {
+    if (key === "inBar") {
+      const converted = converters.inBar(value);
+      parts.push("inBar = ?", "in_bar = ?");
+      params.push(converted, converted);
+      continue;
+    }
+    if (key === "inShoppingList") {
+      const converted = converters.inShoppingList(value);
+      parts.push("inShoppingList = ?", "in_shopping = ?");
+      params.push(converted, converted);
+      continue;
+    }
     if (converters[key]) {
       parts.push(`${key} = ?`);
       params.push(converters[key](value));
@@ -286,8 +304,9 @@ export async function flushPendingIngredients(list) {
       await tx.runAsync(
         `INSERT OR REPLACE INTO ingredients (
           id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          singleCocktailName, searchName, searchTokens, photoUri,
+          inBar, inShoppingList, in_bar, in_shopping
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         String(item.id),
         item.name ?? null,
         item.description ?? null,
@@ -298,6 +317,8 @@ export async function flushPendingIngredients(list) {
         item.searchName ?? null,
         item.searchTokens ? JSON.stringify(item.searchTokens) : null,
         item.photoUri ?? null,
+        item.inBar ? 1 : 0,
+        item.inShoppingList ? 1 : 0,
         item.inBar ? 1 : 0,
         item.inShoppingList ? 1 : 0
       );
@@ -315,8 +336,8 @@ export async function setIngredientsInShoppingList(ids, inShoppingList) {
   const value = inShoppingList ? 1 : 0;
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
-      `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
-      [value, ...list.map((id) => String(id))]
+      `UPDATE ingredients SET inShoppingList = ?, in_shopping = ? WHERE id IN (${placeholders})`,
+      [value, value, ...list.map((id) => String(id))]
     );
   });
 }
@@ -330,7 +351,10 @@ export async function toggleIngredientsInBar(ids) {
   const placeholders = list.map(() => "?").join(", ");
   await withWriteTransactionAsync(async (tx) => {
     await tx.runAsync(
-      `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
+      `UPDATE ingredients
+          SET inBar = 1 - inBar,
+              in_bar = 1 - in_bar
+        WHERE id IN (${placeholders})`,
       list.map((id) => String(id))
     );
   });
