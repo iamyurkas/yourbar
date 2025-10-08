@@ -198,9 +198,11 @@ export function computeAvailableCocktails({
     return false;
   };
 
+  const recipeSet = new Set(recipeIds);
+
   const ids: number[] = [];
   cocktails.forEach((c) => {
-    if (!recipeIds.includes(c.id)) return;
+    if (!recipeSet.has(c.id)) return;
     const required = (c.ingredients || []).filter(
       (r: any) => !r.optional && !(ignoreGarnish && r.garnish)
     );
