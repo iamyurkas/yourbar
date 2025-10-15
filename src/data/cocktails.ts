@@ -216,6 +216,22 @@ export async function saveCocktail(
   return item as unknown as CocktailRecord;
 }
 
+export async function updateCocktailRating(
+  id: number,
+  rating: number
+): Promise<Pick<CocktailRecord, "id" | "rating" | "updatedAt">> {
+  await initDatabase();
+  const value = Math.min(5, Math.max(0, Number(rating ?? 0)));
+  const updatedAt = Date.now();
+  await withWriteTransactionAsync((tx) =>
+    tx.runAsync(
+      `UPDATE cocktails SET rating = ?, updatedAt = ? WHERE id = ?`,
+      [value, updatedAt, id]
+    )
+  );
+  return { id, rating: value, updatedAt };
+}
+
 export function updateCocktailById(list: CocktailRecord[], updated: CocktailRecord): CocktailRecord[] {
   const index = list.findIndex((c) => c.id === updated.id);
   if (index === -1) return list;

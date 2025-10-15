@@ -29,8 +29,8 @@ import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   getCocktailById,
-  saveCocktail,
   updateCocktailById,
+  updateCocktailRating,
 } from "../../domain/cocktails";
 import {
   getIngredientsByIds,
@@ -240,17 +240,28 @@ export default function CocktailDetailsScreen() {
     async (value) => {
       if (!cocktail) return;
       const prev = cocktail;
-      const newRating = cocktail.rating === value ? 0 : value;
-      const updated = { ...cocktail, rating: newRating };
-      setCocktail(updated);
+      const nextRating = prev.rating === value ? 0 : value;
+      const normalized = Math.min(5, Math.max(0, Number(nextRating ?? 0)));
+      const optimistic = {
+        ...prev,
+        rating: normalized,
+        updatedAt: Date.now(),
+      };
+      setCocktail(optimistic);
       setGlobalCocktails((prevList) =>
-        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
+        Array.isArray(prevList)
+          ? updateCocktailById(prevList, optimistic)
+          : prevList
       );
       try {
-        const saved = await saveCocktail(updated);
-        setCocktail(saved);
+        const saved = await updateCocktailRating(prev.id, normalized);
+        if (!saved) return;
+        const persisted = { ...optimistic, ...saved };
+        setCocktail(persisted);
         setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
+          Array.isArray(prevList)
+            ? updateCocktailById(prevList, persisted)
+            : prevList
         );
       } catch (e) {
         setCocktail(prev);

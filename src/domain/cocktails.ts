@@ -22,6 +22,9 @@ export async function addCocktail(cocktail) {
 export async function saveCocktail(updated) {
   return (await ensure()).saveCocktail(updated);
 }
+export async function updateCocktailRating(id, rating) {
+  return (await ensure()).updateCocktailRating(id, rating);
+}
 export async function deleteCocktail(id) {
   return (await ensure()).deleteCocktail(id);
 }
