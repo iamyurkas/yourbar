@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -31,12 +25,7 @@ import IngredientRow, { INGREDIENT_ROW_HEIGHT } from "../../components/Ingredien
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
-import { normalizeSearch } from "../../utils/normalizeSearch";
-import {
-  buildIngredientIndex,
-  getCocktailIngredientInfo,
-} from "../../domain/cocktailIngredients";
-import { sortByName } from "../../utils/sortByName";
+import useCocktailSearchResults from "../../hooks/useCocktailSearchResults";
 
 const ITEM_HEIGHT = Math.max(COCKTAIL_ROW_HEIGHT, INGREDIENT_ROW_HEIGHT);
 
@@ -48,9 +37,6 @@ export default function MyCocktailsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const [cocktails, setCocktails] = useState([]);
-  const [ingredients, setIngredients] = useState(new Map());
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
@@ -61,11 +47,16 @@ export default function MyCocktailsScreen() {
   // Local memory of shopping-list changes
   const [shoppingListChanges, setShoppingListChanges] = useState(new Map());
   const {
-    cocktails: globalCocktails = [],
-    ingredients: globalIngredients = [],
-    loading: globalLoading,
+    cocktails = [],
+    ingredients = [],
+    loading,
     setIngredients: setGlobalIngredients,
   } = useIngredientUsage();
+
+  const ingredientMap = useMemo(
+    () => new Map(ingredients.map((i) => [i.id, i])),
+    [ingredients]
+  );
 
   const shoppingListChangesRef = useRef(shoppingListChanges);
   useEffect(() => {
@@ -91,18 +82,6 @@ export default function MyCocktailsScreen() {
     const h = setTimeout(() => setSearchDebounced(search), 300);
     return () => clearTimeout(h);
   }, [search]);
-
-  useEffect(() => {
-    setCocktails(globalCocktails);
-  }, [globalCocktails]);
-
-  useEffect(() => {
-    setIngredients(new Map(globalIngredients.map((i) => [i.id, i])));
-  }, [globalIngredients]);
-
-  useEffect(() => {
-    setLoading(globalLoading);
-  }, [globalLoading]);
 
   useEffect(() => {
     if (!isFocused) return;
@@ -141,18 +120,6 @@ export default function MyCocktailsScreen() {
         if (toRemove.length) await setIngredientsInShoppingList(toRemove, false);
       })();
       if (toAdd.length || toRemove.length) {
-        setIngredients((prev) => {
-          const next = new Map(prev);
-          toAdd.forEach((id) => {
-            const ing = next.get(id);
-            if (ing) next.set(id, { ...ing, inShoppingList: true });
-          });
-          toRemove.forEach((id) => {
-            const ing = next.get(id);
-            if (ing) next.set(id, { ...ing, inShoppingList: false });
-          });
-          return next;
-        });
         setGlobalIngredients?.((prev) => {
           const next = new Map(prev);
           toAdd.forEach((id) => {
@@ -168,50 +135,16 @@ export default function MyCocktailsScreen() {
       }
     });
     return unsub;
-  }, [navigation, setIngredients, setGlobalIngredients]);
+  }, [navigation, setGlobalIngredients]);
 
-  const processed = useMemo(() => {
-    const ingredientArr = Array.from(ingredients.values());
-    const { ingMap, findBrand } = buildIngredientIndex(ingredientArr);
-    const q = normalizeSearch(searchDebounced);
-    let list = cocktails;
-    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
-    if (selectedTagIds.length > 0)
-      list = list.filter(
-        (c) =>
-          Array.isArray(c.tags) &&
-          c.tags.some((t) => selectedTagIds.includes(t.id))
-      );
-    return list
-      .map((c) => {
-        const {
-          ingredientLine,
-          isAllAvailable,
-          hasBranded,
-          missingIngredientIds,
-        } = getCocktailIngredientInfo(c, {
-          ingMap,
-          findBrand,
-          allowSubstitutes,
-          ignoreGarnish,
-        });
-        return {
-          ...c,
-          ingredientLine,
-          isAllAvailable,
-          hasBranded,
-          missingIngredientIds,
-        };
-      })
-      .sort(sortByName);
-  }, [
+  const processed = useCocktailSearchResults({
     cocktails,
     ingredients,
-    searchDebounced,
+    search: searchDebounced,
     selectedTagIds,
-    ignoreGarnish,
     allowSubstitutes,
-  ]);
+    ignoreGarnish,
+  });
 
   const { available, suggestions } = useMemo(() => {
     const avail = processed.filter((c) => c.isAllAvailable);
@@ -226,13 +159,13 @@ export default function MyCocktailsScreen() {
     }
     const sugg = Array.from(map.entries())
       .map(([id, cocks]) => ({
-        ingredient: ingredients.get(Number(id)) || ingredients.get(id),
+        ingredient: ingredientMap.get(Number(id)) || ingredientMap.get(id),
         cocktails: cocks,
       }))
       .filter((s) => s.ingredient && !s.ingredient.inBar)
       .sort((a, b) => b.cocktails.length - a.cocktails.length);
     return { available: avail, suggestions: sugg };
-  }, [processed, ingredients]);
+  }, [processed, ingredientMap]);
 
   const listData = useMemo(() => {
     const data = available.map((c) => ({ type: "cocktail", item: c }));
@@ -267,7 +200,7 @@ export default function MyCocktailsScreen() {
       requestAnimationFrame(() => {
         setShoppingListChanges((prev) => {
           const next = new Map(prev);
-          const original = ingredients.get(id)?.inShoppingList || false;
+          const original = ingredientMap.get(id)?.inShoppingList || false;
           const current = next.has(id) ? next.get(id) : original;
           const updated = !current;
           if (updated === original) next.delete(id);
@@ -276,7 +209,7 @@ export default function MyCocktailsScreen() {
         });
       });
     },
-    [ingredients]
+    [ingredientMap]
   );
 
   const renderItem = useCallback(

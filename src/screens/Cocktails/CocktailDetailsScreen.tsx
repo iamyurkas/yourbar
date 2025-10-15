@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useRef,
   memo,
+  useTransition,
 } from "react";
 import {
   View,
@@ -236,6 +237,8 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("AddCocktail", { initialCocktail: cocktail });
   }, [navigation, cocktail]);
 
+  const [, startRatingTransition] = useTransition();
+
   const handleRate = useCallback(
     async (value) => {
       if (!cocktail) return;
@@ -243,23 +246,29 @@ export default function CocktailDetailsScreen() {
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
       setCocktail(updated);
-      setGlobalCocktails((prevList) =>
-        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
-      );
+      startRatingTransition(() => {
+        setGlobalCocktails((prevList) =>
+          Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
+        );
+      });
       try {
         const saved = await saveCocktail(updated);
         setCocktail(saved);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
-        );
+        startRatingTransition(() => {
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
+          );
+        });
       } catch (e) {
         setCocktail(prev);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
-        );
+        startRatingTransition(() => {
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
+          );
+        });
       }
     },
-    [cocktail, setGlobalCocktails]
+    [cocktail, setGlobalCocktails, startRatingTransition]
   );
 
   useLayoutEffect(() => {

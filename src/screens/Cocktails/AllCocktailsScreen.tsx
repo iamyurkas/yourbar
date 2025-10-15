@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -28,12 +23,7 @@ import CocktailRow, {
 import ListSkeleton from "../../components/ListSkeleton";
 import TabSwipe from "../../components/TabSwipe";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
-import { normalizeSearch } from "../../utils/normalizeSearch";
-import {
-  buildIngredientIndex,
-  getCocktailIngredientInfo,
-} from "../../domain/cocktailIngredients";
-import { sortByName } from "../../utils/sortByName";
+import useCocktailSearchResults from "../../hooks/useCocktailSearchResults";
 
 export default function AllCocktailsScreen() {
   const theme = useTheme();
@@ -43,9 +33,6 @@ export default function AllCocktailsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
 
-  const [cocktails, setCocktails] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [navigatingId, setNavigatingId] = useState(null);
@@ -53,11 +40,7 @@ export default function AllCocktailsScreen() {
   const [availableTags, setAvailableTags] = useState([]);
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
-  const {
-    cocktails: globalCocktails = [],
-    ingredients: globalIngredients = [],
-    loading: globalLoading,
-  } = useIngredientUsage();
+  const { cocktails = [], ingredients = [], loading } = useIngredientUsage();
 
   useEffect(() => {
     if (isFocused) setTab("cocktails", "All");
@@ -80,18 +63,6 @@ export default function AllCocktailsScreen() {
   }, [search]);
 
   useEffect(() => {
-    setCocktails(globalCocktails);
-  }, [globalCocktails]);
-
-  useEffect(() => {
-    setIngredients(globalIngredients);
-  }, [globalIngredients]);
-
-  useEffect(() => {
-    setLoading(globalLoading);
-  }, [globalLoading]);
-
-  useEffect(() => {
     if (!isFocused) return;
     let cancel = false;
     (async () => {
@@ -112,42 +83,14 @@ export default function AllCocktailsScreen() {
     };
   }, [isFocused]);
 
-  const filtered = useMemo(() => {
-    const { ingMap, findBrand } = buildIngredientIndex(ingredients || []);
-    const q = normalizeSearch(searchDebounced);
-    let list = cocktails;
-    if (q) list = list.filter((c) => normalizeSearch(c.name).includes(q));
-    if (selectedTagIds.length > 0)
-      list = list.filter(
-        (c) =>
-          Array.isArray(c.tags) &&
-          c.tags.some((t) => selectedTagIds.includes(t.id))
-      );
-    return list
-      .map((c) => {
-        const { ingredientLine, isAllAvailable, hasBranded } =
-          getCocktailIngredientInfo(c, {
-            ingMap,
-            findBrand,
-            allowSubstitutes,
-            ignoreGarnish,
-          });
-        return {
-          ...c,
-          ingredientLine,
-          isAllAvailable,
-          hasBranded,
-      };
-      })
-      .sort(sortByName);
-  }, [
+  const filtered = useCocktailSearchResults({
     cocktails,
     ingredients,
-    searchDebounced,
+    search: searchDebounced,
     selectedTagIds,
-    ignoreGarnish,
     allowSubstitutes,
-  ]);
+    ignoreGarnish,
+  });
 
   const handlePress = useCallback(
     (id) => {
@@ -160,7 +103,7 @@ export default function AllCocktailsScreen() {
 
   const renderItem = useCallback(
     ({ item }) => (
-        <CocktailRow
+      <CocktailRow
         id={item.id}
         name={item.name}
         photoUri={item.photoUri}
