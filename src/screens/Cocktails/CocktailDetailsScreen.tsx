@@ -236,28 +236,37 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("AddCocktail", { initialCocktail: cocktail });
   }, [navigation, cocktail]);
 
+  const latestRatingRequest = useRef(0);
+
   const handleRate = useCallback(
-    async (value) => {
+    (value) => {
       if (!cocktail) return;
       const prev = cocktail;
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
+      const requestId = latestRatingRequest.current + 1;
+      latestRatingRequest.current = requestId;
+
       setCocktail(updated);
       setGlobalCocktails((prevList) =>
         Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
       );
-      try {
-        const saved = await saveCocktail(updated);
-        setCocktail(saved);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
-        );
-      } catch (e) {
-        setCocktail(prev);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
-        );
-      }
+
+      saveCocktail(updated)
+        .then((saved) => {
+          if (latestRatingRequest.current !== requestId) return;
+          setCocktail(saved);
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
+          );
+        })
+        .catch(() => {
+          if (latestRatingRequest.current !== requestId) return;
+          setCocktail(prev);
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
+          );
+        });
     },
     [cocktail, setGlobalCocktails]
   );
