@@ -27,11 +27,7 @@ import {
 import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  getCocktailById,
-  saveCocktail,
-  updateCocktailById,
-} from "../../domain/cocktails";
+import { getCocktailById } from "../../domain/cocktails";
 import {
   getIngredientsByIds,
   getIngredientsByBaseIds,
@@ -198,7 +194,6 @@ export default function CocktailDetailsScreen() {
   const {
     ingredients: globalIngredients = [],
     cocktails: globalCocktails = [],
-    setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(initialCocktail || null);
@@ -236,31 +231,7 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("AddCocktail", { initialCocktail: cocktail });
   }, [navigation, cocktail]);
 
-  const handleRate = useCallback(
-    async (value) => {
-      if (!cocktail) return;
-      const prev = cocktail;
-      const newRating = cocktail.rating === value ? 0 : value;
-      const updated = { ...cocktail, rating: newRating };
-      setCocktail(updated);
-      setGlobalCocktails((prevList) =>
-        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
-      );
-      try {
-        const saved = await saveCocktail(updated);
-        setCocktail(saved);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
-        );
-      } catch (e) {
-        setCocktail(prev);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
-        );
-      }
-    },
-    [cocktail, setGlobalCocktails]
-  );
+  const handleRate = useCallback(() => {}, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({

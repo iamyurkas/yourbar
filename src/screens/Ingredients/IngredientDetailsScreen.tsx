@@ -27,11 +27,6 @@ import {
 } from "@react-navigation/native";
 import { goBack } from "../../utils/navigation";
 
-import {
-  saveIngredient,
-  updateIngredientById,
-  updateIngredientFields,
-} from "../../domain/ingredients";
 import { mapCocktailsByIngredient } from "../../domain/ingredientUsage";
 import { sortByName } from "../../utils/sortByName";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -43,7 +38,6 @@ import {
   getAllowSubstitutes,
   addAllowSubstitutesListener,
 } from "../../data/settings";
-import useIngredientsData from "../../hooks/useIngredientsData";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import ExpandableText from "../../components/ExpandableText";
@@ -52,7 +46,6 @@ import {
   getCocktailIngredientInfo,
 } from "../../domain/cocktailIngredients";
 import { withAlpha } from "../../utils/color";
-import { makeProfiler } from "../../utils/profile";
 
 const PHOTO_SIZE = 150;
 const THUMB = 40;
@@ -160,13 +153,11 @@ export default function IngredientDetailsScreen() {
   const route = useRoute();
   const { id, initialIngredient } = route.params;
   const theme = useTheme();
-  const { setIngredients } = useIngredientsData();
   const {
     ingredients = [],
     cocktails: cocktailsCtx = [],
     ingredientsById,
     ingredientsByBase,
-    updateUsageMap,
   } = useIngredientUsage();
 
   const [ignoreGarnish, setIgnoreGarnish] = useState(true);
@@ -366,128 +357,11 @@ export default function IngredientDetailsScreen() {
     return () => sub.remove();
   }, []);
 
-  const toggleInBar = useCallback(() => {
-    if (!ingredient) return;
-    const profiler = makeProfiler("[IngredientDetails] toggleInBar");
-    const next = !ingredient.inBar;
-    profiler.step(`tap id=${ingredient.id} next=${next}`);
-    const updated = { ...ingredient, inBar: next };
-    // Optimistic local update for instant UI feedback
-    setIngredient(updated);
-    profiler.step(`local inBar=${updated.inBar} for ${updated.id}`);
-    // Defer global updates and run DB write on a later tick so any heavy
-    // CPU work (e.g. mapCocktailsByIngredient) runs outside the
-    // transaction window
-    setTimeout(() => {
-      profiler.step(`global inBar update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inBar: updated.inBar,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inBar=${updated.inBar} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, { inBar: updated.inBar }).finally(
-          () => profiler.step("persist done")
-        );
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+  const toggleInBar = useCallback(() => {}, []);
 
-  const toggleInShoppingList = useCallback(() => {
-    if (!ingredient) return;
-    const profiler = makeProfiler("[IngredientDetails] toggleShopping");
-    const next = !ingredient.inShoppingList;
-    profiler.step(`tap shopping id=${ingredient.id} next=${next}`);
-    const updated = {
-      ...ingredient,
-      inShoppingList: next,
-    };
-    // Optimistic local update for instant icon change
-    setIngredient(updated);
-    profiler.step(
-      `local inShoppingList=${updated.inShoppingList} for ${updated.id}`
-    );
-    // Defer global update and schedule DB write after a tick so heavy CPU
-    // work completes before the transaction begins
-    setTimeout(() => {
-      profiler.step(`global inShoppingList update for ${updated.id}`);
-      setIngredients((list) =>
-        updateIngredientById(list, {
-          id: updated.id,
-          inShoppingList: updated.inShoppingList,
-        })
-      );
-      setTimeout(() => {
-        profiler.step(
-          `persist inShoppingList=${updated.inShoppingList} for ${updated.id}`
-        );
-        updateIngredientFields(updated.id, {
-          inShoppingList: updated.inShoppingList,
-        }).finally(() => profiler.step("persist done"));
-      }, 0);
-    }, 0);
-  }, [ingredient, setIngredients]);
+  const toggleInShoppingList = useCallback(() => {}, []);
 
-  const unlinkIngredients = useCallback(
-    ({ base, brandeds }) => {
-      const brandedList = Array.isArray(brandeds)
-        ? brandeds.filter(Boolean)
-        : brandeds
-        ? [brandeds]
-        : [];
-      const updates = brandedList;
-      const changedIds = [
-        ...(base ? [base.id] : []),
-        ...brandedList.map((b) => b.id),
-      ];
-      if (updates.length === 0) return;
-
-      let nextList;
-      setIngredients((list) => {
-        nextList = list;
-        updates.forEach((item) => {
-          nextList = updateIngredientById(nextList, item);
-        });
-        return nextList;
-      });
-
-      updates.forEach((item) => {
-        if (ingredient?.id === item.id) {
-          setIngredient(item);
-          setBaseIngredient(null);
-        } else {
-          setBrandedChildren((prev) => prev.filter((c) => c.id !== item.id));
-        }
-      });
-
-      getAllowSubstitutes().then((allow) => {
-        updateUsageMap(Array.from(nextList.values()), cocktailsCtx, {
-          prevIngredients: ingredients,
-          changedIngredientIds: changedIds,
-          allowSubstitutes: !!allow,
-        });
-      });
-
-      queueMicrotask(async () => {
-        for (const item of updates) {
-          await saveIngredient(item);
-        }
-      });
-    },
-    [
-      ingredient,
-      setIngredient,
-      setBaseIngredient,
-      setBrandedChildren,
-      setIngredients,
-      updateUsageMap,
-      cocktailsCtx,
-    ]
-  );
+  const unlinkIngredients = useCallback(() => {}, []);
 
   const unlinkFromBase = useCallback(() => {
     if (ingredient?.baseIngredientId == null) return;

@@ -6,11 +6,9 @@ import slugify from 'slugify';
 import { Image } from 'react-native';
 
 import { ASSET_MAP } from '../../scripts/assetMap';
-import { getAllIngredients, saveAllIngredients } from './ingredients';
-import { getAllCocktails, replaceAllCocktails } from './cocktails';
-import { withWriteTransactionAsync } from './sqlite';
+import { getAllIngredients } from './ingredients';
+import { getAllCocktails } from './cocktails';
 import { stripFalse } from './stripFalse';
-import { normalizeImportData } from './normalizeBackupData';
 
 const getExt = (uri) => {
   const match = /\.([a-zA-Z0-9]+)(?:[?#].*)?$/.exec(uri || '');
@@ -156,13 +154,8 @@ export async function importAllData() {
     const contents = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.UTF8,
     });
-    const data = JSON.parse(contents);
-    const { ingredients, cocktails } = normalizeImportData(data, resolvePhoto);
-    await withWriteTransactionAsync(async (tx) => {
-      await saveAllIngredients(ingredients, tx);
-      await replaceAllCocktails(cocktails, tx);
-    });
-    return true;
+    JSON.parse(contents);
+    throw new Error('Import is unavailable – data storage has been removed.');
   } catch (e) {
     console.error('Import failed', e);
     return false;

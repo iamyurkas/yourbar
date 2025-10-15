@@ -21,7 +21,6 @@ import {
   Dimensions,
   Keyboard,
   BackHandler,
-  InteractionManager,
   ActivityIndicator,
 } from "react-native";
 import Animated, {
@@ -34,12 +33,7 @@ import { resizeImage } from "../../utils/images";
 import { normalizeSearch } from "../../utils/normalizeSearch";
 import { WORD_SPLIT_RE, wordPrefixMatch } from "../../utils/wordPrefixMatch";
 import { withAlpha } from "../../utils/color";
-import {
-  useNavigation,
-  useRoute,
-  useFocusEffect,
-  CommonActions,
-} from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { useTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
@@ -52,13 +46,7 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import {
-  getCocktailById,
-  saveCocktail,
-  deleteCocktail,
-  updateCocktailById,
-  removeCocktail,
-} from "../../domain/cocktails";
+import { getCocktailById } from "../../domain/cocktails";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../data/cocktailTags";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -72,8 +60,6 @@ import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useInfoDialog from "../../hooks/useInfoDialog";
-import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
-import { getAllowSubstitutes } from "../../data/settings";
 import useDebounced from "../../hooks/useDebounced";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
@@ -209,9 +195,8 @@ export default function EditCocktailScreen() {
   const params = route.params || {};
   const cocktailId =
     params?.id != null ? Number(params.id) : undefined;
-  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
-  const { ingredients: globalIngredients = [], setIngredients } =
-    useIngredientsData();
+  const { cocktails } = useIngredientUsage();
+  const { ingredients: globalIngredients = [] } = useIngredientsData();
 
   const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
@@ -253,7 +238,7 @@ export default function EditCocktailScreen() {
   const [allIngredients, setAllIngredients] = useState(globalIngredients);
   const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
   const [pendingNav, setPendingNav] = useState(null);
   const initialHashRef = useRef("{}");
   const skipPromptRef = useRef(false);
@@ -274,147 +259,20 @@ export default function EditCocktailScreen() {
     [name, photoUri, tags, description, instructions, glassId, ings]
   );
 
-  const handleSave = useCallback(
-    async (stay = false) => {
-      if (saving) return;
-      const title = name.trim();
-      if (!title) {
-        showInfo("Validation", "Please enter a cocktail name.");
-        return;
-      }
-      const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
-      if (nonEmptyIngredients.length === 0) {
-        showInfo("Validation", "Please add at least one ingredient.");
-        return;
-      }
-
-      setSaving(true);
-
-      // Resolve missing selectedId by exact name match (unique)
-      const allKnown = globalIngredients;
-      const bySearch = new Map();
-      allKnown.forEach((i) => {
-        const key = i.searchName || normalizeSearch(i.name || "");
-        if (!bySearch.has(key)) bySearch.set(key, i);
-        else bySearch.set(key, null);
-      });
-
-      const committed = nonEmptyIngredients.map((r) => {
-        if (r.selectedId == null && r.pendingExactMatch) {
-          return {
-            ...r,
-            selectedId: r.pendingExactMatch.id,
-            selectedItem: r.pendingExactMatch,
-            pendingExactMatch: null,
-          };
-        }
-        if (r.selectedId == null) {
-          const key = normalizeSearch(r.name || "");
-          const found = bySearch.get(key);
-          if (found && found.id != null) {
-            return {
-              ...r,
-              selectedId: found.id,
-              selectedItem: found,
-              pendingExactMatch: null,
-            };
-          }
-        }
-        return { ...r, pendingExactMatch: null };
-      });
-      setIngs((prev) =>
-        prev.map((r) => {
-          if (r.selectedId == null && r.pendingExactMatch) {
-            return {
-              ...r,
-              selectedId: r.pendingExactMatch.id,
-              selectedItem: r.pendingExactMatch,
-              pendingExactMatch: null,
-            };
-          }
-          return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
-        })
-      );
-
-      const cocktail = {
-        id: cocktailId,
-        name: title,
-        photoUri: photoUri || null,
-        tags,
-        description: description.trim(),
-        instructions: instructions.trim(),
-        glassId,
-        ingredients: committed.map((r, idx) => ({
-          order: idx + 1,
-          ingredientId: r.selectedId,
-          name: r.name.trim(),
-          quantity: r.quantity.trim(),
-          unitId: r.unitId,
-          garnish: !!r.garnish,
-          optional: !!r.optional,
-          allowBaseSubstitute: !!r.allowBaseSubstitute,
-          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-          substitutes: r.substitutes || [],
-        })),
-        rating: ratingRef.current,
-        createdAt: createdAtRef.current,
-      };
-
-      initialHashRef.current = serialize();
-      setDirty(false);
-      if (!stay) {
-        skipPromptRef.current = true;
-        navigation.goBack();
-      }
-
-      InteractionManager.runAfterInteractions(async () => {
-        const updated = await saveCocktail(cocktail);
-        // Debug: read freshly saved cocktail from DB and log it
-        try {
-          const dbValue = await getCocktailById(updated.id);
-        } catch (e) {
-          console.error("[EditCocktailScreen][DB] fetch after save error", e);
-        }
-        const nextCocktails = updateCocktailById(cocktails, updated);
-        const allowSubs = await getAllowSubstitutes();
-        const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
-          prevCocktails: cocktails,
-          changedCocktailIds: [updated.id],
-          allowSubstitutes: !!allowSubs,
-        });
-        setCocktails(nextCocktails);
-        setIngredients(
-          applyUsageMapToIngredients(
-            globalIngredients,
-            nextUsage,
-            nextCocktails
-          )
-        );
-        if (stay) setSaving(false);
-      });
-
-      return cocktail;
-    },
-    [
-      name,
-      photoUri,
-      tags,
-      description,
-      instructions,
-      glassId,
-      ings,
-      cocktailId,
-      navigation,
-      serialize,
-      cocktails,
-      globalIngredients,
-      setCocktails,
-      updateUsageMap,
-      setIngredients,
-      saving,
-      showInfo,
-    ]
-  );
+  const handleSave = useCallback(() => {
+    if (saving) return;
+    const title = name.trim();
+    if (!title) {
+      showInfo("Validation", "Please enter a cocktail name.");
+      return;
+    }
+    const nonEmptyIngredients = ings.filter((r) => r.name.trim().length > 0);
+    if (nonEmptyIngredients.length === 0) {
+      showInfo("Validation", "Please add at least one ingredient.");
+      return;
+    }
+    showInfo("Unavailable", "Editing cocktails is currently disabled.");
+  }, [name, ings, saving, showInfo]);
 
   const handleDelete = useCallback(() => {
     setConfirmDelete(true);
@@ -1127,7 +985,7 @@ export default function EditCocktailScreen() {
 
           {/* Save */}
           <Pressable
-            onPress={() => handleSave()}
+            onPress={handleSave}
             android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
             style={[
               styles.saveBtn,
@@ -1288,27 +1146,11 @@ export default function EditCocktailScreen() {
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
         onConfirm={() => {
-          skipPromptRef.current = true;
-          const nextCocktails = removeCocktail(cocktails, cocktailId);
-          setCocktails(nextCocktails);
-          navigation.popToTop();
+          showInfo(
+            "Unavailable",
+            "Deleting cocktails is currently disabled."
+          );
           setConfirmDelete(false);
-          InteractionManager.runAfterInteractions(async () => {
-            await deleteCocktail(cocktailId);
-            const allowSubs = await getAllowSubstitutes();
-            const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
-              prevCocktails: cocktails,
-              changedCocktailIds: [cocktailId],
-              allowSubstitutes: !!allowSubs,
-            });
-            setIngredients(
-              applyUsageMapToIngredients(
-                globalIngredients,
-                nextUsage,
-                nextCocktails
-              )
-            );
-          });
         }}
       />
       <ConfirmationDialog
@@ -1333,23 +1175,11 @@ export default function EditCocktailScreen() {
           {
             label: "Save",
             mode: "contained",
-            onPress: async () => {
-              skipPromptRef.current = true;
-              const updated = await handleSave(true);
-              const prevRoute = navigation.getState().routes.slice(-2)[0];
-              if (prevRoute) {
-                navigation.dispatch(
-                  CommonActions.setParams({
-                    source: prevRoute.key,
-                    params: {
-                      id: updated.id,
-                      initialCocktail: updated,
-                    },
-                  })
-                );
-              }
-              navigation.dispatch(pendingNav);
-              setPendingNav(null);
+            onPress: () => {
+              showInfo(
+                "Unavailable",
+                "Editing cocktails is currently disabled."
+              );
             },
           },
         ]}

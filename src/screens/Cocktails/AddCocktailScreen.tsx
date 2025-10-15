@@ -55,7 +55,6 @@ import {
   renderers,
 } from "react-native-popup-menu";
 const { Popover } = renderers;
-import { addCocktail } from "../../domain/cocktails";
 import { BUILTIN_COCKTAIL_TAGS } from "../../constants/cocktailTags";
 import { getAllCocktailTags } from "../../data/cocktailTags";
 import { UNIT_ID, getUnitById, formatUnit } from "../../constants/measureUnits";
@@ -67,8 +66,6 @@ import TinyDivider from "../../components/TinyDivider";
 import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
-import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
-import { getAllowSubstitutes } from "../../data/settings";
 
 /* ---------- GlasswareMenu через popup-menu (Popover) ---------- */
 const GlassPopover = memo(function GlassPopover({ selectedGlass, onSelect }) {
@@ -202,9 +199,8 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
-  const { ingredients: globalIngredients = [], setIngredients } =
-    useIngredientsData();
+  const { cocktails } = useIngredientUsage();
+  const { ingredients: globalIngredients = [] } = useIngredientsData();
   const initialCocktail = route.params?.initialCocktail;
   const initialIngredient = route.params?.initialIngredient;
   const fromIngredientFlow = initialIngredient != null;
@@ -321,7 +317,7 @@ export default function AddCocktailScreen() {
     initialCocktail?.glassId || "cocktail_glass"
   );
 
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
 
   const createBaseRow = (ing) => ({
     localId: Date.now(),
@@ -572,7 +568,7 @@ export default function AddCocktailScreen() {
     }, [route.params, navigation])
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     if (saving) return;
     const title = name.trim();
     if (!title) {
@@ -584,134 +580,8 @@ export default function AddCocktailScreen() {
       showInfo("Validation", "Please add at least one ingredient.");
       return;
     }
-
-    setSaving(true);
-
-    try {
-    // Resolve missing selectedId by exact name match (unique)
-    const allKnown = globalIngredients;
-    const bySearch = new Map();
-    allKnown.forEach((i) => {
-      const key = i.searchName || normalizeSearch(i.name || "");
-      if (!bySearch.has(key)) bySearch.set(key, i);
-      else bySearch.set(key, null); // non-unique
-    });
-
-    const committed = nonEmptyIngredients.map((r) => {
-      if (r.selectedId == null && r.pendingExactMatch) {
-        return {
-          ...r,
-          selectedId: r.pendingExactMatch.id,
-          selectedItem: r.pendingExactMatch,
-          pendingExactMatch: null,
-        };
-      }
-      if (r.selectedId == null) {
-        const key = normalizeSearch(r.name || "");
-        const found = bySearch.get(key);
-        if (found && found.id != null) {
-          return {
-            ...r,
-            selectedId: found.id,
-            selectedItem: found,
-            pendingExactMatch: null,
-          };
-        }
-      }
-      return { ...r, pendingExactMatch: null };
-    });
-      setIngs((prev) =>
-        prev.map((r) => {
-          if (r.selectedId == null && r.pendingExactMatch) {
-            return {
-              ...r,
-              selectedId: r.pendingExactMatch.id,
-              selectedItem: r.pendingExactMatch,
-              pendingExactMatch: null,
-            };
-          }
-          return r.pendingExactMatch ? { ...r, pendingExactMatch: null } : r;
-        })
-      );
-
-      const id = Date.now();
-      const cocktail = {
-        id,
-        name: title,
-        photoUri: photoUri || null,
-        tags,
-        description: description.trim(),
-        instructions: instructions.trim(),
-        glassId,
-        ingredients: committed.map((r, idx) => ({
-          order: idx + 1,
-          ingredientId: r.selectedId,
-          name: r.name.trim(),
-          amount: r.quantity.trim(),
-          unitId: r.unitId,
-          garnish: !!r.garnish,
-          optional: !!r.optional,
-          allowBaseSubstitution: !!r.allowBaseSubstitute,
-          allowBrandedSubstitutes: !!r.allowBrandedSubstitutes,
-          substitutes: r.substitutes || [],
-        })),
-        createdAt: Date.now(),
-      };
-
-      const created = await addCocktail(cocktail);
-      if (!created) {
-        //console.error("[AddCocktailScreen] addCocktail returned null");
-        showInfo("Error", "Failed to save cocktail.");
-        return;
-      }
-
-      const allowSubs = await getAllowSubstitutes();
-      const nextCocktails = [...cocktails, created];
-      const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
-        prevCocktails: cocktails,
-        changedCocktailIds: [created.id],
-        allowSubstitutes: !!allowSubs,
-      });
-      setCocktails(nextCocktails);
-      setIngredients(
-        applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
-      );
-
-      if (fromIngredientFlow) {
-        navigation.replace("CocktailDetails", {
-          id: created.id,
-          backToIngredientId: initialIngredient?.id,
-          initialCocktail: created,
-        });
-      } else {
-        navigation.replace("CocktailDetails", {
-          id: created.id,
-          initialCocktail: created,
-        });
-      }
-    } catch (e) {
-      console.error("[AddCocktailScreen] handleSave error", e);
-      showInfo("Error", "Failed to save cocktail.");
-      setSaving(false);
-    }
-  }, [
-    name,
-    photoUri,
-    tags,
-    description,
-    instructions,
-    glassId,
-    ings,
-    cocktails,
-    globalIngredients,
-    setCocktails,
-    updateUsageMap,
-    setIngredients,
-    navigation,
-    fromIngredientFlow,
-    initialIngredient?.id,
-    saving,
-  ]);
+    showInfo("Unavailable", "Saving cocktails is currently disabled.");
+  }, [name, ings, saving, showInfo]);
 
   const selectedGlass = getGlassById(glassId) || { name: "Cocktail glass" };
 

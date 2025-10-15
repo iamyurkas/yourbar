@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllIngredients } from "../domain/ingredients";
 import { getAllCocktails } from "../domain/cocktails";
 import { mapCocktailsByIngredient } from "../domain/ingredientUsage";
@@ -12,8 +11,6 @@ import {
 } from "../data/settings";
 import { getAllTags } from "../data/ingredientTags";
 import { BUILTIN_INGREDIENT_TAGS } from "../constants/ingredientTags";
-
-const IMPORT_FLAG_KEY = "default_data_imported_flag";
 
 export default function useIngredientsData() {
   const {
@@ -37,35 +34,12 @@ export default function useIngredientsData() {
       setLoading(true);
       setImporting(false);
       try {
-        const [already, ingInitial, cocksInitial, allowSubs, customTags] =
-          await Promise.all([
-            force ? null : AsyncStorage.getItem(IMPORT_FLAG_KEY),
-            getAllIngredients(),
-            getAllCocktails(),
-            getAllowSubstitutes(),
-            getAllTags(),
-          ]);
-
-        let ing = ingInitial;
-        let cocks = cocksInitial;
-
-        let needImport =
-          force ||
-          already !== "true" ||
-          ing.length === 0 ||
-          cocks.length === 0;
-
-        if (needImport) {
-          setImporting(true);
-          const { importCocktailsAndIngredients } = await import(
-            "../../scripts/importCocktailsAndIngredients"
-          );
-          await importCocktailsAndIngredients({ force: true });
-          [ing, cocks] = await Promise.all([
-            getAllIngredients(),
-            getAllCocktails(),
-          ]);
-        }
+        const [ing, cocks, allowSubs, customTags] = await Promise.all([
+          getAllIngredients(),
+          getAllCocktails(),
+          getAllowSubstitutes(),
+          getAllTags(),
+        ]);
 
         // getAllIngredients must return ingredients sorted alphabetically.
         const byId = new Map(ing.map((i) => [i.id, i]));

@@ -1,177 +1,187 @@
-import db, {
-  query,
-  initDatabase,
-  withWriteTransactionAsync,
-} from "./sqlite";
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
 import { IngredientRecord } from "./types";
 
-const now = () => Date.now();
-const genId = () => now();
+declare const require: any;
 
-// Supports optional LIMIT/OFFSET for pagination to avoid loading the entire table
+const DATA = require("../../assets/data/data.json") as any;
+
+type RawIngredient = {
+  id: number;
+  name: string;
+  description?: string | null;
+  tags?: any[];
+  baseIngredientId?: number | null;
+  usageCount?: number;
+  singleCocktailName?: string | null;
+  searchName?: string;
+  searchTokens?: string[];
+  photoUri?: string | null;
+};
+
+let ingredientCache: IngredientRecord[] | null = null;
+let ingredientMap: Map<number, IngredientRecord> | null = null;
+
+function sanitizeIngredient(raw: RawIngredient): IngredientRecord {
+  const id = Number(raw?.id ?? 0);
+  const name = String(raw?.name ?? "").trim();
+  const searchName = normalizeSearch(raw?.searchName ?? name);
+  const searchTokens = Array.isArray(raw?.searchTokens)
+    ? raw.searchTokens.map((token) => String(token))
+    : searchName.split(WORD_SPLIT_RE).filter(Boolean);
+  const tags = Array.isArray(raw?.tags)
+    ? raw.tags.map((tag) =>
+        typeof tag === "object" && tag !== null ? { ...tag } : tag
+      )
+    : [];
+  return {
+    id,
+    name,
+    description:
+      raw?.description != null ? String(raw.description) : null,
+    tags,
+    baseIngredientId:
+      raw?.baseIngredientId != null ? Number(raw.baseIngredientId) : null,
+    usageCount: Number(raw?.usageCount ?? 0),
+    singleCocktailName:
+      raw?.singleCocktailName != null ? String(raw.singleCocktailName) : null,
+    searchName,
+    searchTokens,
+    photoUri: raw?.photoUri != null ? String(raw.photoUri) : null,
+    inBar: false,
+    inShoppingList: false,
+  };
+}
+
+function ensureIngredients(): IngredientRecord[] {
+  if (!ingredientCache) {
+    const rawList: RawIngredient[] = Array.isArray(DATA?.ingredients)
+      ? DATA.ingredients
+      : [];
+    ingredientCache = rawList.map(sanitizeIngredient).sort(sortByName);
+    ingredientMap = new Map(ingredientCache.map((item) => [item.id, item]));
+  }
+  return ingredientCache;
+}
+
+function cloneIngredient(item: IngredientRecord): IngredientRecord {
+  return {
+    ...item,
+    tags: Array.isArray(item.tags)
+      ? item.tags.map((tag: any) =>
+          typeof tag === "object" && tag !== null ? { ...tag } : tag
+        )
+      : [],
+    searchTokens: [...item.searchTokens],
+  };
+}
+
 export async function getAllIngredients({
   limit,
   offset,
 }: { limit?: number; offset?: number } = {}): Promise<IngredientRecord[]> {
-  await initDatabase();
-  let sql =
-    "SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients ORDER BY name";
-  const params: string[] = [];
-  if (typeof limit === "number") {
-    sql += " LIMIT ?";
-    params.push(String(limit));
-  }
+  const list = ensureIngredients();
+  let items = list;
   if (typeof offset === "number") {
-    sql += " OFFSET ?";
-    params.push(String(offset));
+    items = items.slice(offset);
   }
-  const res = await query(sql, params);
-  const list = res.rows._array.map((r) => ({
-    id: Number(r.id),
-    name: r.name,
-    description: r.description,
-    tags: r.tags ? JSON.parse(r.tags) : [],
-    baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-    usageCount: r.usageCount ?? 0,
-    singleCocktailName: r.singleCocktailName,
-    searchName: r.searchName,
-    searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-    photoUri: r.photoUri,
-    inBar: !!r.inBar,
-    inShoppingList: !!r.inShoppingList,
-  }));
-  return list;
+  if (typeof limit === "number") {
+    items = items.slice(0, limit);
+  }
+  return items.map(cloneIngredient);
 }
 
-export async function getIngredientsByIds(ids: number[]): Promise<IngredientRecord[]> {
-  const list = Array.isArray(ids) ? ids.filter((id) => id != null) : [];
-  if (list.length === 0) return [];
-  const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
-  const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE id IN (${placeholders})`,
-    list.map((id) => String(id))
-  );
-  const rows = res.rows._array
-    .map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      description: r.description,
-      tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-      usageCount: r.usageCount ?? 0,
-      singleCocktailName: r.singleCocktailName,
-      searchName: r.searchName,
-      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-      photoUri: r.photoUri,
-      inBar: !!r.inBar,
-      inShoppingList: !!r.inShoppingList,
-    }))
-    .sort(sortByName);
-  return rows;
+export async function getIngredientsByIds(
+  ids: number[]
+): Promise<IngredientRecord[]> {
+  ensureIngredients();
+  const uniqueIds = Array.isArray(ids)
+    ? Array.from(new Set(ids.map((id) => Number(id)).filter((id) => !Number.isNaN(id))))
+    : [];
+  if (uniqueIds.length === 0) return [];
+  const list = uniqueIds
+    .map((id) => ingredientMap?.get(id))
+    .filter(Boolean) as IngredientRecord[];
+  return list.map(cloneIngredient).sort(sortByName);
 }
 
-export async function getIngredientsByBaseIds(baseIds: number[], { inBarOnly = false }: { inBarOnly?: boolean } = {}): Promise<IngredientRecord[]> {
-  const list = Array.isArray(baseIds) ? baseIds.filter((id) => id != null) : [];
-  if (list.length === 0) return [];
-  const placeholders = list.map(() => "?").join(", ");
-  await initDatabase();
-  const res = await query(
-    `SELECT id, name, description, tags, baseIngredientId, usageCount, singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList FROM ingredients WHERE baseIngredientId IN (${placeholders})${inBarOnly ? ' AND inBar = 1' : ''}`,
-    list.map((id) => String(id))
+export async function getIngredientsByBaseIds(
+  baseIds: number[],
+  { inBarOnly = false }: { inBarOnly?: boolean } = {}
+): Promise<IngredientRecord[]> {
+  ensureIngredients();
+  const uniqueIds = Array.isArray(baseIds)
+    ? Array.from(new Set(baseIds.map((id) => Number(id)).filter((id) => !Number.isNaN(id))))
+    : [];
+  if (uniqueIds.length === 0) return [];
+  const list = ensureIngredients().filter((item) =>
+    item.baseIngredientId != null && uniqueIds.includes(item.baseIngredientId)
   );
-  const rows = res.rows._array
-    .map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      description: r.description,
-      tags: r.tags ? JSON.parse(r.tags) : [],
-      baseIngredientId: r.baseIngredientId != null ? Number(r.baseIngredientId) : null,
-      usageCount: r.usageCount ?? 0,
-      singleCocktailName: r.singleCocktailName,
-      searchName: r.searchName,
-      searchTokens: r.searchTokens ? JSON.parse(r.searchTokens) : [],
-      photoUri: r.photoUri,
-      inBar: !!r.inBar,
-      inShoppingList: !!r.inShoppingList,
-    }))
-    .sort(sortByName);
-  return rows;
+  const filtered = inBarOnly
+    ? list.filter((item) => item.inBar)
+    : list;
+  return filtered.map(cloneIngredient).sort(sortByName);
 }
 
 export function buildIndex(list: IngredientRecord[]): Record<number, IngredientRecord> {
   return list.reduce((acc, item) => {
     acc[item.id] = item;
     return acc;
-  }, {});
+  }, {} as Record<number, IngredientRecord>);
 }
 
-async function upsertIngredient(item: IngredientRecord): Promise<void> {
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `INSERT OR REPLACE INTO ingredients (
-        id, name, description, tags, baseIngredientId, usageCount,
-        singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      String(item.id),
-      item.name ?? null,
-      item.description ?? null,
-      item.tags ? JSON.stringify(item.tags) : null,
-      item.baseIngredientId ?? null,
-      item.usageCount ?? 0,
-      item.singleCocktailName ?? null,
-      item.searchName ?? null,
-      item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-      item.photoUri ?? null,
-      item.inBar ? 1 : 0,
-      item.inShoppingList ? 1 : 0
-    );
-  });
+export async function saveAllIngredients(
+  _ingredients?: IngredientRecord[],
+  _tx?: any
+): Promise<void> {
+  // No-op – storage has been removed.
 }
 
-export async function saveAllIngredients(ingredients, tx) {
-  const list = Array.isArray(ingredients) ? ingredients : [];
-  await initDatabase();
-  const run = async (innerTx) => {
-    await innerTx.runAsync("DELETE FROM ingredients");
-    if (list.length) {
-      const placeholders = list
-        .map(() =>
-          "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-        .join(", ");
-      const params = list.flatMap((item) => [
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0,
-      ]);
-      await innerTx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
-          id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES ${placeholders}`,
-        params
-      );
-    }
-  };
-  if (tx) {
-    await run(tx);
-  } else {
-    await withWriteTransactionAsync(run);
-  }
+export async function addIngredient(
+  ingredient: Partial<IngredientRecord>
+): Promise<IngredientRecord> {
+  return sanitizeIngredient(ingredient as RawIngredient);
+}
+
+export async function saveIngredient(
+  updated: Partial<IngredientRecord>
+): Promise<IngredientRecord> {
+  return sanitizeIngredient(updated as RawIngredient);
+}
+
+export async function updateIngredientFields(
+  _id?: number,
+  _fields?: Record<string, unknown>
+): Promise<void> {
+  // No-op – storage has been removed.
+}
+
+export async function flushPendingIngredients(
+  _list?: Partial<IngredientRecord>[]
+): Promise<void> {
+  // No-op – storage has been removed.
+}
+
+export async function setIngredientsInShoppingList(
+  _ids?: number[],
+  _inShoppingList?: boolean
+): Promise<void> {
+  // No-op – storage has been removed.
+}
+
+export async function toggleIngredientsInBar(
+  _ids?: number[]
+): Promise<void> {
+  // No-op – storage has been removed.
+}
+
+export function getIngredientById(id: number, index: Record<number, IngredientRecord>) {
+  return index ? index[id] : null;
+}
+
+export async function deleteIngredient(_id?: number): Promise<void> {
+  // No-op – storage has been removed.
 }
 
 export function updateIngredientById(map, updated) {
@@ -180,171 +190,6 @@ export function updateIngredientById(map, updated) {
   const next = new Map(map);
   next.set(updated.id, { ...prev, ...updated });
   return next;
-}
-
-function sanitizeIngredient(i: Partial<IngredientRecord>): IngredientRecord {
-  const id = Number(i?.id ?? genId());
-  const name = String(i?.name ?? "").trim();
-  const searchName = normalizeSearch(name);
-  const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-  return {
-    id,
-    name,
-    description: i?.description ?? null,
-    tags: Array.isArray(i?.tags) ? i.tags : [],
-    baseIngredientId: i?.baseIngredientId ?? null,
-    usageCount: Number(i?.usageCount ?? 0),
-    singleCocktailName: i?.singleCocktailName ?? null,
-    searchName,
-    searchTokens,
-    photoUri: i?.photoUri ?? null,
-    inBar: !!i?.inBar,
-    inShoppingList: !!i?.inShoppingList,
-  };
-}
-
-export async function addIngredient(ingredient) {
-  const item = sanitizeIngredient({ ...ingredient, id: ingredient?.id ?? genId() });
-  await upsertIngredient(item);
-  return item;
-}
-
-export async function saveIngredient(updated) {
-  await initDatabase();
-  if (!updated?.id) return;
-  const name = String(updated.name ?? "").trim();
-  const searchName = normalizeSearch(name);
-  let item;
-  if (
-    updated.searchName === searchName &&
-    Array.isArray(updated.searchTokens)
-  ) {
-    item = {
-      id: Number(updated.id),
-      name,
-      description: updated.description ?? null,
-      tags: Array.isArray(updated.tags) ? updated.tags : [],
-      baseIngredientId: updated.baseIngredientId ?? null,
-      usageCount: Number(updated.usageCount ?? 0),
-      singleCocktailName: updated.singleCocktailName ?? null,
-      searchName,
-      searchTokens: updated.searchTokens,
-      photoUri: updated.photoUri ?? null,
-      inBar: !!updated.inBar,
-      inShoppingList: !!updated.inShoppingList,
-    };
-  } else {
-    item = sanitizeIngredient({ ...updated, name });
-  }
-  await upsertIngredient(item);
-  return item;
-}
-
-export async function updateIngredientFields(id, fields) {
-  await initDatabase();
-  if (!id || !fields || typeof fields !== "object") return;
-  const entries = Object.entries(fields);
-  if (!entries.length) return;
-
-  const converters = {
-    name: (v) => v ?? null,
-    description: (v) => v ?? null,
-    tags: (v) => (v ? JSON.stringify(v) : null),
-    baseIngredientId: (v) => v ?? null,
-    usageCount: (v) => Number(v ?? 0),
-    singleCocktailName: (v) => v ?? null,
-    searchName: (v) => v ?? null,
-    searchTokens: (v) => (v ? JSON.stringify(v) : null),
-    photoUri: (v) => v ?? null,
-    inBar: (v) => (v ? 1 : 0),
-    inShoppingList: (v) => (v ? 1 : 0),
-  };
-
-  const parts = [];
-  const params = [];
-  for (const [key, value] of entries) {
-    if (converters[key]) {
-      parts.push(`${key} = ?`);
-      params.push(converters[key](value));
-    }
-  }
-  if (!parts.length) return;
-  params.push(String(id));
-  const sql = `UPDATE ingredients SET ${parts.join(", ")} WHERE id = ?`;
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(sql, params);
-  });
-}
-
-export async function flushPendingIngredients(list) {
-  const items = Array.isArray(list) ? list : [];
-  if (!items.length) return;
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    for (const u of items) {
-      const item = sanitizeIngredient(u);
-      await tx.runAsync(
-        `INSERT OR REPLACE INTO ingredients (
-          id, name, description, tags, baseIngredientId, usageCount,
-          singleCocktailName, searchName, searchTokens, photoUri, inBar, inShoppingList
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        String(item.id),
-        item.name ?? null,
-        item.description ?? null,
-        item.tags ? JSON.stringify(item.tags) : null,
-        item.baseIngredientId ?? null,
-        item.usageCount ?? 0,
-        item.singleCocktailName ?? null,
-        item.searchName ?? null,
-        item.searchTokens ? JSON.stringify(item.searchTokens) : null,
-        item.photoUri ?? null,
-        item.inBar ? 1 : 0,
-        item.inShoppingList ? 1 : 0
-      );
-    }
-  });
-}
-
-export async function setIngredientsInShoppingList(ids, inShoppingList) {
-  const list = Array.isArray(ids)
-    ? Array.from(new Set(ids.filter((id) => id != null)))
-    : [];
-  if (!list.length) return;
-  await initDatabase();
-  const placeholders = list.map(() => "?").join(", ");
-  const value = inShoppingList ? 1 : 0;
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inShoppingList = ? WHERE id IN (${placeholders})`,
-      [value, ...list.map((id) => String(id))]
-    );
-  });
-}
-
-export async function toggleIngredientsInBar(ids) {
-  const list = Array.isArray(ids)
-    ? Array.from(new Set(ids.filter((id) => id != null)))
-    : [];
-  if (!list.length) return;
-  await initDatabase();
-  const placeholders = list.map(() => "?").join(", ");
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync(
-      `UPDATE ingredients SET inBar = 1 - inBar WHERE id IN (${placeholders})`,
-      list.map((id) => String(id))
-    );
-  });
-}
-
-export function getIngredientById(id, index) {
-  return index ? index[id] : null;
-}
-
-export async function deleteIngredient(id) {
-  await initDatabase();
-  await withWriteTransactionAsync(async (tx) => {
-    await tx.runAsync("DELETE FROM ingredients WHERE id = ?", [String(id)]);
-  });
 }
 
 export function removeIngredient(list, id) {

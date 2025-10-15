@@ -16,7 +16,6 @@ import {
   ScrollView,
   FlatList,
   Platform,
-  InteractionManager,
   ActivityIndicator,
   Pressable,
   TouchableOpacity,
@@ -27,18 +26,11 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { resizeImage } from "../../utils/images";
 import { waitForInteractions } from "../../utils/waitForInteractions";
-import {
-  useNavigation,
-  useRoute,
-  useIsFocused,
-  CommonActions,
-  StackActions,
-} from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
-import { deleteIngredient, saveIngredient } from "../../domain/ingredients";
 import { MaterialIcons } from "@expo/vector-icons";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import TagPill from "../../components/TagPill";
@@ -49,8 +41,6 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
-import { normalizeSearch } from "../../utils/normalizeSearch";
-import { WORD_SPLIT_RE } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
 import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
 import { withAlpha } from "../../utils/color";
@@ -65,16 +55,9 @@ export default function EditIngredientScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const headerHeight = useHeaderHeight();
-  const {
-    setIngredients: setGlobalIngredients,
-    baseIngredients = [],
-  } = useIngredientsData();
-  const { setUsageMap, ingredientsById } = useIngredientUsage();
+  const { baseIngredients = [] } = useIngredientsData();
+  const { ingredientsById } = useIngredientUsage();
   const [showInfo, infoDialog] = useInfoDialog();
-  const collator = useMemo(
-    () => new Intl.Collator("uk", { sensitivity: "base" }),
-    []
-  );
   const currentId = route.params?.id;
 
   // entity + form state
@@ -85,7 +68,7 @@ export default function EditIngredientScreen() {
   const [tags, setTags] = useState([]);
   const selectedTagIds = useMemo(() => new Set(tags.map((t) => t.id)), [tags]);
   // disable save button and display loader while ingredient updates persist
-  const [savingInProgress, setSavingInProgress] = useState(false);
+  const [savingInProgress] = useState(false);
 
   // reference lists / tags modal
   const {
@@ -356,91 +339,17 @@ export default function EditIngredientScreen() {
   }, []);
 
   const handleSave = useCallback(
-    (stay = false) => {
-      if (savingInProgress) return;
+    async () => {
+      if (savingInProgress) return null;
       const trimmed = name.trim();
       if (!trimmed) {
         showInfo("Validation", "Please enter a name for the ingredient.");
-        return;
+        return null;
       }
-      if (!ingredient) return;
-
-      setSavingInProgress(true);
-
-      const updated = {
-        ...ingredient,
-        name: trimmed,
-        description,
-        photoUri,
-        tags,
-        baseIngredientId: baseIngredientId ?? null,
-      };
-      // зберегти локально baseline і зняти dirty
-      initialHashRef.current = serialize();
-      setDirty(false);
-
-      const searchName = normalizeSearch(updated.name);
-      const searchTokens = searchName.split(WORD_SPLIT_RE).filter(Boolean);
-      const newItem = { ...updated, searchName, searchTokens };
-
-      if (!stay) {
-        skipPromptRef.current = true;
-        const detailParams = {
-          id: updated.id,
-          initialIngredient: updated,
-        };
-        if (route.params?.returnTo) {
-          detailParams.returnTo = route.params.returnTo;
-          detailParams.createdIngredient = {
-            id: updated.id,
-            name: updated.name,
-            photoUri: updated.photoUri || null,
-            baseIngredientId: updated.baseIngredientId ?? null,
-            tags: updated.tags || [],
-          };
-          detailParams.targetLocalId = route.params.targetLocalId;
-        }
-        navigation.dispatch(StackActions.pop(1));
-        navigation.dispatch(
-          StackActions.replace("IngredientDetails", detailParams)
-        );
-      } else {
-        setIngredient(updated);
-      }
-
-      InteractionManager.runAfterInteractions(() => {
-        setGlobalIngredients((map) => {
-          const arr = Array.from(map.values()).filter((i) => i.id !== newItem.id);
-          const idx = arr.findIndex(
-            (i) => collator.compare(i.name, newItem.name) > 0
-          );
-          if (idx === -1) arr.push(newItem);
-          else arr.splice(idx, 0, newItem);
-          return new Map(arr.map((i) => [i.id, i]));
-        });
-        saveIngredient(updated).catch(() => setSavingInProgress(false));
-        if (stay) setSavingInProgress(false);
-      });
-
-      return updated;
+      showInfo("Unavailable", "Editing ingredients is currently disabled.");
+      return null;
     },
-    [
-      ingredient,
-      name,
-      description,
-      photoUri,
-      tags,
-      baseIngredientId,
-      navigation,
-      route.params?.returnTo,
-      route.params?.targetLocalId,
-      serialize,
-      setGlobalIngredients,
-      saveIngredient,
-      collator,
-      savingInProgress,
-      showInfo,
-    ]
+    [name, savingInProgress, showInfo]
   );
 
   const openMenu = useCallback(() => {
@@ -773,7 +682,7 @@ export default function EditIngredientScreen() {
               opacity: savingInProgress ? 0.7 : 1,
             },
           ]}
-          onPress={() => handleSave(false)}
+          onPress={handleSave}
           disabled={savingInProgress}
           android_ripple={{ color: withAlpha(theme.colors.onPrimary, 0.15) }}
         >
@@ -803,23 +712,11 @@ export default function EditIngredientScreen() {
         confirmLabel="Delete"
         onCancel={() => setConfirmDelete(false)}
         onConfirm={() => {
-          if (!ingredient) return;
-          skipPromptRef.current = true;
-          navigation.popToTop();
+          showInfo(
+            "Unavailable",
+            "Deleting ingredients is currently disabled."
+          );
           setConfirmDelete(false);
-          InteractionManager.runAfterInteractions(() => {
-            setGlobalIngredients((map) => {
-              const next = new Map(map);
-              next.delete(ingredient.id);
-              return next;
-            });
-            setUsageMap((prev) => {
-              const next = { ...prev };
-              delete next[ingredient.id];
-              return next;
-            });
-            deleteIngredient(ingredient.id).catch(() => {});
-          });
         }}
       />
       <ConfirmationDialog
@@ -844,27 +741,11 @@ export default function EditIngredientScreen() {
           {
             label: "Save",
             mode: "contained",
-            onPress: async () => {
-              skipPromptRef.current = true;
-              const updated = await handleSave(true);
-              if (!updated) {
-                skipPromptRef.current = false;
-                return;
-              }
-              const prevRoute = navigation.getState().routes.slice(-2)[0];
-              if (prevRoute) {
-                navigation.dispatch(
-                  CommonActions.setParams({
-                    source: prevRoute.key,
-                    params: {
-                      id: updated.id,
-                      initialIngredient: updated,
-                    },
-                  })
-                );
-              }
-              navigation.dispatch(pendingNav);
-              setPendingNav(null);
+            onPress: () => {
+              showInfo(
+                "Unavailable",
+                "Editing ingredients is currently disabled."
+              );
             },
           },
         ]}

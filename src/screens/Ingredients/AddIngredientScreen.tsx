@@ -4,7 +4,6 @@ import React, {
   useEffect,
   useCallback,
   useRef,
-  useMemo,
   useLayoutEffect,
 } from "react";
 import {
@@ -15,7 +14,6 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  InteractionManager,
   ActivityIndicator,
   Pressable,
   BackHandler,
@@ -25,12 +23,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { resizeImage } from "../../utils/images";
 import { waitForInteractions } from "../../utils/waitForInteractions";
-import {
-  useNavigation,
-  useRoute,
-  useIsFocused,
-  StackActions,
-} from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { useTheme, Menu, Divider, Text as PaperText } from "react-native-paper";
 import { HeaderBackButton, useHeaderHeight } from "@react-navigation/elements";
 
@@ -38,7 +31,6 @@ import { BUILTIN_INGREDIENT_TAGS } from "../../constants/ingredientTags";
 import { TAG_COLORS } from "../../theme";
 import { addIngredient } from "../../domain/ingredients";
 import { useTabMemory } from "../../context/TabMemoryContext";
-import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import IngredientTagsModal from "../../components/IngredientTagsModal";
 import TagPill from "../../components/TagPill";
 import IngredientBaseRow, {
@@ -46,8 +38,6 @@ import IngredientBaseRow, {
 } from "../../components/IngredientBaseRow";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useIngredientTags from "../../hooks/useIngredientTags";
-import { normalizeSearch } from "../../utils/normalizeSearch";
-import { WORD_SPLIT_RE } from "../../utils/wordPrefixMatch";
 import useInfoDialog from "../../hooks/useInfoDialog";
 import useBaseIngredientPicker from "../../hooks/useBaseIngredientPicker";
 import { withAlpha } from "../../utils/color";
@@ -63,18 +53,8 @@ export default function AddIngredientScreen() {
   const isFocused = useIsFocused();
   const headerHeight = useHeaderHeight();
   const { getTab } = useTabMemory();
-  const {
-    ingredients: globalIngredients = [],
-    setIngredients: setGlobalIngredients,
-    baseIngredients = [],
-  } = useIngredientsData();
-  const { setUsageMap } = useIngredientUsage();
+  const { baseIngredients = [] } = useIngredientsData();
   const [showInfo, infoDialog] = useInfoDialog();
-
-  const collator = useMemo(
-    () => new Intl.Collator("uk", { sensitivity: "base" }),
-    []
-  );
 
   // read incoming params
   const initialNameParam = route.params?.initialName;
@@ -93,7 +73,7 @@ export default function AddIngredientScreen() {
     return other ? [other] : [{ id: 10, name: "other", color: TAG_COLORS[15] }];
   });
   // disable the save button and show a spinner while persisting an ingredient
-  const [savingInProgress, setSavingInProgress] = useState(false);
+  const [savingInProgress] = useState(false);
 
   // tag helpers & modal state
   const {
@@ -306,68 +286,8 @@ export default function AddIngredientScreen() {
       showInfo("Validation", "Please enter a name for the ingredient.");
       return;
     }
-    setSavingInProgress(true);
-
-    const searchName = normalizeSearch(trimmed);
-    const saved = {
-      id: Date.now(),
-      name: trimmed,
-      description,
-      photoUri,
-      tags,
-      baseIngredientId: baseIngredientId ?? null,
-      usageCount: 0,
-      singleCocktailName: null,
-      searchName,
-      searchTokens: searchName.split(WORD_SPLIT_RE).filter(Boolean),
-      inBar: false,
-      inShoppingList: false,
-    };
-
-    const detailParams = { id: saved.id, initialIngredient: saved };
-    if (fromCocktailFlow) {
-      navigation.navigate("Cocktails", {
-        screen: returnTo,
-        params: {
-          createdIngredient: detailParams.initialIngredient,
-          targetLocalId,
-        },
-        merge: true,
-      });
-    } else {
-      navigation.dispatch(StackActions.replace("IngredientDetails", detailParams));
-    }
-
-    setGlobalIngredients((map) => {
-      const arr = Array.from(map.values()).filter((i) => i.id !== saved.id);
-      const idx = arr.findIndex(
-        (i) => collator.compare(i.name, saved.name) > 0
-      );
-      if (idx === -1) arr.push(saved);
-      else arr.splice(idx, 0, saved);
-      return new Map(arr.map((i) => [i.id, i]));
-    });
-    setUsageMap((prev) => ({ ...prev, [saved.id]: [] }));
-
-    InteractionManager.runAfterInteractions(() => {
-    addIngredient(saved).catch(() => setSavingInProgress(false));
-  });
-  }, [
-    name,
-    description,
-    photoUri,
-    tags,
-    baseIngredientId,
-    navigation,
-    fromCocktailFlow,
-    returnTo,
-    targetLocalId,
-    addIngredient,
-    setGlobalIngredients,
-    setUsageMap,
-    collator,
-    savingInProgress,
-  ]);
+    showInfo("Unavailable", "Saving ingredients is currently disabled.");
+  }, [name, savingInProgress, showInfo]);
 
   const openMenu = useCallback(() => {
     if (!anchorRef.current) return;
