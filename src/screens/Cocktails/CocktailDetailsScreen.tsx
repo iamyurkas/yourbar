@@ -27,12 +27,13 @@ import {
 import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getCocktailById } from "../../domain/cocktails";
+import { getCocktailById, saveCocktail, updateCocktailById } from "../../domain/cocktails";
 import {
   getIngredientsByIds,
   getIngredientsByBaseIds,
 } from "../../domain/ingredients";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
+import type { CocktailRecord } from "../../data/types";
 import { getGlassById } from "../../constants/glassware";
 import { withAlpha } from "../../utils/color";
 import {
@@ -194,6 +195,7 @@ export default function CocktailDetailsScreen() {
   const {
     ingredients: globalIngredients = [],
     cocktails: globalCocktails = [],
+    setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(initialCocktail || null);
@@ -204,6 +206,11 @@ export default function CocktailDetailsScreen() {
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const showImperialLocked = useRef(false);
+  const ratingSaveRef = useRef<{
+    id: number;
+    prev: CocktailRecord;
+    optimistic: CocktailRecord;
+  } | null>(null);
 
   const { ingMap, byBase, bySearch } = useMemo(
     () => buildIngredientIndex(ingredients),
@@ -231,13 +238,47 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("AddCocktail", { initialCocktail: cocktail });
   }, [navigation, cocktail]);
 
-  const handleRate = useCallback((value) => {
-    setCocktail((prev) => {
-      if (!prev) return prev;
-      const newRating = prev.rating === value ? 0 : value;
-      return { ...prev, rating: newRating };
-    });
-  }, []);
+  const handleRate = useCallback(
+    (value: number) => {
+      if (!cocktail) return;
+
+      const previous = cocktail;
+      const newRating = previous.rating === value ? 0 : value;
+      const optimistic: CocktailRecord = { ...previous, rating: newRating };
+
+      setCocktail(optimistic);
+      setGlobalCocktails((prevList) =>
+        Array.isArray(prevList) ? updateCocktailById(prevList, optimistic) : prevList
+      );
+
+      const requestId = (ratingSaveRef.current?.id ?? 0) + 1;
+      ratingSaveRef.current = { id: requestId, prev: previous, optimistic };
+
+      saveCocktail(optimistic)
+        .then((saved) => {
+          if (!ratingSaveRef.current || ratingSaveRef.current.id !== requestId) {
+            return;
+          }
+          ratingSaveRef.current = { id: requestId, prev: saved, optimistic: saved };
+          setCocktail(saved);
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
+          );
+        })
+        .catch((error) => {
+          if (!ratingSaveRef.current || ratingSaveRef.current.id !== requestId) {
+            return;
+          }
+          ratingSaveRef.current = null;
+          console.error("Failed to save cocktail rating", error);
+          setCocktail(previous);
+          setGlobalCocktails((prevList) =>
+            Array.isArray(prevList) ? updateCocktailById(prevList, previous) : prevList
+          );
+        });
+    },
+    [cocktail, setGlobalCocktails]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
