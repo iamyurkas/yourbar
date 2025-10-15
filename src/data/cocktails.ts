@@ -2,6 +2,7 @@ import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
 import { CocktailRecord } from "./types";
+import { resolveBundledPhotoUri } from "./resolveBundledPhotoUri";
 
 declare const require: any;
 
@@ -70,6 +71,9 @@ function sanitizeCocktail(raw: RawCocktail): CocktailRecord {
         typeof tag === "object" && tag !== null ? { ...tag } : tag
       )
     : [];
+  const rawPhotoUri = raw?.photoUri != null ? String(raw.photoUri) : null;
+  const photoUri =
+    resolveBundledPhotoUri(rawPhotoUri) ?? (rawPhotoUri != null ? rawPhotoUri : null);
   return {
     id,
     name,
@@ -85,7 +89,7 @@ function sanitizeCocktail(raw: RawCocktail): CocktailRecord {
     updatedAt: raw?.updatedAt != null ? Number(raw.updatedAt) : null,
     searchName,
     searchTokens,
-    photoUri: raw?.photoUri != null ? String(raw.photoUri) : null,
+    photoUri,
     garnish: raw?.garnish != null ? String(raw.garnish) : null,
   };
 }

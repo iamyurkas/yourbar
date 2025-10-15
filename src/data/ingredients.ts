@@ -2,6 +2,7 @@ import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
 import { IngredientRecord } from "./types";
+import { resolveBundledPhotoUri } from "./resolveBundledPhotoUri";
 
 declare const require: any;
 
@@ -35,6 +36,9 @@ function sanitizeIngredient(raw: RawIngredient): IngredientRecord {
         typeof tag === "object" && tag !== null ? { ...tag } : tag
       )
     : [];
+  const rawPhotoUri = raw?.photoUri != null ? String(raw.photoUri) : null;
+  const photoUri =
+    resolveBundledPhotoUri(rawPhotoUri) ?? (rawPhotoUri != null ? rawPhotoUri : null);
   return {
     id,
     name,
@@ -48,7 +52,7 @@ function sanitizeIngredient(raw: RawIngredient): IngredientRecord {
       raw?.singleCocktailName != null ? String(raw.singleCocktailName) : null,
     searchName,
     searchTokens,
-    photoUri: raw?.photoUri != null ? String(raw.photoUri) : null,
+    photoUri,
     inBar: false,
     inShoppingList: false,
   };
