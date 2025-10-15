@@ -209,6 +209,11 @@ export default function CocktailDetailsScreen() {
   const [keepAwake, setKeepAwake] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const showImperialLocked = useRef(false);
+  const skipNextGlobalSyncRef = useRef<{
+    remaining: number;
+    rating: number;
+    minUpdatedAt: number;
+  } | null>(null);
 
   const { ingMap, byBase, bySearch } = useMemo(
     () => buildIngredientIndex(ingredients),
@@ -242,10 +247,16 @@ export default function CocktailDetailsScreen() {
       const prev = cocktail;
       const nextRating = prev.rating === value ? 0 : value;
       const normalized = Math.min(5, Math.max(0, Number(nextRating ?? 0)));
+      const timestamp = Date.now();
       const optimistic = {
         ...prev,
         rating: normalized,
-        updatedAt: Date.now(),
+        updatedAt: timestamp,
+      };
+      skipNextGlobalSyncRef.current = {
+        remaining: 2,
+        rating: normalized,
+        minUpdatedAt: timestamp,
       };
       setCocktail(optimistic);
       setGlobalCocktails((prevList) =>
@@ -255,7 +266,10 @@ export default function CocktailDetailsScreen() {
       );
       try {
         const saved = await updateCocktailRating(prev.id, normalized);
-        if (!saved) return;
+        if (!saved) {
+          skipNextGlobalSyncRef.current = null;
+          return;
+        }
         const persisted = { ...optimistic, ...saved };
         setCocktail(persisted);
         setGlobalCocktails((prevList) =>
@@ -265,6 +279,12 @@ export default function CocktailDetailsScreen() {
         );
       } catch (e) {
         setCocktail(prev);
+        skipNextGlobalSyncRef.current = {
+          remaining: 1,
+          rating: prev.rating,
+          minUpdatedAt:
+            typeof prev.updatedAt === "number" ? prev.updatedAt : Date.now(),
+        };
         setGlobalCocktails((prevList) =>
           Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
         );
@@ -478,6 +498,20 @@ export default function CocktailDetailsScreen() {
   useEffect(() => {
     const updated = globalCocktails.find((c) => c.id === id);
     if (!updated) return;
+
+    const skipSync = skipNextGlobalSyncRef.current;
+    if (
+      skipSync &&
+      skipSync.remaining > 0 &&
+      updated.rating === skipSync.rating &&
+      updated.updatedAt >= skipSync.minUpdatedAt
+    ) {
+      skipSync.remaining -= 1;
+      if (skipSync.remaining <= 0) {
+        skipNextGlobalSyncRef.current = null;
+      }
+      return;
+    }
 
     const missingIngredient = (updated.ingredients || []).some(
       (r) =>
