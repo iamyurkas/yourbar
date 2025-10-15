@@ -27,11 +27,7 @@ import {
 import { goBack } from "../../utils/navigation";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  getCocktailById,
-  saveCocktail,
-  updateCocktailById,
-} from "../../domain/cocktails";
+import { getCocktailById } from "../../domain/cocktails";
 import {
   getIngredientsByIds,
   getIngredientsByBaseIds,
@@ -198,7 +194,6 @@ export default function CocktailDetailsScreen() {
   const {
     ingredients: globalIngredients = [],
     cocktails: globalCocktails = [],
-    setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
   const [cocktail, setCocktail] = useState(initialCocktail || null);
@@ -236,40 +231,13 @@ export default function CocktailDetailsScreen() {
     navigation.navigate("AddCocktail", { initialCocktail: cocktail });
   }, [navigation, cocktail]);
 
-  const latestRatingRequest = useRef(0);
-
-  const handleRate = useCallback(
-    (value) => {
-      if (!cocktail) return;
-      const prev = cocktail;
-      const newRating = cocktail.rating === value ? 0 : value;
-      const updated = { ...cocktail, rating: newRating };
-      const requestId = latestRatingRequest.current + 1;
-      latestRatingRequest.current = requestId;
-
-      setCocktail(updated);
-      setGlobalCocktails((prevList) =>
-        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
-      );
-
-      saveCocktail(updated)
-        .then((saved) => {
-          if (latestRatingRequest.current !== requestId) return;
-          setCocktail(saved);
-          setGlobalCocktails((prevList) =>
-            Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
-          );
-        })
-        .catch(() => {
-          if (latestRatingRequest.current !== requestId) return;
-          setCocktail(prev);
-          setGlobalCocktails((prevList) =>
-            Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
-          );
-        });
-    },
-    [cocktail, setGlobalCocktails]
-  );
+  const handleRate = useCallback((value) => {
+    setCocktail((prev) => {
+      if (!prev) return prev;
+      const newRating = prev.rating === value ? 0 : value;
+      return { ...prev, rating: newRating };
+    });
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
