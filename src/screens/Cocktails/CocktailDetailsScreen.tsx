@@ -29,8 +29,8 @@ import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   getCocktailById,
-  saveCocktail,
   updateCocktailById,
+  updateCocktailRating,
 } from "../../domain/cocktails";
 import {
   getIngredientsByIds,
@@ -247,7 +247,10 @@ export default function CocktailDetailsScreen() {
         Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
       );
       try {
-        const saved = await saveCocktail(updated);
+        const saved = await updateCocktailRating(updated.id, newRating);
+        if (!saved) {
+          throw new Error("Failed to update rating");
+        }
         setCocktail(saved);
         setGlobalCocktails((prevList) =>
           Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
