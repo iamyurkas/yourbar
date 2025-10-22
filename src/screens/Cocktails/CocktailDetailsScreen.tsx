@@ -545,7 +545,12 @@ export default function CocktailDetailsScreen() {
       {[1, 2, 3, 4, 5].map((value) => (
         <TouchableOpacity
           key={value}
-          onPress={() => handleRate(value)}
+          onPress={() => {
+            console.log(
+              `[${new Date().toISOString()}] Rating star tapped: ${value}`
+            );
+            handleRate(value);
+          }}
           hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
         >
           <MaterialIcons
