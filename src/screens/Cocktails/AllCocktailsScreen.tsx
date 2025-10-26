@@ -54,7 +54,8 @@ export default function AllCocktailsScreen() {
   const [ignoreGarnish, setIgnoreGarnish] = useState(false);
   const [allowSubstitutes, setAllowSubstitutes] = useState(false);
   const {
-    cocktails: globalCocktails = [],
+    cocktails: globalCocktails = new Map(),
+    cocktailList: globalCocktailList = [],
     ingredients: globalIngredients = [],
     loading: globalLoading,
   } = useIngredientUsage();
@@ -80,8 +81,8 @@ export default function AllCocktailsScreen() {
   }, [search]);
 
   useEffect(() => {
-    setCocktails(globalCocktails);
-  }, [globalCocktails]);
+    setCocktails(globalCocktailList);
+  }, [globalCocktailList]);
 
   useEffect(() => {
     setIngredients(globalIngredients);

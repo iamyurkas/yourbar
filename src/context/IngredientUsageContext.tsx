@@ -19,7 +19,8 @@ const IngredientUsageContext = createContext({
   ingredientsById: new Map(),
   ingredientsByBase: new Map(),
   setIngredients: () => {},
-  cocktails: [],
+  cocktails: new Map(),
+  cocktailList: [],
   setCocktails: () => {},
   loading: true,
   setLoading: () => {},
@@ -34,7 +35,7 @@ const IngredientUsageContext = createContext({
 export function IngredientUsageProvider({ children }) {
   const [usageMap, setUsageMap] = useState({});
   const [ingredientsMap, setIngredientsMap] = useState(new Map());
-  const [cocktails, setCocktails] = useState([]);
+  const [cocktailMap, setCocktailMap] = useState(new Map());
   const [loading, setLoading] = useState(true);
   const [baseIngredients, setBaseIngredients] = useState([]);
   const [ingredientTags, setIngredientTags] = useState([]);
@@ -42,6 +43,11 @@ export function IngredientUsageProvider({ children }) {
   const ingredients = useMemo(
     () => Array.from(ingredientsMap.values()),
     [ingredientsMap]
+  );
+
+  const cocktailList = useMemo(
+    () => Array.from(cocktailMap.values()),
+    [cocktailMap]
   );
 
   const ingredientsById = useMemo(() => ingredientsMap, [ingredientsMap]);
@@ -61,12 +67,67 @@ export function IngredientUsageProvider({ children }) {
     [ingredients, ingredientTags]
   );
 
+  const ingredientCacheRef = useRef({ array: null, map: new Map() });
   const setIngredients = useCallback((next) => {
     setIngredientsMap((prev) => {
       const value = typeof next === "function" ? next(prev) : next;
-      if (value instanceof Map) return value;
-      if (Array.isArray(value)) return new Map(value.map((i) => [i.id, i]));
-      return new Map(Object.entries(value));
+      if (value instanceof Map) {
+        ingredientCacheRef.current = { array: null, map: value };
+        return value;
+      }
+      if (Array.isArray(value)) {
+        if (ingredientCacheRef.current.array === value) {
+          return ingredientCacheRef.current.map;
+        }
+        const map = new Map();
+        value.forEach((item) => {
+          if (item?.id != null) map.set(item.id, item);
+        });
+        ingredientCacheRef.current = { array: value, map };
+        return map;
+      }
+      if (value && typeof value === "object") {
+        const entries = Object.values(value);
+        const map = new Map();
+        entries.forEach((item: any) => {
+          if (item?.id != null) map.set(item.id, item);
+        });
+        ingredientCacheRef.current = { array: null, map };
+        return map;
+      }
+      return prev;
+    });
+  }, []);
+
+  const cocktailCacheRef = useRef({ array: null, map: new Map() });
+  const setCocktails = useCallback((next) => {
+    setCocktailMap((prev) => {
+      const value = typeof next === "function" ? next(prev) : next;
+      if (value instanceof Map) {
+        cocktailCacheRef.current = { array: null, map: value };
+        return value;
+      }
+      if (Array.isArray(value)) {
+        if (cocktailCacheRef.current.array === value) {
+          return cocktailCacheRef.current.map;
+        }
+        const map = new Map();
+        value.forEach((item) => {
+          if (item?.id != null) map.set(item.id, item);
+        });
+        cocktailCacheRef.current = { array: value, map };
+        return map;
+      }
+      if (value && typeof value === "object") {
+        const entries = Object.values(value as Record<string, any>);
+        const map = new Map();
+        entries.forEach((item: any) => {
+          if (item?.id != null) map.set(item.id, item);
+        });
+        cocktailCacheRef.current = { array: null, map };
+        return map;
+      }
+      return prev;
     });
   }, []);
 
@@ -149,7 +210,8 @@ export function IngredientUsageProvider({ children }) {
         ingredientsById,
         ingredientsByBase,
         setIngredients,
-        cocktails,
+        cocktails: cocktailMap,
+        cocktailList,
         setCocktails,
         loading,
         setLoading,

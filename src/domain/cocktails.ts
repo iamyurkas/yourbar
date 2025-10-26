@@ -36,12 +36,31 @@ export async function searchCocktails(query) {
 }
 
 export function updateCocktailById(list, updated) {
-  const index = list.findIndex((c) => c.id === updated.id);
-  if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
-  return next;
+  if (list instanceof Map) {
+    const prev = list.get(updated.id);
+    if (!prev) return list;
+    const next = new Map(list);
+    next.set(updated.id, { ...prev, ...updated });
+    return next;
+  }
+  if (Array.isArray(list)) {
+    const index = list.findIndex((c) => c.id === updated.id);
+    if (index === -1) return list;
+    const next = [...list];
+    next[index] = { ...next[index], ...updated };
+    return next;
+  }
+  return list;
 }
 export function removeCocktail(list, id) {
-  return list.filter((item) => item.id !== id);
+  if (list instanceof Map) {
+    if (!list.has(id)) return list;
+    const next = new Map(list);
+    next.delete(id);
+    return next;
+  }
+  if (Array.isArray(list)) {
+    return list.filter((item) => item.id !== id);
+  }
+  return list;
 }

@@ -202,7 +202,12 @@ export default function AddCocktailScreen() {
   const route = useRoute();
   const isFocused = useIsFocused();
   const { getTab } = useTabMemory();
-  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
+  const {
+    cocktails: cocktailMap,
+    cocktailList: cocktails = [],
+    setCocktails,
+    updateUsageMap,
+  } = useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
     useIngredientsData();
   const initialCocktail = route.params?.initialCocktail;
@@ -666,15 +671,21 @@ export default function AddCocktailScreen() {
       }
 
       const allowSubs = await getAllowSubstitutes();
-      const nextCocktails = [...cocktails, created];
-      const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+      const nextCocktails = new Map(cocktailMap);
+      nextCocktails.set(created.id, created);
+      const nextCocktailList = Array.from(nextCocktails.values());
+      const nextUsage = updateUsageMap(globalIngredients, nextCocktailList, {
         prevCocktails: cocktails,
         changedCocktailIds: [created.id],
         allowSubstitutes: !!allowSubs,
       });
       setCocktails(nextCocktails);
       setIngredients(
-        applyUsageMapToIngredients(globalIngredients, nextUsage, nextCocktails)
+        applyUsageMapToIngredients(
+          globalIngredients,
+          nextUsage,
+          nextCocktailList
+        )
       );
 
       if (fromIngredientFlow) {
@@ -702,6 +713,7 @@ export default function AddCocktailScreen() {
     instructions,
     glassId,
     ings,
+    cocktailMap,
     cocktails,
     globalIngredients,
     setCocktails,

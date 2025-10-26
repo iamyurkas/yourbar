@@ -19,7 +19,7 @@ export default function useIngredientsData() {
   const {
     ingredients,
     setIngredients,
-    cocktails,
+    cocktailList,
     setCocktails,
     usageMap,
     setUsageMap,
@@ -148,7 +148,7 @@ export default function useIngredientsData() {
   return {
     ingredients,
     baseIngredients,
-    cocktails,
+    cocktails: cocktailList,
     usageMap,
     ingredientTags,
     ingredientsByTag,

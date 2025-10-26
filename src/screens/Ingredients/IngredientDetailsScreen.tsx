@@ -163,7 +163,7 @@ export default function IngredientDetailsScreen() {
   const { setIngredients } = useIngredientsData();
   const {
     ingredients = [],
-    cocktails: cocktailsCtx = [],
+    cocktailList: cocktailsCtx = [],
     ingredientsById,
     ingredientsByBase,
     updateUsageMap,

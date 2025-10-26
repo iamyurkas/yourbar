@@ -197,7 +197,7 @@ export default function CocktailDetailsScreen() {
   const theme = useTheme();
   const {
     ingredients: globalIngredients = [],
-    cocktails: globalCocktails = [],
+    cocktails: globalCocktails = new Map(),
     setCocktails: setGlobalCocktails,
   } = useIngredientUsage();
 
@@ -243,23 +243,17 @@ export default function CocktailDetailsScreen() {
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
       setCocktail(updated);
-      setGlobalCocktails((prevList) =>
-        Array.isArray(prevList) ? updateCocktailById(prevList, updated) : prevList
-      );
+      setGlobalCocktails((prevList) => updateCocktailById(prevList, updated));
       try {
         const saved = await updateCocktailRating(updated.id, newRating);
         if (!saved) {
           throw new Error("Failed to update rating");
         }
         setCocktail(saved);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, saved) : prevList
-        );
+        setGlobalCocktails((prevList) => updateCocktailById(prevList, saved));
       } catch (e) {
         setCocktail(prev);
-        setGlobalCocktails((prevList) =>
-          Array.isArray(prevList) ? updateCocktailById(prevList, prev) : prevList
-        );
+        setGlobalCocktails((prevList) => updateCocktailById(prevList, prev));
       }
     },
     [cocktail, setGlobalCocktails]
@@ -467,11 +461,30 @@ export default function CocktailDetailsScreen() {
   // If the cocktail references ingredient ids that we don't have cached yet,
   // perform a full reload to fetch the missing ingredient rows.
   const loadingMissingRef = useRef(false);
+  const ingredientSignatureRef = useRef<string | null>(null);
   useEffect(() => {
-    const updated = globalCocktails.find((c) => c.id === id);
+    const updated =
+      globalCocktails instanceof Map
+        ? globalCocktails.get(id)
+        : Array.isArray(globalCocktails)
+        ? globalCocktails.find((c) => c.id === id)
+        : null;
     if (!updated) return;
 
-    const missingIngredient = (updated.ingredients || []).some(
+    const ingredientList = Array.isArray(updated.ingredients)
+      ? updated.ingredients
+      : [];
+    const signature = ingredientList
+      .map((r) => {
+        const substituteCount = Array.isArray(r.substitutes)
+          ? r.substitutes.length
+          : 0;
+        return `${r.order ?? 0}:${r.ingredientId ?? ""}:${substituteCount}`;
+      })
+      .join("|");
+    const prevSignature = ingredientSignatureRef.current;
+
+    const missingIngredient = ingredientList.some(
       (r) =>
         (r.ingredientId && !ingMap.has(r.ingredientId)) ||
         (Array.isArray(r.substitutes) &&
@@ -489,7 +502,13 @@ export default function CocktailDetailsScreen() {
       return { ...prev, ...updated };
     });
 
-    if (missingIngredient && !loadingMissingRef.current) {
+    ingredientSignatureRef.current = signature;
+
+    if (
+      missingIngredient &&
+      !loadingMissingRef.current &&
+      signature !== prevSignature
+    ) {
       loadingMissingRef.current = true;
       (async () => {
         try {
@@ -498,29 +517,33 @@ export default function CocktailDetailsScreen() {
         loadingMissingRef.current = false;
       })();
     }
-  }, [globalCocktails, id]);
+  }, [globalCocktails, id, ingMap, load]);
 
-  const rows = useMemo(
-    () =>
-      cocktail
-        ? getCocktailIngredientRows(cocktail, {
-            ingMap,
-            byBase,
-            bySearch,
-            allowSubstitutes,
-            ignoreGarnish,
-            showImperial,
-          })
-        : [],
-    [
-      cocktail,
-      ingMap,
-      byBase,
-      allowSubstitutes,
-      ignoreGarnish,
-      showImperial,
-    ],
-  );
+  const cocktailIngredients = cocktail?.ingredients;
+  const hasCocktail = cocktail != null;
+  const rows = useMemo(() => {
+    if (!hasCocktail || !Array.isArray(cocktailIngredients)) return [];
+    return getCocktailIngredientRows(
+      { ingredients: cocktailIngredients } as any,
+      {
+        ingMap,
+        byBase,
+        bySearch,
+        allowSubstitutes,
+        ignoreGarnish,
+        showImperial,
+      }
+    );
+  }, [
+    hasCocktail,
+    cocktailIngredients,
+    ingMap,
+    byBase,
+    bySearch,
+    allowSubstitutes,
+    ignoreGarnish,
+    showImperial,
+  ]);
 
   if (loading)
     return (

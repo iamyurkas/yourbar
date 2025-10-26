@@ -61,7 +61,8 @@ export default function MyCocktailsScreen() {
   // Local memory of shopping-list changes
   const [shoppingListChanges, setShoppingListChanges] = useState(new Map());
   const {
-    cocktails: globalCocktails = [],
+    cocktails: globalCocktails = new Map(),
+    cocktailList: globalCocktailList = [],
     ingredients: globalIngredients = [],
     loading: globalLoading,
     setIngredients: setGlobalIngredients,
@@ -93,8 +94,8 @@ export default function MyCocktailsScreen() {
   }, [search]);
 
   useEffect(() => {
-    setCocktails(globalCocktails);
-  }, [globalCocktails]);
+    setCocktails(globalCocktailList);
+  }, [globalCocktailList]);
 
   useEffect(() => {
     setIngredients(new Map(globalIngredients.map((i) => [i.id, i])));

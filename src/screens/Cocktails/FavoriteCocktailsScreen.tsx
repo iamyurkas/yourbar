@@ -45,7 +45,8 @@ export default function FavoriteCocktailsScreen() {
   const tabsOnTop = useTabsOnTop();
   const insets = useSafeAreaInsets();
   const {
-    cocktails: globalCocktails = [],
+    cocktails: globalCocktails = new Map(),
+    cocktailList: globalCocktailList = [],
     ingredients: globalIngredients = [],
     loading: globalLoading,
   } = useIngredientUsage();
@@ -83,8 +84,8 @@ export default function FavoriteCocktailsScreen() {
   }, [search]);
 
   useEffect(() => {
-    setCocktails(globalCocktails);
-  }, [globalCocktails]);
+    setCocktails(globalCocktailList);
+  }, [globalCocktailList]);
 
   useEffect(() => {
     setIngredients(globalIngredients);

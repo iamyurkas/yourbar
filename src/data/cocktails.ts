@@ -233,12 +233,25 @@ export async function updateCocktailRating(
   return saved ? { ...saved, rating: nextRating, updatedAt } : null;
 }
 
-export function updateCocktailById(list: CocktailRecord[], updated: CocktailRecord): CocktailRecord[] {
-  const index = list.findIndex((c) => c.id === updated.id);
-  if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
-  return next;
+export function updateCocktailById(
+  list: CocktailRecord[] | Map<number, CocktailRecord>,
+  updated: CocktailRecord
+): CocktailRecord[] | Map<number, CocktailRecord> {
+  if (list instanceof Map) {
+    const prev = list.get(updated.id);
+    if (!prev) return list;
+    const next = new Map(list);
+    next.set(updated.id, { ...prev, ...updated });
+    return next;
+  }
+  if (Array.isArray(list)) {
+    const index = list.findIndex((c) => c.id === updated.id);
+    if (index === -1) return list;
+    const next = [...list];
+    next[index] = { ...next[index], ...updated };
+    return next;
+  }
+  return list;
 }
 
 /** Delete by id */
@@ -250,8 +263,20 @@ export async function deleteCocktail(id: number): Promise<void> {
   });
 }
 
-export function removeCocktail(list: CocktailRecord[], id: number): CocktailRecord[] {
-  return list.filter((item) => item.id !== id);
+export function removeCocktail(
+  list: CocktailRecord[] | Map<number, CocktailRecord>,
+  id: number
+): CocktailRecord[] | Map<number, CocktailRecord> {
+  if (list instanceof Map) {
+    if (!list.has(id)) return list;
+    const next = new Map(list);
+    next.delete(id);
+    return next;
+  }
+  if (Array.isArray(list)) {
+    return list.filter((item) => item.id !== id);
+  }
+  return list;
 }
 
 /** Replace whole storage (use carefully) */

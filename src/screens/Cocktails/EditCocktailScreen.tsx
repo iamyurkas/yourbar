@@ -209,7 +209,12 @@ export default function EditCocktailScreen() {
   const params = route.params || {};
   const cocktailId =
     params?.id != null ? Number(params.id) : undefined;
-  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
+  const {
+    cocktails: cocktailMap,
+    cocktailList: cocktails = [],
+    setCocktails,
+    updateUsageMap,
+  } = useIngredientUsage();
   const { ingredients: globalIngredients = [], setIngredients } =
     useIngredientsData();
 
@@ -375,9 +380,10 @@ export default function EditCocktailScreen() {
         } catch (e) {
           console.error("[EditCocktailScreen][DB] fetch after save error", e);
         }
-        const nextCocktails = updateCocktailById(cocktails, updated);
+        const nextCocktails = updateCocktailById(cocktailMap, updated);
+        const nextCocktailList = Array.from(nextCocktails.values());
         const allowSubs = await getAllowSubstitutes();
-        const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+        const nextUsage = updateUsageMap(globalIngredients, nextCocktailList, {
           prevCocktails: cocktails,
           changedCocktailIds: [updated.id],
           allowSubstitutes: !!allowSubs,
@@ -387,7 +393,7 @@ export default function EditCocktailScreen() {
           applyUsageMapToIngredients(
             globalIngredients,
             nextUsage,
-            nextCocktails
+            nextCocktailList
           )
         );
         if (stay) setSaving(false);
@@ -406,6 +412,7 @@ export default function EditCocktailScreen() {
       cocktailId,
       navigation,
       serialize,
+      cocktailMap,
       cocktails,
       globalIngredients,
       setCocktails,
@@ -472,7 +479,7 @@ export default function EditCocktailScreen() {
           console.error("[EditCocktailScreen] getCocktailById error", e);
         }
       if (!data) {
-        data = cocktails.find((c) => c.id === cocktailId) || null;
+        data = cocktailMap.get(cocktailId) || null;
       }
       if (!mounted || !data) {
         console.warn(
@@ -526,7 +533,7 @@ export default function EditCocktailScreen() {
     return () => {
       mounted = false;
     };
-  }, [cocktailId, cocktails, params]);
+  }, [cocktailId, cocktailMap, params]);
 
   useEffect(() => {
     if (loading) return;
@@ -1289,23 +1296,28 @@ export default function EditCocktailScreen() {
         onCancel={() => setConfirmDelete(false)}
         onConfirm={() => {
           skipPromptRef.current = true;
-          const nextCocktails = removeCocktail(cocktails, cocktailId);
+          const nextCocktails = removeCocktail(cocktailMap, cocktailId);
+          const nextCocktailList = Array.from(nextCocktails.values());
           setCocktails(nextCocktails);
           navigation.popToTop();
           setConfirmDelete(false);
           InteractionManager.runAfterInteractions(async () => {
             await deleteCocktail(cocktailId);
             const allowSubs = await getAllowSubstitutes();
-            const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
-              prevCocktails: cocktails,
-              changedCocktailIds: [cocktailId],
-              allowSubstitutes: !!allowSubs,
-            });
+            const nextUsage = updateUsageMap(
+              globalIngredients,
+              nextCocktailList,
+              {
+                prevCocktails: cocktails,
+                removedCocktailIds: [cocktailId],
+                allowSubstitutes: !!allowSubs,
+              }
+            );
             setIngredients(
               applyUsageMapToIngredients(
                 globalIngredients,
                 nextUsage,
-                nextCocktails
+                nextCocktailList
               )
             );
           });
