@@ -243,7 +243,7 @@ export default function CocktailDetailsScreen() {
       const newRating = cocktail.rating === value ? 0 : value;
       const updated = { ...cocktail, rating: newRating };
       setCocktail(updated);
-      setGlobalCocktails((prevList) => updateCocktailById(prevList, updated));
+
       try {
         const saved = await updateCocktailRating(updated.id, newRating);
         if (!saved) {
@@ -253,7 +253,6 @@ export default function CocktailDetailsScreen() {
         setGlobalCocktails((prevList) => updateCocktailById(prevList, saved));
       } catch (e) {
         setCocktail(prev);
-        setGlobalCocktails((prevList) => updateCocktailById(prevList, prev));
       }
     },
     [cocktail, setGlobalCocktails]
