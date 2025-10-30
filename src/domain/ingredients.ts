@@ -1,3 +1,5 @@
+import { updateMapItemsById } from "../utils/updateCollections";
+
 let data;
 export function __setDataLayer(mock) {
   data = mock;
@@ -51,11 +53,7 @@ export function buildIndex(list) {
   }, {});
 }
 export function updateIngredientById(map, updated) {
-  const prev = map.get(updated.id);
-  if (!prev) return map;
-  const next = new Map(map);
-  next.set(updated.id, { ...prev, ...updated });
-  return next;
+  return updateMapItemsById(map, updated);
 }
 export function getIngredientById(id, index) {
   return index ? index[id] : null;

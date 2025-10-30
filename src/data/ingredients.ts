@@ -6,6 +6,7 @@ import db, {
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { WORD_SPLIT_RE } from "../utils/wordPrefixMatch";
 import { sortByName } from "../utils/sortByName";
+import { updateMapItemsById } from "../utils/updateCollections";
 import { IngredientRecord } from "./types";
 
 const now = () => Date.now();
@@ -175,11 +176,7 @@ export async function saveAllIngredients(ingredients, tx) {
 }
 
 export function updateIngredientById(map, updated) {
-  const prev = map.get(updated.id);
-  if (!prev) return map;
-  const next = new Map(map);
-  next.set(updated.id, { ...prev, ...updated });
-  return next;
+  return updateMapItemsById(map, updated);
 }
 
 function sanitizeIngredient(i: Partial<IngredientRecord>): IngredientRecord {

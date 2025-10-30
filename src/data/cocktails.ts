@@ -1,6 +1,7 @@
 // src/storage/cocktailsStorage.js
 import { normalizeSearch } from "../utils/normalizeSearch";
 import { sortByName } from "../utils/sortByName";
+import { updateArrayItemsById } from "../utils/updateCollections";
 import { CocktailRecord } from "./types";
 import db, {
   query,
@@ -216,12 +217,11 @@ export async function saveCocktail(
   return item as unknown as CocktailRecord;
 }
 
-export function updateCocktailById(list: CocktailRecord[], updated: CocktailRecord): CocktailRecord[] {
-  const index = list.findIndex((c) => c.id === updated.id);
-  if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
-  return next;
+export function updateCocktailById(
+  list: CocktailRecord[],
+  updated: CocktailRecord | CocktailRecord[]
+): CocktailRecord[] {
+  return updateArrayItemsById(list, updated);
 }
 
 /** Delete by id */

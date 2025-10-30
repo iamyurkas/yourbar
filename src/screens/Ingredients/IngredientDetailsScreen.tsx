@@ -448,10 +448,7 @@ export default function IngredientDetailsScreen() {
 
       let nextList;
       setIngredients((list) => {
-        nextList = list;
-        updates.forEach((item) => {
-          nextList = updateIngredientById(nextList, item);
-        });
+        nextList = updateIngredientById(list, updates);
         return nextList;
       });
 

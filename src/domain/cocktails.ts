@@ -1,3 +1,5 @@
+import { updateArrayItemsById } from "../utils/updateCollections";
+
 let data;
 export function __setDataLayer(mock) {
   data = mock;
@@ -33,11 +35,7 @@ export async function searchCocktails(query) {
 }
 
 export function updateCocktailById(list, updated) {
-  const index = list.findIndex((c) => c.id === updated.id);
-  if (index === -1) return list;
-  const next = [...list];
-  next[index] = { ...next[index], ...updated };
-  return next;
+  return updateArrayItemsById(list, updated);
 }
 export function removeCocktail(list, id) {
   return list.filter((item) => item.id !== id);
