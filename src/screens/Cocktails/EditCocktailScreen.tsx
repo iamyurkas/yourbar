@@ -72,7 +72,6 @@ import CocktailIngredientRow from "../../components/CocktailIngredientRow";
 import { useIngredientUsage } from "../../context/IngredientUsageContext";
 import useIngredientsData from "../../hooks/useIngredientsData";
 import useInfoDialog from "../../hooks/useInfoDialog";
-import { applyUsageMapToIngredients } from "../../domain/ingredientUsage";
 import { getAllowSubstitutes } from "../../data/settings";
 import useDebounced from "../../hooks/useDebounced";
 
@@ -209,9 +208,8 @@ export default function EditCocktailScreen() {
   const params = route.params || {};
   const cocktailId =
     params?.id != null ? Number(params.id) : undefined;
-  const { cocktails, setCocktails, updateUsageMap } = useIngredientUsage();
-  const { ingredients: globalIngredients = [], setIngredients } =
-    useIngredientsData();
+  const { cocktails, updateUsageMap } = useIngredientUsage();
+  const { ingredients: globalIngredients = [] } = useIngredientsData();
 
   const headerHeight = useHeaderHeight();
   const subSearchRef = useRef(null);
@@ -377,19 +375,11 @@ export default function EditCocktailScreen() {
         }
         const nextCocktails = updateCocktailById(cocktails, updated);
         const allowSubs = await getAllowSubstitutes();
-        const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+        updateUsageMap(globalIngredients, nextCocktails, {
           prevCocktails: cocktails,
           changedCocktailIds: [updated.id],
           allowSubstitutes: !!allowSubs,
         });
-        setCocktails(nextCocktails);
-        setIngredients(
-          applyUsageMapToIngredients(
-            globalIngredients,
-            nextUsage,
-            nextCocktails
-          )
-        );
         if (stay) setSaving(false);
       });
 
@@ -408,9 +398,7 @@ export default function EditCocktailScreen() {
       serialize,
       cocktails,
       globalIngredients,
-      setCocktails,
       updateUsageMap,
-      setIngredients,
       saving,
       showInfo,
     ]
@@ -1290,24 +1278,16 @@ export default function EditCocktailScreen() {
         onConfirm={() => {
           skipPromptRef.current = true;
           const nextCocktails = removeCocktail(cocktails, cocktailId);
-          setCocktails(nextCocktails);
           navigation.popToTop();
           setConfirmDelete(false);
           InteractionManager.runAfterInteractions(async () => {
             await deleteCocktail(cocktailId);
             const allowSubs = await getAllowSubstitutes();
-            const nextUsage = updateUsageMap(globalIngredients, nextCocktails, {
+            updateUsageMap(globalIngredients, nextCocktails, {
               prevCocktails: cocktails,
               changedCocktailIds: [cocktailId],
               allowSubstitutes: !!allowSubs,
             });
-            setIngredients(
-              applyUsageMapToIngredients(
-                globalIngredients,
-                nextUsage,
-                nextCocktails
-              )
-            );
           });
         }}
       />

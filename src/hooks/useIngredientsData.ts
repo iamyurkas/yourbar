@@ -20,9 +20,7 @@ export default function useIngredientsData() {
     ingredients,
     setIngredients,
     cocktails,
-    setCocktails,
     usageMap,
-    setUsageMap,
     loading,
     setLoading,
     baseIngredients,
@@ -30,6 +28,7 @@ export default function useIngredientsData() {
     setIngredientTags,
     ingredientsByTag,
     setImporting,
+    applyIngredientCocktailUpdates,
   } = useContext(IngredientUsageContext);
 
   const load = useCallback(
@@ -96,9 +95,14 @@ export default function useIngredientsData() {
             singleCocktailName,
           };
         });
-        setIngredients(withUsage);
-        setCocktails(cocks);
-        setUsageMap(map);
+        applyIngredientCocktailUpdates({
+          ingredients: withUsage,
+          cocktails: cocks,
+          usageMap: map,
+          allowSubstitutes: !!allowSubs,
+          byId,
+          byBase,
+        });
         const nextTags = [
           ...BUILTIN_INGREDIENT_TAGS,
           ...((customTags || [])),
@@ -118,9 +122,7 @@ export default function useIngredientsData() {
       }
     },
     [
-      setIngredients,
-      setCocktails,
-      setUsageMap,
+      applyIngredientCocktailUpdates,
       setLoading,
       setIngredientTags,
       setImporting,
