@@ -23,7 +23,7 @@ export default function SortMenu({ order = "desc", onChange }) {
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8, borderRadius: 16 }}
         >
           <MaterialIcons
-            name="sort"
+            name="filter-list"
             size={28}
             color={theme.colors.onSurface}
           />
