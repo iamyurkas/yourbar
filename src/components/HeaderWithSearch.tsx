@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
-import GeneralMenu from "./GeneralMenu";
+import SideMenu from "./SideMenu";
 import { HEADER_HEIGHT } from "../constants/layout";
 
 export default function HeaderWithSearch({
@@ -89,7 +89,7 @@ export default function HeaderWithSearch({
           </TouchableOpacity>
         )}
       </View>
-      <GeneralMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
+      <SideMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
     </SafeAreaView>
   );
 }
