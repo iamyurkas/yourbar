@@ -38,26 +38,50 @@ export function chooseUsedIngredient(recipeRow, indexes, opts = {}) {
     if (candidate) ing = candidate;
   }
   const baseId = ing?.baseIngredientId ?? r.ingredientId;
+  const allowBase = allowSubstitutes || r.allowBaseSubstitution || r.allowBaseSubstitute;
+  const isBaseIngredient = ing?.baseIngredientId == null;
+  const allowBranded = allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient;
   let used = null;
   if (ing?.inBar) {
     used = ing;
   } else if (ing) {
-    if (allowSubstitutes || r.allowBaseSubstitution) {
+    if (allowBase) {
       const base = byId?.get(baseId);
-      if (base?.inBar) used = base;
+      if (base?.inBar && base.id !== ing.id) used = base;
     }
-    const isBaseIngredient = ing?.baseIngredientId == null;
-    if (!used && (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)) {
-      const brand = findBrand ? findBrand(baseId) : (byBase?.get(baseId) || []).find((i) => i.inBar);
-      if (brand) used = brand;
+    if (!used && allowBranded) {
+      const brand = findBrand
+        ? findBrand(baseId)
+        : (byBase?.get(baseId) || []).find((i) => i.inBar);
+      if (brand && brand.id !== ing.id) used = brand;
     }
     if (!used && Array.isArray(r.substitutes)) {
       for (const s of r.substitutes) {
         const candidate = byId?.get(s.id);
-        if (candidate?.inBar) { used = candidate; break; }
+        if (!candidate) continue;
+        if (candidate.inBar) {
+          used = candidate;
+          break;
+        }
+        const candidateBaseId = candidate.baseIngredientId ?? candidate.id;
+        if (allowBase && candidate.id !== candidateBaseId) {
+          const base = byId?.get(candidateBaseId);
+          if (base?.inBar) {
+            used = base;
+            break;
+          }
+        }
+        if (allowBranded) {
+          const brand = findBrand
+            ? findBrand(candidateBaseId)
+            : (byBase?.get(candidateBaseId) || []).find((i) => i.inBar);
+          if (brand && brand.id !== candidate.id) {
+            used = brand;
+            break;
+          }
+        }
       }
     }
   }
   return { used, ing, baseId };
 }
-
