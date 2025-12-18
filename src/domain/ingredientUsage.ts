@@ -129,7 +129,7 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
           add(id, c.id)
         );
 
-        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+        if (Array.isArray(r.substitutes)) {
           r.substitutes.forEach((s) => {
             const subIng = byIdMap.get(s.id);
             if (!subIng) return;
@@ -300,7 +300,7 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = 
         const flags = getAllowFlags(r, allowSubstitutes, ing);
         collectIngredientIds(ing, byBaseMap, flags).forEach(add);
 
-        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+        if (Array.isArray(r.substitutes)) {
           r.substitutes.forEach((s) => {
             const subIng = byIdMap.get(s.id);
             if (!subIng) return;
@@ -336,7 +336,7 @@ export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, optio
         const flags = getAllowFlags(r, allowSubstitutes, ing);
         collectIngredientIds(ing, byBaseMap, flags).forEach(remove);
 
-        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+        if (Array.isArray(r.substitutes)) {
           r.substitutes.forEach((s) => {
             const subIng = byIdMap.get(s.id);
             if (!subIng) return;

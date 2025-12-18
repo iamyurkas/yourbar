@@ -47,9 +47,8 @@ function isCocktailAvailable(cocktail) {
   for (const r of required) {
     const ing = ingredientsMap.get(String(r.ingredientId));
     const flags = getAllowFlags(r, ing);
-    const allowAnySubstitute = flags.allowAnySubstitute;
     let used = resolveIngredient(ing, r, flags);
-    if (!used && allowAnySubstitute && Array.isArray(r.substitutes)) {
+    if (!used && Array.isArray(r.substitutes)) {
       for (const s of r.substitutes) {
         const candidate = ingredientsMap.get(String(s.id));
         used = resolveIngredient(candidate, r, flags);

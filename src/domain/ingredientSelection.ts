@@ -41,11 +41,6 @@ export function chooseUsedIngredient(recipeRow, indexes, opts = {}) {
   const allowBase = allowSubstitutes || r.allowBaseSubstitution || r.allowBaseSubstitute;
   const isBaseIngredient = ing?.baseIngredientId == null;
   const allowBranded = allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient;
-  const allowAnySubstitute =
-    allowSubstitutes ||
-    r.allowBaseSubstitution ||
-    r.allowBaseSubstitute ||
-    r.allowBrandedSubstitutes;
   let used = null;
   if (ing?.inBar) {
     used = ing;
@@ -60,7 +55,7 @@ export function chooseUsedIngredient(recipeRow, indexes, opts = {}) {
         : (byBase?.get(baseId) || []).find((i) => i.inBar);
       if (brand && brand.id !== ing.id) used = brand;
     }
-    if (!used && allowAnySubstitute && Array.isArray(r.substitutes)) {
+    if (!used && Array.isArray(r.substitutes)) {
       for (const s of r.substitutes) {
         const candidate = byId?.get(s.id);
         if (!candidate) continue;
