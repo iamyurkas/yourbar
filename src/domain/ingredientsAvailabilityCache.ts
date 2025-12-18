@@ -11,39 +11,45 @@ function findBrand(baseId) {
   return null;
 }
 
+function isIngredientAvailable(id, { allowBaseSubstitution, allowBrandedSubstitutes }) {
+  const ing = ingredientsMap.get(String(id));
+  if (!ing) return false;
+  if (ing.inBar) return true;
+  const baseId = String(ing.baseIngredientId ?? ing.id ?? id);
+  const isBaseIngredient = ing.baseIngredientId == null;
+  if (settings.allowSubstitutes || allowBaseSubstitution) {
+    const base = ingredientsMap.get(baseId);
+    if (base?.inBar) return true;
+  }
+  if (
+    settings.allowSubstitutes ||
+    allowBrandedSubstitutes ||
+    isBaseIngredient
+  ) {
+    const brand = findBrand(baseId);
+    if (brand) return true;
+  }
+  return false;
+}
+
 function isCocktailAvailable(cocktail) {
   const required = (cocktail.ingredients || []).filter(
     (r) => !r.optional && !(settings.ignoreGarnish && r.garnish)
   );
   if (required.length === 0) return false;
   for (const r of required) {
-    const ing = ingredientsMap.get(String(r.ingredientId));
-    const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-    let used = null;
-    if (ing?.inBar) used = ing;
-    else {
-      if (settings.allowSubstitutes || r.allowBaseSubstitution) {
-        const base = ingredientsMap.get(baseId);
-        if (base?.inBar) used = base;
-      }
-      if (
-        !used &&
-        (settings.allowSubstitutes || r.allowBrandedSubstitutes || ing?.baseIngredientId != null)
-      ) {
-        const brand = findBrand(baseId);
-        if (brand) used = brand;
-      }
-      if (!used && Array.isArray(r.substitutes)) {
-        for (const s of r.substitutes) {
-          const cand = ingredientsMap.get(String(s.id));
-          if (cand?.inBar) {
-            used = cand;
-            break;
-          }
-        }
-      }
+    const allowBaseSubstitution = !!(
+      r.allowBaseSubstitution ?? r.allowBaseSubstitute
+    );
+    const allowBrandedSubstitutes = !!r.allowBrandedSubstitutes;
+    const opts = { allowBaseSubstitution, allowBrandedSubstitutes };
+    if (isIngredientAvailable(r.ingredientId, opts)) continue;
+    if (
+      !Array.isArray(r.substitutes) ||
+      !r.substitutes.some((s) => isIngredientAvailable(s.id, opts))
+    ) {
+      return false;
     }
-    if (!used) return false;
   }
   return true;
 }

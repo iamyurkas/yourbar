@@ -39,29 +39,40 @@ export function getCocktailIngredientInfo(
   for (const r of required) {
     const ing = ingMap.get(String(r.ingredientId));
     const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-    let used = null;
-    if (ing?.inBar) {
-      used = ing;
-    } else {
-      if (allowSubstitutes || r.allowBaseSubstitution) {
-        const base = ingMap.get(baseId);
-        if (base?.inBar) used = base;
+    const allowBaseSubstitution = !!(
+      r.allowBaseSubstitution ?? r.allowBaseSubstitute
+    );
+    const allowBrandedSubstitutes = !!r.allowBrandedSubstitutes;
+    const resolveIngredient = (ingredientId) => {
+      const candidate = ingMap.get(String(ingredientId));
+      if (!candidate) return null;
+      if (candidate.inBar) return candidate;
+      const candidateBaseId = String(
+        candidate.baseIngredientId ?? candidate.id ?? ingredientId
+      );
+      const isCandidateBase = candidate.baseIngredientId == null;
+      if (allowSubstitutes || allowBaseSubstitution) {
+        const baseIng = ingMap.get(candidateBaseId);
+        if (baseIng?.inBar) return baseIng;
       }
-      const isBaseIngredient = ing?.baseIngredientId == null;
       if (
-        !used &&
-        (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+        allowSubstitutes ||
+        allowBrandedSubstitutes ||
+        isCandidateBase
       ) {
-        const brand = findBrand ? findBrand(baseId) : null;
-        if (brand) used = brand;
+        const brandIng = findBrand ? findBrand(candidateBaseId) : null;
+        if (brandIng) return brandIng;
       }
-      if (!used && Array.isArray(r.substitutes)) {
-        for (const s of r.substitutes) {
-          const candidate = ingMap.get(String(s.id));
-          if (candidate?.inBar) {
-            used = candidate;
-            break;
-          }
+      return null;
+    };
+    let used = null;
+    if (ing) used = resolveIngredient(ing.id);
+    if (!used && Array.isArray(r.substitutes)) {
+      for (const s of r.substitutes) {
+        const candidate = resolveIngredient(s.id);
+        if (candidate) {
+          used = candidate;
+          break;
         }
       }
     }
@@ -118,6 +129,10 @@ export function getCocktailIngredientRows(
     const inBar = ing?.inBar;
     const baseId = String(ing?.baseIngredientId ?? ing?.id ?? r.ingredientId);
     const isBaseIngredient = ing?.baseIngredientId == null;
+    const allowBaseSubstitution = !!(
+      r.allowBaseSubstitution ?? r.allowBaseSubstitute
+    );
+    const allowBrandedSubstitutes = !!r.allowBrandedSubstitutes;
 
     let substitute = null;
     let declaredSubstitutes = [];
@@ -131,11 +146,15 @@ export function getCocktailIngredientRows(
           return candidate?.name || s.name;
         });
       }
-      if (allowSubstitutes || r.allowBaseSubstitution) {
+      if (allowSubstitutes || allowBaseSubstitution) {
         const base = ingMap.get(baseId);
         if (base && base.id !== ing.id) baseSubstitutes.push(base.name);
       }
-      if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+      if (
+        allowSubstitutes ||
+        allowBrandedSubstitutes ||
+        isBaseIngredient
+      ) {
         const others = (byBase.get(baseId) || []).filter(
           (i) => i.id !== ing.id && String(i.baseIngredientId) === String(baseId)
         );
@@ -144,14 +163,14 @@ export function getCocktailIngredientRows(
     }
 
     if (!inBar && ing) {
-      if (allowSubstitutes || r.allowBaseSubstitution) {
+      if (allowSubstitutes || allowBaseSubstitution) {
         const base = ingMap.get(baseId);
         if (base?.inBar && base.id !== ing.id) substitute = base;
       }
 
       if (
         !substitute &&
-        (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient)
+        (allowSubstitutes || allowBrandedSubstitutes || isBaseIngredient)
       ) {
         const brand = (byBase.get(baseId) || []).find(
           (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
@@ -161,9 +180,9 @@ export function getCocktailIngredientRows(
 
       if (!substitute && Array.isArray(r.substitutes)) {
         for (const s of r.substitutes) {
-          const candidate = ingMap.get(String(s.id));
-          if (candidate?.inBar) {
-            substitute = candidate;
+          const resolved = resolveIngredient(s.id);
+          if (resolved) {
+            substitute = resolved;
             break;
           }
         }

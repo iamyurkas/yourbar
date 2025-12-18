@@ -29,7 +29,10 @@ function hashCocktails(cocktails) {
     if (!Array.isArray(c.ingredients)) continue;
     for (const r of c.ingredients) {
       h = (h * 31 + Number(r.ingredientId)) | 0;
-      h = (h * 31 + (r.allowBrandedSubstitutes ? 1 : 0)) | 0;
+      const allowBase = r.allowBaseSubstitution || r.allowBaseSubstitute;
+      const allowBranded = r.allowBrandedSubstitutes;
+      h = (h * 31 + (allowBase ? 1 : 0)) | 0;
+      h = (h * 31 + (allowBranded ? 1 : 0)) | 0;
       if (Array.isArray(r.substitutes)) {
         for (const s of r.substitutes) {
           h = (h * 31 + Number(s.id)) | 0;
@@ -54,6 +57,36 @@ export function clearMapCocktailsByIngredientCache() {
     cockHash: 0,
     result: null,
   };
+}
+
+function collectUsageIds(ing, { allowSubstitutes, allowBaseSubstitution, allowBrandedSubstitutes, byBaseMap }) {
+  const ids = new Set();
+  if (!ing) return ids;
+  const baseId = ing.baseIngredientId ?? ing.id;
+  const group = byBaseMap.get(baseId) || [];
+
+  ids.add(ing.id);
+
+  if (ing.id === baseId) {
+    // base ingredient used: count all branded versions
+    group.forEach((item) => {
+      if (item.id !== baseId) ids.add(item.id);
+    });
+    return ids;
+  }
+
+  // branded ingredient used: include base only when allowed
+  if (allowSubstitutes || allowBaseSubstitution) {
+    ids.add(baseId);
+  }
+  // include other branded siblings only when allowed
+  if (allowSubstitutes || allowBrandedSubstitutes) {
+    group.forEach((item) => {
+      if (item.id !== ing.id && item.id !== baseId) ids.add(item.id);
+    });
+  }
+
+  return ids;
 }
 
 export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
@@ -90,31 +123,21 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
       c.ingredients.forEach((r) => {
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
-        if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
+        const allowBaseSub = !!(r.allowBaseSubstitution ?? r.allowBaseSubstitute);
+        const allowBranded = !!r.allowBrandedSubstitutes;
+        const opts = {
+          allowSubstitutes,
+          allowBaseSubstitution: allowBaseSub,
+          allowBrandedSubstitutes: allowBranded,
+          byBaseMap,
+        };
+        collectUsageIds(ing, opts).forEach((id) => add(id, c.id));
 
-        // direct usage
-        add(ing.id, c.id);
-
-        if (ing.id === baseId) {
-          // base ingredient used: count all branded versions
-          group.forEach((item) => {
-            if (item.id !== baseId) add(item.id, c.id);
-          });
-        } else {
-          // branded ingredient used: base ingredient always counts
-          add(baseId, c.id);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) add(item.id, c.id);
-            });
-          }
-        }
-
-        // explicit substitutes
         if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => add(s.id, c.id));
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            collectUsageIds(subIng, opts).forEach((id) => add(id, c.id));
+          });
         }
       });
     });
@@ -274,27 +297,21 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = 
       cocktail.ingredients.forEach((r) => {
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
-        if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
-
-        add(ing.id);
-
-        if (ing.id === baseId) {
-          group.forEach((item) => {
-            if (item.id !== baseId) add(item.id);
-          });
-        } else {
-          add(baseId);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) add(item.id);
-            });
-          }
-        }
+        const allowBaseSub = !!(r.allowBaseSubstitution ?? r.allowBaseSubstitute);
+        const allowBranded = !!r.allowBrandedSubstitutes;
+        const opts = {
+          allowSubstitutes,
+          allowBaseSubstitution: allowBaseSub,
+          allowBrandedSubstitutes: allowBranded,
+          byBaseMap,
+        };
+        collectUsageIds(ing, opts).forEach(add);
 
         if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => add(s.id));
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            collectUsageIds(subIng, opts).forEach(add);
+          });
         }
       });
     }
@@ -321,27 +338,21 @@ export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, optio
       cocktail.ingredients.forEach((r) => {
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
-        if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
-
-        remove(ing.id);
-
-        if (ing.id === baseId) {
-          group.forEach((item) => {
-            if (item.id !== baseId) remove(item.id);
-          });
-        } else {
-          remove(baseId);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) remove(item.id);
-            });
-          }
-        }
+        const allowBaseSub = !!(r.allowBaseSubstitution ?? r.allowBaseSubstitute);
+        const allowBranded = !!r.allowBrandedSubstitutes;
+        const opts = {
+          allowSubstitutes,
+          allowBaseSubstitution: allowBaseSub,
+          allowBrandedSubstitutes: allowBranded,
+          byBaseMap,
+        };
+        collectUsageIds(ing, opts).forEach(remove);
 
         if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => remove(s.id));
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            collectUsageIds(subIng, opts).forEach(remove);
+          });
         }
       });
     }
