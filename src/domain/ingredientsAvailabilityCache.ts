@@ -4,6 +4,34 @@ let cocktailMap = new Map();
 let usage = {};
 let settings = { ignoreGarnish: false, allowSubstitutes: false };
 
+function getAllowFlags(row, ingredient) {
+  const allowBase =
+    settings.allowSubstitutes || row.allowBaseSubstitution || row.allowBaseSubstitute;
+  const allowBranded =
+    settings.allowSubstitutes ||
+    row.allowBrandedSubstitutes ||
+    (ingredient?.baseIngredientId == null);
+  const allowAnySubstitute =
+    settings.allowSubstitutes ||
+    row.allowBaseSubstitution ||
+    row.allowBaseSubstitute ||
+    row.allowBrandedSubstitutes;
+  return { allowBase, allowBranded, allowAnySubstitute };
+}
+
+function resolveIngredient(candidate, row, flags) {
+  if (!candidate) return null;
+  const baseId = String(candidate.baseIngredientId ?? candidate.id);
+  const base = ingredientsMap.get(baseId);
+  if (candidate.inBar) return candidate;
+  if (flags.allowBase && candidate.id !== Number(baseId) && base?.inBar) return base;
+  if (flags.allowBranded) {
+    const brand = findBrand(baseId);
+    if (brand && brand.id !== candidate.id) return brand;
+  }
+  return null;
+}
+
 function findBrand(baseId) {
   for (const ing of ingredientsMap.values()) {
     if (ing.inBar && String(ing.baseIngredientId) === String(baseId)) return ing;
@@ -18,29 +46,14 @@ function isCocktailAvailable(cocktail) {
   if (required.length === 0) return false;
   for (const r of required) {
     const ing = ingredientsMap.get(String(r.ingredientId));
-    const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-    let used = null;
-    if (ing?.inBar) used = ing;
-    else {
-      if (settings.allowSubstitutes || r.allowBaseSubstitution) {
-        const base = ingredientsMap.get(baseId);
-        if (base?.inBar) used = base;
-      }
-      if (
-        !used &&
-        (settings.allowSubstitutes || r.allowBrandedSubstitutes || ing?.baseIngredientId != null)
-      ) {
-        const brand = findBrand(baseId);
-        if (brand) used = brand;
-      }
-      if (!used && Array.isArray(r.substitutes)) {
-        for (const s of r.substitutes) {
-          const cand = ingredientsMap.get(String(s.id));
-          if (cand?.inBar) {
-            used = cand;
-            break;
-          }
-        }
+    const flags = getAllowFlags(r, ing);
+    const allowAnySubstitute = flags.allowAnySubstitute;
+    let used = resolveIngredient(ing, r, flags);
+    if (!used && allowAnySubstitute && Array.isArray(r.substitutes)) {
+      for (const s of r.substitutes) {
+        const candidate = ingredientsMap.get(String(s.id));
+        used = resolveIngredient(candidate, r, flags);
+        if (used) break;
       }
     }
     if (!used) return false;

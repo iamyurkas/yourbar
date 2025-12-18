@@ -29,6 +29,7 @@ function hashCocktails(cocktails) {
     if (!Array.isArray(c.ingredients)) continue;
     for (const r of c.ingredients) {
       h = (h * 31 + Number(r.ingredientId)) | 0;
+      h = (h * 31 + (r.allowBaseSubstitution || r.allowBaseSubstitute ? 1 : 0)) | 0;
       h = (h * 31 + (r.allowBrandedSubstitutes ? 1 : 0)) | 0;
       if (Array.isArray(r.substitutes)) {
         for (const s of r.substitutes) {
@@ -46,6 +47,38 @@ let usageCache = {
   cockHash: 0,
   result: null,
 };
+
+function getAllowFlags(row, allowSubstitutes, ingredient) {
+  const allowBase = allowSubstitutes || row.allowBaseSubstitution || row.allowBaseSubstitute;
+  const isBaseIngredient = ingredient?.baseIngredientId == null;
+  const allowBranded =
+    allowSubstitutes || row.allowBrandedSubstitutes || isBaseIngredient;
+  const allowAnySubstitute =
+    allowSubstitutes ||
+    row.allowBaseSubstitution ||
+    row.allowBaseSubstitute ||
+    row.allowBrandedSubstitutes;
+  return { allowBase, allowBranded, allowAnySubstitute };
+}
+
+function collectIngredientIds(target, byBaseMap, flags) {
+  if (!target) return [];
+  const ids = [target.id];
+  const baseId = target.baseIngredientId ?? target.id;
+  const group = byBaseMap.get(baseId) || [];
+
+  if (flags.allowBase && target.id !== baseId) ids.push(baseId);
+
+  if (flags.allowBranded) {
+    group.forEach((item) => {
+      if (item.id === target.id) return;
+      if (item.id === baseId && !flags.allowBase) return;
+      ids.push(item.id);
+    });
+  }
+
+  return ids;
+}
 
 export function clearMapCocktailsByIngredientCache() {
   usageCache = {
@@ -91,30 +124,19 @@ export function mapCocktailsByIngredient(ingredients, cocktails, options = {}) {
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
         if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
+        const flags = getAllowFlags(r, allowSubstitutes, ing);
+        collectIngredientIds(ing, byBaseMap, flags).forEach((id) =>
+          add(id, c.id)
+        );
 
-        // direct usage
-        add(ing.id, c.id);
-
-        if (ing.id === baseId) {
-          // base ingredient used: count all branded versions
-          group.forEach((item) => {
-            if (item.id !== baseId) add(item.id, c.id);
+        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            if (!subIng) return;
+            collectIngredientIds(subIng, byBaseMap, flags).forEach((id) =>
+              add(id, c.id)
+            );
           });
-        } else {
-          // branded ingredient used: base ingredient always counts
-          add(baseId, c.id);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) add(item.id, c.id);
-            });
-          }
-        }
-
-        // explicit substitutes
-        if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => add(s.id, c.id));
         }
       });
     });
@@ -275,26 +297,15 @@ export function addCocktailToUsageMap(prevMap, ingredients, cocktail, options = 
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
         if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
+        const flags = getAllowFlags(r, allowSubstitutes, ing);
+        collectIngredientIds(ing, byBaseMap, flags).forEach(add);
 
-        add(ing.id);
-
-        if (ing.id === baseId) {
-          group.forEach((item) => {
-            if (item.id !== baseId) add(item.id);
+        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            if (!subIng) return;
+            collectIngredientIds(subIng, byBaseMap, flags).forEach(add);
           });
-        } else {
-          add(baseId);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) add(item.id);
-            });
-          }
-        }
-
-        if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => add(s.id));
         }
       });
     }
@@ -322,26 +333,15 @@ export function removeCocktailFromUsageMap(prevMap, ingredients, cocktail, optio
         if (r.ingredientId == null) return;
         const ing = byIdMap.get(r.ingredientId);
         if (!ing) return;
-        const baseId = ing.baseIngredientId ?? ing.id;
-        const group = byBaseMap.get(baseId) || [];
+        const flags = getAllowFlags(r, allowSubstitutes, ing);
+        collectIngredientIds(ing, byBaseMap, flags).forEach(remove);
 
-        remove(ing.id);
-
-        if (ing.id === baseId) {
-          group.forEach((item) => {
-            if (item.id !== baseId) remove(item.id);
+        if (flags.allowAnySubstitute && Array.isArray(r.substitutes)) {
+          r.substitutes.forEach((s) => {
+            const subIng = byIdMap.get(s.id);
+            if (!subIng) return;
+            collectIngredientIds(subIng, byBaseMap, flags).forEach(remove);
           });
-        } else {
-          remove(baseId);
-          if (allowSubstitutes || r.allowBrandedSubstitutes) {
-            group.forEach((item) => {
-              if (item.id !== ing.id && item.id !== baseId) remove(item.id);
-            });
-          }
-        }
-
-        if (Array.isArray(r.substitutes)) {
-          r.substitutes.forEach((s) => remove(s.id));
         }
       });
     }
