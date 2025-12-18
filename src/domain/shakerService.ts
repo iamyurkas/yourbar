@@ -176,23 +176,42 @@ export function computeAvailableCocktails({
       (i) => i.inBar && String(i.baseIngredientId) === String(baseId)
     );
 
-  const isSatisfied = (r: any): boolean => {
-    const ing = ingMap.get(String(r.ingredientId));
-    if (ing?.inBar) return true;
-    const baseId = String(ing?.baseIngredientId ?? r.ingredientId);
-    if (allowSubstitutes || r.allowBaseSubstitution) {
+  const isIngredientAvailable = (
+    ingredientId: string | number,
+    opts: { allowBaseSubstitution: boolean; allowBrandedSubstitutes: boolean }
+  ): boolean => {
+    const ing = ingMap.get(String(ingredientId));
+    const allowBaseSubstitution = opts.allowBaseSubstitution;
+    const allowBrandedSubstitutes = opts.allowBrandedSubstitutes;
+    if (!ing) return false;
+    if (ing.inBar) return true;
+    const baseId = String(ing.baseIngredientId ?? ing.id ?? ingredientId);
+    const isBaseIngredient = ing.baseIngredientId == null;
+    if (allowSubstitutes || allowBaseSubstitution) {
       const base = ingMap.get(baseId);
       if (base?.inBar) return true;
     }
-    const isBaseIngredient = ing?.baseIngredientId == null;
-    if (allowSubstitutes || r.allowBrandedSubstitutes || isBaseIngredient) {
+    if (
+      allowSubstitutes ||
+      allowBrandedSubstitutes ||
+      isBaseIngredient
+    ) {
       const brand = findBrand(baseId);
       if (brand) return true;
     }
+    return false;
+  };
+
+  const isSatisfied = (r: any): boolean => {
+    const allowBaseSubstitution = !!(
+      r.allowBaseSubstitution ?? r.allowBaseSubstitute
+    );
+    const allowBrandedSubstitutes = !!r.allowBrandedSubstitutes;
+    const options = { allowBaseSubstitution, allowBrandedSubstitutes };
+    if (isIngredientAvailable(r.ingredientId, options)) return true;
     if (Array.isArray(r.substitutes)) {
       for (const s of r.substitutes) {
-        const candidate = ingMap.get(String(s.id));
-        if (candidate?.inBar) return true;
+        if (isIngredientAvailable(s.id, options)) return true;
       }
     }
     return false;
