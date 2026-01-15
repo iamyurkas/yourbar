@@ -124,13 +124,13 @@ export function getCocktailIngredientRows(
     let baseSubstitutes = [];
     let brandedSubstitutes = [];
 
+    if (Array.isArray(r.substitutes)) {
+      declaredSubstitutes = r.substitutes.map((s) => {
+        const candidate = ingMap.get(String(s.id));
+        return candidate?.name || s.name;
+      });
+    }
     if (ing) {
-      if (Array.isArray(r.substitutes)) {
-        declaredSubstitutes = r.substitutes.map((s) => {
-          const candidate = ingMap.get(String(s.id));
-          return candidate?.name || s.name;
-        });
-      }
       if (allowSubstitutes || r.allowBaseSubstitution) {
         const base = ingMap.get(baseId);
         if (base && base.id !== ing.id) baseSubstitutes.push(base.name);

@@ -145,17 +145,23 @@ const IngredientRow = memo(function IngredientRow({
               .join(", ");
             if (propLine) lines.push(`(${propLine})`);
             if (substituteFor) lines.push(`Substitute for: ${substituteFor}`);
-            const allSubs = Array.from(
-              new Set([
-                ...declaredSubstitutes,
-                ...baseSubstitutes,
-                ...brandedSubstitutes,
-              ])
-            );
-            if (!inBar && !substituteFor && allSubs.length > 0) {
-              allSubs.forEach((s, i) =>
-                lines.push(i === 0 ? `or ${s}` : s)
-              );
+            const orderedSubs = [];
+            const pushUnique = (items) => {
+              items.forEach((item) => {
+                if (!item || orderedSubs.includes(item)) return;
+                orderedSubs.push(item);
+              });
+            };
+            pushUnique(declaredSubstitutes);
+            if (isBranded) {
+              pushUnique(baseSubstitutes);
+              pushUnique(brandedSubstitutes);
+            } else {
+              pushUnique(brandedSubstitutes);
+              pushUnique(baseSubstitutes);
+            }
+            if (!inBar && !substituteFor && orderedSubs.length > 0) {
+              orderedSubs.forEach((s) => lines.push(`or ${s}`));
             } else {
               declaredSubstitutes.forEach((s) => lines.push(s));
               baseSubstitutes.forEach((s) => lines.push(s));
