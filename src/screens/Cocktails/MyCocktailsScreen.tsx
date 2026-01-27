@@ -67,6 +67,8 @@ export default function MyCocktailsScreen() {
     setIngredients: setGlobalIngredients,
   } = useIngredientUsage();
 
+  const listRef = useRef(null);
+  const scrollOffsetRef = useRef(0);
   const shoppingListChangesRef = useRef(shoppingListChanges);
   useEffect(() => {
     shoppingListChangesRef.current = shoppingListChanges;
@@ -246,6 +248,16 @@ export default function MyCocktailsScreen() {
     return data;
   }, [available, suggestions]);
 
+  useEffect(() => {
+    if (!isFocused) return;
+    const offset = scrollOffsetRef.current;
+    if (!listRef.current || offset <= 0) return;
+    const id = requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({ offset, animated: false });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isFocused, listData]);
+
   const handlePress = useCallback(
     (id) => {
       setNavigatingId(id);
@@ -363,10 +375,15 @@ export default function MyCocktailsScreen() {
       />
       {tabsOnTop && <TopTabBar navigation={navigation} theme={theme} />}
       <FlashList
+        ref={listRef}
         data={listData}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         estimatedItemSize={ITEM_HEIGHT}
+        onScroll={(event) => {
+          scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
+        }}
+        scrollEventThrottle={16}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews
         initialNumToRender={12}
@@ -402,4 +419,3 @@ export default function MyCocktailsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
 });
-
